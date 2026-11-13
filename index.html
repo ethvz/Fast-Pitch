@@ -1492,6 +1492,14 @@ body.pkon #bar{z-index:61!important}
 #p-pricing .kit .kv{top:24px;transform:scale(.8);transform-origin:0 0}
 #p-pricing .kit h4{top:30px!important}#p-pricing .kit .ln{top:86px!important;border-color:rgba(255,255,255,.1)!important}
 #p-pricing .kc{top:100px!important}
+#p-pricing .kit{transition:top .55s cubic-bezier(.22,1,.36,1),height .55s cubic-bezier(.22,1,.36,1),opacity .4s,transform .55s cubic-bezier(.22,1,.36,1)}
+#p-pricing .kit .kv,#p-pricing .kit h4,#p-pricing .kit .ln,#p-pricing .kc{transition:top .55s cubic-bezier(.22,1,.36,1),transform .55s cubic-bezier(.22,1,.36,1)}
+#p-pricing.no4 .kit{height:330px!important}
+#p-pricing.no4 .kit:nth-child(1){top:140px!important}#p-pricing.no4 .kit:nth-child(2){top:500px!important}
+#p-pricing.no4 .kit:nth-child(3){top:860px!important;opacity:0;transform:translateY(40px) scale(.96);pointer-events:none}
+#p-pricing.no4 .kit .kv{top:28px;transform:scale(.9)}
+#p-pricing.no4 .kit h4{top:38px!important}#p-pricing.no4 .kit .ln{top:100px!important}#p-pricing.no4 .kc{top:120px!important}
+.p4-tog{width:340px}
 #p-pricing .kc .k{color:#8e8e93!important}#p-pricing .kc .s{color:#8e8e93!important}
 
 /* ===== Reviews: live hero + horizontal scroll cards ===== */
@@ -2292,7 +2300,7 @@ function barFor(p){
   $('#bar').classList.toggle('home',p==='home');
   if(p==='home') r.innerHTML=HOME_RIGHT;
   if(p==='buyouts') r.innerHTML=`<button class="bbtn${big?' on':''}" id="amtBtn" style="width:96px"><svg width="24" height="34" viewBox="0 0 24 34" fill="none" stroke="#fff" stroke-width="2.4"><path d="M12 2v30M19 9c0-3-3-4.5-7-4.5S5 6.5 5 10s3.5 4.5 7 5.5 7.5 2 7.5 6-3.5 6-7.5 6S4 25.5 4 22"/></svg></button>`;
-  if(p==='packages') r.innerHTML=`<button class="pricingBtn" data-modal="m-pricing"><svg width="16" height="26" viewBox="0 0 24 34" fill="none" stroke="#fff" stroke-width="2.6"><path d="M12 2v30M19 9c0-3-3-4.5-7-4.5S5 6.5 5 10s3.5 4.5 7 5.5 7.5 2 7.5 6-3.5 6-7.5 6S4 25.5 4 22"/></svg>Pricing Options</button>`;
+  /* packages: no pricing button */
   if(p==='monitoring') r.innerHTML=[0,1,2,3,4,5].map(i=>`<button class="bbtn${i===monTab?' on':''}" data-mon="${i}"><img src="assets/icons/mon${i}.png" alt=""></button>`).join('');
   if(p==='ocp') r.innerHTML=(OC.mode==='p3'?['hero','feat','phone','cmp','specs','hist','act','with','faq']:['hero','feat','phone']).map(k=>k==='cube'?`<a class="bbtn" href="${VW}" target="_blank" rel="noopener" data-octab="cube"><img src="assets/oc/i_cube.png" alt="PreView"></a>`:`<button class="bbtn${k===OC.tab||(k==='play'&&OC.tab==='videos')?' on':''}" data-octab="${k}">${k==='hist'?HISTICO:`<img src="assets/oc/i_${k}.png" alt="">`}</button>`).join('');
   if(p==='prod') r.innerHTML=prBar();
@@ -2365,7 +2373,7 @@ function kits(){
  const sc=plan==='sc';
  const K=[{n:'Premium Kit',img:sc?'kit_premium_sc':'kit_premium',eq:'$1899',mo:'$31.65/mo',sv:sc?'$29.99/mo':'$24.99/mo',tot:sc?'$61.64/mo':'$56.64/mo',note:'No service contract after<br>equipment is paid off'},
           {n:'Non-Premium Kit',img:sc?'kit_nonpremium_sc':'kit_nonpremium',eq:'$749',mo:'$12.48/mo',sv:sc?'$49.99/mo':'$44.99/mo',tot:sc?'$62.47/mo':'$57.47/mo',note:'60 month service contract with<br><b>60% early termination fee</b><br>Remaining equipment balance'},
-          {n:'Pay in Four',p4:1,eq:'$399',mo:'4 × $100',sv:'$44.99/mo',tot:'$44.99/mo',note:'24 month service contract with<br><b>50% early termination fee</b><br>No financing'}];
+          {n:'Pay in Four Bundle',p4:1,eq:'$399',mo:'4 × $100',sv:'$44.99/mo',tot:'$44.99/mo',note:'24 month service contract with<br><b>50% early termination fee</b><br>No financing'}];
  $('#kits').innerHTML=K.map((k,i)=>`<div class="kit" style="top:${246+i*368}px">${KV(sc)}<h4 style="color:${i?'#fff':'var(--orange)'}">${k.n}${sc?'<em>(Free Thermostat)</em>':''}</h4><div class="ln"></div>
   <div class="kc" style="left:476px"><div class="k">Equipment starting at</div><div class="v">${k.eq} <span style="font-size:11px">or</span></div><div class="v" style="margin-top:14px">${k.mo}</div><div class="s">${k.p4?'4 installments, no financing':'for 60 months'}</div></div>
   <div class="kc" style="left:740px"><div class="k">Service starting at</div><div class="v">${k.sv}</div></div>
@@ -3504,12 +3512,13 @@ IP.tools='<path d="M14.5 6.5a4 4 0 0 0-5 5L4 17l3 3 5.5-5.5a4 4 0 0 0 5-5l-2.5 2
 /* Packages <-> Pricing Options: two pages, one centered toggle */
 { const m=$('#m-pricing'), pg=document.createElement('section'); pg.className='page'; pg.id='p-pricing'; $('#p-packages').after(pg);
   [...m.children].forEach(c=>{ if(!c.classList.contains('mclose')) pg.appendChild(c); }); m.remove();
-  let last=0; const IDX={packages:0,pricing:1};
-  const _bf=barFor; barFor=function(p){ _bf(p); if(p in IDX){ const r=$('#barRight'), n=IDX[p]; r.classList.remove('pnav');
-      r.innerHTML=`<div class="pk-tog"><i style="transform:translateX(${last*100}%)"></i><button data-pkt="packages">Packages</button><button data-pkt="pricing">Pricing Options</button></div>`;
-      const t=r.querySelector('.pk-tog'); requestAnimationFrame(()=>requestAnimationFrame(()=>{ t.querySelector('i').style.transform=`translateX(${n*100}%)`; t.querySelectorAll('button').forEach((b,i)=>b.classList.toggle('on',i===n)); }));
-      t.querySelectorAll('button')[last].classList.add('on'); last=n; } };
-  document.addEventListener('click',e=>{ const b=e.target.closest('[data-pkt]'); if(!b) return; const to=b.dataset.pkt; if(to===cur) return; stack[stack.length-1]=to; show(to); }); }
+  /* With PI4 / Without PI4 toggle (pricing page only) */
+  let p4=1;
+  const _bf=barFor; barFor=function(p){ _bf(p); if(p==='pricing'){ const r=$('#barRight'); r.classList.remove('pnav');
+      r.innerHTML=`<div class="pk-tog p4-tog"><i style="transform:translateX(${p4?0:100}%)"></i><button data-p4="1" class="${p4?'on':''}">With PI4</button><button data-p4="0" class="${p4?'':'on'}">Without PI4</button></div>`; } };
+  document.addEventListener('click',e=>{ const b=e.target.closest('[data-p4]'); if(!b) return; p4=+b.dataset.p4;
+    const t=b.closest('.pk-tog'); t.querySelector('i').style.transform=`translateX(${p4?0:100}%)`; t.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));
+    $('#p-pricing').classList.toggle('no4',!p4); }); }
 
 /* ===== Packages page: live rows ===== */
 { const H={ocspot:96,ocp:84,dbcp:82,chime:76,garage:66,lock:82,motion:64,window:62,water:52,icp:70,therm:66};
