@@ -1652,7 +1652,11 @@ html.booted #stage{animation:bootIn .35s ease both}
 #barlogo,#bar.home #barlogo{filter:invert(1)!important;height:31px!important;margin:0 0 0 12px!important;align-self:center}
 /* sections: centered on the page (content block, not the rail gap), scaled up as far as width and height allow */
 .lpage>.otab:not([data-t=hero]):not(.hum),.lpage>.psec:not([data-t=hero]){transform:translateX(var(--SX,0px)) scale(var(--S2,.925))!important;transform-origin:0 0!important}
-#lpT .lpl[data-c=all]{bottom:auto;top:12px}#lpT .lpl[data-c=all] h2{display:none}
+#lpT .lpl{bottom:auto!important;top:12px}#lpT .lpl h2{display:none}
+.hcat .hhead h2{display:none}
+#homeTrack .hcat{padding-top:74px!important}
+/* hub tile label matches the Keypad / Vivint App labels beside it */
+.hcat .hubt,#flipLayer .hubt{top:11px;font-size:16.5px;color:rgba(255,255,255,.58)}
 </style>
 <div id="stage">
   <div id="screen">
