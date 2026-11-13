@@ -1764,6 +1764,29 @@ body:has(#p-verify.on) #vrBg img{animation:kbz 18s ease-out both}
 #p-verify .vr-pts svg{color:var(--vg,#05E5AF)}
 #p-verify.on .vr-txt>*{animation:rise .85s var(--ease) backwards}
 #p-verify.on .vr-txt>*:nth-child(2){animation-delay:.08s}#p-verify.on .vr-txt>*:nth-child(3){animation-delay:.16s}#p-verify.on .vr-txt>*:nth-child(4){animation-delay:.24s}#p-verify.on .vr-txt>*:nth-child(5){animation-delay:.32s}
+.lvmask{position:absolute;background:#000;pointer-events:none}
+.lvon .fglass{display:none!important}
+.lvl{position:absolute;width:500px}
+.lvl button{display:flex;align-items:center;gap:20px;width:100%;height:56px;margin:0 0 4px;padding:0 24px;border-radius:28px;font-size:23px;color:rgba(255,255,255,.55);text-align:left;background:transparent;transition:background .3s,color .3s}
+.lvl button.on{background:#1c1c1c;color:var(--vg)!important}
+.lvt{position:absolute;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;border-radius:22px;font-size:19px;line-height:1.22;text-align:center;color:rgba(255,255,255,.55);background:transparent;transition:background .3s,color .3s}
+.lvt.on{background:#1c1c1c;color:var(--vg)!important}
+.lvi{flex:none;display:block;color:currentColor}
+.lvi.red{color:#e0262f!important}
+.lvt.on .lvi.reda{color:#ff3b30!important}
+.dbf-row .lvi,.dbt .lvi,.hbm .lvi{color:currentColor}
+#hbNew .ft .lvi{flex:none;color:#fff;opacity:.9}
+.dbf-row.on .lvi:not(.red),.dbt.on .lvi:not(.red),.hbm.on .lvi:not(.red){color:var(--vg)!important}
+/* AI button: Siri-style living orb */
+.ocb[data-go="ai"],.hot[data-go="ai"]{border-radius:50%!important;isolation:isolate;display:grid!important;place-items:center;color:#fff;font-weight:600;font-size:24px;letter-spacing:.5px;background:none!important;border:0!important;box-shadow:none;overflow:visible!important;animation:aiGlow 6s linear infinite}
+.ocb[data-go="ai"]::before,.hot[data-go="ai"]::before{content:"";position:absolute;inset:-2px;border-radius:50%;z-index:-2;background:conic-gradient(from 0deg,#ff2d95,#a24bff,#4f7bff,#00d0ff,#05e5af,#ffd60a,#ff6b2d,#ff2d95);animation:aiSpin 3.2s linear infinite,aiBreath 2.4s ease-in-out infinite}
+.ocb[data-go="ai"]::after,.hot[data-go="ai"]::after{content:"";position:absolute;inset:3px;border-radius:50%;z-index:-1;background:radial-gradient(circle at 32% 28%,rgba(160,120,255,.45),rgba(20,20,34,.96) 46%,#07070c 75%),#07070c;box-shadow:inset 0 0 14px rgba(0,200,255,.35)}
+.hot[data-go="ai"]::after{content:"AI";display:grid;place-items:center;font-size:30px;font-weight:600;color:#fff;text-shadow:0 0 12px rgba(160,140,255,.9)}
+.ocb[data-go="ai"]{text-shadow:0 0 12px rgba(160,140,255,.9)}
+@keyframes aiSpin{to{transform:rotate(360deg)}}
+@keyframes aiBreath{0%,100%{filter:blur(0) saturate(1.2)}50%{filter:blur(1.5px) saturate(1.6)}}
+@keyframes aiGlow{0%{box-shadow:0 0 22px 2px rgba(255,45,149,.55),0 0 50px 6px rgba(162,75,255,.25)}33%{box-shadow:0 0 26px 3px rgba(0,208,255,.6),0 0 54px 8px rgba(79,123,255,.28)}66%{box-shadow:0 0 22px 2px rgba(5,229,175,.55),0 0 50px 6px rgba(255,214,10,.22)}100%{box-shadow:0 0 22px 2px rgba(255,45,149,.55),0 0 50px 6px rgba(162,75,255,.25)}}
+@media (prefers-reduced-motion:reduce){.ocb[data-go="ai"],.hot[data-go="ai"],.ocb[data-go="ai"]::before,.hot[data-go="ai"]::before{animation:none}}
 .otab.th.lhero .lh-scrim{background:linear-gradient(90deg,rgba(0,0,0,.62) 0%,rgba(0,0,0,.3) 45%,rgba(0,0,0,0) 70%),linear-gradient(0deg,rgba(0,0,0,.5) 0%,rgba(0,0,0,0) 45%),linear-gradient(180deg,rgba(0,0,0,.45) 0%,rgba(0,0,0,0) 18%)!important}
 .th-media .thm img{opacity:1;transform:none;right:auto;bottom:auto}
 .thm{position:absolute;inset:0;opacity:0;transform:scale(.97);transition:opacity .45s ease,transform .6s var(--ease);pointer-events:none}
@@ -3696,6 +3719,85 @@ document.head.insertAdjacentHTML('beforeend','<style>#ocScroll,#dbScroll{scroll-
       const i=curIdx(a,items,sec), vals=items.map(x=>x.getAttribute(a)), cur=(a==='data-feat'||a==='data-ph'||a==='data-prsub')?vals.indexOf(String(i)):i;
       items[(cur+1)%items.length].click(); return; } },false);
 }
+
+/* ===== Live feature icons + labels on product pages (replaces icons and text that were baked into screenshots / PNGs) ===== */
+const LI={
+ hd:'<rect x="2" y="6" width="14" height="12" rx="2.2"/><path d="M16 10.4l5.5-3.2v9.6L16 13.6"/><text x="9" y="14.4" font-size="6.4" font-weight="700" text-anchor="middle" fill="currentColor" stroke="none" font-family="Arial,Helvetica,sans-serif">HD</text>',
+ loop:'<path d="M17 2.5l3 3-3 3"/><path d="M4 11.5v-1a5 5 0 0 1 5-5h11"/><path d="M7 21.5l-3-3 3-3"/><path d="M20 12.5v1a5 5 0 0 1-5 5H4"/>',
+ mic:'<rect x="9" y="2.5" width="6" height="11.5" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21M8.5 21h7"/>',
+ sliders:'<path d="M4 6h3M11 6h9M4 12h9M17 12h3M4 18h5M13 18h7"/><circle cx="9" cy="6" r="2"/><circle cx="15" cy="12" r="2"/><circle cx="11" cy="18" r="2"/>',
+ box:'<path d="M12 2.8l8 4.6v9.2l-8 4.6-8-4.6V7.4z"/><path d="M4 7.4l8 4.6 8-4.6M12 12v9.2"/>',
+ ring:'<circle cx="12" cy="12" r="8.5"/>', square:'<rect x="4" y="4" width="16" height="16" rx="4.5"/>',
+ bulb:'<path d="M9.5 18h5M10.5 21h3"/><path d="M12 3a6 6 0 0 0-3.6 10.8c.7.6 1.1 1.4 1.1 2.2h5c0-.8.4-1.6 1.1-2.2A6 6 0 0 0 12 3z"/>',
+ expand:'<path d="M3.5 9V3.5H9M20.5 9V3.5H15M3.5 15v5.5H9M20.5 15v5.5H15M3.5 3.5l6 6M20.5 3.5l-6 6M3.5 20.5l6-6M20.5 20.5l-6-6"/>',
+ hub:'<rect x="2.5" y="5" width="19" height="13" rx="2"/><rect x="5.5" y="8" width="13" height="7" rx="1"/>',
+ sd:'<path d="M8 2.5h7.5l3.5 3.5v14a1.5 1.5 0 0 1-1.5 1.5h-9.5A1.5 1.5 0 0 1 6.5 20V4A1.5 1.5 0 0 1 8 2.5z"/><path d="M9.5 3v4M12 3v4M14.5 3v4"/>',
+ chip:'<rect x="3.5" y="3.5" width="17" height="17" rx="1" stroke-dasharray="1.6 2.4"/><rect x="8.5" y="8.5" width="7" height="7" rx="1"/>',
+ target:'<circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/>',
+ zoom:'<circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21M10.5 7.5v6M7.5 10.5h6"/>',
+ car:'<path d="M3 8V3.5h4.5M21 8V3.5h-4.5M3 16v4.5h4.5M21 16v4.5h-4.5"/><path d="M7.5 15.5v-3.5l1.4-3h6.2l1.4 3v3.5zM7.5 15.5v1.5M16.5 15.5v1.5M7.5 12h9"/>',
+ wifi:'<path d="M2.5 9a14 14 0 0 1 19 0M5.5 12.3a9.5 9.5 0 0 1 13 0M8.6 15.5a5 5 0 0 1 6.8 0"/><circle cx="12" cy="19" r="1" fill="currentColor"/>',
+ weather:'<path d="M7 16.5a4 4 0 1 1 .9-7.9A5 5 0 0 1 17.6 10.5 3 3 0 0 1 17 16.5z"/><path d="M8.5 19.5l-1 2M12.5 19.5l-1 2M16.5 19.5l-1 2"/>',
+ sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/>',
+ touch:'<path d="M9 11.5V5.5a1.5 1.5 0 0 1 3 0v5M12 10V8.8a1.5 1.5 0 0 1 3 0V11M15 10.5a1.5 1.5 0 0 1 3 0V15a6 6 0 0 1-6 6h-.6a6 6 0 0 1-4.7-2.3l-2.3-3a1.6 1.6 0 0 1 2.4-2.1L9 15.5"/>',
+ speaker:'<path d="M4 9.5v5h3.5l4.5 4v-13l-4.5 4z"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/>',
+ flame:'<path d="M12 21a6 6 0 0 0 6-6c0-3.6-2.5-6-4-9-1 2.5-2.5 3.5-3.5 3.5-.9-1.7-1-3-1-4.5C7.3 7.3 6 10.5 6 15a6 6 0 0 0 6 6z"/>',
+ shieldx:'<path d="M12 3l7.5 3v5.5c0 4.5-3.2 8-7.5 9.5-4.3-1.5-7.5-5-7.5-9.5V6z"/><path d="M9.5 9.5l5 5M14.5 9.5l-5 5"/>',
+ shieldok:'<path d="M12 3l7.5 3v5.5c0 4.5-3.2 8-7.5 9.5-4.3-1.5-7.5-5-7.5-9.5V6z"/><path d="M8.8 12.2l2.2 2.2 4.2-4.4"/>',
+ bell:'<path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 1.5h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/>',
+ person:'<circle cx="12" cy="8" r="4"/><path d="M4.5 21a7.5 7.5 0 0 1 15 0"/>',
+ film:'<rect x="3" y="4" width="13" height="16" rx="1.5"/><path d="M6.5 4v16M3 8h3.5M3 12h3.5M3 16h3.5"/><path d="M19.5 3v4M17.5 5h4"/>',
+ sparkle:'<path d="M12 3l1.9 5.6 5.6 1.9-5.6 1.9L12 18l-1.9-5.6-5.6-1.9 5.6-1.9z"/>',
+ moon:'<path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/>',
+ house:'<path d="M3.5 11L12 4l8.5 7"/><path d="M5.5 9.5V20h13V9.5"/>',
+ search:'<circle cx="11" cy="11" r="7"/><path d="M16 16l5 5"/>',
+ palette:'<path d="M12 3a9 9 0 0 0 0 18c1.2 0 1.8-.8 1.8-1.7 0-1.4-1.3-1.9-1.3-3.1 0-1 .8-1.7 1.8-1.7H17a4 4 0 0 0 4-4C21 6.4 17 3 12 3z"/><circle cx="7.5" cy="11" r="1"/><circle cx="10" cy="7" r="1"/><circle cx="14.5" cy="7" r="1"/>',
+ energy:'<path d="M5.5 6H3.5v12h2M18.5 6h2v12h-2"/><path d="M13 5l-5 8h4l-1 6 5-8h-4z"/>',
+ clips:'<rect x="3" y="5" width="18" height="12" rx="1.5"/><rect x="6" y="8" width="12" height="6" rx=".5"/><path d="M5 20.5h14"/>',
+ lock:'<rect x="5" y="10.5" width="14" height="10" rx="2"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5M12 14.5v2"/>',
+ remote:'<path d="M8.5 9.5a5 5 0 0 1 7 0M6 7a8.5 8.5 0 0 1 12 0"/><rect x="8.5" y="12" width="7" height="9" rx="1"/><path d="M12 14.5v2"/>',
+ calendar:'<rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 9.5h17M8 3v4M16 3v4"/><path d="M8 13.5h.01M12 13.5h.01M16 13.5h.01M8 17h.01M12 17h.01" stroke-width="2.4"/>',
+ cmd:'<rect x="2.5" y="4.5" width="15" height="11" rx="1.5"/><path d="M20.5 8v10a1.5 1.5 0 0 1-1.5 1.5H6"/><rect x="6" y="8" width="8" height="4" rx=".5"/>',
+ alert:'<path d="M3 9.5v5h3l4 3.5v-12l-4 3.5z"/><path d="M14 8l3-2M14.5 12h3.5M14 16l3 2"/>',
+ installer:'<circle cx="9" cy="7" r="3.5"/><path d="M3 20.5a6 6 0 0 1 10.5-4M18 10v7M16.5 17h3l-.5 3.5h-2z"/>',
+ battery:'<rect x="2.5" y="7.5" width="17" height="9" rx="1.5"/><path d="M21.5 10.5v3M5.5 10.5v3M8.5 10.5v3M11.5 10.5v3M14.5 10.5v3"/>',
+ agent:'<circle cx="12" cy="9" r="4"/><path d="M5 9a7 7 0 0 1 14 0v3M19 12a2 2 0 0 1-2 2h-1M5 21a7 7 0 0 1 14 0"/>'
+};
+const LSV=(k,sz=30,cls='')=>`<svg class="lvi ${cls}" width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">${LI[k]||''}</svg>`;
+const LV={
+ ocfeat:[['square','Detect and Deter','red'],['hd','4K HDR Sensor'],['chip','AI + RADAR'],['car','Vehicle Protection'],['sun','Spotlight Tracking'],['expand','140 Degree Lens'],['wifi','Online, All the Time'],['sd','On Device Processing'],['weather','Weather Resistant']],
+ ocph:[['hd','Crisp HDR<br>Video'],['target','Spot and<br>Follow Lurkers'],['loop','Full 10 Day<br>Recording*'],['zoom','5.3X HD<br>Zoom'],['square','Smart Deter','reda'],['car','Vehicle<br>Detection'],['mic','High Fidelity<br>2-way Talk'],['sliders','Customize<br>Everything']],
+ icfeat:[['hd','1080p HDR Camera'],['sd','High Speed Memory'],['expand','150 Degree Lens'],['touch','One Touch Call Out'],['speaker','HD Speaker &amp; Microphone'],['flame','Smoke &amp; CO Listener']],
+ icph:[['hd','1080 HDR<br>Video'],['loop','Full 10 Day<br>Recording*'],['mic','2-Way Talk'],['sliders','Customize<br>Everything']],
+ app:[['person','Familiar<br>Faces'],['film','Home<br>Highlights'],['sparkle','AI Video<br>Search'],['moon','Dark Mode'],['house','HomeView'],['search','Insights'],['palette','For You'],['energy','Energy<br>Insights'],['touch','Smart<br>Actions'],['shieldok','Arming'],['sliders','Customize<br>Home Page'],['clips','Video<br>Clips']],
+ lock:[['touch','One Touch<br>Lock and Arm'],['lock','Unlock to<br>Disarm'],['remote','Remote<br>Control'],['calendar','SmartActions'],['palette','Colors']],
+ gph:[['remote','Control'],['sliders','Rules'],['bell','Notifications']],
+ dbf:['hd','mic','sd','expand',['ring','red'],'chip'], dbt:['hd','loop','box',['ring','red'],'bulb','mic','expand','sliders','hub'],
+ hbm:['shieldx','shieldok','speaker','bell','hd','sun'], wi:['cmd','alert','installer','flame','battery','agent']
+};
+const lvMask=(x,y,w,h)=>`<div class="lvmask" style="left:${x}px;top:${y}px;width:${w}px;height:${h}px"></div>`;
+const lvList=(set,x,y,attr,act)=>lvMask(x-12,y-16,540,set.length*60+40)+`<div class="lvl" style="left:${x}px;top:${y}px">${set.map(([ic,t,c],i)=>`<button class="${i===act?'on':''}" ${attr}="${i}">${LSV(ic,30,c||'')}<span>${t}</span></button>`).join('')}</div>`;
+const lvTiles=(set,pos,w,h,attr,act)=>set.map(([ic,t,c],i)=>{ const [x,y]=pos(i); return `<button class="lvt${i===act?' on':''}" style="left:${x}px;top:${y}px;width:${w}px;height:${h}px" ${attr}="${i}">${LSV(ic,32,c||'')}<span>${t}</span></button>`; }).join('');
+const stripHot=(hot,attr)=>hot.replace(new RegExp('<div class="hot"[^>]*'+attr+'="\\d+"[^>]*></div>','g'),'');
+/* Outdoor Camera: features list + app tab bar */
+{ const _o=ocRender; ocRender=function(){ _o.apply(this,arguments); if(OC.mode==='g2') { $$('#p-ocp .lvon').forEach(x=>x.classList.remove('lvon')); return; }
+    const fh=$('#ocFeatHot'); fh.innerHTML=lvList(LV.ocfeat,100,380,'data-feat',OC.feat)+stripHot(fh.innerHTML,'data-feat'); fh.closest('.otab').classList.add('lvon');
+    const ph=$('#ocPhoneHot'); ph.innerHTML=lvMask(30,745,1320,190)+lvTiles(LV.ocph,i=>[126+i*159.7-75,770],150,146,'data-ph',OC.phone)+stripHot(ph.innerHTML.replace(/<svg class="sdico"[\s\S]*?<\/svg>/,''),'data-ph'); ph.closest('.otab').classList.add('lvon'); };
+  try{ ocRender(); }catch(e){} }
+/* generic product pages: Indoor Camera features + app, Vivint App grid, Smart Lock, Garage app */
+{ const _s=secRender; secRender=function(id,t,S){ const r=_s.apply(this,arguments); if(!r||!S) return r; const a=S.sub|0;
+    if(id==='icp'&&t==='feat') r.hot=lvList(LV.icfeat,100,442,'data-prsub',a)+stripHot(r.hot,'data-prsub');
+    else if(id==='icp'&&t==='phone') r.hot=lvMask(350,760,660,190)+lvTiles(LV.icph,i=>[370+i*160,786],140,146,'data-prsub',a)+stripHot(r.hot,'data-prsub');
+    else if(t==='phone'&&id!=='icp') r.hot=lvMask(770,170,500,660)+lvTiles(LV.app,i=>[790+(i%3)*160,188+Math.floor(i/3)*163],140,140,'data-prsub',a)+stripHot(r.hot,'data-prsub');
+    else if(t==='lock') r.hot=lvMask(280,770,820,190)+lvTiles(LV.lock,i=>[298+i*160-(i===4?2:0),795],140,146,'data-prsub',a)+stripHot(r.hot,'data-prsub');
+    else if(t==='gphone') r.hot=lvMask(915,255,180,500)+lvTiles(LV.gph,i=>[934,[277,427,593][i]],140,146,'data-prsub',a)+stripHot(r.hot,'data-prsub');
+    else return r;
+    r.lv=1; return r; };
+  const _pr=prRender; prRender=function(k){ const out=_pr.apply(this,arguments); $$('#prScroll .psec').forEach(sec=>sec.classList.toggle('lvon',!!sec.querySelector('.lvmask'))); return out; };
+  try{ if($('#prScroll').children.length) prRender(); }catch(e){} }
+/* Doorbell Camera + Smart Hub lists that used PNG icons */
+{ const swap=(sel,set)=>$$(sel).forEach((el,i)=>{ const im=el.querySelector('img'); const k=set[i]; if(!im||!k) return; const [ic,c]=Array.isArray(k)?k:[k,'']; im.outerHTML=LSV(ic,el.matches('.dbf-row')?32:34,c); });
+  swap('#dbfList .dbf-row',LV.dbf); swap('#dbTiles .dbt',LV.dbt); swap('#hbModes .hbm',LV.hbm); swap('#hbNew .ft',LV.wi); }
 
 barFor(cur);
 </script>
