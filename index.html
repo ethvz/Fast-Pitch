@@ -2948,7 +2948,7 @@ const LHERO={
  fob:['fob','Your whole home,<br>on your keychain.','One press arms the system, locks every door, closes the garage and sets the thermostat.'],
  keypad:['keypad','Control where<br>you need it.','Arm and disarm from any room with backlit, one-touch buttons.'],
  lock:['lock2','Effortless<br>entry.','Lock up from anywhere.<br>Give every guest a code of their own.'],
- garage:['garageopen','Never forget to<br>close the garage.','Check it, close it and get alerts from anywhere.']};
+ garage:['garage2','Never forget to<br>close the garage.','Check it, close it and get alerts from anywhere.']};
 let LH=id=>{ const [ph,h,p,x]=LHERO[id]; return `<div class="psec lhero" data-t="hero" data-vis="0"><div class="lh-media"><img class="lh-ph kb" src="assets/ph/${ph}.webp?v=${ph==="firefighter"?131:87}" alt=""></div><div class="lh-scrim"></div><div class="lh-txt"${x?` style="left:${x}px"`:''}><h1>${h}</h1><p>${p}</p></div></div>`; };
 
 /* ===== About: live bento with count-up stats ===== */
@@ -3391,7 +3391,7 @@ $$('.hcat .ht[data-k=shp2]').forEach(t=>{ if(t.querySelector('img[src*="scr.webp
 /* ===== Product photo galleries ===== */
 IP.gal='<rect x="6.5" y="3.5" width="14" height="11" rx="2"/><path d="M3.5 7.5v10a2 2 0 0 0 2 2h11"/><path d="M20.5 11.5l-3.5-3.5-6.5 6.5"/>'; NLAB.gal='Gallery';
 { const GN={ocp:7,hub:9,icp:7,dbcp:7,lock:9,therm:4,garage:4};
-  const html=k=>`<div class="gal" data-t="gal" data-gal="${k}"><div class="gal-tr">${Array.from({length:GN[k]},(_,i)=>`<figure><img src="assets/gal/${k}_${i}.webp?v=195" alt="" loading="${i?'lazy':'eager'}" decoding="async"></figure>`).join('')}</div><div class="gal-dots">${Array.from({length:GN[k]},(_,i)=>`<i class="${i?'':'on'}" data-gi="${i}"></i>`).join('')}</div></div>`;
+  const html=k=>`<div class="gal" data-t="gal" data-gal="${k}"><div class="gal-tr">${Array.from({length:GN[k]},(_,i)=>`<figure><img src="assets/gal/${k}_${i}.webp?v=196" alt="" loading="${i?'lazy':'eager'}" decoding="async"></figure>`).join('')}</div><div class="gal-dots">${Array.from({length:GN[k]},(_,i)=>`<i class="${i?'':'on'}" data-gi="${i}"></i>`).join('')}</div></div>`;
   const wire=g=>{ const tr=g.querySelector('.gal-tr'), ds=g.querySelectorAll('.gal-dots i'); let t;
     tr.addEventListener('scroll',()=>{ cancelAnimationFrame(t); t=requestAnimationFrame(()=>{ const i=Math.round(tr.scrollLeft/tr.clientWidth); ds.forEach((d,j)=>d.classList.toggle('on',j===i)); }); },{passive:true});
     g.querySelector('.gal-dots').addEventListener('click',e=>{ const d=e.target.closest('[data-gi]'); if(d) tr.scrollTo({left:+d.dataset.gi*tr.clientWidth,behavior:'smooth'}); }); };
