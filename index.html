@@ -1643,6 +1643,7 @@ html.booting #stage{opacity:0}
 html.booting #stage *{animation-play-state:paused!important}
 html.booted #stage{animation:bootIn .35s ease both}
 @keyframes bootIn{from{opacity:0}to{opacity:1}}
+#bar #back{display:none!important}
 #barlogo,#bar.home #barlogo{filter:invert(1)!important;height:31px!important;margin:0 0 0 12px!important;align-self:center}
 /* sections: centered on the page (content block, not the rail gap), scaled up as far as width and height allow */
 .lpage>.otab:not([data-t=hero]):not(.hum),.lpage>.psec:not([data-t=hero]){transform:translateX(var(--SX,0px)) scale(var(--S2,.925))!important;transform-origin:0 0!important}
