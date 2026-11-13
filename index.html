@@ -1590,10 +1590,10 @@ body.pkon #bar{z-index:61!important}
 .hcat .ht[data-k=shp2]:has(img[src*="scr.webp"]) .cl{top:14px!important;bottom:auto!important;font-size:15px!important;color:rgba(255,255,255,.7)!important}
 
 /* live "Smart Hub Pro II" labels (old images had it baked in) */
-#allTiles .ht[data-k=shp2]::after,.hcat .ht[data-k=shp2]:has(img[src*="scr.webp"])::after{content:"Smart Hub Pro II";position:absolute;left:0;right:0;text-align:center;pointer-events:none;z-index:3;letter-spacing:-.1px}
+#allTiles .ht[data-k=shp2]::after{content:"Smart Hub Pro II";position:absolute;left:0;right:0;text-align:center;pointer-events:none;z-index:3;letter-spacing:-.1px}
 #allTiles .ht[data-k=shp2] img{scale:.84;translate:0 -6%}
 #allTiles .ht[data-k=shp2]::after{bottom:6%;font-size:11.5px;color:rgba(255,255,255,.5)}
-.hcat .ht[data-k=shp2]:has(img[src*="scr.webp"])::after{top:16px;font-size:16px;color:rgba(255,255,255,.72)}
+.hubt{position:absolute;left:0;right:0;top:16px;text-align:center;font-size:16px;color:rgba(255,255,255,.72);letter-spacing:-.1px;pointer-events:none;z-index:3}
 
 /* Cameras page: Spotlight tile matches the Smart Hub tile width so the left column lines up */
 .hcat .hrow>.ht[data-k=ocspot]:first-child{flex:0 0 calc((100% - 14px)*631/1263)!important}
@@ -3297,6 +3297,9 @@ IP.tools='<path d="M14.5 6.5a4 4 0 0 0-5 5L4 17l3 3 5.5-5.5a4 4 0 0 0 5-5l-2.5 2
 { let t=null; const wake=()=>{ const r=$('#barRight'); if(!r) return; r.classList.remove('idle'); clearTimeout(t); t=setTimeout(()=>r.classList.add('idle'),2000); };
   document.addEventListener('scroll',wake,true); ['touchstart','pointerdown'].forEach(ev=>$('#barRight').addEventListener(ev,wake,{passive:true}));
   const _bf=barFor; barFor=function(p){ _bf(p); wake(); }; wake(); }
+
+/* hub title as a real element so it travels with the tile during page-switch animations */
+$$('.hcat .ht[data-k=shp2]').forEach(t=>{ if(t.querySelector('img[src*="scr.webp"]')&&!t.querySelector('.hubt')) t.insertAdjacentHTML('beforeend','<div class="hubt">Smart Hub Pro II</div>'); });
 
 barFor(cur);
 </script>
