@@ -1643,6 +1643,7 @@ html.booting #stage{opacity:0}
 html.booting #stage *{animation-play-state:paused!important}
 html.booted #stage{animation:bootIn .35s ease both}
 @keyframes bootIn{from{opacity:0}to{opacity:1}}
+#barlogo,#bar.home #barlogo{filter:invert(1)!important;height:31px!important;margin:0 0 0 12px!important;align-self:center}
 </style>
 <div id="stage">
   <div id="screen">
@@ -1909,7 +1910,7 @@ html.booted #stage{animation:bootIn .35s ease both}
         <img class="full" id="ocHeroImg" src="assets/oc/g2_hero.webp?v=176" alt="" hidden>
         <div id="ocHeroHot"></div>
       </div>
-      <div class="otab hum" data-t="spin"><div class="hum-st"><video id="humV" src="assets/hum.mp4?v=87" muted playsinline preload="auto"></video></div></div>
+      <div class="otab hum" data-t="spin"><div class="hum-st"><video id="humV" src="assets/hum.mp4?v=190" muted playsinline preload="auto"></video></div></div>
       <div class="otab" data-t="feat">
         <img class="full" id="ocFeatImg" src="assets/oc/f_detect.webp?v=176" alt="">
         <video class="ovid" id="ocFeatVid" muted playsinline loop hidden></video>
@@ -2460,7 +2461,7 @@ $('#allTiles').innerHTML=Object.entries(ALLPOS).map(([k,[x,y,w,h]])=>k==='shortc
   :`<div class="ht abs" data-k="${k}" ${TACT[k]} style="left:${x}px;top:${y}px;width:${w}px;height:${h}px"><div class="lg"></div>${(k==='dbcp'||k==='icp')?`<img class="cp big" src="assets/cat/${k}.webp?v=176" alt=""><div class="cl">${CNAME[k]}</div>`:ALLEQ.includes(k)?`<img class="cp" src="assets/cat/${k}.webp?v=176" alt=""><div class="cl">${CNAME[k]}</div>`:`<img src="assets/tiles/${k}.webp?v=176" alt="">`}</div>`).join('');
 { const T0=17, T1=946, N0=150, k=(T1-N0)/(T1-T0);
   $$('#allTiles .ht').forEach(el=>{ const y=parseFloat(el.style.top), h=parseFloat(el.style.height); el.style.top=(N0+(y-T0)*k).toFixed(1)+'px'; el.style.height=(h*k).toFixed(1)+'px'; });
-  $('#homeAll').insertAdjacentHTML('afterbegin','<div class="hall-h"><div><div class="eb">Vivint Smart Home</div><h1>One system. Every corner of your home.</h1></div><p>Security, cameras, locks and comfort, working together and protected 24/7.</p></div>'); }
+  $('#homeAll').insertAdjacentHTML('afterbegin','<div class="hall-h"><div><div class="eb">Vivint Smart Home</div><h1>One system. Every corner of your home.</h1></div></div>'); }
 $('#p-home').insertAdjacentHTML('beforeend','<div id="flipLayer"></div>');
 /* All grid: built from one spec so every gap is exactly G on every iPad width */
 function allGrid(Wt){ const G=14, X0=20.6, Y0=150, Y1=946, top=Math.round((Y1-Y0)*0.40), cw=(Wt-2*G)/3, cx=[X0,X0+cw+G,X0+2*(cw+G)], half=(cw-G)/2, y2=Y0+top+G, rest=Y1-y2, P={};
@@ -2776,12 +2777,21 @@ $('#burger').innerHTML=SVGI('menu',24);
 navify();
 
 /* scroll-scrubbed reverse animation under the Outdoor Camera hero */
-[['#humV','#ocScroll'],['#dbScrubV','#dbScroll']].forEach(([vs,bs])=>{ const v=$(vs), box=$(bs); if(!v||!box) return; const sec=v.closest('.otab'); let want=0, busy=false;
-  const seek=()=>{ if(busy||!v.duration) return; const t=want*(v.duration-0.05); if(!isFinite(t)) return; if(Math.abs(v.currentTime-t)<0.04) return; busy=true; v.currentTime=t; };
-  v.addEventListener('seeked',()=>{ busy=false; seek(); });
-  const tick=()=>{ const H=box.clientHeight, t=sec.offsetTop, h=sec.offsetHeight; want=Math.max(0,Math.min(1,(box.scrollTop-(t-H))/h)); seek(); };
-  box.addEventListener('scroll',()=>requestAnimationFrame(tick),{passive:true});
-  v.addEventListener('loadedmetadata',tick);
+[['#humV','#ocScroll'],['#dbScrubV','#dbScroll']].forEach(([vs,bs])=>{ const v=$(vs), box=$(bs); if(!v||!box) return; const sec=v.closest('.otab');
+  /* scroll-scrubbed video: the frame eases toward the scroll position every animation frame, one seek in flight at a time (all-intra video, so each seek is a single-frame decode) */
+  let want=0, at=0, busy=false, run=false;
+  const target=()=>{ const H=box.clientHeight, t=sec.offsetTop, h=sec.offsetHeight; return Math.max(0,Math.min(1,(box.scrollTop-(t-H))/h)); };
+  const loop=()=>{ want=target(); at+=(want-at)*0.35; if(Math.abs(want-at)<0.0015) at=want;
+    if(!busy&&v.duration){ const tt=at*(v.duration-0.04); if(Math.abs(v.currentTime-tt)>1/60){ busy=true; if(v.fastSeek) v.fastSeek(tt); else v.currentTime=tt; } }
+    const b=box.getBoundingClientRect(), r=sec.getBoundingClientRect(); const vis=r.bottom>b.top-40&&r.top<b.bottom+40;
+    if(vis||Math.abs(want-at)>0.001) requestAnimationFrame(loop); else run=false; };
+  const kick=()=>{ if(run) return; run=true; requestAnimationFrame(loop); };
+  v.addEventListener('seeked',()=>{ busy=false; });
+  box.addEventListener('scroll',kick,{passive:true});
+  v.addEventListener('loadedmetadata',()=>{ at=want=target(); kick(); });
+  /* iOS Home Screen apps don't buffer a never-played video; prime it once so the first scrub frame is ready */
+  const prime=()=>{ if(v.readyState<2){ v.load(); const p=v.play(); if(p&&p.then) p.then(()=>v.pause()).catch(()=>{}); } };
+  box.addEventListener('scroll',prime,{passive:true,once:true}); setTimeout(prime,1500);
 });
 </script>
 <script>
@@ -3378,13 +3388,13 @@ $$('.hcat .ht[data-k=shp2]').forEach(t=>{ if(t.querySelector('img[src*="scr.webp
 
 /* ===== Product photo galleries ===== */
 IP.gal='<rect x="6.5" y="3.5" width="14" height="11" rx="2"/><path d="M3.5 7.5v10a2 2 0 0 0 2 2h11"/><path d="M20.5 11.5l-3.5-3.5-6.5 6.5"/>'; NLAB.gal='Gallery';
-{ const GN={ocp:7,hub:8,icp:7,dbcp:7,lock:7,therm:4,garage:5};
+{ const GN={ocp:7,hub:8,icp:7,dbcp:7,lock:7,therm:4};
   const html=k=>`<div class="gal" data-t="gal" data-gal="${k}"><div class="gal-tr">${Array.from({length:GN[k]},(_,i)=>`<figure><img src="assets/gal/${k}_${i}.webp?v=187" alt="" loading="${i?'lazy':'eager'}" decoding="async"></figure>`).join('')}</div><div class="gal-dots">${Array.from({length:GN[k]},(_,i)=>`<i class="${i?'':'on'}" data-gi="${i}"></i>`).join('')}</div></div>`;
   const wire=g=>{ const tr=g.querySelector('.gal-tr'), ds=g.querySelectorAll('.gal-dots i'); let t;
     tr.addEventListener('scroll',()=>{ cancelAnimationFrame(t); t=requestAnimationFrame(()=>{ const i=Math.round(tr.scrollLeft/tr.clientWidth); ds.forEach((d,j)=>d.classList.toggle('on',j===i)); }); },{passive:true});
     g.querySelector('.gal-dots').addEventListener('click',e=>{ const d=e.target.closest('[data-gi]'); if(d) tr.scrollTo({left:+d.dataset.gi*tr.clientWidth,behavior:'smooth'}); }); };
   const put=(box,k)=>{ if(!box) return; box.querySelectorAll(':scope>.gal').forEach(x=>{ if(x.dataset.gal!==k) x.remove(); }); if(!GN[k]) return; if(box.querySelector(':scope>.gal')) return;
-    const hero=[...box.children].find(c=>c.dataset.t==='hero'); if(!hero) return; hero.insertAdjacentHTML('afterend',html(k)); const g=hero.nextElementSibling; wire(g); g.classList.add('in'); };
+    const hero=[...box.children].find(c=>c.dataset.t==='spin')||[...box.children].find(c=>c.dataset.t==='hero'); if(!hero) return; hero.insertAdjacentHTML('afterend',html(k)); const g=hero.nextElementSibling; wire(g); g.classList.add('in'); };
   put($('#ocScroll'),'ocp'); put($('#dbScroll'),'dbcp'); put($('#hbScroll'),'hub'); put($('#thScroll'),'therm');
   const _pb=prBuild; prBuild=function(){ _pb.apply(this,arguments); put($('#prScroll'),PR.id); if(cur==='prod'&&window.galBtn) galBtn(); };
   if($('#prScroll').children.length) put($('#prScroll'),PR.id);
