@@ -2947,7 +2947,7 @@ const LHERO={
  pendant:['pendant','Peace of mind<br>at home.','Help is one press away, anywhere in the house.'],
  fob:['fob','Your whole home,<br>on your keychain.','One press arms the system, locks every door, closes the garage and sets the thermostat.'],
  keypad:['keypad','Control where<br>you need it.','Arm and disarm from any room with backlit, one-touch buttons.'],
- lock:['lock','Effortless<br>entry.','Lock up from anywhere. Give every guest a code of their own.',560],
+ lock:['lock2','Effortless<br>entry.','Lock up from anywhere.<br>Give every guest a code of their own.'],
  garage:['garageopen','Never forget to<br>close the garage.','Check it, close it and get alerts from anywhere.']};
 let LH=id=>{ const [ph,h,p,x]=LHERO[id]; return `<div class="psec lhero" data-t="hero" data-vis="0"><div class="lh-media"><img class="lh-ph kb" src="assets/ph/${ph}.webp?v=${ph==="firefighter"?131:87}" alt=""></div><div class="lh-scrim"></div><div class="lh-txt"${x?` style="left:${x}px"`:''}><h1>${h}</h1><p>${p}</p></div></div>`; };
 
