@@ -1644,6 +1644,8 @@ html.booting #stage *{animation-play-state:paused!important}
 html.booted #stage{animation:bootIn .35s ease both}
 @keyframes bootIn{from{opacity:0}to{opacity:1}}
 #barlogo,#bar.home #barlogo{filter:invert(1)!important;height:31px!important;margin:0 0 0 12px!important;align-self:center}
+/* sections: centered on the page (content block, not the rail gap), scaled up as far as width and height allow */
+.lpage>.otab:not([data-t=hero]):not(.hum),.lpage>.psec:not([data-t=hero]){transform:translateX(var(--SX,0px)) scale(var(--S2,.925))!important;transform-origin:0 0!important}
 </style>
 <div id="stage">
   <div id="screen">
@@ -2059,7 +2061,7 @@ function fit(){ const st=$('#stage'), sb=safeBox(), vw=sb.w, vh=sb.h;
   /* iPads in landscape (aspect 4:3 up to ~1.55): widen the stage so the screen fills edge to edge; phones and portrait keep the fixed 4:3 stage */
   const tablet=vw>vh && Math.min(vw,vh)>=600;
   const W=tablet?Math.round(Math.min(1600,Math.max(1376,1032*vw/vh))):1376;
-  st.style.width=W+'px'; st.style.setProperty('--gx',((W-1376)/2)+'px'); st.style.setProperty('--W',W+'px'); HW=W; if(window.homeLayout) homeLayout();
+  st.style.width=W+'px'; { const S2=Math.min(.96,(W/2-102)/616.5); st.style.setProperty('--S2',S2.toFixed(4)); st.style.setProperty('--SX',(W/2-742.5*S2).toFixed(1)+'px'); } st.style.setProperty('--gx',((W-1376)/2)+'px'); st.style.setProperty('--W',W+'px'); HW=W; if(window.homeLayout) homeLayout();
   const sc=Math.min(vw/W,vh/1032);
   st.style.left=(sb.x+vw/2)+'px'; st.style.top=(sb.y+vh/2)+'px'; st.style.transformOrigin='50% 50%'; st.style.transform=`translate(-50%,-50%) scale(${sc})`; }
 addEventListener('resize',fit);addEventListener('orientationchange',()=>setTimeout(fit,250));addEventListener('pageshow',fit);setTimeout(fit,300);fit();
