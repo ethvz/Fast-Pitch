@@ -1487,11 +1487,11 @@ body.pkon #bar{z-index:61!important}
 #p-pricing .seg i{position:absolute;left:6px;top:6px;bottom:6px;width:calc(50% - 6px);border-radius:999px;background:#3a3a3c;transition:transform .45s cubic-bezier(.22,1,.36,1)}
 #p-pricing .seg button{position:relative;z-index:1;flex:1;padding:0!important;background:none!important;color:rgba(255,255,255,.62)!important;font-size:17px!important;font-weight:400!important;letter-spacing:-.37px;transition:color .3s}
 #p-pricing .seg button.on{color:#fff!important}
-#p-pricing .kit{height:300px!important;background:#1c1c1c!important;border-radius:28px!important}
-#p-pricing .kit:nth-child(1){top:214px!important}#p-pricing .kit:nth-child(2){top:532px!important}
-#p-pricing .kit .kv{top:26px;transform:scale(.9);transform-origin:0 0}
-#p-pricing .kit h4{top:36px!important}#p-pricing .kit .ln{top:96px!important;border-color:rgba(255,255,255,.1)!important}
-#p-pricing .kc{top:114px!important}
+#p-pricing .kit{height:272px!important;background:#1c1c1c!important;border-radius:28px!important}
+#p-pricing .kit:nth-child(1){top:106px!important}#p-pricing .kit:nth-child(2){top:392px!important}#p-pricing .kit:nth-child(3){top:678px!important}
+#p-pricing .kit .kv{top:24px;transform:scale(.8);transform-origin:0 0}
+#p-pricing .kit h4{top:30px!important}#p-pricing .kit .ln{top:86px!important;border-color:rgba(255,255,255,.1)!important}
+#p-pricing .kc{top:100px!important}
 #p-pricing .kc .k{color:#8e8e93!important}#p-pricing .kc .s{color:#8e8e93!important}
 
 /* ===== Reviews: live hero + horizontal scroll cards ===== */
@@ -2218,7 +2218,6 @@ body.hasbk #gTitle{transform:translateX(118px)}
   </div>
   <div class="modal" id="m-pricing">
     <h3>VIVINT PRICING OPTIONS</h3>
-    <div class="seg"><button class="on" data-plan="std">Standard Packages</button><button data-plan="sc">Smart Comfort System</button></div>
     <button class="mclose" style="left:1264px;top:164px" data-close="m-pricing"><svg width="36" height="36" viewBox="0 0 38 38" stroke="#fff" stroke-width="3"><path d="M3 3l32 32M35 3L3 35"/></svg></button>
     <div id="kits"></div>
   </div>
@@ -2365,11 +2364,12 @@ let plan='std';
 function kits(){
  const sc=plan==='sc';
  const K=[{n:'Premium Kit',img:sc?'kit_premium_sc':'kit_premium',eq:'$1899',mo:'$31.65/mo',sv:sc?'$29.99/mo':'$24.99/mo',tot:sc?'$61.64/mo':'$56.64/mo',note:'No service contract after<br>equipment is paid off'},
-          {n:'Non-Premium Kit',img:sc?'kit_nonpremium_sc':'kit_nonpremium',eq:'$749',mo:'$12.48/mo',sv:sc?'$49.99/mo':'$44.99/mo',tot:sc?'$62.47/mo':'$57.47/mo',note:'60 month service contract with<br><b>60% early termination fee</b><br>Remaining equipment balance'}];
+          {n:'Non-Premium Kit',img:sc?'kit_nonpremium_sc':'kit_nonpremium',eq:'$749',mo:'$12.48/mo',sv:sc?'$49.99/mo':'$44.99/mo',tot:sc?'$62.47/mo':'$57.47/mo',note:'60 month service contract with<br><b>60% early termination fee</b><br>Remaining equipment balance'},
+          {n:'Pay in Four',p4:1,eq:'$399',mo:'4 × $100',sv:'$44.99/mo',tot:'$44.99/mo',note:'24 month service contract with<br><b>50% early termination fee</b><br>No financing'}];
  $('#kits').innerHTML=K.map((k,i)=>`<div class="kit" style="top:${246+i*368}px">${KV(sc)}<h4 style="color:${i?'#fff':'var(--orange)'}">${k.n}${sc?'<em>(Free Thermostat)</em>':''}</h4><div class="ln"></div>
-  <div class="kc" style="left:476px"><div class="k">Equipment starting at</div><div class="v">${k.eq} <span style="font-size:11px">or</span></div><div class="v" style="margin-top:14px">${k.mo}</div><div class="s">for 60 months</div></div>
+  <div class="kc" style="left:476px"><div class="k">Equipment starting at</div><div class="v">${k.eq} <span style="font-size:11px">or</span></div><div class="v" style="margin-top:14px">${k.mo}</div><div class="s">${k.p4?'4 installments, no financing':'for 60 months'}</div></div>
   <div class="kc" style="left:740px"><div class="k">Service starting at</div><div class="v">${k.sv}</div></div>
-  <div class="kc" style="left:1056px"><div class="k">Total monthly</div><div class="v">${k.tot}</div><div class="s" style="margin-top:14px">${k.note}</div></div></div>`).join('');
+  <div class="kc" style="left:1056px"><div class="k">${k.p4?'Monthly service':'Total monthly'}</div><div class="v">${k.tot}</div><div class="s" style="margin-top:14px">${k.note}</div></div></div>`).join('');
  $$('.seg button').forEach(b=>b.classList.toggle('on',b.dataset.plan===plan));
  { const sg=$('.seg'); if(sg){ let ind=sg.querySelector('i'); if(!ind){ ind=document.createElement('i'); sg.prepend(ind); } ind.style.transform=`translateX(${plan==='sc'?100:0}%)`; } }
 }
