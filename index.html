@@ -397,7 +397,7 @@ body:not(.ishome) #screen::after{display:none;content:"";position:absolute;left:
 /* ---------- long product pages ---------- */
 .lpage{touch-action:pan-y;position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;scroll-snap-type:y mandatory;scroll-behavior:smooth;-webkit-overflow-scrolling:touch;scrollbar-width:none}
 .lpage::-webkit-scrollbar{display:none}
-.lpage .otab,.psec{position:relative;display:block;height:1032px;overflow:hidden;scroll-snap-align:start;scroll-snap-stop:always}
+.lpage .otab,.psec{position:relative;display:block;height:1032px;overflow:hidden;scroll-snap-align:start;scroll-snap-stop:normal}
 .lpage .otab.tall{height:auto}
 .vlib{position:absolute;inset:0;padding:96px 60px 0;background:#000}
 .vlib .eb{font-size:13px;letter-spacing:2.2px;font-weight:600;color:var(--mint);text-transform:uppercase}
@@ -2159,9 +2159,10 @@ let HW=1376;
 function safeBox(){ let pr=document.getElementById('safeProbe'); if(!pr){ pr=document.createElement('div'); pr.id='safeProbe';
   pr.style.cssText='position:fixed;left:0;top:0;width:100vw;height:100vh;height:100dvh;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);box-sizing:border-box;visibility:hidden;pointer-events:none;z-index:-1'; document.documentElement.appendChild(pr); }
   const cs=getComputedStyle(pr), t=parseFloat(cs.paddingTop)||0, b=parseFloat(cs.paddingBottom)||0, l=parseFloat(cs.paddingLeft)||0, r=parseFloat(cs.paddingRight)||0;
-  const H=Math.min(innerHeight, pr.getBoundingClientRect().height||innerHeight), Wd=innerWidth;
-  /* status bar: keep content below it; home indicator: keep footer above it */
-  return {x:l, y:t, w:Wd-l-r, h:H-t-Math.max(b,0)}; }
+  const H=Math.max(innerHeight, pr.getBoundingClientRect().height||0, (window.visualViewport&&visualViewport.height)||0), Wd=innerWidth;
+  /* status bar: keep content below it. The stage runs all the way to the bottom edge (under the thin home-indicator strip)
+     so there is no black band; the footer's controls sit well above that strip. */
+  return {x:l, y:t, w:Wd-l-r, h:H-t}; }
 function fit(){ const st=$('#stage'), sb=safeBox(), vw=sb.w, vh=sb.h;
   /* iPads in landscape (aspect 4:3 up to ~1.55): widen the stage so the screen fills edge to edge; phones and portrait keep the fixed 4:3 stage */
   const tablet=vw>vh && Math.min(vw,vh)>=600;
@@ -3619,6 +3620,23 @@ document.body.insertAdjacentHTML('afterbegin','<div id="vrBg"><img src="assets/p
     }
     lastKey=k; };
 }
+
+/* Outdoor/Doorbell Camera pages: iOS Safari's built-in snapping mishandles the tall scroll-animation section and can jump
+   several sections at once. These two pages scroll freely (fast flicks allowed) and settle onto the nearest section once
+   the scroll comes to rest. Inside the animation section there is no settling, so it scrubs freely. */
+document.head.insertAdjacentHTML('beforeend','<style>#ocScroll,#dbScroll{scroll-snap-type:none!important}</style>');
+['#ocScroll','#dbScroll'].forEach(sel=>{ const box=$(sel); if(!box) return; let t=0, touching=false, lastY=box.scrollTop, dir=1, settling=false;
+  const settle=()=>{ if(touching) return; const H=box.clientHeight, y=box.scrollTop; if(!H) return;
+    const pts=[]; let free=null;
+    [...box.children].forEach(c=>{ if(c.hidden||!c.offsetHeight) return; const top=c.offsetTop, h=c.offsetHeight; pts.push(top); if(h>H+40){ pts.push(top+h-H); if(y>top+2&&y<top+h-H-2) free=c; } });
+    if(free) return;
+    pts.push(box.scrollHeight-H);
+    let best=pts[0], bd=1e9; pts.forEach(v=>{ let d=Math.abs(v-y); if((v-y)*dir<0) d*=1.35; if(d<bd){ bd=d; best=v; } });
+    if(Math.abs(best-y)>2){ settling=true; box.scrollTo({top:best,behavior:'smooth'}); setTimeout(()=>settling=false,600); } };
+  box.addEventListener('scroll',()=>{ const y=box.scrollTop; if(Math.abs(y-lastY)>1) dir=y>lastY?1:-1; lastY=y; clearTimeout(t); if(!settling) t=setTimeout(settle,160); },{passive:true});
+  box.addEventListener('touchstart',()=>{ touching=true; clearTimeout(t); },{passive:true});
+  ['touchend','touchcancel'].forEach(ev=>box.addEventListener(ev,()=>{ touching=false; clearTimeout(t); t=setTimeout(settle,220); },{passive:true}));
+});
 
 barFor(cur);
 </script>
