@@ -1451,6 +1451,7 @@ body.pkon #bar{z-index:61!important}
 .pk-svc i{width:30px;height:30px;border-radius:8px;background:#f0b649;display:grid;place-items:center}
 .pk-svc svg{width:20px;height:20px}
 .pk-sign{flex:none;width:64px;height:64px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#ff8a4a,#ef6a1f 70%);box-shadow:0 0 0 3px #f6f6f6 inset,0 4px 10px rgba(0,0,0,.4);display:grid;place-items:center;color:#fff;font-weight:600;font-size:15px;letter-spacing:-.3px}
+.pk-sign2{flex:none;width:64px;height:64px;filter:drop-shadow(0 4px 10px rgba(0,0,0,.4))}
 .pk-sign span{display:block;text-align:center;line-height:1}
 .pk-sign small{display:block;font-size:4.5px;font-weight:500;opacity:.85;letter-spacing:0;margin-top:2px}
 .pk-tx{flex:none;width:340px;text-align:right}
@@ -3532,7 +3533,7 @@ IP.tools='<path d="M14.5 6.5a4 4 0 0 0-5 5L4 17l3 3 5.5-5.5a4 4 0 0 0 5-5l-2.5 2
 { const H={ocspot:96,ocp:84,dbcp:82,chime:76,garage:66,lock:82,motion:64,window:62,water:52,icp:70,therm:66};
   const SV='<svg viewBox="0 0 24 24" fill="none" stroke="#3b2a06" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">';
   const SVC=`<div class="pk-svc"><i>${SV}<path d="M14.5 6.5a4 4 0 0 0-5 5L4 17l3 3 5.5-5.5a4 4 0 0 0 5-5l-2.5 2.5-2.5-.5-.5-2.5z"/></svg></i><i>${SV}<path d="M4 12a8 8 0 1 0 2.4-5.7"/><path d="M4 4v4h4"/></svg></i><i>${SV}<rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18M7 15h3"/></svg></i><i>${SV}<path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg></i></div>`;
-  const SIGN='<div class="pk-sign"><span>vivint<small>PROTECTED BY</small></span></div>';
+  const SIGN='<img class="pk-sign2" src="assets/cat/ysign.webp?v=247" alt="Protected by Vivint">';
   const I=(k,n,sc=1)=>`<div class="pk-i" style="height:${Math.round(H[k]*sc)}px"><img src="assets/cat/${k}.webp?v=176" alt="">${n>1?`<b>x${n}</b>`:''}</div>`;
   const R=[
    ['Smart Security',115,[[['dbcp'],['chime'],['garage'],['motion'],['window',3],'SVC','SIGN']],1.15],
