@@ -2781,19 +2781,25 @@ navify();
 /* scroll-scrubbed reverse animation under the Outdoor Camera hero */
 [['#humV','#ocScroll'],['#dbScrubV','#dbScroll']].forEach(([vs,bs])=>{ const v=$(vs), box=$(bs); if(!v||!box) return; const sec=v.closest('.otab');
   /* scroll-scrubbed video: the frame eases toward the scroll position every animation frame, one seek in flight at a time (all-intra video, so each seek is a single-frame decode) */
-  let want=0, at=0, busy=false, run=false;
+  let want=0, at=0, busy=false, busyT=0, run=false, primed=false;
+  v.muted=true; v.playsInline=true; v.setAttribute('webkit-playsinline','');
   const target=()=>{ const H=box.clientHeight, t=sec.offsetTop, h=sec.offsetHeight; return Math.max(0,Math.min(1,(box.scrollTop-(t-H))/h)); };
   const loop=()=>{ want=target(); at+=(want-at)*0.35; if(Math.abs(want-at)<0.0015) at=want;
-    if(!busy&&v.duration){ const tt=at*(v.duration-0.04); if(Math.abs(v.currentTime-tt)>1/60){ busy=true; if(v.fastSeek) v.fastSeek(tt); else v.currentTime=tt; } }
+    /* a seek that never reports back (iOS drops some) must not freeze the animation */
+    if(busy&&performance.now()-busyT>250) busy=false;
+    if(!busy&&v.readyState>=1&&isFinite(v.duration)){ const tt=at*(v.duration-0.04); if(Math.abs(v.currentTime-tt)>1/60){ busy=true; busyT=performance.now(); try{ v.currentTime=tt; }catch(e){ busy=false; } } }
     const b=box.getBoundingClientRect(), r=sec.getBoundingClientRect(); const vis=r.bottom>b.top-40&&r.top<b.bottom+40;
     if(vis||Math.abs(want-at)>0.001) requestAnimationFrame(loop); else run=false; };
-  const kick=()=>{ if(run) return; run=true; requestAnimationFrame(loop); };
+  const kick=()=>{ prime(); if(run) return; run=true; requestAnimationFrame(loop); };
   v.addEventListener('seeked',()=>{ busy=false; });
+  ['loadedmetadata','loadeddata','canplay'].forEach(ev=>v.addEventListener(ev,()=>{ busy=false; kick(); }));
   box.addEventListener('scroll',kick,{passive:true});
-  v.addEventListener('loadedmetadata',()=>{ at=want=target(); kick(); });
-  /* iOS Home Screen apps don't buffer a never-played video; prime it once so the first scrub frame is ready */
-  const prime=()=>{ if(v.readyState<2){ v.load(); const p=v.play(); if(p&&p.then) p.then(()=>v.pause()).catch(()=>{}); } };
-  box.addEventListener('scroll',prime,{passive:true,once:true}); setTimeout(prime,1500);
+  /* iOS (Home Screen apps especially) won't load or paint a video that has never played: play it muted for an instant, once, then hand it to the scroll */
+  function prime(){ if(primed) return; primed=true;
+    if(v.readyState===0&&v.networkState!==2) v.load();
+    const p=v.play(); if(p&&p.then) p.then(()=>{ v.pause(); busy=false; }).catch(()=>{ primed=false; }); else v.pause(); }
+  ['touchstart','pointerdown'].forEach(ev=>box.addEventListener(ev,prime,{passive:true}));
+  setTimeout(prime,1200);
 });
 </script>
 <script>
