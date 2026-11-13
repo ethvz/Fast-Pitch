@@ -1161,7 +1161,7 @@ img[src*="nw/securityorg"]{filter:brightness(0) invert(1)}
 #psheet .hd{position:absolute;left:36px;right:36px;top:26px;display:flex;align-items:center;justify-content:space-between}
 #psheet .hd b{font-size:24px;font-weight:500;letter-spacing:-.4px}
 #psheet .x{width:40px;height:40px;border-radius:50%;background:#2c2c2e;display:grid;place-items:center}
-#psheet .car{position:absolute;left:0;right:0;top:76px;bottom:0;display:flex;gap:28px;overflow-x:auto;overflow-y:hidden;padding:0 36px 24px;scroll-snap-type:x proximity;scrollbar-width:none;-webkit-overflow-scrolling:touch;-webkit-mask-image:linear-gradient(90deg,rgba(0,0,0,.18) 0,#000 13%,#000 87%,rgba(0,0,0,.18) 100%);mask-image:linear-gradient(90deg,rgba(0,0,0,.18) 0,#000 13%,#000 87%,rgba(0,0,0,.18) 100%)}
+#psheet .car{position:absolute;left:0;right:0;top:76px;bottom:0;display:flex;gap:28px;overflow-x:auto;overflow-y:hidden;padding:0 36px 24px;scroll-snap-type:x proximity;scrollbar-width:none;-webkit-overflow-scrolling:touch;--fl:.18;--fr:.18;-webkit-mask-image:linear-gradient(90deg,rgba(0,0,0,var(--fl)) 0,#000 13%,#000 87%,rgba(0,0,0,var(--fr)) 100%);mask-image:linear-gradient(90deg,rgba(0,0,0,var(--fl)) 0,#000 13%,#000 87%,rgba(0,0,0,var(--fr)) 100%)}
 #psheet .car::-webkit-scrollbar{display:none}
 #psheet .grp{flex:none;display:flex;flex-direction:column;gap:12px;scroll-snap-align:start}
 #psheet .grp>span{font-size:12.5px;letter-spacing:2px;text-transform:uppercase;color:#8e8e93;font-weight:500;padding-left:4px}
@@ -1613,6 +1613,13 @@ body.pkon #bar{z-index:61!important}
 #lpT .lpl:not(.on){opacity:0;transform:translateY(14px);filter:blur(8px)}
 #lpT .lpl.up:not(.on){transform:translateY(-14px)}
 #lpT .lpl.on{opacity:1;transform:none;filter:none;transition-delay:.06s}
+
+/* About / Videos / Yard Sign pill: sliding highlight, stays put between its pages */
+#homeX{--hxi:0}
+#homeX .hxi{position:absolute;left:5px;top:5px;width:72px;height:44px;border-radius:22px;background:rgba(5,229,175,.16);transform:translateX(calc(var(--hxi)*74px));transition:transform .45s cubic-bezier(.22,1,.36,1),opacity .25s;opacity:0;pointer-events:none}
+#bar.hx-ctr #homeX .hxi{opacity:1}
+#bar #homeX .bbtn.on{background-color:transparent!important}
+#bar #homeX .bbtn{position:relative;z-index:1}
 </style>
 <div id="stage">
   <div id="screen">
@@ -2967,8 +2974,8 @@ const THI=k=>`assets/th/${k}.webp?v=93`;
 { const sc=$('#p-sign .sgn-sc'); let t=null;
   sc.addEventListener('scroll',()=>{ clearTimeout(t); t=setTimeout(()=>{ const h=Math.round(sc.scrollTop/sc.clientHeight)===1; if(h!==signHouse) sign(h,true); },60); },{passive:true});
   let tx=null,ty=null; sc.addEventListener('touchstart',e=>{tx=e.touches[0].clientX;ty=e.touches[0].clientY},{passive:true});
-  sc.addEventListener('touchend',e=>{ if(tx===null) return; const dx=e.changedTouches[0].clientX-tx, dy=e.changedTouches[0].clientY-ty; tx=null; if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy)*1.5) sign(dx<0?1:0); },{passive:true});
-  let px=null; sc.addEventListener('pointerdown',e=>{ if(e.pointerType==='mouse') px=e.clientX; }); sc.addEventListener('pointerup',e=>{ if(px===null) return; const dx=e.clientX-px; px=null; if(Math.abs(dx)>50) sign(dx<0?1:0); }); }
+  /* horizontal swipe now switches About / Videos / Yard Sign (handled globally) */ }
+
 
 /* ===== Awards + newsroom (vivint.com/company/newsroom) ===== */
 { const EX='<svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11L11 3M4.5 3H11v6.5"/></svg>';
@@ -3321,6 +3328,24 @@ $$('.hcat .ht[data-k=shp2]').forEach(t=>{ if(t.querySelector('img[src*="scr.webp
     box.querySelectorAll('.lpl').forEach((l,j)=>{ l.classList.toggle('up',j<i); l.classList.toggle('on',j===i); }); };
   const _ts=trackSet; trackSet=function(p,a){ _ts(p,a); show(Math.round(Math.max(0,Math.min(HORD.length-1,p)))); };
   show(Math.max(0,HORD.indexOf(typeof hcat!=='undefined'?hcat:'all'))); }
+
+/* About / Videos / Yard Sign: sliding pill highlight + swipe between them */
+{ const HX=['about','videos','sign'];
+  const sync=()=>{ const hx=$('#homeX'); if(!hx) return; const i=HX.indexOf(cur); if(!hx.querySelector('.hxi')) hx.insertAdjacentHTML('afterbegin','<i class="hxi"></i>'); if(i>=0) hx.style.setProperty('--hxi',i); };
+  const _bf=barFor; barFor=function(p){ _bf(p); sync(); }; sync();
+  const goHX=to=>{ if(to===cur) return; stack[stack.length-1]=to; show(to); };
+  /* tapping between them swaps in place (no history pile-up) */
+  document.addEventListener('click',e=>{ const b=e.target.closest('#homeX [data-go]'); if(!b||!HX.includes(cur)) return; e.stopPropagation(); goHX(b.dataset.go); },true);
+  let sx=null,sy=null,blocked=false;
+  const scroller=el=>{ for(;el&&el!==document.body;el=el.parentElement){ if(el.scrollWidth>el.clientWidth+4&&/(auto|scroll)/.test(getComputedStyle(el).overflowX)) return true; } return false; };
+  $('#screen').addEventListener('touchstart',e=>{ if(!HX.includes(cur)||e.touches.length!==1){ sx=null; return; } sx=e.touches[0].clientX; sy=e.touches[0].clientY; blocked=scroller(e.target); },{passive:true});
+  $('#screen').addEventListener('touchend',e=>{ if(sx===null||blocked) return; const dx=e.changedTouches[0].clientX-sx, dy=e.changedTouches[0].clientY-sy; sx=null;
+    if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.4){ const i=HX.indexOf(cur), j=i+(dx<0?1:-1); if(j>=0&&j<HX.length) goHX(HX[j]); } },{passive:true}); }
+
+/* product carousel: edge fades only where there's more to scroll */
+{ const upd=c=>{ const l=c.scrollLeft, m=c.scrollWidth-c.clientWidth; c.style.setProperty('--fl',l<=48?1:.18); c.style.setProperty('--fr',l>=m-48?1:.18); };
+  document.addEventListener('scroll',e=>{ if(e.target.matches&&e.target.matches('#psheet .car')) upd(e.target); },true);
+  new MutationObserver(()=>$$('#psheet .car').forEach(upd)).observe($('#psheet'),{attributes:true,childList:true,subtree:true,attributeFilter:['class']}); $$('#psheet .car').forEach(upd); }
 
 barFor(cur);
 </script>
