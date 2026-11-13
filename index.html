@@ -1632,6 +1632,8 @@ body.pkon #bar{z-index:61!important}
 .gal-dots i{width:8px;height:8px;border-radius:4px;background:rgba(255,255,255,.45);transition:width .35s cubic-bezier(.22,1,.36,1),background .3s;cursor:pointer}
 .gal-dots i.on{width:26px;background:#fff}
 .lpage>.gal:not(.in)>*{opacity:1!important}
+#bar,#bar *{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+#bar img{-webkit-user-drag:none}
 </style>
 <div id="stage">
   <div id="screen">
@@ -3362,7 +3364,7 @@ $$('.hcat .ht[data-k=shp2]').forEach(t=>{ if(t.querySelector('img[src*="scr.webp
 /* ===== Product photo galleries ===== */
 IP.gal='<rect x="6.5" y="3.5" width="14" height="11" rx="2"/><path d="M3.5 7.5v10a2 2 0 0 0 2 2h11"/><path d="M20.5 11.5l-3.5-3.5-6.5 6.5"/>'; NLAB.gal='Gallery';
 { const GN={ocp:7,hub:8,icp:7,dbcp:7,lock:7,therm:4,garage:5};
-  const html=k=>`<div class="gal" data-t="gal" data-gal="${k}"><div class="gal-tr">${Array.from({length:GN[k]},(_,i)=>`<figure><img src="assets/gal/${k}_${i}.webp?v=186" alt="" loading="${i?'lazy':'eager'}" decoding="async"></figure>`).join('')}</div><div class="gal-dots">${Array.from({length:GN[k]},(_,i)=>`<i class="${i?'':'on'}" data-gi="${i}"></i>`).join('')}</div></div>`;
+  const html=k=>`<div class="gal" data-t="gal" data-gal="${k}"><div class="gal-tr">${Array.from({length:GN[k]},(_,i)=>`<figure><img src="assets/gal/${k}_${i}.webp?v=187" alt="" loading="${i?'lazy':'eager'}" decoding="async"></figure>`).join('')}</div><div class="gal-dots">${Array.from({length:GN[k]},(_,i)=>`<i class="${i?'':'on'}" data-gi="${i}"></i>`).join('')}</div></div>`;
   const wire=g=>{ const tr=g.querySelector('.gal-tr'), ds=g.querySelectorAll('.gal-dots i'); let t;
     tr.addEventListener('scroll',()=>{ cancelAnimationFrame(t); t=requestAnimationFrame(()=>{ const i=Math.round(tr.scrollLeft/tr.clientWidth); ds.forEach((d,j)=>d.classList.toggle('on',j===i)); }); },{passive:true});
     g.querySelector('.gal-dots').addEventListener('click',e=>{ const d=e.target.closest('[data-gi]'); if(d) tr.scrollTo({left:+d.dataset.gi*tr.clientWidth,behavior:'smooth'}); }); };
@@ -3380,6 +3382,17 @@ IP.gal='<rect x="6.5" y="3.5" width="14" height="11" rx="2"/><path d="M3.5 7.5v1
   const galSpy=()=>{ const b=box(), btn=$('#barRight [data-galgo]'); if(!b||!btn) return; const g=b.querySelector(':scope>.gal'); const on=Math.abs(b.scrollTop-g.offsetTop)<g.offsetHeight*.45;
     btn.classList.toggle('on',on); if(on) $$('#barRight .bbtn:not([data-galgo])').forEach(x=>x.classList.remove('on')); };
   Object.values(PG).forEach(q=>{ const b=$(q); if(b) b.addEventListener('scroll',()=>requestAnimationFrame(galSpy),{passive:true}); }); }
+
+/* footer controls: fire on finger-up so swipe/zoom/tip guards never swallow a tap */
+{ const SEL='#bar button,#bar [role=button]'; let d=null, fired=0;
+  document.addEventListener('pointerdown',e=>{ const t=e.target.closest&&e.target.closest(SEL); d=t?{t,x:e.clientX,y:e.clientY,id:e.pointerId}:null; },true);
+  document.addEventListener('pointercancel',e=>{ if(d&&e.pointerId===d.id) d=null; },true);
+  document.addEventListener('pointerup',e=>{ if(!d||e.pointerId!==d.id) return; const s=d; d=null;
+    const u=document.elementFromPoint(e.clientX,e.clientY), t=u&&u.closest(SEL);
+    if(t!==s.t||Math.hypot(e.clientX-s.x,e.clientY-s.y)>16||s.t.disabled) return;
+    swiped=0; window.__tipEat=0; fired=Date.now(); s.t.__fast=1; s.t.click(); },true);
+  document.addEventListener('click',e=>{ const t=e.target.closest&&e.target.closest(SEL); if(!t) return;
+    if(t.__fast){ t.__fast=0; return; } if(Date.now()-fired<700){ e.stopImmediatePropagation(); e.preventDefault(); } },true); }
 
 barFor(cur);
 </script>
