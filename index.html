@@ -1792,6 +1792,30 @@ body:has(#p-verify.on) #vrBg img{animation:kbz 18s ease-out both}
 #p-history .hy2-h{position:absolute;left:96px;top:118px;z-index:3}
 #p-history .hy2-h h1{margin:0;font-size:72px;line-height:1.04;letter-spacing:-2.3px;font-weight:500;color:#fff;text-shadow:0 2px 18px rgba(0,0,0,.6)}
 #p-history .hy2-h h1 span{color:rgba(255,255,255,.55)}
+/* AI orb v2: glassy 3D sphere with gooey colour blobs */
+.ocb[data-go="ai"]{overflow:visible!important}
+.ocb[data-go="ai"] .aig{position:absolute;inset:3px;border-radius:50%;overflow:hidden;z-index:-1;filter:url(#aiGoo) saturate(1.35);background:#0a0716}
+.ocb[data-go="ai"] .aig i{position:absolute;border-radius:50%;mix-blend-mode:screen;filter:blur(3px)}
+.aig .b1{width:70%;height:70%;left:-6%;top:4%;background:radial-gradient(circle,#ff2d95 0,#ff2d9500 70%);animation:aiB1 5.2s ease-in-out infinite}
+.aig .b2{width:72%;height:72%;right:-10%;top:-6%;background:radial-gradient(circle,#00d0ff 0,#00d0ff00 70%);animation:aiB2 6.4s ease-in-out infinite}
+.aig .b3{width:66%;height:66%;left:18%;bottom:-14%;background:radial-gradient(circle,#7b5cff 0,#7b5cff00 70%);animation:aiB3 4.6s ease-in-out infinite}
+.aig .b4{width:46%;height:46%;right:4%;bottom:6%;background:radial-gradient(circle,#05e5af 0,#05e5af00 70%);animation:aiB4 5.8s ease-in-out infinite}
+.ocb[data-go="ai"] .aih{position:absolute;inset:3px;border-radius:50%;z-index:0;pointer-events:none;background:radial-gradient(circle at 34% 26%,rgba(255,255,255,.75) 0,rgba(255,255,255,.18) 18%,rgba(255,255,255,0) 40%),radial-gradient(circle at 60% 110%,rgba(0,0,0,0) 40%,rgba(0,0,0,.55) 75%);box-shadow:inset 0 -6px 12px rgba(0,0,0,.55),inset 0 4px 8px rgba(255,255,255,.25)}
+.ocb[data-go="ai"] .ait{position:relative;z-index:1;font-weight:700;text-shadow:0 1px 6px rgba(0,0,0,.45),0 0 14px rgba(255,255,255,.35)}
+.ocb[data-go="ai"]::after{display:none}
+.ocb[data-go="ai"]{animation:aiGlow 6s linear infinite,aiFloat 4s ease-in-out infinite}
+@keyframes aiFloat{0%,100%{translate:0 0}50%{translate:0 -3px}}
+@keyframes aiB1{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(30%,22%) scale(1.25)}66%{transform:translate(12%,-14%) scale(.85)}}
+@keyframes aiB2{0%,100%{transform:translate(0,0) scale(1)}40%{transform:translate(-34%,26%) scale(.8)}70%{transform:translate(-12%,40%) scale(1.2)}}
+@keyframes aiB3{0%,100%{transform:translate(0,0) scale(1.1)}30%{transform:translate(-22%,-30%) scale(.9)}65%{transform:translate(24%,-20%) scale(1.25)}}
+@keyframes aiB4{0%,100%{transform:translate(0,0) scale(.9)}45%{transform:translate(-50%,-40%) scale(1.3)}75%{transform:translate(-20%,-60%) scale(1)}}
+/* back pill for pages opened from inside another page */
+#bkPill{position:absolute;left:40px;top:34px;height:52px;padding:0 22px 0 16px;display:flex;align-items:center;gap:8px;border-radius:26px;background:rgba(28,28,30,.72);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);box-shadow:inset 0 0 0 1px rgba(255,255,255,.1);color:#fff;font-size:17px;font-weight:500;z-index:40;opacity:0;pointer-events:none;transform:translateX(-10px);transition:opacity .3s ease,transform .3s var(--ease,ease)}
+#bkPill svg{width:20px;height:20px}
+body.hasbk #bkPill{opacity:1;pointer-events:auto;transform:none}
+#bkPill:active{transform:scale(.95)}
+#gTitle{transition:transform .3s var(--ease,ease)}
+body.hasbk #gTitle{transform:translateX(118px)}
 .otab.th.lhero .lh-scrim{background:linear-gradient(90deg,rgba(0,0,0,.62) 0%,rgba(0,0,0,.3) 45%,rgba(0,0,0,0) 70%),linear-gradient(0deg,rgba(0,0,0,.5) 0%,rgba(0,0,0,0) 45%),linear-gradient(180deg,rgba(0,0,0,.45) 0%,rgba(0,0,0,0) 18%)!important}
 .th-media .thm img{opacity:1;transform:none;right:auto;bottom:auto}
 .thm{position:absolute;inset:0;opacity:0;transform:scale(.97);transition:opacity .45s ease,transform .6s var(--ease);pointer-events:none}
@@ -3807,7 +3831,7 @@ const stripHot=(hot,attr)=>hot.replace(new RegExp('<div class="hot"[^>]*'+attr+'
 
 /* ===== History: Fast Recruit's swipeable timeline wheel, written for customers ===== */
 { const pg=$('#p-history'), N=10, S=9.5;
-  pg.innerHTML=`<img class="bg kb" src="assets/ph/office.webp?v=97" alt=""><div class="sc"></div><div class="hy2-h pv"><h1>There’s no shortcut<br><span>to 25 years of protecting homes.</span></h1></div><div class="hyx">${$('#hyTpl').innerHTML}</div>`;
+  pg.innerHTML=`<img class="bg kb" src="assets/ph/office.webp?v=97" alt=""><div class="sc"></div><div class="hy2-h pv"><h1>There’s no shortcut<br><span>to protecting families since 1999.</span></h1></div><div class="hyx">${$('#hyTpl').innerHTML}</div>`;
   const X=$('.hyx',pg), box=$('[data-hybox]',X), wh=$('[data-hyw]',X), hint=$('[data-hyhint]',X);
   const Y=$$('[data-hyy]',X), L=$$('[data-hyl]',X), D=$$('[data-hyd]',X);
   let p=0, drag=false, used=false, t=null, acc=0;
@@ -3828,6 +3852,20 @@ const stripHot=(hot,attr)=>hot.replace(new RegExp('<div class="hot"[^>]*'+attr+'
   const _s=show; show=function(q){ _s(q); if(q==='history'){ fit(); paint(); } };
   const _g=go; go=function(q){ if(q==='history'){ p=0; used=false; } _g(q); };
   fit(); paint(); }
+
+/* AI orb: inner gooey blobs + glass highlight */
+document.body.insertAdjacentHTML('beforeend','<svg width="0" height="0" style="position:absolute"><filter id="aiGoo"><feGaussianBlur in="SourceGraphic" stdDeviation="4" result="b"/><feColorMatrix in="b" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 22 -9" result="g"/><feComposite in="SourceGraphic" in2="g" operator="atop"/></filter></svg>');
+{ const orb=()=>$$('.ocb[data-go="ai"]').forEach(b=>{ if(b.querySelector('.aig')) return; b.innerHTML='<span class="aig"><i class="b1"></i><i class="b2"></i><i class="b3"></i><i class="b4"></i></span><span class="aih"></span><span class="ait">AI</span>'; });
+  const _o=ocRender; ocRender=function(){ _o.apply(this,arguments); orb(); }; orb(); }
+/* Back pill: shows on pages opened from a link inside another page (AI, History, NRG, Gives Back, Patents…), not on main-flow pages */
+{ $('#screen').insertAdjacentHTML('beforeend','<button id="bkPill" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>Back</button>');
+  const FLOW=['home','ocp','dbcp','hub','therm','prod','ocspot'];
+  let pend=false, flags=[], prevLen=stack.length;
+  document.addEventListener('click',e=>{ const a=e.target.closest&&e.target.closest('[data-go]'); if(!a) return; const pg=a.closest('.page'); pend=!!(pg&&pg.id!=='p-home'&&!a.closest('#drawer,#bar,#psheet,#barRight')); },true);
+  const _s=show; show=function(p){ _s(p); const L=stack.length;
+    if(L>prevLen) flags[L-1]=pend&&!FLOW.includes(p); flags.length=L; prevLen=L; pend=false;
+    document.body.classList.toggle('hasbk',!!flags[L-1]); };
+  $('#bkPill').addEventListener('click',e=>{ e.stopPropagation(); back(); }); }
 
 barFor(cur);
 </script>
