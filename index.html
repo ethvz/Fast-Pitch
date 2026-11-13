@@ -2487,7 +2487,7 @@ function spy(box,onTab){ let last='';
     secs.forEach(x=>{const on=x===curS; if((x.dataset.vis==='1')!==on){x.dataset.vis=on?'1':'0'; x.querySelectorAll('video').forEach(v=>{ if(on&&!v.hidden&&v.__u){v.play().catch(()=>{v.muted=true;v.play().catch(()=>{});});} else v.pause(); });}});
     if(curS&&curS.dataset.t!==last){ last=curS.dataset.t; onTab(last); } };
   box.addEventListener('scroll',()=>requestAnimationFrame(tick),{passive:true}); return tick; }
-function jump(box,t){ const x=[...box.children].find(c=>c.dataset.t===t&&!c.hidden); if(x) box.scrollTo({top:x.offsetTop-(parseFloat(getComputedStyle(x).scrollMarginTop)||0),behavior:'smooth'}); }
+function jump(box,t){ const x=[...box.children].find(c=>c.dataset.t===t&&!c.hidden); if(x){ x.classList.add('in','jin'); clearTimeout(x.__jn); x.__jn=setTimeout(()=>x.classList.remove('jin'),1400); } if(x) box.scrollTo({top:x.offsetTop-(parseFloat(getComputedStyle(x).scrollMarginTop)||0),behavior:'smooth'}); }
 function ocStop(){ $$('#p-ocp video').forEach(v=>{v.pause()}); whistle.pause(); }
 const TPREV={};
 const IC={bulb:'<svg width="20" height="22" viewBox="0 0 20 22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M10 2a6 6 0 0 0-3.6 10.8c.7.6 1.1 1.3 1.1 2.2h5c0-.9.4-1.6 1.1-2.2A6 6 0 0 0 10 2zM7.5 18h5M8.5 20.5h3"/></svg>',
@@ -3158,6 +3158,8 @@ navify=function(){ const r=$('#barRight'); if(!r) return;
   const _go=go; go=function(p){ $('#screen').dataset.dir='fwd'; _go(p); };
   const _back=back; back=function(){ $('#screen').dataset.dir='back'; _back(); }; }
 
+/* jumping to a section lands on it already in place (no rise-in after arriving) */
+document.head.insertAdjacentHTML('beforeend','<style>.lpage.lpage>.jin.jin>*{animation:none!important}</style>');
 /* scroll reveal */
 { const IO=new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('in'); }),{threshold:.12});
   const watch=s=>{ if(s.nodeType===1&&!s.__w){ s.__w=1; IO.observe(s); } };
@@ -3772,7 +3774,7 @@ document.head.insertAdjacentHTML('beforeend','<style>#ocScroll,#dbScroll{scroll-
 ['#ocScroll','#dbScroll'].forEach(sel=>{ const box=$(sel); if(!box) return; let t=0, touching=false, lastY=box.scrollTop, dir=1, settling=false;
   const settle=()=>{ if(touching) return; const H=box.clientHeight, y=box.scrollTop; if(!H) return;
     const pts=[]; let free=null;
-    [...box.children].forEach(c=>{ if(c.hidden||!c.offsetHeight) return; const top=c.offsetTop, h=c.offsetHeight; pts.push(top); if(h>H+40){ pts.push(top+h-H); if(y>top+2&&y<top+h-H-2) free=c; } });
+    [...box.children].forEach(c=>{ if(c.hidden||!c.offsetHeight) return; const mt=parseFloat(getComputedStyle(c).scrollMarginTop)||0, top=c.offsetTop-mt, h=c.offsetHeight+mt; pts.push(top); if(h>H+40){ pts.push(top+h-H); if(y>top+2&&y<top+h-H-2) free=c; } });
     if(free) return;
     pts.push(box.scrollHeight-H);
     let best=pts[0], bd=1e9; pts.forEach(v=>{ let d=Math.abs(v-y); if((v-y)*dir<0) d*=1.35; if(d<bd){ bd=d; best=v; } });
