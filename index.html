@@ -855,6 +855,7 @@ body,button,input{font-family:"Vivint Sans",Figtree,system-ui,sans-serif}
 .page.out{display:block!important;z-index:1;pointer-events:none;animation:pgOut .3s ease forwards}
 .page.on{z-index:2}
 .page.hxout{display:block!important;z-index:1;pointer-events:none}
+.page.on.hxno{animation:none!important}
 @keyframes pgIn{from{opacity:0;transform:translate3d(46px,0,0) scale(.985)}to{opacity:1;transform:none}}
 @keyframes pgBack{from{opacity:0;transform:translate3d(-46px,0,0) scale(.985)}to{opacity:1;transform:none}}
 @keyframes pgOut{to{opacity:0;transform:scale(.975)}}
@@ -3604,13 +3605,14 @@ $$('.hcat .ht[data-k=shp2]').forEach(t=>{ if(t.querySelector('img[src*="scr.webp
   const _bf=barFor; barFor=function(p){ _bf(p); sync(); }; sync();
   /* slide: outgoing page glides off to one side while the next one glides in from the other */
   const slide=(fromEl,toEl,dir,dx0)=>{ if(!fromEl||!toEl) return; const W=fromEl.offsetWidth||1376;
-    fromEl.classList.add('hxout'); [fromEl,toEl].forEach(e=>{ e.style.transition='none'; e.style.animation='none'; });
+    fromEl.classList.add('hxout'); toEl.classList.add('hxno'); [fromEl,toEl].forEach(e=>{ e.style.transition='none'; e.style.animation='none'; });
     fromEl.style.transform=`translateX(${dx0}px)`; toEl.style.transform=`translateX(${dir*W*.6+dx0}px)`; toEl.style.opacity='.4';
     void toEl.offsetWidth;
     requestAnimationFrame(()=>{ const T='transform .55s cubic-bezier(.22,1,.36,1), opacity .45s ease';
       fromEl.style.transition=T; toEl.style.transition=T;
       fromEl.style.transform=`translateX(${-dir*W*.45}px) scale(.94)`; fromEl.style.opacity='0'; toEl.style.transform='none'; toEl.style.opacity='1'; });
     clearTimeout(slide.t); slide.t=setTimeout(()=>{ fromEl.classList.remove('hxout'); [fromEl,toEl].forEach(e=>{ e.style.transition=''; e.style.transform=''; e.style.opacity=''; e.style.animation=''; }); },600); };
+  { const _sh=show; show=function(p){ $$('.page.hxno').forEach(e=>e.classList.remove('hxno')); _sh(p); }; }
   const goHX=(to,dx0=0)=>{ if(to===cur) return; const i=HX.indexOf(cur), j=HX.indexOf(to), fromEl=$('#p-'+cur);
     stack[stack.length-1]=to; show(to); if(i>=0&&j>=0) slide(fromEl,$('#p-'+to),j>i?1:-1,dx0); };
   /* tapping between them swaps in place (no history pile-up) */
