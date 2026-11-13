@@ -2402,7 +2402,7 @@ requestAnimationFrame(()=>trackSet(0,false));
 /* instant press feedback */
 document.addEventListener('pointerdown',e=>{const h=e.target.closest('.hot,.bbtn,.gbtn,#homeSeg button,.dwseg button');if(h){h.classList.add('pressed');setTimeout(()=>h.classList.remove('pressed'),180);}},{passive:true});
 
-const ALLPOS={"ocspot": [920.5, 18.6, 434.1, 375.0], "ocp": [20.6, 18.6, 434.8, 375.0], "dbcp": [470.6, 18.6, 209.2, 375.0], "icp": [693.5, 18.6, 211.2, 375.0], "shp2": [470.6, 406.0, 434.1, 295.2], "motion": [20.6, 406.0, 135.5, 172.2], "glass": [169.2, 406.0, 136.2, 172.2], "window": [319.2, 406.0, 136.2, 172.2], "lock": [920.5, 406.0, 209.8, 264.5], "garage": [1144.1, 406.0, 210.5, 264.5], "water": [20.6, 590.6, 135.5, 172.2], "smokeco": [169.2, 590.6, 136.2, 172.2], "fire": [319.2, 590.6, 136.2, 172.2], "keypad": [471.3, 713.6, 209.2, 233.9], "app": [694.9, 713.6, 209.2, 233.9], "therm": [920.5, 682.9, 209.8, 264.5], "plug": [1144.1, 682.9, 210.5, 264.5], "pendant": [20.6, 775.2, 135.5, 172.2], "fob": [169.2, 775.2, 136.2, 172.2], "chime": [319.2, 775.2, 136.2, 172.2]};
+const ALLPOS={"ocspot": [919.9, 18.6, 434.7, 375], "ocp": [20.6, 18.6, 434.7, 375], "dbcp": [470.3, 18.6, 209.8, 375], "icp": [695.1, 18.6, 209.8, 375], "shp2": [470.3, 408.6, 434.7, 290.0], "motion": [20.6, 408.6, 134.9, 169.6], "glass": [170.5, 408.6, 134.9, 169.6], "window": [320.4, 408.6, 134.9, 169.6], "lock": [919.9, 408.6, 209.8, 261.9], "garage": [1144.8, 408.6, 209.8, 261.9], "water": [20.6, 593.2, 134.9, 169.6], "smokeco": [170.5, 593.2, 134.9, 169.6], "fire": [320.4, 593.2, 134.9, 169.6], "keypad": [470.3, 713.6, 209.8, 233.9], "app": [695.1, 713.6, 209.8, 233.9], "therm": [919.9, 685.5, 209.8, 261.9], "plug": [1144.8, 685.5, 209.8, 261.9], "pendant": [20.6, 777.9, 134.9, 169.6], "fob": [170.5, 777.9, 134.9, 169.6], "chime": [320.4, 777.9, 134.9, 169.6]};
 $('#allTiles').innerHTML=Object.entries(ALLPOS).map(([k,[x,y,w,h]])=>k==='shortcuts'
   ?`<div class="ht abs abs-sc" style="left:${x}px;top:${y}px;width:${w}px;height:${h}px"><div class="lg"></div><img src="assets/tiles/shortcuts.webp?v=176" alt=""></div>`
   :`<div class="ht abs" data-k="${k}" ${TACT[k]} style="left:${x}px;top:${y}px;width:${w}px;height:${h}px"><div class="lg"></div>${(k==='dbcp'||k==='icp')?`<img class="cp big" src="assets/cat/${k}.webp?v=176" alt=""><div class="cl">${CNAME[k]}</div>`:ALLEQ.includes(k)?`<img class="cp" src="assets/cat/${k}.webp?v=176" alt=""><div class="cl">${CNAME[k]}</div>`:`<img src="assets/tiles/${k}.webp?v=176" alt="">`}</div>`).join('');
@@ -2410,9 +2410,14 @@ $('#allTiles').innerHTML=Object.entries(ALLPOS).map(([k,[x,y,w,h]])=>k==='shortc
   $$('#allTiles .ht').forEach(el=>{ const y=parseFloat(el.style.top), h=parseFloat(el.style.height); el.style.top=(N0+(y-T0)*k).toFixed(1)+'px'; el.style.height=(h*k).toFixed(1)+'px'; });
   $('#homeAll').insertAdjacentHTML('afterbegin','<div class="hall-h"><div><div class="eb">Vivint Smart Home</div><h1>One system. Every corner of your home.</h1></div><p>Security, cameras, locks and comfort, working together and protected 24/7.</p></div>'); }
 $('#p-home').insertAdjacentHTML('beforeend','<div id="flipLayer"></div>');
-window.homeLayout=function(){ const k=(HW-41.2)/(1376-41.2);
-  $$('#allTiles .ht').forEach(el=>{ if(!el.dataset.x0){ el.dataset.x0=parseFloat(el.style.left); el.dataset.w0=parseFloat(el.style.width); }
-    el.style.left=(20.6+(el.dataset.x0-20.6)*k).toFixed(1)+'px'; el.style.width=(el.dataset.w0*k).toFixed(1)+'px'; });
+/* All grid: built from one spec so every gap is exactly G on every iPad width */
+function allGrid(Wt){ const G=14, X0=20.6, Y0=150, Y1=946, top=Math.round((Y1-Y0)*0.40), cw=(Wt-2*G)/3, cx=[X0,X0+cw+G,X0+2*(cw+G)], half=(cw-G)/2, y2=Y0+top+G, rest=Y1-y2, P={};
+  P.ocp=[cx[0],Y0,cw,top]; P.dbcp=[cx[1],Y0,half,top]; P.icp=[cx[1]+half+G,Y0,half,top]; P.ocspot=[cx[2],Y0,cw,top];
+  const sh=(rest-2*G)/3, sw=(cw-2*G)/3; [['motion','glass','window'],['water','smokeco','fire'],['pendant','fob','chime']].forEach((r,ri)=>r.forEach((k,ci)=>P[k]=[cx[0]+ci*(sw+G),y2+ri*(sh+G),sw,sh]));
+  const kh=Math.round(rest*0.43), hh=rest-G-kh; P.shp2=[cx[1],y2,cw,hh]; P.keypad=[cx[1],y2+hh+G,half,kh]; P.app=[cx[1]+half+G,y2+hh+G,half,kh];
+  const rh=(rest-G)/2; P.lock=[cx[2],y2,half,rh]; P.garage=[cx[2]+half+G,y2,half,rh]; P.therm=[cx[2],y2+rh+G,half,rh]; P.plug=[cx[2]+half+G,y2+rh+G,half,rh]; return P; }
+window.homeLayout=function(){ const P=allGrid(HW-41.2);
+  $$('#allTiles .ht[data-k]').forEach(el=>{ const r=P[el.dataset.k]; if(!r) return; const [x,y,w,h]=r; Object.assign(el.style,{left:x.toFixed(1)+'px',top:y.toFixed(1)+'px',width:w.toFixed(1)+'px',height:h.toFixed(1)+'px'}); });
   $$('#homeTrack .hcat').forEach((pn,i)=>pn.style.left=(HW*(i+1))+'px');
   if(typeof hcat!=='undefined') trackSet(HORD.indexOf(hcat),false); };
 homeLayout();
