@@ -3788,21 +3788,39 @@ document.body.insertAdjacentHTML('afterbegin','<div id="vrBg"><img src="assets/p
     lastKey=k; };
 }
 
-/* Outdoor/Doorbell Camera pages: iOS Safari's built-in snapping mishandles the tall scroll-animation section and can jump
-   several sections at once. These two pages scroll freely (fast flicks allowed) and settle onto the nearest section once
-   the scroll comes to rest. Inside the animation section there is no settling, so it scrubs freely. */
-document.head.insertAdjacentHTML('beforeend','<style>#ocScroll,#dbScroll{scroll-snap-type:none!important}</style>');
-['#ocScroll','#dbScroll'].forEach(sel=>{ const box=$(sel); if(!box) return; let t=0, touching=false, lastY=box.scrollTop, dir=1, settling=false;
-  const settle=()=>{ if(touching) return; const H=box.clientHeight, y=box.scrollTop; if(!H) return;
-    const pts=[]; let free=null;
-    [...box.children].forEach(c=>{ if(c.hidden||!c.offsetHeight) return; const mt=parseFloat(getComputedStyle(c).scrollMarginTop)||0, top=c.offsetTop-mt, h=c.offsetHeight+mt; pts.push(top); if(h>H+40){ pts.push(top+h-H); if(y>top+2&&y<top+h-H-2) free=c; } });
-    if(free) return;
-    pts.push(box.scrollHeight-H);
-    let best=pts[0], bd=1e9; pts.forEach(v=>{ let d=Math.abs(v-y); if((v-y)*dir<0) d*=1.35; if(d<bd){ bd=d; best=v; } });
-    if(Math.abs(best-y)>2){ settling=true; box.scrollTo({top:best,behavior:'smooth'}); setTimeout(()=>settling=false,600); } };
-  box.addEventListener('scroll',()=>{ const y=box.scrollTop; if(Math.abs(y-lastY)>1) dir=y>lastY?1:-1; lastY=y; clearTimeout(t); if(!settling) t=setTimeout(settle,160); },{passive:true});
-  box.addEventListener('touchstart',()=>{ touching=true; clearTimeout(t); },{passive:true});
-  ['touchend','touchcancel'].forEach(ev=>box.addEventListener(ev,()=>{ touching=false; clearTimeout(t); t=setTimeout(settle,220); },{passive:true}));
+/* Section paging for every product page: free native scrolling, then a spring settles onto a section.
+   A quick flick pages to the next/previous section (even a short one); a slow drag settles to the nearest.
+   Inside sections taller than the screen (e.g. the 360° scroll animation) there is no settling, so they scroll freely. */
+document.head.insertAdjacentHTML('beforeend','<style>.lpage{scroll-snap-type:none!important;scroll-behavior:auto!important}</style>');
+$$('.lpage').forEach(box=>{ let t=0, touching=false, lastY=box.scrollTop, dir=1, raf=0, T=null, vel=0, lastT=0;
+  const stopAnim=()=>{ if(raf){ cancelAnimationFrame(raf); raf=0; } };
+  const spring=(to,v0=0)=>{ stopAnim(); let x=box.scrollTop, v=v0, prev=performance.now(); const K=230, D=2*Math.sqrt(K)*0.78; /* slightly under-damped: a touch of bounce */
+    const step=now=>{ const dt=Math.min(.032,(now-prev)/1000); prev=now; const a=-K*(x-to)-D*v; v+=a*dt; x+=v*dt; box.scrollTop=x;
+      if(Math.abs(x-to)<.5&&Math.abs(v)<8){ box.scrollTop=to; raf=0; return; } raf=requestAnimationFrame(step); };
+    raf=requestAnimationFrame(step); };
+  const layout=()=>{ const H=box.clientHeight, pts=[], free=[]; if(!H) return null;
+    [...box.children].forEach(c=>{ if(c.hidden||!c.offsetHeight) return; const mt=parseFloat(getComputedStyle(c).scrollMarginTop)||0, top=Math.max(0,c.offsetTop-mt), h=c.offsetHeight+mt; pts.push(top); if(h>H+40){ pts.push(top+h-H); free.push([top,top+h-H]); } });
+    pts.push(Math.max(0,box.scrollHeight-H)); const P=[...new Set(pts.map(Math.round))].sort((a,b)=>a-b); return {H,P,free}; };
+  const inFree=(L,y)=>L.free.some(([a,b])=>y>a+2&&y<b-2);
+  const settle=()=>{ if(touching||raf||box.__jt||box.closest('.zm,.pcol')) return; const L=layout(); if(!L) return; const y=box.scrollTop; if(inFree(L,y)) return;
+    let best=L.P[0], bd=1e9; L.P.forEach(v=>{ let d=Math.abs(v-y); if((v-y)*dir<0) d*=1.35; if(d<bd){ bd=d; best=v; } });
+    if(Math.abs(best-y)>1) spring(best); };
+  box.addEventListener('scroll',()=>{ const y=box.scrollTop; if(Math.abs(y-lastY)>1) dir=y>lastY?1:-1; lastY=y; if(raf) return; clearTimeout(t); t=setTimeout(settle,140); },{passive:true});
+  box.addEventListener('touchstart',e=>{ touching=true; stopAnim(); clearTimeout(t); if(e.touches.length>1||box.closest('.zm,.pcol')){ T=null; return; } const p=e.touches[0]; T={x:p.clientX,y:p.clientY,y0:box.scrollTop,t:performance.now(),ly:p.clientY,lt:performance.now()}; vel=0; },{passive:true});
+  box.addEventListener('touchmove',e=>{ if(!T) return; const p=e.touches[0], now=performance.now(), dt=now-T.lt; if(dt>0){ vel=.6*vel+.4*((p.clientY-T.ly)/dt); } T.ly=p.clientY; T.lt=now; T.lx=p.clientX; },{passive:true});
+  const end=e=>{ touching=false; clearTimeout(t); const S=T; T=null;
+    if(S&&e.type==='touchend'&&e.touches.length===0){ const ch=e.changedTouches[0], dy=ch.clientY-S.y, dx=ch.clientX-S.x, dt=performance.now()-S.t;
+      const v=(performance.now()-S.lt<80)?vel:0; /* px per ms, finger direction */
+      const flick=Math.abs(dy)>14&&Math.abs(dy)>Math.abs(dx)*1.2&&(Math.abs(v)>.35||(dt<260&&Math.abs(dy)>30));
+      const L=layout();
+      if(flick&&L&&!box.__jt){ const d=dy<0?1:-1, y0=S.y0;
+        const startFree=L.free.find(([a,b])=>(y0>a+2&&y0<b-2)||(d>0&&Math.abs(y0-a)<=2)||(d<0&&Math.abs(y0-b)<=2)); /* entering a tall section: scroll it naturally */
+        if(!startFree){ const tgt=d>0?L.P.find(v=>v>y0+2):[...L.P].reverse().find(v=>v<y0-2);
+          if(tgt!=null){ const nf=L.free.find(([a,b])=>Math.abs(a-tgt)<2&&d<0); /* flicking up into a tall section lands at its bottom edge */
+            spring(nf?nf[1]:tgt, -v*1000*.6); return; } } } }
+    t=setTimeout(settle,200); };
+  ['touchend','touchcancel'].forEach(ev=>box.addEventListener(ev,end,{passive:true}));
+  box.addEventListener('wheel',()=>stopAnim(),{passive:true});
 });
 
 /* tap anywhere on a product section that has a list of tabs (features, app screens, modes, actions…) to go to the next tab; wraps to the first */
@@ -3936,6 +3954,18 @@ document.body.insertAdjacentHTML('beforeend','<svg width="0" height="0" style="p
     if(L>prevLen) flags[L-1]=pend&&!FLOW.includes(p); flags.length=L; prevLen=L; pend=false;
     document.body.classList.toggle('hasbk',!!flags[L-1]); };
   $('#bkPill').addEventListener('click',e=>{ e.stopPropagation(); back(); }); }
+
+/* Instant video switching: each product page's clips are pulled into memory when the page opens, and any video
+   pointed at one of them plays from memory (no network/disk wait). Keeps the two most recent pages' clips. */
+{ const VG={"ocp": ["assets/oc/ph0.mp4", "assets/oc/ph1.mp4", "assets/oc/ph2.mp4", "assets/oc/ph3.mp4", "assets/oc/ph4.mp4", "assets/oc/ph5.mp4", "assets/oc/ph6.mp4", "assets/oc/ph7.mp4", "assets/oc/vai.mp4"], "dbcp": ["assets/db/hub.mp4", "assets/db/ph0.mp4", "assets/db/ph1.mp4", "assets/db/ph2.mp4", "assets/db/ph3.mp4", "assets/db/ph4.mp4", "assets/db/ph5.mp4", "assets/db/ph6.mp4", "assets/db/ph7.mp4"], "hub": ["assets/hb/m0.mp4", "assets/hb/m1.mp4", "assets/hb/m2.mp4", "assets/hb/m3.mp4", "assets/hb/m4.mp4", "assets/hb/m5.mp4"], "prod": ["assets/p/gp1.mp4", "assets/p/gp2.mp4", "assets/p/ic_hero.mp4", "assets/p/icph0.mp4", "assets/p/icph1.mp4", "assets/p/icph2.mp4", "assets/p/icph3.mp4", "assets/p/lk0.mp4", "assets/p/lk1.mp4", "assets/p/lk2.mp4", "assets/p/lk3.mp4"], "therm": ["assets/th/sys.mp4"]}; const BL=new Map(), ORDER=[];
+  const key=u=>{ try{ return new URL(u,location.href).pathname.replace(/^.*?(assets\/)/,'assets/'); }catch(e){ return u; } };
+  const D=Object.getOwnPropertyDescriptor(HTMLMediaElement.prototype,'src');
+  Object.defineProperty(HTMLMediaElement.prototype,'src',{configurable:true,enumerable:D.enumerable,get(){ return D.get.call(this); },
+    set(u){ const b=u&&BL.get(key(String(u))); D.set.call(this, b&&b.url||u); } });
+  const load=g=>{ const L=VG[g]; if(!L) return; const i=ORDER.indexOf(g); if(i>=0) ORDER.splice(i,1); ORDER.push(g);
+    while(ORDER.length>2){ const old=ORDER.shift(); (VG[old]||[]).forEach(k=>{ const b=BL.get(k); if(b&&b.url){ URL.revokeObjectURL(b.url); } BL.delete(k); }); }
+    L.forEach(k=>{ if(BL.has(k)) return; BL.set(k,{}); fetch(k+'?v=56').then(r=>r.ok?r.blob():null).then(bl=>{ if(bl&&BL.has(k)) BL.get(k).url=URL.createObjectURL(bl); }).catch(()=>BL.delete(k)); }); };
+  const _sw=show; show=function(p){ _sw(p); if(VG[p]) setTimeout(()=>load(p),350); }; if(VG[cur]) load(cur); }
 
 barFor(cur);
 </script>
