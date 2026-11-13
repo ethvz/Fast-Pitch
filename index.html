@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Fast Pitch 2027">
-<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#000000">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Fast Pitch 2027">
@@ -1585,6 +1585,15 @@ body.pkon #bar{z-index:61!important}
 .hcat .ht[data-k=shp2] img[src*="scr.webp"]{position:absolute!important;inset:0!important;left:0!important;top:0!important;width:100%!important;height:100%!important;max-width:none!important;object-fit:cover!important;object-position:50% 50%;transform:none!important}
 .hcat .ht[data-k=shp2]:has(img[src*="scr.webp"]){overflow:hidden;border-radius:20.5px}
 .hcat .ht[data-k=shp2]:has(img[src*="scr.webp"]) .cl{z-index:2;color:rgba(255,255,255,.6)!important}
+
+/* hub tiles on Sensors/Smart Home: panel framed lower, title on top */
+.hcat .ht[data-k=shp2]:has(img[src*="scr.webp"]) .cl{top:14px!important;bottom:auto!important;font-size:15px!important;color:rgba(255,255,255,.7)!important}
+
+/* live "Smart Hub Pro II" labels (old images had it baked in) */
+#allTiles .ht[data-k=shp2]::after,.hcat .ht[data-k=shp2]:has(img[src*="scr.webp"])::after{content:"Smart Hub Pro II";position:absolute;left:0;right:0;text-align:center;pointer-events:none;z-index:3;letter-spacing:-.1px}
+#allTiles .ht[data-k=shp2] img{scale:.84;translate:0 -6%}
+#allTiles .ht[data-k=shp2]::after{bottom:6%;font-size:11.5px;color:rgba(255,255,255,.5)}
+.hcat .ht[data-k=shp2]:has(img[src*="scr.webp"])::after{top:16px;font-size:16px;color:rgba(255,255,255,.72)}
 </style>
 <div id="stage">
   <div id="screen">
@@ -1599,13 +1608,13 @@ body.pkon #bar{z-index:61!important}
 
     <!-- VERIFY -->
     <section class="page" id="p-verify">
-      <img class="full" src="assets/verify.webp?v=56" alt="">
+      <img class="full" src="assets/verify.webp?v=176" alt="">
       <div class="hot" style="left:716px;top:384px;width:104px;height:42px;border-radius:21px" data-toast="Check Now"></div>
     </section>
 
     <!-- MILITARY -->
     <section class="page" id="p-military">
-      <img class="full" src="assets/military_hero.webp?v=56" alt="">
+      <img class="full" src="assets/military_hero.webp?v=176" alt="">
       <div class="scroll">
         <div class="sheet">
           <h2>Vivint Military Policy</h2>
@@ -1665,7 +1674,7 @@ body.pkon #bar{z-index:61!important}
 
     <!-- COMPATIBILITY -->
     <section class="page" id="p-compat">
-      <img class="full" src="assets/compat_grid.webp?v=56" alt="">
+      <img class="full" src="assets/compat_grid.webp?v=176" alt="">
       <div class="hot" style="left:30px;top:477px;width:733px;height:143px" data-cm="2gig"></div>
       <div class="hot" style="left:783px;top:477px;width:563px;height:143px" data-cm="adt"></div>
       <div class="hot" style="left:30px;top:640px;width:733px;height:143px" data-cm="dsc"></div>
@@ -1689,7 +1698,7 @@ body.pkon #bar{z-index:61!important}
 
     <!-- SOCIAL -->
     <section class="page" id="p-social">
-      <img src="assets/social.webp?v=56" alt="" style="position:absolute;left:0;top:110px;width:1376px">
+      <img src="assets/social.webp?v=176" alt="" style="position:absolute;left:0;top:110px;width:1376px">
       <h2>Connect with us</h2>
       <div class="hot" style="left:170px;top:236px;width:110px;height:76px;border-radius:38px" data-toast="Facebook"></div>
       <div class="hot" style="left:486px;top:236px;width:110px;height:76px;border-radius:38px" data-toast="Instagram"></div>
@@ -1712,9 +1721,9 @@ body.pkon #bar{z-index:61!important}
     <!-- MOVES -->
     <section class="page" id="p-moves">
       <h2>Moving Options</h2>
-      <div class="mcard" style="left:62px"><img src="assets/move1.webp?v=56" alt=""><h3>Get a new security<br>system</h3><p>Customize a brand new system for your new space using our latest smart home products and technology.</p><small>(Your old equipment loan needs to be paid off.)</small><div class="price">No Cost</div></div>
-      <div class="mcard" style="left:490px"><img src="assets/move2.webp?v=56" alt=""><h3>Move your security<br>system yourself</h3><p>You move the key components of your system, and we’ll get it set up in your new home.</p><div class="price">$149</div></div>
-      <div class="mcard" style="left:916px"><img src="assets/move3.webp?v=56" alt=""><h3>Professional removal,<br>professional installation</h3><p>Let us handle the professional removal of your system and installation in your new home.</p><div class="price">$298</div></div>
+      <div class="mcard" style="left:62px"><img src="assets/move1.webp?v=176" alt=""><h3>Get a new security<br>system</h3><p>Customize a brand new system for your new space using our latest smart home products and technology.</p><small>(Your old equipment loan needs to be paid off.)</small><div class="price">No Cost</div></div>
+      <div class="mcard" style="left:490px"><img src="assets/move2.webp?v=176" alt=""><h3>Move your security<br>system yourself</h3><p>You move the key components of your system, and we’ll get it set up in your new home.</p><div class="price">$149</div></div>
+      <div class="mcard" style="left:916px"><img src="assets/move3.webp?v=176" alt=""><h3>Professional removal,<br>professional installation</h3><p>Let us handle the professional removal of your system and installation in your new home.</p><div class="price">$298</div></div>
     </section>
 
     <!-- PROTECTION -->
@@ -1741,37 +1750,37 @@ body.pkon #bar{z-index:61!important}
 
     <!-- MONITORING -->
     <section class="page" id="p-monitoring"><div class="lpage" id="monScroll">
-      <div class="otab mtab" data-t="0"><img class="full" src="assets/mon_hero.webp?v=56" alt=""></div>
+      <div class="otab mtab" data-t="0"><img class="full" src="assets/mon_hero.webp?v=176" alt=""></div>
       <div class="otab mtab" data-t="1">
-        <img class="full sub" data-s="0" src="assets/mon_home.webp?v=56" alt="">
-        <img class="full sub" data-s="1" src="assets/mon_trained.webp?v=56" alt="" hidden>
-        <img class="full sub" data-s="2" src="assets/mon_911.webp?v=56" alt="" hidden>
-        <img class="full sub" data-s="3" src="assets/mon_simple.webp?v=56" alt="" hidden>
+        <img class="full sub" data-s="0" src="assets/mon_home.webp?v=176" alt="">
+        <img class="full sub" data-s="1" src="assets/mon_trained.webp?v=176" alt="" hidden>
+        <img class="full sub" data-s="2" src="assets/mon_911.webp?v=176" alt="" hidden>
+        <img class="full sub" data-s="3" src="assets/mon_simple.webp?v=176" alt="" hidden>
         <div class="hot" style="left:368px;top:778px;width:140px;height:142px" data-sub="0"></div>
         <div class="hot" style="left:524px;top:778px;width:140px;height:142px" data-sub="1"></div>
         <div class="hot" style="left:680px;top:778px;width:140px;height:142px" data-sub="2"></div>
         <div class="hot" style="left:836px;top:778px;width:140px;height:142px" data-sub="3"></div>
       </div>
-      <div class="otab mtab" data-t="2"><img class="full" src="assets/mon_insurance.webp?v=56" alt=""></div>
+      <div class="otab mtab" data-t="2"><img class="full" src="assets/mon_insurance.webp?v=176" alt=""></div>
       <div class="otab mtab" data-t="3">
-        <img class="full sub" data-s="0" src="assets/mon_breakin.webp?v=56" alt="">
-        <img class="full sub" data-s="1" src="assets/mon_smoke.webp?v=56" alt="" hidden>
-        <img class="full sub" data-s="2" src="assets/mon_water.webp?v=56" alt="" hidden>
-        <img class="full sub" data-s="3" src="assets/mon_medical.webp?v=56" alt="" hidden>
-        <img class="full sub" data-s="4" src="assets/mon_duress.webp?v=56" alt="" hidden>
+        <img class="full sub" data-s="0" src="assets/mon_breakin.webp?v=176" alt="">
+        <img class="full sub" data-s="1" src="assets/mon_smoke.webp?v=176" alt="" hidden>
+        <img class="full sub" data-s="2" src="assets/mon_water.webp?v=176" alt="" hidden>
+        <img class="full sub" data-s="3" src="assets/mon_medical.webp?v=176" alt="" hidden>
+        <img class="full sub" data-s="4" src="assets/mon_duress.webp?v=176" alt="" hidden>
         <div class="hot" style="left:290px;top:778px;width:140px;height:142px" data-sub="0"></div>
         <div class="hot" style="left:446px;top:778px;width:140px;height:142px" data-sub="1"></div>
         <div class="hot" style="left:602px;top:778px;width:140px;height:142px" data-sub="2"></div>
         <div class="hot" style="left:758px;top:778px;width:140px;height:142px" data-sub="3"></div>
         <div class="hot" style="left:914px;top:778px;width:140px;height:142px" data-sub="4"></div>
       </div>
-      <div class="otab mtab" data-t="4"><img class="full" src="assets/mon_trusted.webp?v=56" alt=""></div>
+      <div class="otab mtab" data-t="4"><img class="full" src="assets/mon_trusted.webp?v=176" alt=""></div>
     </div></section>
 
     <!-- ABOUT -->
     <section class="page" id="p-about">
-      <img class="full" src="assets/about.webp?v=56" alt="">
-      <img id="awardTile" src="assets/award_tile0.webp?v=56" alt="">
+      <img class="full" src="assets/about.webp?v=176" alt="">
+      <img id="awardTile" src="assets/award_tile0.webp?v=176" alt="">
       <div class="hot" style="left:32px;top:36px;width:286px;height:616px" data-go="gives"></div>
       <div class="hot" style="left:344px;top:34px;width:342px;height:228px" data-toast="Since 1999"></div>
       <div class="hot" style="left:714px;top:34px;width:176px;height:228px" data-go="sign"></div>
@@ -1782,10 +1791,10 @@ body.pkon #bar{z-index:61!important}
       <div class="hot" style="left:414px;top:690px;width:512px;height:234px" data-go="home"></div>
       <div class="hot" style="left:952px;top:690px;width:386px;height:234px" data-go="patents"></div>
     </section>
-    <section class="page" id="p-gives"><img class="full" src="assets/gives.webp?v=56" alt=""></section>
-    <section class="page" id="p-map"><img class="full" src="assets/map.webp?v=56" alt=""></section>
-    <section class="page" id="p-awards"><img class="full" src="assets/awards.webp?v=56" alt=""></section>
-    <section class="page" id="p-sign"><div class="sgn-sc"><div class="sgn-s"><img src="assets/sign.webp?v=56" alt="" draggable="false"></div><div class="sgn-s"><img src="assets/sign_house.webp?v=56" alt="" draggable="false"></div></div><div class="sgn-dots"><i class="on"></i><i></i></div></section>
+    <section class="page" id="p-gives"><img class="full" src="assets/gives.webp?v=176" alt=""></section>
+    <section class="page" id="p-map"><img class="full" src="assets/map.webp?v=176" alt=""></section>
+    <section class="page" id="p-awards"><img class="full" src="assets/awards.webp?v=176" alt=""></section>
+    <section class="page" id="p-sign"><div class="sgn-sc"><div class="sgn-s"><img src="assets/sign.webp?v=176" alt="" draggable="false"></div><div class="sgn-s"><img src="assets/sign_house.webp?v=176" alt="" draggable="false"></div></div><div class="sgn-dots"><i class="on"></i><i></i></div></section>
 
     <!-- PATENTS -->
     <section class="page" id="p-patents">
@@ -1820,7 +1829,7 @@ body.pkon #bar{z-index:61!important}
     </section>
 
     <!-- AI -->
-    <section class="page" id="p-ai"><img class="full" src="assets/ai_wheel.webp?v=56" alt=""><div id="aiHot"></div></section>
+    <section class="page" id="p-ai"><img class="full" src="assets/ai_wheel.webp?v=176" alt=""><div id="aiHot"></div></section>
 
     <!-- WHATS NEW -->
     <section class="page" id="p-whatsnew">
@@ -1848,18 +1857,18 @@ body.pkon #bar{z-index:61!important}
         <div class="ochx"><div class="och-glow"></div>
           <div class="och-txt"><div class="eb">Meet the Outdoor Camera Pro 3</div><h1>Our most advanced<br>outdoor camera yet.</h1><div class="och-sub">4K clarity. Smart Deter. Built to stop crime before it starts.</div></div>
           <div class="och-prod"><img data-k="c0" src="assets/och/c0.webp?v=87" alt=""><img data-k="c1" src="assets/och/c1.webp?v=87" alt=""><img data-k="s0" src="assets/och/s0.webp?v=87" alt=""><img data-k="s1" src="assets/och/s1.webp?v=87" alt=""></div></div>
-        <img class="full" id="ocHeroImg" src="assets/oc/g2_hero.webp?v=56" alt="" hidden>
+        <img class="full" id="ocHeroImg" src="assets/oc/g2_hero.webp?v=176" alt="" hidden>
         <div id="ocHeroHot"></div>
       </div>
       <div class="otab hum" data-t="spin"><div class="hum-st"><video id="humV" src="assets/hum.mp4?v=87" muted playsinline preload="auto"></video></div></div>
       <div class="otab" data-t="feat">
-        <img class="full" id="ocFeatImg" src="assets/oc/f_detect.webp?v=56" alt="">
+        <img class="full" id="ocFeatImg" src="assets/oc/f_detect.webp?v=176" alt="">
         <video class="ovid" id="ocFeatVid" muted playsinline loop hidden></video>
         <div id="ocFeatHot"></div>
         <div class="tip" id="ocTip"><span class="tx" data-tipx="1"><svg width="11" height="11" viewBox="0 0 12 12" stroke="#fff" stroke-width="1.6"><path d="M1 1l10 10M11 1L1 11"/></svg></span><div id="ocTipTx"></div></div>
       </div>
       <div class="otab" data-t="phone">
-        <img class="full" id="ocPhoneImg" src="assets/oc/p0.webp?v=56" alt="">
+        <img class="full" id="ocPhoneImg" src="assets/oc/p0.webp?v=176" alt="">
         <video class="ovid" id="ocPhoneVid" playsinline style="border-radius:0"></video>
         <div id="ocPhoneHot"></div>
       </div>
@@ -1932,7 +1941,7 @@ body.pkon #bar{z-index:61!important}
     <section class="page" id="p-history"></section>
 
     <!-- PROFESSIONAL INSTALLATION -->
-    <section class="page" id="p-install"><img class="full" src="assets/p/install.webp?v=56" alt="Professional installation: We'll do the hard work"></section>
+    <section class="page" id="p-install"><img class="full" src="assets/p/install.webp?v=176" alt="Professional installation: We'll do the hard work"></section>
 
     <!-- GENERIC PRODUCT PAGES -->
     <section class="page" id="p-prod"><div class="lpage" id="prScroll"></div><div class="ptitle" id="prTitle"></div></section>
@@ -1956,7 +1965,7 @@ body.pkon #bar{z-index:61!important}
     <button class="mclose" style="left:1235px;top:59px" data-close="m-compat"><svg width="38" height="38" viewBox="0 0 38 38" stroke="#fff" stroke-width="3"><path d="M3 3l32 32M35 3L3 35"/></svg></button>
   </div>
   <div class="modal" id="m-video" style="background:#000">
-    <img src="assets/mon_video.webp?v=56" alt="" class="full" style="height:964px">
+    <img src="assets/mon_video.webp?v=176" alt="" class="full" style="height:964px">
     <button class="mclose" style="left:1282px;top:34px" data-close="m-video"></button>
   </div>
   <div class="modal" id="m-pricing">
@@ -1966,7 +1975,7 @@ body.pkon #bar{z-index:61!important}
     <div id="kits"></div>
   </div>
   <div class="modal" id="m-note" style="background:rgba(0,0,0,.35);bottom:68px">
-    <img src="assets/oc/note.webp?v=56" alt="" style="position:absolute;left:92px;top:48px;width:1192px;height:898px">
+    <img src="assets/oc/note.webp?v=176" alt="" style="position:absolute;left:92px;top:48px;width:1192px;height:898px">
     <div class="hot" style="left:1212px;top:68px;width:52px;height:52px;border-radius:50%" data-note="no"></div>
     <div class="hot" style="left:340px;top:802px;width:206px;height:62px;border-radius:31px" data-note="no"></div>
     <div class="hot" style="left:572px;top:802px;width:462px;height:62px;border-radius:31px" data-note="yes"></div>
@@ -1990,13 +1999,19 @@ const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelect
 
 /* ---------- scale stage ---------- */
 let HW=1376;
-function fit(){ const st=$('#stage'), vw=document.documentElement.clientWidth||innerWidth, vh=document.documentElement.clientHeight||innerHeight;
+function safeBox(){ let pr=document.getElementById('safeProbe'); if(!pr){ pr=document.createElement('div'); pr.id='safeProbe';
+  pr.style.cssText='position:fixed;left:0;top:0;width:100vw;height:100vh;height:100dvh;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);box-sizing:border-box;visibility:hidden;pointer-events:none;z-index:-1'; document.documentElement.appendChild(pr); }
+  const cs=getComputedStyle(pr), t=parseFloat(cs.paddingTop)||0, b=parseFloat(cs.paddingBottom)||0, l=parseFloat(cs.paddingLeft)||0, r=parseFloat(cs.paddingRight)||0;
+  const H=Math.min(innerHeight, pr.getBoundingClientRect().height||innerHeight), Wd=innerWidth;
+  /* status bar: keep content below it; home indicator: keep footer above it */
+  return {x:l, y:t, w:Wd-l-r, h:H-t-Math.max(b,0)}; }
+function fit(){ const st=$('#stage'), sb=safeBox(), vw=sb.w, vh=sb.h;
   /* iPads in landscape (aspect 4:3 up to ~1.55): widen the stage so the screen fills edge to edge; phones and portrait keep the fixed 4:3 stage */
   const tablet=vw>vh && Math.min(vw,vh)>=600;
   const W=tablet?Math.round(Math.min(1600,Math.max(1376,1032*vw/vh))):1376;
   st.style.width=W+'px'; st.style.setProperty('--gx',((W-1376)/2)+'px'); st.style.setProperty('--W',W+'px'); HW=W; if(window.homeLayout) homeLayout();
   const sc=Math.min(vw/W,vh/1032);
-  st.style.left='50%'; st.style.top='50%'; st.style.transformOrigin='50% 50%'; st.style.transform=`translate(-50%,-50%) scale(${sc})`; }
+  st.style.left=(sb.x+vw/2)+'px'; st.style.top=(sb.y+vh/2)+'px'; st.style.transformOrigin='50% 50%'; st.style.transform=`translate(-50%,-50%) scale(${sc})`; }
 addEventListener('resize',fit);addEventListener('orientationchange',()=>setTimeout(fit,250));addEventListener('pageshow',fit);setTimeout(fit,300);fit();
 
 /* ---------- menu ---------- */
@@ -2060,7 +2075,7 @@ $('#tl').insertAdjacentHTML('beforeend',[1.5,11.3,12.3,14.3,25.7,51.9,70.1,71.1,
 let big=false; function amt(){big=!big;$$('.amtTxt').forEach(e=>e.textContent=big?'$1,500':'$1,000');$('#amtBtn').classList.toggle('on',big)}
 
 /* ---------- compatibility ---------- */
-function cm(k){$('#cmImg').src='assets/cm_'+k+'.webp?v=56';$('#m-compat').classList.add('on')}
+function cm(k){$('#cmImg').src='assets/cm_'+k+'.webp?v=176';$('#m-compat').classList.add('on')}
 
 /* ---------- protection coverage ---------- */
 const COV=[['Monthly Cost','$7.99','$27.99<small>Compare</small>','$32.99<small>Compare</small>'],['PRMR Adder','$5.00 RMR','$10.00 RMR','$12.00 RMR'],
@@ -2081,7 +2096,7 @@ function sub(el,i){const t=el.closest('.mtab');$$('.sub',t).forEach(s=>s.hidden=
 let signHouse=false; function sign(h,noScroll){signHouse=!!h; const sc=$('#p-sign .sgn-sc'); if(sc&&!noScroll) sc.scrollTo({top:h?sc.clientHeight:0,behavior:'smooth'}); $$('#barRight [data-sign]').forEach(b=>b.classList.toggle('on',+b.dataset.sign===+signHouse)); $$('#p-sign .sgn-dots i').forEach((d,i)=>d.classList.toggle('on',i===+signHouse)); }
 
 /* ---------- about award tile carousel ---------- */
-let at=0; setInterval(()=>{if(cur!=='about')return;const t=$('#awardTile');if(!t)return;t.style.opacity=0;setTimeout(()=>{at=(at+1)%3;t.src='assets/award_tile'+at+'.webp?v=56';t.style.opacity=1},450)},3500);
+let at=0; setInterval(()=>{if(cur!=='about')return;const t=$('#awardTile');if(!t)return;t.style.opacity=0;setTimeout(()=>{at=(at+1)%3;t.src='assets/award_tile'+at+'.webp?v=176';t.style.opacity=1},450)},3500);
 
 /* ---------- patents ---------- */
 const PT=['Methods for Providing Notifications for Follow-Up Actions in Response to Events Detected by an Automation System','Camera with a Lens Connector','System and Methods for Correlating Sound Events to Security and/or Automation System Operations','Mobile Personal Device','Outdoor Camera','Software Updates From a Security Control Unit','Multicast Traffic Management Within a Wireless Mesh Network','Relayed Network Access Control Systems and Methods','Communications Based on Geo Location Information','Touch Panel','Control Panel','Node Directed Multicast Traffic Management Systems and Methods for Mesh Networks','Setting Up a System with a Mobile Device','Outdoor Modular Radio','Smart Doorman','Location-based Access Point Module Control','Home Automation Communication System','Dynamic Linking','Smart Door Lock','Integrated Radio and Solar Panels','Geo-location Services','Hinge Sensor for Barrier','Security System with Earthquake Detection','Smart Detection','Door to Door Sales Management Tool','Techniques for Lead Scoring','Sleep State Monitoring','Premises Security','Keypad Projection','Active Infrared Sensor','Thermostat with Downcast Light','Smart Wake','Remote Talk Down to Panel, Camera and Speaker','Security Camera Privacy Shutter','Interface of an Automation System','Monitoring Vehicle Usage','Sprinkler Control Systems and Methods','Signal Cloning','Refuse Removal Reminders','Entry Detection'];
@@ -2090,7 +2105,7 @@ $('#prows').innerHTML=[0,1,2,3].map(r=>{const items=PT.slice(r*10,r*10+10);const
  return `<div class="prow" style="top:${286+r*186}px;animation:${r%2?'mqr':'mq'} ${70+r*8}s linear infinite">${cards}${cards}</div>`}).join('');
 
 /* ---------- pricing ---------- */
-const KV=sc=>`<div class="kv"><img class="kh" src="assets/cat/shp2_home.webp?v=56" alt=""><img class="ka" src="assets/cat/app.webp?v=56" alt=""><div class="kvd">${['window','window','window','motion','water'].concat(sc?['therm']:[]).map(x=>`<img class="${x==='water'||x==='therm'?'sq':''}" src="assets/cat/${x}.webp?v=56" alt="">`).join('')}</div></div>`;
+const KV=sc=>`<div class="kv"><img class="kh" src="assets/cat/shp2_home.webp?v=176" alt=""><img class="ka" src="assets/cat/app.webp?v=176" alt=""><div class="kvd">${['window','window','window','motion','water'].concat(sc?['therm']:[]).map(x=>`<img class="${x==='water'||x==='therm'?'sq':''}" src="assets/cat/${x}.webp?v=176" alt="">`).join('')}</div></div>`;
 let plan='std';
 function kits(){
  const sc=plan==='sc';
@@ -2137,7 +2152,7 @@ $('#aiHot').innerHTML=Object.entries(AI).map(([k,v])=>`<div class="hot" style="l
 const QI='<svg width="28" height="26" viewBox="0 0 28 26" fill="none" stroke="#f37334" stroke-width="2.2"><path d="M2 2h24v17H12l-6 5v-5H2z"/><path d="M9 8c-1 1-1.5 2.5-1 4M15 8c-1 1-1.5 2.5-1 4" stroke-width="2.6"/></svg>';
 const PI='<svg width="26" height="30" viewBox="0 0 26 30" fill="none" stroke="#333" stroke-width="1.8"><rect x="4" y="2" width="18" height="26" rx="4"/><circle cx="13" cy="12" r="5"/><circle cx="13" cy="12" r="1.5"/></svg>';
 function ai(k){const v=AI[k];const top=v.t.length>18&&v.t!=='Spotlight Tracking'?204:(v.tag===2?188:146);
- $('#aibox').innerHTML=`<img class="img" src="assets/ai_${k}.webp?v=56" alt=""><div class="prods"><h5>${v.p.length>1?'PRODUCTS':'PRODUCT'}</h5><div class="chips${v.p.length===1?' one':''}">${v.p.map(p=>`<div class="chip">${PI}<span>${p}</span></div>`).join('')}</div></div>
+ $('#aibox').innerHTML=`<img class="img" src="assets/ai_${k}.webp?v=176" alt=""><div class="prods"><h5>${v.p.length>1?'PRODUCTS':'PRODUCT'}</h5><div class="chips${v.p.length===1?' one':''}">${v.p.map(p=>`<div class="chip">${PI}<span>${p}</span></div>`).join('')}</div></div>
  <h2>${v.t}${v.tag===1?'<span class="tag">PATENTED TECHNOLOGY</span>':''}${v.tag===2?'<br><span class="tag" style="margin:0;top:-10px">PATENTED TECHNOLOGY</span>':''}</h2>
  <div class="aibody" style="top:${top}px"><div class="q">${QI}<span>${v.q}</span></div><h6>WHAT THE FEATURE DOES${v.star?'*':''}</h6><p class="t">${v.d}</p><h6>THE AI ELEMENT</h6><p class="t">${v.a}</p>${v.star?'<p class="fn">*Only available with Premium Video</p>':''}</div>
  <button class="aix" data-close="m-ai"><svg width="14" height="14" viewBox="0 0 16 16"><path d="M2 2l12 12M14 2L2 14" stroke="#fff" stroke-width="3"/></svg></button>`;
@@ -2245,11 +2260,11 @@ function ocRender(){
     else { img=OC.deter?'hero_s11':'hero_s0';
       hot=DT(732)+SP+(OC.deter?'<div class="ocb" style="left:1172px;top:56px" data-whistle="1" title="Whistle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10v4h4l5 4V6L8 10z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg></div>':''); }
     if(!g2) hot+='<div class="ocb" style="left:1256px;top:56px" data-go="ai" title="AI detection">AI</div>';
-    $('#ocHeroImg').hidden=!g2; if(g2) $('#ocHeroImg').src='assets/oc/'+img+'.webp?v=56'; { const key=(OC.spot?'s':'c')+(OC.deter?1:0); $$('.och-prod img').forEach(im=>im.classList.toggle('on',im.dataset.k===key)); } $('#ocHeroHot').innerHTML=hot; togGo($('#ocHeroHot'));
+    $('#ocHeroImg').hidden=!g2; if(g2) $('#ocHeroImg').src='assets/oc/'+img+'.webp?v=176'; { const key=(OC.spot?'s':'c')+(OC.deter?1:0); $$('.och-prod img').forEach(im=>im.classList.toggle('on',im.dataset.k===key)); } $('#ocHeroHot').innerHTML=hot; togGo($('#ocHeroHot'));
   }
   {
     let hot='';
-    if(g2){ $('#ocFeatImg').src='assets/oc/g2_detect.webp?v=56'; vid($('#ocFeatVid'),'g2detect',[0,0,1376,964]);
+    if(g2){ $('#ocFeatImg').src='assets/oc/g2_detect.webp?v=176'; vid($('#ocFeatVid'),'g2detect',[0,0,1376,964]);
       hot=G2F.map((n,i)=>H(100,380+i*60,480,60,i?`data-toast="${n} (Gen 2)"`:'',24)).join('')+H(480,80,120,36,'data-ocmode="p3"',18);
       $('#ocTip').classList.remove('on');
     } else { const f=FEAT[OC.feat]; xfade($('#ocFeatImg'),'assets/oc/'+f.bg+'.webp?v=106');
@@ -2270,7 +2285,7 @@ function ocRender(){
   { $('#ocPick').hidden=OC.arlo; $('#ocArlo').hidden=!OC.arlo; const av=$('#ocArloVid'); av.__u=OC.arlo?'arlo':''; if(OC.arlo&&av.closest('[data-vis="1"]')){av.currentTime=0;av.play().catch(()=>{});} else av.pause(); }
   {
     if(!OC.hist) OC.hist='f'; const inH=true;
-    { const sec=$('#ocStrip').closest('.otab'), im=sec.querySelectorAll('#ocStrip img'); ['f','s'].forEach((v,i)=>{const u='assets/oc/sp_'+v+(OC.specSpot?1:0)+'.webp?v=56'; if(!im[i].src.endsWith(u)) im[i].src=u;});
+    { const sec=$('#ocStrip').closest('.otab'), im=sec.querySelectorAll('#ocStrip img'); ['f','s'].forEach((v,i)=>{const u='assets/oc/sp_'+v+(OC.specSpot?1:0)+'.webp?v=176'; if(!im[i].src.endsWith(u)) im[i].src=u;});
       sec.querySelectorAll('[data-specspot]').forEach(b=>b.classList.toggle('on',+b.dataset.specspot===(OC.specSpot?1:0)));
       const si=sec.querySelector('.fsp.spot .ind'); if(si) si.style.transform=`translateX(${OC.specSpot?100:0}%)`;
       
@@ -2328,7 +2343,7 @@ const PTITLE={icp:'Vivint Indoor Camera Pro',motion:'Vivint Motion Sensor',glass
 function prTitle(){ $('#prTitle').textContent=PR.id==='window'&&PR.door?'Vivint Door Sensor':(PTITLE[PR.id]||''); }
 function prBuild(){ const box=$('#prScroll'); PR.st={}; prTitle(); $('#p-prod .ptitle').classList.toggle('dk',PR.id==='icp');
   box.innerHTML=prSecs().map(t=>{PR.st[t]={sub:0,spec:'f',tip:false};return t==='which'?SMK_WHICH():XS_TABS.includes(t)?xsSec(PR.id,t,'psec'):(t==='hero'&&LHERO[PR.id])?LH(PR.id):(t==='hero'&&PR.id==='window')
-  ?`<div class="psec" data-t="hero" data-vis="0"><div class="strip"><img src="assets/p/window.webp?v=56" alt=""><img src="assets/p/door.webp?v=56" alt=""></div><div class="dwseg spill"><i class="ind"></i><button class="on" data-door="0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4v16"/><rect x="6.5" y="7" width="6" height="10" rx="1.5"/><rect x="14.5" y="9" width="4" height="6" rx="1"/></svg>Surface Mount</button><button data-door="1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h6v16H4M20 4h-6v16h6"/><circle cx="12" cy="12" r="1.6"/></svg>Recessed</button></div><div class="hl"></div></div>`
+  ?`<div class="psec" data-t="hero" data-vis="0"><div class="strip"><img src="assets/p/window.webp?v=176" alt=""><img src="assets/p/door.webp?v=176" alt=""></div><div class="dwseg spill"><i class="ind"></i><button class="on" data-door="0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4v16"/><rect x="6.5" y="7" width="6" height="10" rx="1.5"/><rect x="14.5" y="9" width="4" height="6" rx="1"/></svg>Surface Mount</button><button data-door="1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h6v16H4M20 4h-6v16h6"/><circle cx="12" cy="12" r="1.6"/></svg>Recessed</button></div><div class="hl"></div></div>`
   :(t==='hero'&&PR.id==='icp')
   ?`<div class="psec ichv" data-t="hero" data-vis="0"><video class="ich-vid" src="assets/p/ic_hero.mp4?v=63" poster="assets/p/ic_hero_v.jpg?v=63" muted playsinline loop autoplay preload="auto"></video><div class="ich-txt"><h1>Be home.<br>From anywhere.</h1><p>Check in, talk to the kids, and see what’s happening, all from your phone.</p></div><button class="dbai" data-go="ai">AI</button></div>`
   :t==='specs'
@@ -2340,9 +2355,9 @@ function prRender(only){ const box=$('#prScroll');
     if(t==='hero'&&PR.id==='window'){ if(!sec.__drag) stripSet(sec,PR.door?1:0,false); return; }
     if(t==='hero'&&PR.id==='icp'){ const v=sec.querySelector('video'); v.__u='hero'; if(sec.dataset.vis==='1'||cur==='prod') v.play().catch(()=>{}); return; }
     if(t==='specs'){ const b=r.src.replace(/_[fs](\?.*)?$/,''), im=sec.querySelectorAll('.strip img');
-      ['f','s'].forEach((v,i)=>{const u='assets/p/'+b+'_'+v+'.webp?v=56'; if(!im[i].src.endsWith(u)) im[i].src=u;});
+      ['f','s'].forEach((v,i)=>{const u='assets/p/'+b+'_'+v+'.webp?v=176'; if(!im[i].src.endsWith(u)) im[i].src=u;});
       sec.querySelector('.hl').innerHTML=r.hot; if(!sec.__drag) stripSet(sec,PR.st.specs.spec==='s'?1:0,false); return; }
-    const img=sec.querySelector('img'), u='assets/p/'+r.src+'.webp?v=56'; img.hidden=!r.src; if(r.src&&!img.src.endsWith(u)) img.src=u;
+    const img=sec.querySelector('img'), u='assets/p/'+r.src+'.webp?v=176'; img.hidden=!r.src; if(r.src&&!img.src.endsWith(u)) img.src=u;
     tileGlass(img); if(PR.id==='icp'&&t==='feat') glassAt(sec,126,448+60*PR.st.feat.sub,413);
     sec.querySelector('.hl').innerHTML=r.hot;
     vid(sec.querySelector('video'),r.clip,r.box,'assets/p/');
@@ -2359,7 +2374,7 @@ const TACT={ocp:'data-go="ocp"',dbcp:'data-go="dbcp"',icp:'data-pr="icp"',ocspot
  keypad:'data-pr="keypad"',app:'data-pr="app"',lock:'data-pr="lock"',garage:'data-pr="garage"',therm:'data-go="therm"',plug:'data-pr="plug"'};
 const HROW={cams:[1.25,1],smart:[1,1],sensors:[1.25,1,1]};
 const HHEAD={cams:['Cameras','See it all. <span>Stop it before it starts.</span>'],smart:['Smart Home','Your whole home. <span>One tap away.</span>'],sensors:['Sensors &amp; Security','Every door, window and room. <span>Covered 24/7.</span>']};
-const TIMG={sensors:{shp2:'shp2_sscr.webp?v=173#'},cams:{shp2:'shp2_cam'},smart:{shp2:'shp2_scr.webp?v=172#'}};
+const TIMG={sensors:{shp2:'shp2_sscr.webp?v=176#'},cams:{shp2:'shp2_cam'},smart:{shp2:'shp2_scr.webp?v=176#'}};
 const CNAME={ocp:'Outdoor Camera Pro III',ocspot:'Outdoor Camera Pro III with Spotlight',dbcp:'Doorbell Camera Pro II',icp:'Indoor Camera Pro',shp2:'Smart Hub Pro II',motion:'Motion Sensor',glass:'Glass Break Sensor',window:'Door/Window Sensor',water:'Water Sensor',smokeco:'Smoke/CO Detector',fire:'Smoke/CO Monitor',pendant:'Panic Pendant',fob:'Key Fob',chime:'Chime Extender',keypad:'Keypad',app:'Vivint App',lock:'Smart Lock',garage:'MyQ Garage',therm:'Smart Thermostat',plug:'Smart Plug'};
 const CROPK=['ocp','ocspot','keypad','app','shp2'];
 const ALLEQ=['motion','glass','window','water','smokeco','fire','pendant','fob','chime','lock','garage','therm','plug'];
@@ -2370,7 +2385,7 @@ let hcat='all';
 const HORD=['all','sensors','smart','cams'];
 const paneOf=c=>c==='all'?$('#homeAll'):$(`.hpane[data-c="${c}"]`);
 $$('.hpane.hcat').forEach(box=>{ const c=box.dataset.c, rows=HCAT[c], w=HROW[c];
-  box.innerHTML=`<div class="hhead"><div class="eb">${HHEAD[c][0]}</div><h2>${HHEAD[c][1]}</h2></div>`+rows.map((r,ri)=>`<div class="hrow" style="flex:${w[ri]} 1 0">`+r.map(k=>`<div class="ht" data-k="${k}" ${TACT[k]} style="flex-grow:${TILE[k][0]}"><div class="lg"></div>${CROPK.includes(k)?`<img src="assets/tiles/${timg(c,k)}.webp?v=56" alt="">`:`<img class="cp" src="assets/cat/${timg(c,k)}.webp?v=56" alt=""><div class="cl">${CNAME[k]}</div>`}</div>`).join('')+'</div>').join(''); });
+  box.innerHTML=`<div class="hhead"><div class="eb">${HHEAD[c][0]}</div><h2>${HHEAD[c][1]}</h2></div>`+rows.map((r,ri)=>`<div class="hrow" style="flex:${w[ri]} 1 0">`+r.map(k=>`<div class="ht" data-k="${k}" ${TACT[k]} style="flex-grow:${TILE[k][0]}"><div class="lg"></div>${CROPK.includes(k)?`<img src="assets/tiles/${timg(c,k)}.webp?v=176" alt="">`:`<img class="cp" src="assets/cat/${timg(c,k)}.webp?v=176" alt=""><div class="cl">${CNAME[k]}</div>`}</div>`).join('')+'</div>').join(''); });
 const TEASE='cubic-bezier(.22,.9,.2,1)';
 /* p = fractional pane index (0..3); moves track + pill indicator together */
 function trackSet(p,anim){ const tr=$('#homeTrack'), ind=$('#homeSeg .sind'), bs=$$('#homeSeg button');
@@ -2386,8 +2401,8 @@ document.addEventListener('pointerdown',e=>{const h=e.target.closest('.hot,.bbtn
 
 const ALLPOS={"ocspot": [920.5, 18.6, 434.1, 375.0], "ocp": [20.6, 18.6, 434.8, 375.0], "dbcp": [470.6, 18.6, 209.2, 375.0], "icp": [693.5, 18.6, 211.2, 375.0], "shp2": [470.6, 406.0, 434.1, 295.2], "motion": [20.6, 406.0, 135.5, 172.2], "glass": [169.2, 406.0, 136.2, 172.2], "window": [319.2, 406.0, 136.2, 172.2], "lock": [920.5, 406.0, 209.8, 264.5], "garage": [1144.1, 406.0, 210.5, 264.5], "water": [20.6, 590.6, 135.5, 172.2], "smokeco": [169.2, 590.6, 136.2, 172.2], "fire": [319.2, 590.6, 136.2, 172.2], "keypad": [471.3, 713.6, 209.2, 233.9], "app": [694.9, 713.6, 209.2, 233.9], "therm": [920.5, 682.9, 209.8, 264.5], "plug": [1144.1, 682.9, 210.5, 264.5], "pendant": [20.6, 775.2, 135.5, 172.2], "fob": [169.2, 775.2, 136.2, 172.2], "chime": [319.2, 775.2, 136.2, 172.2]};
 $('#allTiles').innerHTML=Object.entries(ALLPOS).map(([k,[x,y,w,h]])=>k==='shortcuts'
-  ?`<div class="ht abs abs-sc" style="left:${x}px;top:${y}px;width:${w}px;height:${h}px"><div class="lg"></div><img src="assets/tiles/shortcuts.webp?v=56" alt=""></div>`
-  :`<div class="ht abs" data-k="${k}" ${TACT[k]} style="left:${x}px;top:${y}px;width:${w}px;height:${h}px"><div class="lg"></div>${(k==='dbcp'||k==='icp')?`<img class="cp big" src="assets/cat/${k}.webp?v=46" alt=""><div class="cl">${CNAME[k]}</div>`:ALLEQ.includes(k)?`<img class="cp" src="assets/cat/${k}.webp?v=46" alt=""><div class="cl">${CNAME[k]}</div>`:`<img src="assets/tiles/${k}.webp?v=56" alt="">`}</div>`).join('');
+  ?`<div class="ht abs abs-sc" style="left:${x}px;top:${y}px;width:${w}px;height:${h}px"><div class="lg"></div><img src="assets/tiles/shortcuts.webp?v=176" alt=""></div>`
+  :`<div class="ht abs" data-k="${k}" ${TACT[k]} style="left:${x}px;top:${y}px;width:${w}px;height:${h}px"><div class="lg"></div>${(k==='dbcp'||k==='icp')?`<img class="cp big" src="assets/cat/${k}.webp?v=176" alt=""><div class="cl">${CNAME[k]}</div>`:ALLEQ.includes(k)?`<img class="cp" src="assets/cat/${k}.webp?v=176" alt=""><div class="cl">${CNAME[k]}</div>`:`<img src="assets/tiles/${k}.webp?v=176" alt="">`}</div>`).join('');
 { const T0=17, T1=946, N0=150, k=(T1-N0)/(T1-T0);
   $$('#allTiles .ht').forEach(el=>{ const y=parseFloat(el.style.top), h=parseFloat(el.style.height); el.style.top=(N0+(y-T0)*k).toFixed(1)+'px'; el.style.height=(h*k).toFixed(1)+'px'; });
   $('#homeAll').insertAdjacentHTML('afterbegin','<div class="hall-h"><div><div class="eb">Vivint Smart Home</div><h1>One system. Every corner of your home.</h1></div><p>Security, cameras, locks and comfort, working together and protected 24/7.</p></div>'); }
@@ -2478,7 +2493,7 @@ document.addEventListener('click',e=>{ if(Date.now()-swiped<350){e.stopPropagati
 });
 
 /* ---------- preload: fetch + decode all images once so every tap swaps instantly ---------- */
-const PRE=["assets/cat/app.webp?v=46","assets/cat/chime.webp?v=46","assets/cat/dbcp.webp?v=46","assets/cat/fire.webp?v=46","assets/cat/fob.webp?v=46","assets/cat/garage.webp?v=46","assets/cat/glass.webp?v=46","assets/cat/icp.webp?v=46","assets/cat/keypad.webp?v=46","assets/cat/lock.webp?v=46","assets/cat/motion.webp?v=46","assets/cat/ocp.webp?v=46","assets/cat/ocspot.webp?v=46","assets/cat/pendant.webp?v=46","assets/cat/plug.webp?v=46","assets/cat/shp2_cam.webp?v=46","assets/cat/shp2_home.webp?v=46","assets/cat/shp2_sens.webp?v=46","assets/cat/smokeco.webp?v=46","assets/cat/therm.webp?v=46","assets/cat/water.webp?v=46","assets/cat/window.webp?v=46","assets/tiles/shp2_sens.webp?v=56","assets/tiles/shp2_cam.webp?v=56","assets/tiles/shp2_home.webp?v=56","assets/home_fg.webp?v=56","assets/tiles/ocspot.webp?v=56","assets/tiles/shortcuts.webp?v=56","assets/tiles/ocp.webp?v=56","assets/tiles/dbcp.webp?v=56","assets/tiles/icp.webp?v=56","assets/tiles/shp2.webp?v=56","assets/tiles/motion.webp?v=56","assets/tiles/glass.webp?v=56","assets/tiles/window.webp?v=56","assets/tiles/lock.webp?v=56","assets/tiles/garage.webp?v=56","assets/tiles/water.webp?v=56","assets/tiles/smokeco.webp?v=56","assets/tiles/fire.webp?v=56","assets/tiles/keypad.webp?v=56","assets/tiles/app.webp?v=56","assets/tiles/therm.webp?v=56","assets/tiles/plug.webp?v=56","assets/tiles/pendant.webp?v=56","assets/tiles/fob.webp?v=56","assets/tiles/chime.webp?v=56","assets/p/ic_f.webp?v=56", "assets/p/ic_f0.webp?v=56", "assets/p/ic_f1.webp?v=56", "assets/p/ic_f1t.webp?v=56", "assets/p/ic_f2.webp?v=56", "assets/p/ic_f3.webp?v=56", "assets/p/ic_f4.webp?v=56", "assets/p/ic_f5.webp?v=56", "assets/p/ic_f5t.webp?v=56", "assets/p/ic_hero.webp?v=56", "assets/p/ic_p0.webp?v=56", "assets/p/ic_p1.webp?v=56", "assets/p/ic_p2.webp?v=56", "assets/p/ic_p3.webp?v=56", "assets/p/ic_s.webp?v=56", "assets/p/ic_videos.webp?v=56","assets/p/install.webp?v=56","assets/p/door_f.webp?v=56", "assets/p/door_s.webp?v=56", "assets/p/fire_f.webp?v=56", "assets/p/fire_s.webp?v=56", "assets/p/fob_f.webp?v=56", "assets/p/fob_s.webp?v=56", "assets/p/garage_f.webp?v=56", "assets/p/garage_s.webp?v=56", "assets/p/glass_f.webp?v=56", "assets/p/glass_s.webp?v=56", "assets/p/keypad_f.webp?v=56", "assets/p/keypad_s.webp?v=56", "assets/p/lock_f.webp?v=56", "assets/p/lock_s.webp?v=56", "assets/p/motion_f.webp?v=56", "assets/p/motion_s.webp?v=56", "assets/p/pendant_f.webp?v=56", "assets/p/pendant_s.webp?v=56", "assets/p/plug_f.webp?v=56", "assets/p/plug_s.webp?v=56", "assets/p/smokeco_f.webp?v=56", "assets/p/smokeco_s.webp?v=56", "assets/p/water_f.webp?v=56", "assets/p/water_s.webp?v=56", "assets/p/window_f.webp?v=56", "assets/p/window_s.webp?v=56","assets/p/app_0.webp?v=56", "assets/p/app_1.webp?v=56", "assets/p/app_10.webp?v=56", "assets/p/app_11.webp?v=56", "assets/p/app_2.webp?v=56", "assets/p/app_3.webp?v=56", "assets/p/app_4.webp?v=56", "assets/p/app_5.webp?v=56", "assets/p/app_6.webp?v=56", "assets/p/app_7.webp?v=56", "assets/p/app_8.webp?v=56", "assets/p/app_9.webp?v=56", "assets/p/app_hero.webp?v=56", "assets/p/chime.webp?v=56", "assets/p/door.webp?v=56", "assets/p/fire.webp?v=56", "assets/p/fob.webp?v=56", "assets/p/g0.webp?v=56", "assets/p/g1.webp?v=56", "assets/p/g2.webp?v=56", "assets/p/garage_f.webp?v=56", "assets/p/garage_feat.webp?v=56", "assets/p/garage_hero.webp?v=56", "assets/p/garage_s.webp?v=56", "assets/p/glass.webp?v=56", "assets/p/keypad.webp?v=56", "assets/p/l0.webp?v=56", "assets/p/l1.webp?v=56", "assets/p/l2.webp?v=56", "assets/p/l3.webp?v=56", "assets/p/l4.webp?v=56", "assets/p/lock_f.webp?v=56", "assets/p/lock_hero.webp?v=56", "assets/p/lock_s.webp?v=56", "assets/p/motion.webp?v=56", "assets/p/pendant.webp?v=56", "assets/p/plug_f.webp?v=56", "assets/p/plug_hero.webp?v=56", "assets/p/plug_s.webp?v=56", "assets/p/smokeco.webp?v=56", "assets/p/water.webp?v=56", "assets/p/window.webp?v=56", "assets/home2.webp?v=56", "assets/homebar2.webp?v=56", "assets/p/i_lock.png", "assets/p/i_garage.png", "assets/oc/arlo_bg.webp?v=56", "assets/oc/f_140.webp?v=56", "assets/oc/f_4k.webp?v=56", "assets/oc/f_ai.webp?v=56", "assets/oc/f_built.webp?v=56", "assets/oc/f_detect.webp?v=56", "assets/oc/f_fast.webp?v=56", "assets/oc/f_spot.webp?v=56", "assets/oc/f_stay.webp?v=56", "assets/oc/f_vehicle.webp?v=56", "assets/oc/g2_detect.webp?v=56", "assets/oc/g2_hero.webp?v=56", "assets/oc/g2_phone.webp?v=56", "assets/oc/hero_n0.webp?v=56", "assets/oc/hero_n1.webp?v=56", "assets/oc/hero_s0.webp?v=56", "assets/oc/hero_s10.webp?v=56", "assets/oc/hero_s11.webp?v=56", "assets/oc/hist_day.webp?v=56", "assets/oc/hist_f.webp?v=56", "assets/oc/hist_night.webp?v=56", "assets/oc/i_cmp.png", "assets/oc/i_cube.png", "assets/oc/i_feat.png", "assets/oc/i_hero.png", "assets/oc/i_phone.png", "assets/oc/i_play.png", "assets/oc/i_specs.png", "assets/oc/note.webp?v=56", "assets/oc/p0.webp?v=56", "assets/oc/p1.webp?v=56", "assets/oc/p2.webp?v=56", "assets/oc/p3.webp?v=56", "assets/oc/p4.webp?v=56", "assets/oc/p5.webp?v=56", "assets/oc/p6.webp?v=56", "assets/oc/p7.webp?v=56", "assets/oc/picker.webp?v=56", "assets/oc/sp_f0.webp?v=56", "assets/oc/sp_f1.webp?v=56", "assets/oc/sp_s0.webp?v=56", "assets/oc/sp_s1.webp?v=56", "assets/oc/videos.webp?v=56", "assets/about.webp?v=56", "assets/ai_aivideo.webp?v=56", "assets/ai_comfort.webp?v=56", "assets/ai_deter.webp?v=56", "assets/ai_faces.webp?v=56", "assets/ai_holiday.webp?v=56", "assets/ai_homehighlights.webp?v=56", "assets/ai_package.webp?v=56", "assets/ai_person.webp?v=56", "assets/ai_sound.webp?v=56", "assets/ai_spotlight.webp?v=56", "assets/ai_vehicle.webp?v=56", "assets/ai_vprotect.webp?v=56", "assets/ai_wheel.webp?v=56", "assets/award_tile0.webp?v=56", "assets/award_tile1.webp?v=56", "assets/award_tile2.webp?v=56", "assets/awards.webp?v=56", "assets/cm_2gig.webp?v=56", "assets/cm_adt.webp?v=56", "assets/cm_dsc.webp?v=56", "assets/cm_honeywell.webp?v=56", "assets/cm_ring.webp?v=56", "assets/cm_simplisafe.webp?v=56", "assets/compat_grid.webp?v=56", "assets/gives.webp?v=56", "assets/homebar_right.png", "assets/icons/m_about.png", "assets/icons/m_ai.png", "assets/icons/m_awards.png", "assets/icons/m_birdseye.png", "assets/icons/m_buyouts.png", "assets/icons/m_comparisons.png", "assets/icons/m_compat.png", "assets/icons/m_military.png", "assets/icons/m_monitoring.png", "assets/icons/m_moves.png", "assets/icons/m_packages.png", "assets/icons/m_playback.png", "assets/icons/m_preview.png", "assets/icons/m_protection.png", "assets/icons/m_psa.png", "assets/icons/m_reviews.png", "assets/icons/m_sign.png", "assets/icons/m_social.png", "assets/icons/m_verify.png", "assets/icons/m_videos.png", "assets/icons/mon0.png", "assets/icons/mon1.png", "assets/icons/mon2.png", "assets/icons/mon3.png", "assets/icons/mon4.png", "assets/icons/mon5.png", "assets/kit_nonpremium.webp?v=56", "assets/kit_nonpremium_sc.webp?v=56", "assets/kit_premium.webp?v=56", "assets/kit_premium_sc.webp?v=56", "assets/logo.png?v=94", "assets/map.webp?v=56", "assets/military_hero.webp?v=56", "assets/mon_911.webp?v=56", "assets/mon_breakin.webp?v=56", "assets/mon_duress.webp?v=56", "assets/mon_hero.webp?v=56", "assets/mon_home.webp?v=56", "assets/mon_insurance.webp?v=56", "assets/mon_medical.webp?v=56", "assets/mon_simple.webp?v=56", "assets/mon_smoke.webp?v=56", "assets/mon_trained.webp?v=56", "assets/mon_trusted.webp?v=56", "assets/mon_video.webp?v=56", "assets/mon_water.webp?v=56", "assets/move1.webp?v=56", "assets/move2.webp?v=56", "assets/move3.webp?v=56", "assets/packages.webp?v=56", "assets/psa_0.webp?v=56", "assets/psa_1.webp?v=56", "assets/psa_2.webp?v=56", "assets/reviews_hero.webp?v=56", "assets/sign.webp?v=56", "assets/sign_house.webp?v=56", "assets/social.webp?v=56", "assets/verify.webp?v=56", "assets/videos.webp?v=56"]; const IMGCACHE=[];
+const PRE=["assets/cat/app.webp?v=176","assets/cat/chime.webp?v=176","assets/cat/dbcp.webp?v=176","assets/cat/fire.webp?v=176","assets/cat/fob.webp?v=176","assets/cat/garage.webp?v=176","assets/cat/glass.webp?v=176","assets/cat/icp.webp?v=176","assets/cat/keypad.webp?v=176","assets/cat/lock.webp?v=176","assets/cat/motion.webp?v=176","assets/cat/ocp.webp?v=176","assets/cat/ocspot.webp?v=176","assets/cat/pendant.webp?v=176","assets/cat/plug.webp?v=176","assets/cat/shp2_cam.webp?v=176","assets/cat/shp2_home.webp?v=176","assets/cat/shp2_sens.webp?v=176","assets/cat/smokeco.webp?v=176","assets/cat/therm.webp?v=176","assets/cat/water.webp?v=176","assets/cat/window.webp?v=176","assets/tiles/shp2_sens.webp?v=176","assets/tiles/shp2_cam.webp?v=176","assets/tiles/shp2_home.webp?v=176","assets/home_fg.webp?v=176","assets/tiles/ocspot.webp?v=176","assets/tiles/shortcuts.webp?v=176","assets/tiles/ocp.webp?v=176","assets/tiles/dbcp.webp?v=176","assets/tiles/icp.webp?v=176","assets/tiles/shp2.webp?v=176","assets/tiles/motion.webp?v=176","assets/tiles/glass.webp?v=176","assets/tiles/window.webp?v=176","assets/tiles/lock.webp?v=176","assets/tiles/garage.webp?v=176","assets/tiles/water.webp?v=176","assets/tiles/smokeco.webp?v=176","assets/tiles/fire.webp?v=176","assets/tiles/keypad.webp?v=176","assets/tiles/app.webp?v=176","assets/tiles/therm.webp?v=176","assets/tiles/plug.webp?v=176","assets/tiles/pendant.webp?v=176","assets/tiles/fob.webp?v=176","assets/tiles/chime.webp?v=176","assets/p/ic_f.webp?v=176", "assets/p/ic_f0.webp?v=176", "assets/p/ic_f1.webp?v=176", "assets/p/ic_f1t.webp?v=176", "assets/p/ic_f2.webp?v=176", "assets/p/ic_f3.webp?v=176", "assets/p/ic_f4.webp?v=176", "assets/p/ic_f5.webp?v=176", "assets/p/ic_f5t.webp?v=176", "assets/p/ic_hero.webp?v=176", "assets/p/ic_p0.webp?v=176", "assets/p/ic_p1.webp?v=176", "assets/p/ic_p2.webp?v=176", "assets/p/ic_p3.webp?v=176", "assets/p/ic_s.webp?v=176", "assets/p/ic_videos.webp?v=176","assets/p/install.webp?v=176","assets/p/door_f.webp?v=176", "assets/p/door_s.webp?v=176", "assets/p/fire_f.webp?v=176", "assets/p/fire_s.webp?v=176", "assets/p/fob_f.webp?v=176", "assets/p/fob_s.webp?v=176", "assets/p/garage_f.webp?v=176", "assets/p/garage_s.webp?v=176", "assets/p/glass_f.webp?v=176", "assets/p/glass_s.webp?v=176", "assets/p/keypad_f.webp?v=176", "assets/p/keypad_s.webp?v=176", "assets/p/lock_f.webp?v=176", "assets/p/lock_s.webp?v=176", "assets/p/motion_f.webp?v=176", "assets/p/motion_s.webp?v=176", "assets/p/pendant_f.webp?v=176", "assets/p/pendant_s.webp?v=176", "assets/p/plug_f.webp?v=176", "assets/p/plug_s.webp?v=176", "assets/p/smokeco_f.webp?v=176", "assets/p/smokeco_s.webp?v=176", "assets/p/water_f.webp?v=176", "assets/p/water_s.webp?v=176", "assets/p/window_f.webp?v=176", "assets/p/window_s.webp?v=176","assets/p/app_0.webp?v=176", "assets/p/app_1.webp?v=176", "assets/p/app_10.webp?v=176", "assets/p/app_11.webp?v=176", "assets/p/app_2.webp?v=176", "assets/p/app_3.webp?v=176", "assets/p/app_4.webp?v=176", "assets/p/app_5.webp?v=176", "assets/p/app_6.webp?v=176", "assets/p/app_7.webp?v=176", "assets/p/app_8.webp?v=176", "assets/p/app_9.webp?v=176", "assets/p/app_hero.webp?v=176", "assets/p/chime.webp?v=176", "assets/p/door.webp?v=176", "assets/p/fire.webp?v=176", "assets/p/fob.webp?v=176", "assets/p/g0.webp?v=176", "assets/p/g1.webp?v=176", "assets/p/g2.webp?v=176", "assets/p/garage_f.webp?v=176", "assets/p/garage_feat.webp?v=176", "assets/p/garage_hero.webp?v=176", "assets/p/garage_s.webp?v=176", "assets/p/glass.webp?v=176", "assets/p/keypad.webp?v=176", "assets/p/l0.webp?v=176", "assets/p/l1.webp?v=176", "assets/p/l2.webp?v=176", "assets/p/l3.webp?v=176", "assets/p/l4.webp?v=176", "assets/p/lock_f.webp?v=176", "assets/p/lock_hero.webp?v=176", "assets/p/lock_s.webp?v=176", "assets/p/motion.webp?v=176", "assets/p/pendant.webp?v=176", "assets/p/plug_f.webp?v=176", "assets/p/plug_hero.webp?v=176", "assets/p/plug_s.webp?v=176", "assets/p/smokeco.webp?v=176", "assets/p/water.webp?v=176", "assets/p/window.webp?v=176", "assets/home2.webp?v=176", "assets/homebar2.webp?v=176", "assets/p/i_lock.png", "assets/p/i_garage.png", "assets/oc/arlo_bg.webp?v=176", "assets/oc/f_140.webp?v=176", "assets/oc/f_4k.webp?v=176", "assets/oc/f_ai.webp?v=176", "assets/oc/f_built.webp?v=176", "assets/oc/f_detect.webp?v=176", "assets/oc/f_fast.webp?v=176", "assets/oc/f_spot.webp?v=176", "assets/oc/f_stay.webp?v=176", "assets/oc/f_vehicle.webp?v=176", "assets/oc/g2_detect.webp?v=176", "assets/oc/g2_hero.webp?v=176", "assets/oc/g2_phone.webp?v=176", "assets/oc/hero_n0.webp?v=176", "assets/oc/hero_n1.webp?v=176", "assets/oc/hero_s0.webp?v=176", "assets/oc/hero_s10.webp?v=176", "assets/oc/hero_s11.webp?v=176", "assets/oc/hist_day.webp?v=176", "assets/oc/hist_f.webp?v=176", "assets/oc/hist_night.webp?v=176", "assets/oc/i_cmp.png", "assets/oc/i_cube.png", "assets/oc/i_feat.png", "assets/oc/i_hero.png", "assets/oc/i_phone.png", "assets/oc/i_play.png", "assets/oc/i_specs.png", "assets/oc/note.webp?v=176", "assets/oc/p0.webp?v=176", "assets/oc/p1.webp?v=176", "assets/oc/p2.webp?v=176", "assets/oc/p3.webp?v=176", "assets/oc/p4.webp?v=176", "assets/oc/p5.webp?v=176", "assets/oc/p6.webp?v=176", "assets/oc/p7.webp?v=176", "assets/oc/picker.webp?v=176", "assets/oc/sp_f0.webp?v=176", "assets/oc/sp_f1.webp?v=176", "assets/oc/sp_s0.webp?v=176", "assets/oc/sp_s1.webp?v=176", "assets/oc/videos.webp?v=176", "assets/about.webp?v=176", "assets/ai_aivideo.webp?v=176", "assets/ai_comfort.webp?v=176", "assets/ai_deter.webp?v=176", "assets/ai_faces.webp?v=176", "assets/ai_holiday.webp?v=176", "assets/ai_homehighlights.webp?v=176", "assets/ai_package.webp?v=176", "assets/ai_person.webp?v=176", "assets/ai_sound.webp?v=176", "assets/ai_spotlight.webp?v=176", "assets/ai_vehicle.webp?v=176", "assets/ai_vprotect.webp?v=176", "assets/ai_wheel.webp?v=176", "assets/award_tile0.webp?v=176", "assets/award_tile1.webp?v=176", "assets/award_tile2.webp?v=176", "assets/awards.webp?v=176", "assets/cm_2gig.webp?v=176", "assets/cm_adt.webp?v=176", "assets/cm_dsc.webp?v=176", "assets/cm_honeywell.webp?v=176", "assets/cm_ring.webp?v=176", "assets/cm_simplisafe.webp?v=176", "assets/compat_grid.webp?v=176", "assets/gives.webp?v=176", "assets/homebar_right.png", "assets/icons/m_about.png", "assets/icons/m_ai.png", "assets/icons/m_awards.png", "assets/icons/m_birdseye.png", "assets/icons/m_buyouts.png", "assets/icons/m_comparisons.png", "assets/icons/m_compat.png", "assets/icons/m_military.png", "assets/icons/m_monitoring.png", "assets/icons/m_moves.png", "assets/icons/m_packages.png", "assets/icons/m_playback.png", "assets/icons/m_preview.png", "assets/icons/m_protection.png", "assets/icons/m_psa.png", "assets/icons/m_reviews.png", "assets/icons/m_sign.png", "assets/icons/m_social.png", "assets/icons/m_verify.png", "assets/icons/m_videos.png", "assets/icons/mon0.png", "assets/icons/mon1.png", "assets/icons/mon2.png", "assets/icons/mon3.png", "assets/icons/mon4.png", "assets/icons/mon5.png", "assets/kit_nonpremium.webp?v=176", "assets/kit_nonpremium_sc.webp?v=176", "assets/kit_premium.webp?v=176", "assets/kit_premium_sc.webp?v=176", "assets/logo.png?v=94", "assets/map.webp?v=176", "assets/military_hero.webp?v=176", "assets/mon_911.webp?v=176", "assets/mon_breakin.webp?v=176", "assets/mon_duress.webp?v=176", "assets/mon_hero.webp?v=176", "assets/mon_home.webp?v=176", "assets/mon_insurance.webp?v=176", "assets/mon_medical.webp?v=176", "assets/mon_simple.webp?v=176", "assets/mon_smoke.webp?v=176", "assets/mon_trained.webp?v=176", "assets/mon_trusted.webp?v=176", "assets/mon_video.webp?v=176", "assets/mon_water.webp?v=176", "assets/move1.webp?v=176", "assets/move2.webp?v=176", "assets/move3.webp?v=176", "assets/packages.webp?v=176", "assets/psa_0.webp?v=176", "assets/psa_1.webp?v=176", "assets/psa_2.webp?v=176", "assets/reviews_hero.webp?v=176", "assets/sign.webp?v=176", "assets/sign_house.webp?v=176", "assets/social.webp?v=176", "assets/verify.webp?v=176", "assets/videos.webp?v=176"]; const IMGCACHE=[];
 (function(){let i=0;const next=()=>{if(i>=PRE.length)return;const im=new Image();im.decoding='async';im.src=PRE[i++];IMGCACHE.push(im);
  (im.decode?im.decode():Promise.resolve()).catch(()=>{}).finally(()=>setTimeout(next,0));};for(let k=0;k<4;k++)next();})();
 (()=>{ const sec=$('#ocStrip').closest('.otab'); const ph=[...sec.childNodes].find(n=>n.nodeType===3&&n.textContent.includes('${OCPILLS}')); 
@@ -2728,7 +2743,7 @@ const XCAT={
  home:['Whole home','<path d="M3.5 11L12 4l8.5 7"/><path d="M5.5 9.5V20h13V9.5"/><path d="M10 20v-5h4v5"/>'],
  therm:['Thermostat','<path d="M10 14.5V5a2 2 0 0 1 4 0v9.5a4 4 0 1 1-4 0z"/><path d="M12 9v7"/>']};
 const XNAME={ocp:'Outdoor Camera Pro 3',ocspot:'Spotlight Pro',dbcp:'Doorbell Camera Pro',hub:'Smart Hub Pro 2',icp:'Indoor Camera Pro',motion:'Motion Sensor',glass:'Glass Break Detector',window:'Door & Window Sensor',water:'Water Sensor',smokeco:'Smoke & CO Detector',fire:'Firefighter',pendant:'Emergency Pendant',fob:'Key Fob',chime:'Chime Extender',keypad:'Keypad',app:'Vivint App',lock:'Smart Lock',plug:'Smart Plug',garage:'Garage Door Control'};
-const XIMG=k=>`assets/cat/${k==='hub'?'shp2_home':k}.webp?v=46`;
+const XIMG=k=>`assets/cat/${k==='hub'?'shp2_home':k}.webp?v=176`;
 const XGO=k=>k==='ocspot'?'data-ocspot="1"':['ocp','dbcp','hub','therm'].includes(k)?`data-go="${k}"`:`data-pr="${k}"`;
 const XARR='<svg width="22" height="14" viewBox="0 0 22 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 7h19M14 1l6 6-6 6"/></svg>';
 const XCHK=XI('<path d="M5 12.5l4.5 4.5L19 7.5"/>',22);
@@ -2975,7 +2990,7 @@ $('#back').innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-
   const ic='<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="7" height="7" rx="1.8"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.8"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.8"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.8"/></svg>';
   $('#bar').insertAdjacentHTML('beforeend',`<button id="prodBtn" aria-label="All Products">${ic}All Products</button>`);
   $('#stage').insertAdjacentHTML('beforeend',`<div id="psheet"><div class="dim"></div><div class="pan"><div class="hd"><b>Products</b><button class="x" aria-label="Close"><svg width="14" height="14" viewBox="0 0 14 14" stroke="#fff" stroke-width="1.9" stroke-linecap="round"><path d="M2 2l10 10M12 2L2 12"/></svg></button></div>
-   <div class="car">${G.map(([n,L])=>`<div class="grp"><span>${n}</span><div class="row">${L.map(([k,l,im])=>`<button class="pi" data-pk="${k}" ${TACT[k]}><img src="assets/cat/${im||k}.webp?v=56" alt="">${l}</button>`).join('')}</div></div>`).join('')}</div></div></div>`);
+   <div class="car">${G.map(([n,L])=>`<div class="grp"><span>${n}</span><div class="row">${L.map(([k,l,im])=>`<button class="pi" data-pk="${k}" ${TACT[k]}><img src="assets/cat/${im||k}.webp?v=176" alt="">${l}</button>`).join('')}</div></div>`).join('')}</div></div></div>`);
   const sh=$('#psheet');
   const curKey=()=>cur==='ocp'?(OC.spot?'ocspot':'ocp'):cur==='hub'?'shp2':cur==='prod'?PR.id:cur;
   const pan=$('.pan',sh);
@@ -3006,7 +3021,7 @@ NLAB.which='Which one';
   /* heroes: give the Monitor its own lifestyle shot back next to the Detector */
   LHERO.fire=['firefighter','Already have<br>hardwired detectors?','The Smoke/CO Monitor listens for them and gets Vivint’s 24/7 monitoring on the line.'];
   const card=(k,me)=>{ const D=k==='smokeco';
-    return `<div class="smk-c${me?' me':''}" style="left:${D?72:712}px"><img src="assets/cat/${k}.webp?v=56" alt=""><div class="nm">${D?'Smoke & CO Detector':'Smoke/CO Monitor · “Firefighter”'}</div>
+    return `<div class="smk-c${me?' me':''}" style="left:${D?72:712}px"><img src="assets/cat/${k}.webp?v=176" alt=""><div class="nm">${D?'Smoke & CO Detector':'Smoke/CO Monitor · “Firefighter”'}</div>
      <h3>${D?'A complete detector, monitored 24/7.':'A listener for the detectors you already have.'}</h3>
      <div class="best">Best if you have ${D?'battery smoke detectors':'hardwired smoke detectors'}</div>
      <p>${D?'A normal smoke and carbon monoxide detector, connected to your Vivint system so every alarm reaches our monitoring team.':'Mounts next to one of your existing smoke detectors and sends Vivint the signal the moment it sounds.'}</p>
@@ -3198,19 +3213,19 @@ IP.tools='<path d="M14.5 6.5a4 4 0 0 0-5 5L4 17l3 3 5.5-5.5a4 4 0 0 0 5-5l-2.5 2
   const SV='<svg viewBox="0 0 24 24" fill="none" stroke="#3b2a06" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">';
   const SVC=`<div class="pk-svc"><i>${SV}<path d="M14.5 6.5a4 4 0 0 0-5 5L4 17l3 3 5.5-5.5a4 4 0 0 0 5-5l-2.5 2.5-2.5-.5-.5-2.5z"/></svg></i><i>${SV}<path d="M4 12a8 8 0 1 0 2.4-5.7"/><path d="M4 4v4h4"/></svg></i><i>${SV}<rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18M7 15h3"/></svg></i><i>${SV}<path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg></i></div>`;
   const SIGN='<div class="pk-sign"><span>vivint<small>PROTECTED BY</small></span></div>';
-  const I=(k,n,sc=1)=>`<div class="pk-i" style="height:${Math.round(H[k]*sc)}px"><img src="assets/cat/${k}.webp?v=56" alt="">${n>1?`<b>x${n}</b>`:''}</div>`;
+  const I=(k,n,sc=1)=>`<div class="pk-i" style="height:${Math.round(H[k]*sc)}px"><img src="assets/cat/${k}.webp?v=176" alt="">${n>1?`<b>x${n}</b>`:''}</div>`;
   const R=[
    ['Smart Security',115,[[['dbcp'],['chime'],['garage'],['motion'],['window',3],'SVC','SIGN']],1.15],
    ['Smart Security +',131,[[['ocp'],['dbcp'],['chime'],['lock'],['motion'],['window',3],'SVC','SIGN']],1.1],
    ['Smart Security Pro',164,[[['ocspot'],['dbcp'],['chime'],['garage'],['water'],'SVC'],[['ocp'],['icp'],['lock',2],['therm'],['motion'],['window',3],'SIGN']],.82],
    ['Smart Security Max',252,[[['ocspot',5],['dbcp'],['chime'],['garage'],['water',3],'SVC'],[['ocp'],['icp',2],['lock',3],['therm',2],['motion',2],['window',10],'SIGN']],.82]];
-  $('#pk2').innerHTML=R.map(([n,mo,lines,sc],i)=>`<div class="pk2-r" style="top:${76+i*222}px;animation-delay:${i*.08}s"><div class="pk-hub"><img src="assets/cat/shp2_home.webp?v=56" alt=""></div>
+  $('#pk2').innerHTML=R.map(([n,mo,lines,sc],i)=>`<div class="pk2-r" style="top:${76+i*222}px;animation-delay:${i*.08}s"><div class="pk-hub"><img src="assets/cat/shp2_home.webp?v=176" alt=""></div>
     <div class="pk-dev">${lines.map(l=>`<div class="pk-line">${l.map(x=>x==='SVC'?SVC:x==='SIGN'?SIGN:I(x[0],x[1]||1,sc)).join('')}</div>`).join('')}</div>
     <div class="pk-tx"><h3>${n}</h3><div class="in">$399 Install</div><div class="mo">$${mo}/mo<small>plus tax</small></div><div class="pk-fine">Costs assume 60 months, 0% APR</div></div></div>`).join(''); }
 
 /* ===== Built-in pinch zoom ===== */
 { const vm=document.querySelector('meta[name=viewport]')||document.head.appendChild(Object.assign(document.createElement('meta'),{name:'viewport'}));
-  vm.content='width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no';
+  vm.content='width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover';
   ['gesturestart','gesturechange','gestureend'].forEach(ev=>document.addEventListener(ev,e=>e.preventDefault(),{passive:false}));
   const st=$('#stage'), scr=$('#screen');
   $('#stage').insertAdjacentHTML('beforeend','<button id="zoomOut" aria-label="Zoom out"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M8 11h6M16.5 16.5L21 21"/></svg>Zoom out <span id="zoomPct">100%</span></button>');
