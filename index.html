@@ -1597,6 +1597,11 @@ body.pkon #bar{z-index:61!important}
 
 /* Cameras page: Spotlight tile matches the Smart Hub tile width so the left column lines up */
 .hcat .hrow>.ht[data-k=ocspot]:first-child{flex:0 0 calc((100% - 14px)*631/1263)!important}
+
+/* Smart Home page: columns line up — Hub = MyQ + Thermostat, Lock = Plug */
+.hcat .hrow:has(>.ht[data-k=lock])>.ht[data-k=shp2]{flex:0 0 calc((100% - 28px)*2/3 + 14px)!important}
+.hcat .hrow:has(>.ht[data-k=lock])>.ht[data-k=lock]{flex:1 1 0!important}
+.hcat .hrow:has(>.ht[data-k=plug])>.ht{flex:1 1 0!important}
 </style>
 <div id="stage">
   <div id="screen">
