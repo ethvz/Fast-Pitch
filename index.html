@@ -2380,7 +2380,7 @@ const KV=sc=>`<div class="kv"><img class="kh" src="assets/cat/shp2_home.webp?v=1
 let plan='std';
 function kits(){
  const sc=plan==='sc';
- const K=[{n:'Premium Kit',img:sc?'kit_premium_sc':'kit_premium',eq:'$1899',mo:'$31.65/mo',sv:sc?'$29.99/mo':'$24.99/mo',tot:sc?'$61.64/mo':'$56.64/mo',note:'No service contract after<br>equipment is paid off',bf:['You want to finance your equipment','You’d rather not be locked into a contract','You want a much lower bill once it’s paid off']},
+ const K=[{n:'Premium Kit',img:sc?'kit_premium_sc':'kit_premium',eq:'$1899',mo:'$31.65/mo',sv:sc?'$29.99/mo':'$24.99/mo',tot:sc?'$61.64/mo':'$56.64/mo',note:'No service contract after<br>equipment is paid off',bf:['You don’t want any upfront costs','You’d rather not be locked into a contract','You want a much lower bill once it’s paid off']},
           {n:'Non-Premium Kit',img:sc?'kit_nonpremium_sc':'kit_nonpremium',eq:'$749',mo:'$12.48/mo',sv:sc?'$49.99/mo':'$44.99/mo',tot:sc?'$62.47/mo':'$57.47/mo',note:'If financed: 60 month service contract with<br><b>50% early termination fee</b><br>+ remaining equipment balance',bf:['You’d like to pay in full and skip the contract','You were approved with 25% down']},
           {n:'Pay in Four Bundle',p4:1,eq:'$399',mo:'$100/mo × 4',sv:'$44.99/mo',tot:'$44.99/mo',note:'24 month service contract with<br><b>50% early termination fee</b><br>No financing',bf:['You want the lowest equipment cost','You don’t mind paying more upfront']}];
  $('#kits').innerHTML=K.map((k,i)=>`<div class="kit" style="top:${246+i*368}px">${KV(sc)}<h4 style="color:${i?'#fff':'var(--orange)'}">${k.n}${sc?'<em>(Free Thermostat)</em>':''}</h4><div class="ln"></div>
