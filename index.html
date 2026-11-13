@@ -1147,7 +1147,7 @@ img[src*="nw/securityorg"]{filter:brightness(0) invert(1)}
 .hum-st video{position:relative;left:auto!important;margin-left:calc(-1*var(--gx))}
 .dbh-scrim,.hbh-scrim,.ich-scrim,.hbh-sc,.ich-sc{left:calc(-1*var(--gx))!important;right:auto!important;width:var(--W)!important}
 /* scroll-scrub videos: the whole section spans the full width (no overflow tricks) */
-.lpage>.hum{width:var(--W)!important;margin-left:0!important;overflow:hidden!important;clip-path:none!important;-webkit-clip-path:none!important}
+.lpage>.hum{width:var(--W)!important;margin-left:0!important;overflow:clip!important;clip-path:none!important;-webkit-clip-path:none!important}
 .lpage>.hum .hum-st{width:var(--W)}
 .lpage>.hum .hum-st video{margin-left:0!important;width:var(--W)!important;height:1032px}
 .dbh-scrim{left:calc(-1*var(--gx) - 2px)!important;width:calc(var(--W) + 4px)!important}
@@ -2862,7 +2862,7 @@ navify();
   const loop=()=>{ want=target(); if(!isFinite(at)) at=want; at+=(want-at)*0.35; if(Math.abs(want-at)<0.0015) at=want;
     /* a seek that never reports back (iOS drops some) must not freeze the animation */
     if(busy&&performance.now()-busyT>250) busy=false;
-    if(!busy&&v.readyState>=1&&isFinite(v.duration)){ const tt=at*(v.duration-0.04); if(Math.abs(v.currentTime-tt)>1/60){ busy=true; busyT=performance.now(); try{ v.currentTime=tt; }catch(e){ busy=false; } } }
+    if(!busy&&v.readyState>=1&&isFinite(v.duration)){ const tt=at*(v.duration*(vs==='#humV'?0.95:0.87)-0.04); if(Math.abs(v.currentTime-tt)>1/60){ busy=true; busyT=performance.now(); try{ v.currentTime=tt; }catch(e){ busy=false; } } }
     const b=box.getBoundingClientRect(), r=sec.getBoundingClientRect(); const vis=r.bottom>b.top-40&&r.top<b.bottom+40;
     if(vis||Math.abs(want-at)>0.001) requestAnimationFrame(loop); else run=false; };
   const kick=()=>{ prime(); if(run) return; run=true; requestAnimationFrame(loop); };
@@ -3525,6 +3525,18 @@ function fsSpec(d){ const im=d.im.map(([u,b])=>{ const [a,t,c,e]=b||[150,180,650
 function fsHTML(k){ const d=FSD[k]; return d?fsFeat(d.f)+fsSpec(d.s):''; }
 function fsFill(strip,k){ if(!strip||strip.dataset.fs===k) return; strip.dataset.fs=k; strip.classList.add('fsx'); strip.innerHTML=fsHTML(k); }
 window.fsFill=fsFill; fsFill($('#dbScroll [data-t=specs] .strip'),'dbcp'); fsFill($('#thScroll [data-t=specs] .strip'),'therm'); bindStrips($('#dbScroll')); bindStrips($('#thScroll')); fsFill($('#ocStrip'),'ocp'+(OC.specSpot?1:0)); if($('#prScroll').children.length) prRender('specs');
+
+/* product carousel: custom drag with 1.8x speed + momentum */
+{ const G=1.8; let c=null,x0=0,s0=0,lx=0,lt=0,v=0,mv=false,raf=0,kill=false,S=1;
+  const stop=()=>{ cancelAnimationFrame(raf); raf=0; };
+  document.addEventListener('pointerdown',e=>{ const el=e.target.closest&&e.target.closest('#psheet .car'); if(!el||e.pointerType==='mouse'&&e.button) return; stop(); c=el; S=(c.getBoundingClientRect().width/c.offsetWidth)||1; x0=lx=e.clientX; lt=performance.now(); s0=c.scrollLeft; v=0; mv=false; c.style.scrollSnapType='none'; },true);
+  document.addEventListener('pointermove',e=>{ if(!c) return; const dx=e.clientX-x0; if(!mv&&Math.abs(dx)>6){ mv=true; kill=true; } if(!mv) return; c.scrollLeft=s0-dx*G/S; const t=performance.now(),dt=Math.max(1,t-lt); v=0.7*((e.clientX-lx)*G/S/dt)+0.3*v; lx=e.clientX; lt=t; },true);
+  const up=()=>{ if(!c) return; const el=c; c=null; if(!mv){ kill=false; return; } let last=performance.now();
+    const step=t=>{ const dt=Math.min(32,t-last); last=t; el.scrollLeft-=v*dt; v*=Math.pow(0.94,dt/16); if(Math.abs(v)>0.03&&el.scrollLeft>0&&el.scrollLeft<el.scrollWidth-el.clientWidth) raf=requestAnimationFrame(step); else raf=0; };
+    raf=requestAnimationFrame(step); setTimeout(()=>kill=false,60); };
+  document.addEventListener('pointerup',up,true); document.addEventListener('pointercancel',up,true);
+  window.addEventListener('click',e=>{ if(kill&&e.target.closest&&e.target.closest('#psheet .car')){ e.stopPropagation(); e.preventDefault(); kill=false; } },true);
+  document.head.insertAdjacentHTML('beforeend','<style>#psheet .car{touch-action:none}</style>'); }
 
 barFor(cur);
 </script>
