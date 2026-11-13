@@ -1718,6 +1718,35 @@ html.booted #stage{animation:bootIn .35s ease both}
 #drawer .m2-dl.busy{pointer-events:none}
 #p-verify{background:transparent!important;left:calc(-1*var(--gx,0px))!important;right:auto!important;width:var(--W,1376px)!important}
 #stage:has(#p-verify.on),#stage:has(#p-verify.on) .screen,#stage:has(#p-verify.on) #screen{background:transparent!important;background-image:none!important}
+#p-nrg{background:#000;overflow:visible!important}
+#p-nrg .ng-bg{position:absolute;top:0;bottom:0;left:calc(-1*var(--gx,0px));width:var(--W,1376px);overflow:hidden}
+#p-nrg .ng-bg img{position:absolute;top:0;height:100%;object-fit:cover;opacity:.6}
+#p-nrg .ng-p1{left:0;width:57%;object-position:60% 40%}
+#p-nrg .ng-p2{right:0;width:52%;object-position:45% 50%}
+#p-nrg .ng-seam{position:absolute;top:0;bottom:0;left:41%;width:20%;background:linear-gradient(90deg,transparent,#000 50%,transparent)}
+#p-nrg .ng-sc{position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.85),rgba(0,0,0,.45) 30%,rgba(0,0,0,.3)),linear-gradient(180deg,rgba(0,0,0,.55),rgba(0,0,0,.1) 30%,rgba(0,0,0,.5) 75%,#000)}
+#p-nrg .ng-h{position:absolute;left:96px;top:120px}
+#p-nrg h1{margin:0;font-size:76px;line-height:1.02;letter-spacing:-2.4px;font-weight:500;color:#fff}
+#p-nrg h1 span{color:rgba(255,255,255,.55)}
+#p-nrg .ng-logo{position:absolute;right:110px;top:96px;width:290px;height:auto}
+#p-nrg .ng-card,#p-nrg .ng-f{position:absolute;border-radius:30px;background:rgba(22,22,22,.72);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);box-shadow:inset 0 0 0 1px rgba(255,255,255,.1);color:#fff}
+#p-nrg .ng-card{left:96px;top:330px;width:560px;height:560px;padding:36px 38px;box-sizing:border-box}
+#p-nrg .ng-eb{font-size:13px;letter-spacing:3px;text-transform:uppercase;color:var(--vg,#05E5AF);font-weight:500}
+#p-nrg .ng-hero{display:flex;align-items:flex-end;gap:16px;margin:22px 0 22px}
+#p-nrg .ng-hero b{font-size:112px;line-height:.9;font-weight:500;letter-spacing:-4px;color:var(--vg,#05E5AF)}
+#p-nrg .ng-hero span{font-size:21px;color:rgba(255,255,255,.75);padding-bottom:10px;line-height:1.2}
+#p-nrg .ng-card p{margin:0;font-size:19px;line-height:1.5;color:rgba(255,255,255,.85)}
+#p-nrg .ng-chips{position:absolute;left:38px;right:38px;bottom:34px;display:flex;gap:12px}
+#p-nrg .ng-chips div{flex:1;border-radius:18px;background:rgba(255,255,255,.07);box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);padding:14px 16px}
+#p-nrg .ng-chips i{display:block;font-style:normal;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.55)}
+#p-nrg .ng-chips b{display:block;margin-top:6px;font-size:18px;font-weight:500}
+#p-nrg .ng-f{left:676px;width:604px;height:176px;padding:28px 30px;box-sizing:border-box}
+#p-nrg .ng-row{display:flex;align-items:center;gap:22px;margin-top:16px}
+#p-nrg .ng-big{font-size:52px;font-weight:500;letter-spacing:-1.5px;white-space:nowrap;line-height:1}
+#p-nrg .ng-t{font-size:17px;line-height:1.42;color:rgba(255,255,255,.8)}
+#p-nrg .ng-src{position:absolute;left:96px;width:1184px;top:912px;font-size:12px;line-height:1.5;color:rgba(255,255,255,.45)}
+#p-about .rec2 .logos{grid-template-columns:repeat(2,1fr)!important;grid-template-rows:repeat(3,minmax(0,1fr))!important;top:150px!important}
+#p-about .nrgt .nl{position:absolute;left:30px;top:34px;width:120px;height:auto;z-index:2}
 #vrBg{position:fixed;inset:0;z-index:-1;overflow:hidden;opacity:0;visibility:hidden;transition:opacity .45s ease,visibility 0s .45s;background:#000}
 body:has(#p-verify.on) #vrBg{opacity:1;visibility:visible;transition:opacity .45s ease}
 #vrBg img{position:absolute;left:0;top:0;width:125vw;min-height:100vh;object-fit:cover;object-position:0% 0%;transform-origin:30% 20%}
@@ -1934,6 +1963,7 @@ body:has(#p-verify.on) #vrBg img{animation:kbz 18s ease-out both}
     </div></section>
 
     <!-- ABOUT -->
+    <section class="page" id="p-nrg"></section>
     <section class="page" id="p-about">
       <img class="full" src="assets/about.webp?v=176" alt="">
       <img id="awardTile" src="assets/award_tile0.webp?v=176" alt="">
@@ -3075,9 +3105,23 @@ let LH=id=>{ const [ph,h,p,x]=LHERO[id]; return `<div class="psec lhero" data-t=
    `<div class="ab pv" style="left:40px;top:40px;width:640px;height:430px" data-go="history">${AR}<img class="bg kb" src="assets/ph/bungalow.webp?v=87" alt=""><div class="sc"></div><div class="bx"><div class="eb" style="color:rgba(255,255,255,.8)">About Vivint</div><h2>Protecting what<br>matters since 1999.</h2></div></div>`+
    stat(696,40,2.1,'','M+',1,'families protected','map',1)+stat(1024,40,35,'$','M',0,'donated through Vivint Gives Back','gives',2)+
    stat(696,263,460,'','+',0,'patents and counting','patents',2)+stat(1024,263,24,'','/7',0,'professional monitoring','monitoring',3)+
-   `<div class="ab pv d3" style="left:40px;top:486px;width:640px;height:424px" data-go="awards">${AR}<div class="top"><div class="eb">Recognition</div><h3 style="margin-top:10px">Award winning. Year after year.</h3></div><div class="logos nw">${['cnet','forbes','stevie','securityorg','pcmag','newsweek'].map(k=>`<div><img src="assets/nw/${k}.webp?v=98" alt="${k}"></div>`).join('')}</div></div>`+
+   `<div class="ab pv d3 rec2" style="left:40px;top:486px;width:312px;height:424px" data-go="awards">${AR}<div class="top"><div class="eb">Recognition</div><h3 style="margin-top:10px">Award winning.<br>Year after year.</h3></div><div class="logos nw">${['cnet','forbes','stevie','securityorg','pcmag','newsweek'].map(k=>`<div><img src="assets/nw/${k}.webp?v=98" alt="${k}"></div>`).join('')}</div></div>`+
+   `<div class="ab pv d3 nrgt" style="left:368px;top:486px;width:312px;height:424px" data-go="nrg">${AR}<img class="bg" src="assets/nrg/plant.webp?v=222" alt="" style="object-position:60% 40%"><div class="sc"></div><img class="nl" src="assets/nrg/logo.png?v=222" alt="NRG"><div class="bx"><h3>Backed by NRG, a Fortune&nbsp;500 energy company.</h3></div></div>`+
    `<div class="ab pv d4" style="left:696px;top:486px;width:312px;height:424px" data-go="sign">${AR}<img class="bg" src="assets/ph/sign.webp?v=87" alt="" style="object-position:22% 50%"><div class="sc"></div><div class="bx"><h3>The sign that says you’re protected.</h3></div></div>`+
    `<div class="ab pv d5" style="left:1024px;top:486px;width:312px;height:424px" data-go="install">${AR}<img class="bg" src="assets/ph/truck.webp?v=87" alt="" style="object-position:70% 50%"><div class="sc"></div><div class="bx"><h3>Installed by our own pros.</h3></div></div>`;
+
+  const NC=(top,eb,big,txt,d)=>`<div class="ng-f pv d${d}" style="top:${top}px"><div class="ng-eb">${eb}</div><div class="ng-row"><div class="ng-big">${big}</div><div class="ng-t">${txt}</div></div></div>`;
+  $('#p-nrg').innerHTML=`<div class="ng-bg"><img class="ng-p1 kb" src="assets/nrg/plant.webp?v=222" alt=""><img class="ng-p2" src="assets/nrg/stadium.webp?v=222" alt=""><div class="ng-seam"></div><div class="ng-sc"></div></div>
+   <div class="ng-h pv d1"><h1>Backed by NRG.<br><span>Here for the long run.</span></h1></div>
+   <img class="ng-logo pv d2" src="assets/nrg/logo.png?v=222" alt="NRG">
+   <div class="ng-card pv d2"><div class="ng-eb">What it means for you</div>
+     <div class="ng-hero"><b>#153</b><span>on the Fortune&nbsp;500</span></div>
+     <p>Vivint has been part of NRG Energy since 2023. The company protecting your home has the backing of one of America’s largest energy providers, so it will be here, and keep improving, for years to come.</p>
+     <div class="ng-chips"><div><i>Part of NRG</i><b>Since 2023</b></div><div><i>Family of brands</i><b>Reliant · Vivint</b></div></div></div>
+   ${NC(330,'Lower energy bills','$300','Save up to $300 a year on heating and cooling with the Vivint Smart Thermostat.*',3)}
+   ${NC(522,'A steadier grid','200&nbsp;MW','Vivint homes already help power NRG’s virtual power plant, easing strain on the grid when demand peaks.',4)}
+   ${NC(714,'Power for what’s next','5.4&nbsp;GW','of new power plants NRG is building. Enough for about 4 million homes.',5)}
+   <div class="ng-src">*Estimated savings from a year-long study of about 50,000 Vivint homes; actual savings vary. Fortune 500 rank, new power plant and virtual power plant figures: Fortune, May 2026.</div>`;
   $('#p-install').innerHTML=`<div class="lh-media"><img class="lh-ph kb" src="assets/ph/install.webp?v=87" alt=""></div><div class="lh-scrim"></div><div class="lh-txt pv d1"><div class="eb">Professional installation</div><h1>We’ll do the<br>hard work.</h1><p>A Vivint Smart Home Pro installs everything, tests it, and walks you through it before leaving.</p></div>`;
   const count=el=>{ const n=+el.dataset.n, dec=+el.dataset.dec, pre=el.dataset.pre, suf=el.dataset.suf, t0=performance.now(), D=1300;
     const f=t=>{ const k=Math.min(1,(t-t0)/D), e=1-Math.pow(1-k,3); el.textContent=pre+(n*e).toFixed(dec)+suf; if(k<1) requestAnimationFrame(f); }; requestAnimationFrame(f); };
@@ -3459,7 +3503,7 @@ IP.tools='<path d="M14.5 6.5a4 4 0 0 0-5 5L4 17l3 3 5.5-5.5a4 4 0 0 0 5-5l-2.5 2
   scr.addEventListener('wheel',e=>{ if(!e.ctrlKey) return; e.preventDefault(); if(NOZ()) return; pg=$('#p-'+cur)||pg; const m=loc(e.clientX,e.clientY); zoomAt(Z*Math.exp(-e.deltaY*0.01),m[0],m[1],false); if(Z<=1.01) reset(false); },{passive:false}); }
 
 /* ===== Global pinned page title ===== */
-{ const NAMES={verify:'Verify a Rep',military:'Military',playback:'Video Plans',compat:'Compatibility',buyouts:'Buyouts',social:'Social',psa:'Purchase & Service Agreement',moves:'Moves',protection:'Protection Plans',monitoring:'Monitoring',about:'About Vivint',awards:'Awards',sign:'Yard Sign',patents:'Patents',packages:'Packages',pricing:'Pricing Options',comparisons:'Comparisons',reviews:'Reviews',videos:'Video Library',ai:'AI Technologies',whatsnew:'What’s New',history:'History',install:'Installation'};
+{ const NAMES={verify:'Verify a Rep',military:'Military',playback:'Video Plans',compat:'Compatibility',buyouts:'Buyouts',social:'Social',psa:'Purchase & Service Agreement',moves:'Moves',protection:'Protection Plans',monitoring:'Monitoring',about:'About Vivint',nrg:'Vivint, an NRG Company',awards:'Awards',sign:'Yard Sign',patents:'Patents',packages:'Packages',pricing:'Pricing Options',comparisons:'Comparisons',reviews:'Reviews',videos:'Video Library',ai:'AI Technologies',whatsnew:'What’s New',history:'History',install:'Installation'};
   const SKIP=['home','gives','map','preview','birdseye'];
   $('#screen').insertAdjacentHTML('beforeend','<div id="gTitle"><span></span></div>');
   const g=$('#gTitle'); let shown='';
