@@ -3391,8 +3391,9 @@ IP.gal='<rect x="6.5" y="3.5" width="14" height="11" rx="2"/><path d="M3.5 7.5v1
     const u=document.elementFromPoint(e.clientX,e.clientY), t=u&&u.closest(SEL);
     if(t!==s.t||Math.hypot(e.clientX-s.x,e.clientY-s.y)>16||s.t.disabled) return;
     swiped=0; window.__tipEat=0; fired=Date.now(); s.t.__fast=1; s.t.click(); },true);
-  document.addEventListener('click',e=>{ const t=e.target.closest&&e.target.closest(SEL); if(!t) return;
-    if(t.__fast){ t.__fast=0; return; } if(Date.now()-fired<700){ e.stopImmediatePropagation(); e.preventDefault(); } },true); }
+  /* on window (runs before every document listener) so the browser's own follow-up click can't fire an action a second time */
+  window.addEventListener('click',e=>{ const t=e.target.closest&&e.target.closest(SEL); if(!t) return;
+    if(t.__fast){ t.__fast=0; return; } if(Date.now()-fired<700){ e.stopImmediatePropagation(); e.stopPropagation(); e.preventDefault(); } },true); }
 
 barFor(cur);
 </script>
