@@ -716,7 +716,7 @@ body:not(.ishome) #screen::after{display:none;content:"";position:absolute;left:
 
 .lpage .otab.hum{height:1806px;scroll-snap-align:start;background:#000;overflow:visible}
 .hum-st{position:sticky;top:0;height:1032px;overflow:hidden}
-.hum-st video{display:block;width:1376px;height:1032px;object-fit:cover;background:#000}
+.hum-st canvas{display:block;width:1376px;height:1032px;object-fit:cover;background:#000}
 
 .ochx{position:absolute;left:0;top:0;width:1376px;height:1032px;background:#000;overflow:hidden}
 .och-glow{position:absolute;left:600px;top:80px;width:820px;height:820px;border-radius:50%;background:radial-gradient(closest-side,rgba(27,251,165,.22),rgba(27,251,165,.07) 55%,transparent 75%);pointer-events:none}
@@ -1136,7 +1136,7 @@ img[src*="nw/securityorg"]{filter:brightness(0) invert(1)}
 .page:has(>.lpage),#p-install,#p-history{overflow:visible!important}
 .lpage>[data-t=hero],.lpage>.hum{overflow:visible!important;clip-path:inset(0 calc(-1*var(--gx)));-webkit-clip-path:inset(0 calc(-1*var(--gx)))}
 /* full-screen photos and videos run edge to edge */
-.lh-media,.lh-scrim,.ochx,.dbh-vid,.hbh-vid,.ich-vid,.hum-st video,#p-history>.bg,#p-history>.sc{left:calc(-1*var(--gx))!important;width:var(--W)!important}
+.lh-media,.lh-scrim,.ochx,.dbh-vid,.hbh-vid,.ich-vid,.hum-st canvas,#p-history>.bg,#p-history>.sc{left:calc(-1*var(--gx))!important;width:var(--W)!important}
 .lh-ph{width:100%!important}
 .och-glow,.och-txt,.och-prod{margin-left:var(--gx)}
 /* home: tiles fill the full width */
@@ -1144,12 +1144,12 @@ img[src*="nw/securityorg"]{filter:brightness(0) invert(1)}
 .hpane{width:var(--W)!important}
 #homeTrack{width:calc(4*var(--W))!important}
 .lpage>[data-t=hero]:has(.strip){overflow:hidden!important;clip-path:none!important;-webkit-clip-path:none!important}
-.hum-st video{position:relative;left:auto!important;margin-left:calc(-1*var(--gx))}
+.hum-st canvas{position:relative;left:auto!important;margin-left:calc(-1*var(--gx))}
 .dbh-scrim,.hbh-scrim,.ich-scrim,.hbh-sc,.ich-sc{left:calc(-1*var(--gx))!important;right:auto!important;width:var(--W)!important}
 /* scroll-scrub videos: the whole section spans the full width (no overflow tricks) */
 .lpage>.hum{width:var(--W)!important;margin-left:0!important;overflow:clip!important;clip-path:none!important;-webkit-clip-path:none!important}
 .lpage>.hum .hum-st{width:var(--W)}
-.lpage>.hum .hum-st video{margin-left:0!important;width:var(--W)!important;height:1032px}
+.lpage>.hum .hum-st canvas{margin-left:0!important;width:var(--W)!important;height:1032px}
 .dbh-scrim{left:calc(-1*var(--gx) - 2px)!important;width:calc(var(--W) + 4px)!important}
 
 /* ===== Products quick switcher ===== */
@@ -2016,7 +2016,7 @@ body:has(#p-verify.on) #vrBg img{animation:kbz 18s ease-out both}
         <img class="full" id="ocHeroImg" src="assets/oc/g2_hero.webp?v=176" alt="" hidden>
         <div id="ocHeroHot"></div>
       </div>
-      <div class="otab hum" data-t="spin"><div class="hum-st"><video id="humV" src="assets/hum.mp4?v=190" muted playsinline preload="auto"></video></div></div>
+      <div class="otab hum" data-t="spin"><div class="hum-st"><canvas id="humV" data-seq="assets/seq/oc-frames.jpg?v=217" width="1376" height="1032"></canvas></div></div>
       <div class="otab" data-t="feat">
         <img class="full" id="ocFeatImg" src="assets/oc/f_detect.webp?v=176" alt="">
         <video class="ovid" id="ocFeatVid" muted playsinline loop hidden></video>
@@ -2056,7 +2056,7 @@ body:has(#p-verify.on) #vrBg img{animation:kbz 18s ease-out both}
         <div class="dbh-txt"><h1>Rain or shine.<br>Day or night.</h1><p>Built for every season, so your porch is protected in any weather, any time.</p></div>
         <button class="dbai" data-go="ai">AI</button>
       </div>
-      <div class="otab hum" data-t="spin"><div class="hum-st"><video id="dbScrubV" src="assets/db/scrub.mp4?v=87" poster="assets/db/scrub.jpg?v=87" muted playsinline preload="auto"></video></div></div>
+      <div class="otab hum" data-t="spin"><div class="hum-st"><canvas id="dbScrubV" data-seq="assets/seq/db-frames.jpg?v=217" width="1376" height="1032"></canvas></div></div>
       <div class="otab db" data-t="feat">
         <div class="dbf-vis" id="dbfVis"></div>
         <h2 class="dbf-h" id="dbfH"></h2>
@@ -2885,28 +2885,31 @@ $('#burger').innerHTML=SVGI('menu',24);
 navify();
 
 /* scroll-scrubbed reverse animation under the Outdoor Camera hero */
-[['#humV','#ocScroll'],['#dbScrubV','#dbScroll']].forEach(([vs,bs])=>{ const v=$(vs), box=$(bs); if(!v||!box) return; const sec=v.closest('.otab');
-  /* scroll-scrubbed video: the frame eases toward the scroll position every animation frame, one seek in flight at a time (all-intra video, so each seek is a single-frame decode) */
-  let want=0, at=0, busy=false, busyT=0, run=false, primed=false;
-  v.muted=true; v.playsInline=true; v.setAttribute('webkit-playsinline','');
+[['#humV','#ocScroll'],['#dbScrubV','#dbScroll']].forEach(([vs,bs])=>{ const cv=$(vs), box=$(bs); if(!cv||!box) return; const sec=cv.closest('.otab'), g=cv.getContext('2d');
+  /* scroll-scrubbed animation drawn from a JPEG frame sequence (one .bin file per animation) onto a canvas.
+     Video seeking on iOS is unreliable; drawing still frames is instant and works the same online, offline and in the Home Screen app. */
+  let frames=[], bmp=new Map(), pend=new Set(), shown=-1, wantF=0, loading=false, want=0, at=0, run=false;
+  const load=()=>{ if(loading) return; loading=true;
+    fetch(cv.dataset.seq).then(r=>{ if(!r.ok) throw 0; return r.arrayBuffer(); }).then(buf=>{ const dv=new DataView(buf), n=dv.getUint32(0,true); let off=4+4*n;
+      for(let i=0;i<n;i++){ const len=dv.getUint32(4+4*i,true); frames.push(new Blob([new Uint8Array(buf,off,len)],{type:'image/jpeg'})); off+=len; }
+      need(); }).catch(()=>{ loading=false; setTimeout(load,3000); }); };
+  const draw=b=>{ const cw=cv.width, ch=cv.height, k=Math.max(cw/b.width,ch/b.height), w=b.width*k, h=b.height*k; g.drawImage(b,(cw-w)/2,(ch-h)/2,w,h); };
+  const paint=()=>{ if(!frames.length) return; let best=-1; for(let d=0;d<frames.length;d++){ if(bmp.has(wantF-d)){ best=wantF-d; break; } if(bmp.has(wantF+d)){ best=wantF+d; break; } }
+    if(best>=0&&best!==shown){ draw(bmp.get(best)); shown=best; } };
+  const dec=i=>{ if(i<0||i>=frames.length||bmp.has(i)||pend.has(i)) return; pend.add(i);
+    createImageBitmap(frames[i]).then(b=>{ pend.delete(i); bmp.set(i,b);
+      if(bmp.size>28){ let far=-1,fd=-1; bmp.forEach((_,j)=>{ const d=Math.abs(j-wantF); if(d>fd){ fd=d; far=j; } }); if(far!==i){ const x=bmp.get(far); bmp.delete(far); x.close&&x.close(); } }
+      paint(); }).catch(()=>pend.delete(i)); };
+  const need=()=>{ if(!frames.length) return; wantF=Math.round(at*(frames.length-1)); dec(wantF); const dir=want>=at?1:-1; for(let k=1;k<=6;k++) dec(wantF+dir*k); dec(wantF-dir); paint(); };
+  const fit=()=>{ const cw=Math.round(cv.offsetWidth)||1376; if(cv.width!==cw){ cv.width=cw; cv.height=1032; shown=-1; paint(); } };
   const target=()=>{ const H=box.clientHeight, t=sec.offsetTop, h=sec.offsetHeight; if(!h||!H) return want; const q=(box.scrollTop-(t-H))/h; return isFinite(q)?Math.max(0,Math.min(1,q)):want; };
-  /* (a hidden page measures 0 tall; never let that turn the position into NaN, which froze the video for good) */
-  const loop=()=>{ want=target(); if(!isFinite(at)) at=want; at+=(want-at)*0.35; if(Math.abs(want-at)<0.0015) at=want;
-    /* a seek that never reports back (iOS drops some) must not freeze the animation */
-    if(busy&&performance.now()-busyT>250) busy=false;
-    if(!busy&&v.readyState>=1&&isFinite(v.duration)){ const tt=at*(v.duration*(vs==='#humV'?0.95:0.87)-0.04); if(Math.abs(v.currentTime-tt)>1/60){ busy=true; busyT=performance.now(); try{ v.currentTime=tt; }catch(e){ busy=false; } } }
+  const loop=()=>{ want=target(); if(!isFinite(at)) at=want; at+=(want-at)*0.35; if(Math.abs(want-at)<0.0015) at=want; need();
     const b=box.getBoundingClientRect(), r=sec.getBoundingClientRect(); const vis=r.bottom>b.top-40&&r.top<b.bottom+40;
     if(vis||Math.abs(want-at)>0.001) requestAnimationFrame(loop); else run=false; };
-  const kick=()=>{ prime(); if(run) return; run=true; requestAnimationFrame(loop); };
-  v.addEventListener('seeked',()=>{ busy=false; });
-  ['loadedmetadata','loadeddata','canplay'].forEach(ev=>v.addEventListener(ev,()=>{ busy=false; kick(); }));
-  box.addEventListener('scroll',kick,{passive:true});
-  /* iOS (Home Screen apps especially) won't load or paint a video that has never played: play it muted for an instant, once, then hand it to the scroll */
-  function prime(){ if(primed) return; primed=true;
-    if(v.readyState===0&&v.networkState!==2) v.load();
-    const p=v.play(); if(p&&p.then) p.then(()=>{ v.pause(); busy=false; }).catch(()=>{ primed=false; }); else v.pause(); }
-  ['touchstart','pointerdown'].forEach(ev=>box.addEventListener(ev,prime,{passive:true}));
-  setTimeout(prime,1200);
+  const kick=()=>{ load(); fit(); if(run) return; run=true; requestAnimationFrame(loop); };
+  box.addEventListener('scroll',kick,{passive:true}); ['touchstart','pointerdown'].forEach(ev=>box.addEventListener(ev,load,{passive:true}));
+  window.addEventListener('resize',()=>{ fit(); });
+  setTimeout(load,1500);
 });
 </script>
 <script>
