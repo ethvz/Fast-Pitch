@@ -3390,8 +3390,8 @@ $$('.hcat .ht[data-k=shp2]').forEach(t=>{ if(t.querySelector('img[src*="scr.webp
 
 /* ===== Product photo galleries ===== */
 IP.gal='<rect x="6.5" y="3.5" width="14" height="11" rx="2"/><path d="M3.5 7.5v10a2 2 0 0 0 2 2h11"/><path d="M20.5 11.5l-3.5-3.5-6.5 6.5"/>'; NLAB.gal='Gallery';
-{ const GN={ocp:7,hub:9,icp:7,dbcp:7,lock:7,therm:4};
-  const html=k=>`<div class="gal" data-t="gal" data-gal="${k}"><div class="gal-tr">${Array.from({length:GN[k]},(_,i)=>`<figure><img src="assets/gal/${k}_${i}.webp?v=192" alt="" loading="${i?'lazy':'eager'}" decoding="async"></figure>`).join('')}</div><div class="gal-dots">${Array.from({length:GN[k]},(_,i)=>`<i class="${i?'':'on'}" data-gi="${i}"></i>`).join('')}</div></div>`;
+{ const GN={ocp:7,hub:9,icp:7,dbcp:7,lock:7,therm:4,garage:4};
+  const html=k=>`<div class="gal" data-t="gal" data-gal="${k}"><div class="gal-tr">${Array.from({length:GN[k]},(_,i)=>`<figure><img src="assets/gal/${k}_${i}.webp?v=193" alt="" loading="${i?'lazy':'eager'}" decoding="async"></figure>`).join('')}</div><div class="gal-dots">${Array.from({length:GN[k]},(_,i)=>`<i class="${i?'':'on'}" data-gi="${i}"></i>`).join('')}</div></div>`;
   const wire=g=>{ const tr=g.querySelector('.gal-tr'), ds=g.querySelectorAll('.gal-dots i'); let t;
     tr.addEventListener('scroll',()=>{ cancelAnimationFrame(t); t=requestAnimationFrame(()=>{ const i=Math.round(tr.scrollLeft/tr.clientWidth); ds.forEach((d,j)=>d.classList.toggle('on',j===i)); }); },{passive:true});
     g.querySelector('.gal-dots').addEventListener('click',e=>{ const d=e.target.closest('[data-gi]'); if(d) tr.scrollTo({left:+d.dataset.gi*tr.clientWidth,behavior:'smooth'}); }); };
