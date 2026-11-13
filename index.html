@@ -1598,6 +1598,11 @@ body.pkon #bar{z-index:61!important}
 #allTiles .ht[data-k=shp2]::after{content:"Smart Hub Pro II";position:absolute;left:0;right:0;text-align:center;pointer-events:none;z-index:3;letter-spacing:-.1px}
 #allTiles .ht[data-k=shp2] img{scale:.84;translate:0 -6%}
 #allTiles .ht[data-k=shp2]::after{bottom:6%;font-size:11.5px;color:rgba(255,255,255,.5)}
+/* the flying copy of the main-page hub tile carries the same framing + label, so nothing snaps when it lands */
+#flipLayer .ht[data-f=shp2] .sm img{scale:.84;translate:0 -6%}
+#flipLayer .ht[data-f=shp2]{overflow:hidden;border-radius:20.5px}
+#flipLayer .ht[data-f=shp2] img[src*="scr.webp"]{position:absolute;inset:0;width:100%;height:100%;max-width:none;object-fit:cover;object-position:50% 50%;transform:none}
+#flipLayer .ht[data-f=shp2] .sm::after{content:"Smart Hub Pro II";position:absolute;left:0;right:0;bottom:6%;text-align:center;font-size:11.5px;color:rgba(255,255,255,.5);letter-spacing:-.1px;pointer-events:none;z-index:3}
 .hubt{position:absolute;left:0;right:0;top:16px;text-align:center;font-size:16px;color:rgba(255,255,255,.72);letter-spacing:-.1px;pointer-events:none;z-index:3}
 
 /* Cameras page: Spotlight tile matches the Smart Hub tile width so the left column lines up */
