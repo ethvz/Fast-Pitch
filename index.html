@@ -1639,6 +1639,10 @@ body.pkon #bar{z-index:61!important}
 .lpage>.gal:not(.in)>*{opacity:1!important}
 #bar,#bar *{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 #bar img{-webkit-user-drag:none}
+html.booting #stage{opacity:0}
+html.booting #stage *{animation-play-state:paused!important}
+html.booted #stage{animation:bootIn .35s ease both}
+@keyframes bootIn{from{opacity:0}to{opacity:1}}
 </style>
 <div id="stage">
   <div id="screen">
@@ -2058,6 +2062,12 @@ function fit(){ const st=$('#stage'), sb=safeBox(), vw=sb.w, vh=sb.h;
   const sc=Math.min(vw/W,vh/1032);
   st.style.left=(sb.x+vw/2)+'px'; st.style.top=(sb.y+vh/2)+'px'; st.style.transformOrigin='50% 50%'; st.style.transform=`translate(-50%,-50%) scale(${sc})`; }
 addEventListener('resize',fit);addEventListener('orientationchange',()=>setTimeout(fit,250));addEventListener('pageshow',fit);setTimeout(fit,300);fit();
+if(window.visualViewport) visualViewport.addEventListener('resize',fit);
+/* launch: keep the stage hidden until the screen size has settled (Home Screen apps report safe areas a few frames late), then fade it in once, already in place */
+{ const html=document.documentElement; html.classList.add('booting'); let last='', same=0; const t0=performance.now();
+  const tick=()=>{ const b=safeBox(), k=[b.x,b.y,b.w,b.h].map(Math.round).join(); if(k===last) same++; else { same=0; last=k; fit(); }
+    if(same>=4||performance.now()-t0>700){ fit(); html.classList.remove('booting'); html.classList.add('booted'); return; } requestAnimationFrame(tick); };
+  requestAnimationFrame(tick); }
 
 /* ---------- menu ---------- */
 const MENU=[
