@@ -3638,5 +3638,20 @@ document.head.insertAdjacentHTML('beforeend','<style>#ocScroll,#dbScroll{scroll-
   ['touchend','touchcancel'].forEach(ev=>box.addEventListener(ev,()=>{ touching=false; clearTimeout(t); t=setTimeout(settle,220); },{passive:true}));
 });
 
+/* tap anywhere on a product section that has a list of tabs (features, app screens, modes, actions…) to go to the next tab; wraps to the first */
+{ const TABS=['data-thf','data-tha','data-feat','data-ph','data-dbf','data-dbp','data-hbm','data-prsub'];
+  /* some lists mark the current tab with a class, others keep it in page state */
+  const curIdx=(a,items,sec)=>{ if(a==='data-feat') return OC.feat|0; if(a==='data-ph') return OC.phone|0; if(a==='data-prsub'){ const st=PR.st&&PR.st[sec.dataset.t]; return st?st.sub|0:0; }
+    return items.findIndex(x=>x.classList.contains('on')||x.classList.contains('act')); };
+  const TABSEL=TABS.map(a=>'['+a+']').join(',');
+  const SKIP='button,a,input,select,textarea,label,video,.strip,.gal,.pnav,#barRight,.hot,.tx,.xa,[data-tip],[data-tipx],[data-prtip],[data-whistle],[data-hero],[data-xw],[data-fs],[data-gi],[data-hb3],[data-hcmp],[data-smk],[data-specspot],[data-hist],'+TABSEL;
+  document.addEventListener('click',e=>{ const t=e.target; if(!t.closest||t.closest(SKIP)) return;
+    if(!t.closest('#ocScroll,#dbScroll,#hbScroll,#thScroll,#prScroll')) return;
+    const sec=t.closest('.otab,.psec'); if(!sec) return;
+    for(const a of TABS){ const items=[...new Map([...sec.querySelectorAll('['+a+']')].map(x=>[x.getAttribute(a),x])).values()]; if(items.length<2) continue;
+      const i=curIdx(a,items,sec), vals=items.map(x=>x.getAttribute(a)), cur=(a==='data-feat'||a==='data-ph'||a==='data-prsub')?vals.indexOf(String(i)):i;
+      items[(cur+1)%items.length].click(); return; } },false);
+}
+
 barFor(cur);
 </script>
