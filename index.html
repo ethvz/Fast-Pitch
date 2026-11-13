@@ -397,7 +397,7 @@ body:not(.ishome) #screen::after{display:none;content:"";position:absolute;left:
 /* ---------- long product pages ---------- */
 .lpage{touch-action:pan-y;position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;scroll-snap-type:y mandatory;scroll-behavior:smooth;-webkit-overflow-scrolling:touch;scrollbar-width:none}
 .lpage::-webkit-scrollbar{display:none}
-.lpage .otab,.psec{position:relative;display:block;height:1032px;overflow:hidden;scroll-snap-align:start;scroll-snap-stop:normal}
+.lpage .otab,.psec{position:relative;display:block;height:1032px;overflow:hidden;scroll-snap-align:start;scroll-snap-stop:always}
 .lpage .otab.tall{height:auto}
 .vlib{position:absolute;inset:0;padding:96px 60px 0;background:#000}
 .vlib .eb{font-size:13px;letter-spacing:2.2px;font-weight:600;color:var(--mint);text-transform:uppercase}
@@ -3599,6 +3599,26 @@ window.fsFill=fsFill; fsFill($('#dbScroll [data-t=specs] .strip'),'dbcp'); fsFil
 
 /* Verify a Rep: photo lives outside the stage so it fills the whole screen, edge to edge, at any window shape */
 document.body.insertAdjacentHTML('afterbegin','<div id="vrBg"><img src="assets/ph/verify2.webp?v=213" alt=""><div class="sc"></div></div>');
+
+/* page memory: come straight back to a page (one page in between) and it is where you left it; view two or more other pages first and it starts from the top */
+{ const saved={}, left={}; let n=0, lastKey=null;
+  const keyOf=p=>p==='prod'?'prod:'+PR.id:p;
+  const scrollers=el=>[el,...el.querySelectorAll('*')].filter(x=>x.scrollHeight>x.clientHeight+2||x.scrollWidth>x.clientWidth+2);
+  const grab=el=>{ const all=[el,...el.querySelectorAll('*')], out=[]; all.forEach((x,i)=>{ if(x.scrollTop>0||x.scrollLeft>0) out.push([x.id||i,x.scrollTop,x.scrollLeft]); }); return out; };
+  const put=(el,fn)=>{ const all=[el,...el.querySelectorAll('*')]; fn(all); };
+  const noSmooth=(x,f)=>{ const sb=x.style.scrollBehavior, st=x.style.scrollSnapType; x.style.scrollBehavior='auto'; x.style.scrollSnapType='none'; f(); requestAnimationFrame(()=>requestAnimationFrame(()=>{ x.style.scrollBehavior=sb; x.style.scrollSnapType=st; })); };
+  const _show=show;
+  show=function(p){
+    const prevEl=lastKey?$('#p-'+(lastKey.startsWith('prod:')?'prod':lastKey)):null;
+    if(prevEl&&lastKey!=='home'&&lastKey!==keyOf(p)){ saved[lastKey]=grab(prevEl); left[lastKey]=n; }
+    _show(p); const k=keyOf(p), el=$('#p-'+p); if(!el||p==='home'){ lastKey=k; return; }
+    if(k!==lastKey){ n++;
+      const since=left[k]==null?Infinity:n-left[k]-1;   /* pages viewed in between */
+      if(since<=1&&saved[k]){ const list=saved[k]; put(el,all=>list.forEach(([key,t,l])=>{ const x=typeof key==='string'?document.getElementById(key):all[key]; if(x) noSmooth(x,()=>{ x.scrollTop=t; x.scrollLeft=l; x.dispatchEvent(new Event('scroll')); }); })); }
+      else if(left[k]!=null){ scrollers(el).forEach(x=>{ if(x.scrollTop||x.scrollLeft) noSmooth(x,()=>{ x.scrollTop=0; x.scrollLeft=0; x.dispatchEvent(new Event('scroll')); }); }); }
+    }
+    lastKey=k; };
+}
 
 barFor(cur);
 </script>
