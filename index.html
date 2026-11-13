@@ -1793,6 +1793,8 @@ body:has(#p-verify.on) #vrBg img{animation:kbz 18s ease-out both}
 #p-history .hy2-h h1{margin:0;font-size:72px;line-height:1.04;letter-spacing:-2.3px;font-weight:500;color:#fff;text-shadow:0 2px 18px rgba(0,0,0,.6)}
 #p-history .hy2-h h1 span{color:rgba(255,255,255,.55)}
 /* AI orb v2: glassy 3D sphere with gooey colour blobs */
+.ocb[data-go="ai"]::before,.hot[data-go="ai"]::before{display:none!important}
+.ocb[data-go="ai"] .aig,.ocb[data-go="ai"] .aih{inset:0!important}
 .ocb[data-go="ai"]{overflow:visible!important}
 .ocb[data-go="ai"] .aig{position:absolute;inset:3px;border-radius:50%;overflow:hidden;z-index:-1;filter:url(#aiGoo) saturate(1.35);background:#0a0716}
 .ocb[data-go="ai"] .aig i{position:absolute;border-radius:50%;mix-blend-mode:screen;filter:blur(3px)}
