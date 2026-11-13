@@ -1602,6 +1602,17 @@ body.pkon #bar{z-index:61!important}
 .hcat .hrow:has(>.ht[data-k=lock])>.ht[data-k=shp2]{flex:0 0 calc((100% - 28px)*2/3 + 14px)!important}
 .hcat .hrow:has(>.ht[data-k=lock])>.ht[data-k=lock]{flex:1 1 0!important}
 .hcat .hrow:has(>.ht[data-k=plug])>.ht{flex:1 1 0!important}
+
+/* ===== Landing page titles: one pinned header, text morphs between pages ===== */
+#homeTrack .hhead,#homeAll .hall-h>div{opacity:0!important;animation:none!important}
+#lpT{position:absolute;left:24px;top:30px;height:100px;width:calc(var(--W,1376px) - 48px);z-index:6;pointer-events:none}
+#lpT .lpl{position:absolute;left:0;bottom:0;transition:opacity .5s cubic-bezier(.22,1,.36,1),transform .6s cubic-bezier(.22,1,.36,1),filter .5s ease}
+#lpT .lpl .eb{font-size:13px;letter-spacing:2.4px;text-transform:uppercase;color:var(--vg)!important;font-weight:500;transition:opacity .35s ease}
+#lpT .lpl h2{font-size:44px;line-height:1.05;font-weight:500;letter-spacing:-1.2px;margin-top:10px;white-space:nowrap;color:#fff}
+#lpT .lpl h2 span{color:rgba(255,255,255,.55)}
+#lpT .lpl:not(.on){opacity:0;transform:translateY(14px);filter:blur(8px)}
+#lpT .lpl.up:not(.on){transform:translateY(-14px)}
+#lpT .lpl.on{opacity:1;transform:none;filter:none;transition-delay:.06s}
 </style>
 <div id="stage">
   <div id="screen">
@@ -3300,6 +3311,16 @@ IP.tools='<path d="M14.5 6.5a4 4 0 0 0-5 5L4 17l3 3 5.5-5.5a4 4 0 0 0 5-5l-2.5 2
 
 /* hub title as a real element so it travels with the tile during page-switch animations */
 $$('.hcat .ht[data-k=shp2]').forEach(t=>{ if(t.querySelector('img[src*="scr.webp"]')&&!t.querySelector('.hubt')) t.insertAdjacentHTML('beforeend','<div class="hubt">Smart Hub Pro II</div>'); });
+
+/* Landing page titles: pinned overlay that cross-morphs instead of sliding with the tiles */
+{ const home=$('#p-home'); home.insertAdjacentHTML('beforeend','<div id="lpT"></div>'); const box=$('#lpT');
+  const src={all:$('#homeAll .hall-h>div')}; const panes=[...$$('#homeTrack .hcat')]; HORD.slice(1).forEach((c,i)=>src[c]=panes[i]&&panes[i].querySelector('.hhead'));
+  box.innerHTML=HORD.map(c=>{ const e=src[c]; if(!e) return ''; const eb=e.querySelector('.eb'), h=e.querySelector('h1,h2');
+    return `<div class="lpl" data-c="${c}"><div class="eb">${eb?eb.innerHTML:''}</div><h2>${h?h.innerHTML:''}</h2></div>`; }).join('');
+  let curI=-1; const show=i=>{ if(i===curI) return; const dir=i>curI; curI=i;
+    box.querySelectorAll('.lpl').forEach((l,j)=>{ l.classList.toggle('up',j<i); l.classList.toggle('on',j===i); }); };
+  const _ts=trackSet; trackSet=function(p,a){ _ts(p,a); show(Math.round(Math.max(0,Math.min(HORD.length-1,p)))); };
+  show(Math.max(0,HORD.indexOf(typeof hcat!=='undefined'?hcat:'all'))); }
 
 barFor(cur);
 </script>
