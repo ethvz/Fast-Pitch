@@ -2487,6 +2487,8 @@ function tileRects(view){ const o=$('#p-home').getBoundingClientRect(), sc=o.wid
   view.querySelectorAll('[data-k]').forEach(el=>{const r=el.getBoundingClientRect(); m[el.dataset.k]=[(r.left-o.left)/sc,(r.top-o.top)/sc,r.width/sc,r.height/sc];}); return m; }
 let flipT;
 function flipTo(c){ if(c===hcat) return; const fromC=hcat;
+  /* category to category: switch instantly, no tile animation (main page <-> category keeps the morph) */
+  if(fromC!=='all'&&c!=='all'){ clearTimeout(flipT); $('#flipLayer').innerHTML=''; setHcat(c,false); return; }
   const from=paneOf(hcat), a=tileRects(from); setHcat(c,false); const to=paneOf(c); const b=tileRects(to);
   const L=$('#flipLayer'); clearTimeout(flipT); L.innerHTML='';
   const shared=Object.keys(b).filter(k=>a[k]);
@@ -2790,8 +2792,9 @@ navify();
   /* scroll-scrubbed video: the frame eases toward the scroll position every animation frame, one seek in flight at a time (all-intra video, so each seek is a single-frame decode) */
   let want=0, at=0, busy=false, busyT=0, run=false, primed=false;
   v.muted=true; v.playsInline=true; v.setAttribute('webkit-playsinline','');
-  const target=()=>{ const H=box.clientHeight, t=sec.offsetTop, h=sec.offsetHeight; return Math.max(0,Math.min(1,(box.scrollTop-(t-H))/h)); };
-  const loop=()=>{ want=target(); at+=(want-at)*0.35; if(Math.abs(want-at)<0.0015) at=want;
+  const target=()=>{ const H=box.clientHeight, t=sec.offsetTop, h=sec.offsetHeight; if(!h||!H) return want; const q=(box.scrollTop-(t-H))/h; return isFinite(q)?Math.max(0,Math.min(1,q)):want; };
+  /* (a hidden page measures 0 tall; never let that turn the position into NaN, which froze the video for good) */
+  const loop=()=>{ want=target(); if(!isFinite(at)) at=want; at+=(want-at)*0.35; if(Math.abs(want-at)<0.0015) at=want;
     /* a seek that never reports back (iOS drops some) must not freeze the animation */
     if(busy&&performance.now()-busyT>250) busy=false;
     if(!busy&&v.readyState>=1&&isFinite(v.duration)){ const tt=at*(v.duration-0.04); if(Math.abs(v.currentTime-tt)>1/60){ busy=true; busyT=performance.now(); try{ v.currentTime=tt; }catch(e){ busy=false; } } }
