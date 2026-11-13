@@ -1657,7 +1657,9 @@ html.booted #stage{animation:bootIn .35s ease both}
 .lpage>.otab:not([data-t=hero]):not(.hum),.lpage>.psec:not([data-t=hero]){transform:translateX(var(--SX,0px)) scale(var(--S2,.925))!important;transform-origin:0 0!important}
 #lpT .lpl{bottom:auto!important;top:12px}#lpT .lpl h2{display:none}
 .hcat .hhead h2{display:none}
-#homeTrack .hcat{padding-top:74px!important}
+#homeTrack .hcat{padding-top:51px!important;padding-bottom:14px!important}
+/* equal margins: eyebrow sits 21px from the top, tiles 21px below it and 21px above the footer pills (same as the side margin) */
+#lpT{top:8px!important}
 /* hub tile label matches the Keypad / Vivint App labels beside it */
 .hcat .hubt,#flipLayer .hubt{top:11px;font-size:16.5px;color:rgba(255,255,255,.58)}
 
@@ -2660,7 +2662,7 @@ $('#allTiles').innerHTML=Object.entries(ALLPOS).map(([k,[x,y,w,h]])=>k==='shortc
   $('#homeAll').insertAdjacentHTML('afterbegin','<div class="hall-h"><div><div class="eb">Full Vivint Product Suite</div><h1>One system. Every corner of your home.</h1></div></div>'); }
 $('#p-home').insertAdjacentHTML('beforeend','<div id="flipLayer"></div>');
 /* All grid: built from one spec so every gap is exactly G on every iPad width */
-function allGrid(Wt){ const G=14, X0=20.6, Y0=74, Y1=946, top=Math.round((Y1-Y0)*0.40), cw=(Wt-2*G)/3, cx=[X0,X0+cw+G,X0+2*(cw+G)], half=(cw-G)/2, y2=Y0+top+G, rest=Y1-y2, P={};
+function allGrid(Wt){ const G=14, X0=20.6, Y0=51, Y1=950, top=Math.round((Y1-Y0)*0.40), cw=(Wt-2*G)/3, cx=[X0,X0+cw+G,X0+2*(cw+G)], half=(cw-G)/2, y2=Y0+top+G, rest=Y1-y2, P={};
   P.ocp=[cx[0],Y0,cw,top]; P.dbcp=[cx[1],Y0,half,top]; P.icp=[cx[1]+half+G,Y0,half,top]; P.ocspot=[cx[2],Y0,cw,top];
   const sh=(rest-2*G)/3, sw=(cw-2*G)/3; [['motion','glass','window'],['water','smokeco','fire'],['pendant','fob','chime']].forEach((r,ri)=>r.forEach((k,ci)=>P[k]=[cx[0]+ci*(sw+G),y2+ri*(sh+G),sw,sh]));
   const kh=Math.round(rest*0.43), hh=rest-G-kh; P.shp2=[cx[1],y2,cw,hh]; P.keypad=[cx[1],y2+hh+G,half,kh]; P.app=[cx[1]+half+G,y2+hh+G,half,kh];
