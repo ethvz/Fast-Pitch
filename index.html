@@ -1659,7 +1659,7 @@ html.booted #stage{animation:bootIn .35s ease both}
 .hcat .hubt,#flipLayer .hubt{top:11px;font-size:16.5px;color:rgba(255,255,255,.58)}
 
 /* live Features | Specs panes */
-.strip.fsp>.fsp-pane{background:#000;position:relative;width:1376px;height:964px;flex:none;overflow:hidden}
+.strip.fsx>.fsp-pane{background:#000;position:relative;width:1376px;height:964px;flex:none;overflow:hidden}
 .fsp-im{position:absolute;object-fit:contain;pointer-events:none;-webkit-user-drag:none}
 .fsp-ln{position:absolute;left:0;top:0;width:1376px;height:964px;pointer-events:none;overflow:visible}
 .fsp-ln line{stroke:var(--vg,#05E5AF);stroke-width:1.4;stroke-linecap:round}
@@ -3471,7 +3471,7 @@ function fsSpec(d){ const im=d.im.map(([u,b])=>{ const [a,t,c,e]=b||[150,180,650
   const y0=(d.rows[0]?d.rows[0][2]:300)-14, kw=d.vx-d.kx;
   return `<div class="fsp-pane">${im}<div class="fst" style="left:${d.kx}px;top:${y0}px"><div class="fst-h">Specifications</div>${d.rows.map(([k,v])=>`<div class="r"><b style="width:${kw}px">${k}</b><span>${String(v).replace(/\n/g,'<br>')}</span></div>`).join('')}</div></div>`; }
 function fsHTML(k){ const d=FSD[k]; return d?fsFeat(d.f)+fsSpec(d.s):''; }
-function fsFill(strip,k){ if(!strip||strip.dataset.fs===k) return; strip.dataset.fs=k; strip.classList.add('fsp'); strip.innerHTML=fsHTML(k); }
+function fsFill(strip,k){ if(!strip||strip.dataset.fs===k) return; strip.dataset.fs=k; strip.classList.add('fsx'); strip.innerHTML=fsHTML(k); }
 window.fsFill=fsFill; fsFill($('#ocStrip'),'ocp'+(OC.specSpot?1:0)); if($('#prScroll').children.length) prRender('specs');
 
 barFor(cur);
