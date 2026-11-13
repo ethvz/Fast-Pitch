@@ -1531,6 +1531,9 @@ body.pkon #bar{z-index:61!important}
 
 /* ===== Built-in pinch zoom: page content zooms, controls stay pinned ===== */
 #screen .page.zm{transform-origin:0 0}
+/* phone menu always paints above the phone video (iOS can lift playing video over later siblings) */
+#ocPhoneVid{z-index:1}
+#ocPhoneHot>*{z-index:6;transform:translateZ(0)}
 #screen .page.pcol{overflow:hidden;will-change:transform,opacity;animation:none!important}
 #screen .page.pcol-go{transition:transform .32s cubic-bezier(.4,0,.2,1),opacity .32s ease,border-radius .32s ease}
 #screen .page.zm-anim{transition:transform .35s cubic-bezier(.22,1,.36,1)}
