@@ -1531,6 +1531,8 @@ body.pkon #bar{z-index:61!important}
 
 /* ===== Built-in pinch zoom: page content zooms, controls stay pinned ===== */
 #screen .page.zm{transform-origin:0 0}
+#screen .page.pcol{overflow:hidden;will-change:transform,opacity;animation:none!important}
+#screen .page.pcol-go{transition:transform .32s cubic-bezier(.4,0,.2,1),opacity .32s ease,border-radius .32s ease}
 #screen .page.zm-anim{transition:transform .35s cubic-bezier(.22,1,.36,1)}
 #zoomOut{position:absolute;left:50%;top:18px;z-index:70;transform:translate(-50%,-14px) scale(.9);opacity:0;pointer-events:none;display:flex;align-items:center;gap:8px;height:44px;padding:0 18px 0 14px;border-radius:22px;background:rgba(28,28,30,.92);box-shadow:0 0 0 1px rgba(255,255,255,.1),0 8px 24px rgba(0,0,0,.45);color:#fff;font-size:15px;font-weight:500;transition:opacity .25s ease,transform .35s cubic-bezier(.22,1,.36,1)}
 #zoomOut.on{opacity:1;pointer-events:auto;transform:translate(-50%,0) scale(1)}
@@ -3575,10 +3577,24 @@ IP.tools='<path d="M14.5 6.5a4 4 0 0 0-5 5L4 17l3 3 5.5-5.5a4 4 0 0 0 5-5l-2.5 2
     else if(e.touches.length===1&&Z>1.02){ const t=e.touches[0], m=loc(t.clientX,t.clientY); pan={x:m[0],y:m[1],tx:TX,ty:TY,moved:false}; } },{passive:true});
   scr.addEventListener('touchmove',e=>{
     if(g&&e.touches.length===2){ e.preventDefault(); const [a,b]=e.touches, m=loc((a.clientX+b.clientX)/2,(a.clientY+b.clientY)/2);
-      const nz=Math.min(3,Math.max(1,g.z*dist(a,b)/g.d)); /* keep the pinch point under the fingers and follow two-finger pan */
+      const ratio=dist(a,b)/g.d;
+      if(g.z<=1.02&&ratio<1&&!g.zoomed){ /* already fully zoomed out: pinching in collapses the page toward home */
+        const c=Math.max(.35,1-(1-ratio)*1.1); g.c=c; const r=scr.getBoundingClientRect(), zk=k();
+        if(!g.col){ g.col=1; pg.classList.add('pcol'); pg.style.transformOrigin=`${g.mx}px ${g.my}px`; }
+        pg.style.transform=`scale(${c})`; pg.style.opacity=String(Math.min(1,.25+c)); pg.style.borderRadius=`${Math.round((1-c)*120)}px`; return; }
+      if(ratio>1) g.zoomed=1;
+      if(g.col){ g.col=0; g.c=1; pg.classList.remove('pcol'); pg.style.transform=''; pg.style.opacity=''; pg.style.borderRadius=''; }
+      const nz=Math.min(3,Math.max(1,g.z*ratio)); /* keep the pinch point under the fingers and follow two-finger pan */
       Z=nz; TX=m[0]-(g.mx-g.tx)*nz/g.z; TY=m[1]-(g.my-g.ty)*nz/g.z; apply(false); }
     else if(pan&&e.touches.length===1&&Z>1.02){ e.preventDefault(); const t=e.touches[0], m=loc(t.clientX,t.clientY); TX=pan.tx+(m[0]-pan.x); TY=pan.ty+(m[1]-pan.y); if(Math.abs(m[0]-pan.x)+Math.abs(m[1]-pan.y)>6) pan.moved=true; apply(false); } },{passive:false});
-  scr.addEventListener('touchend',e=>{ if(e.touches.length<2) g=null; if(!e.touches.length){ if(Z<1.05&&Z!==1) reset(true);
+  const collapseEnd=gg=>{ const P=pg; if(!P) return;
+    if(gg.c<.84){ /* commit: finish collapsing, then land on home */
+      P.classList.add('pcol','pcol-go'); P.style.transform='scale(.18)'; P.style.opacity='0'; P.style.borderRadius='160px';
+      setTimeout(()=>{ try{closeMenu();closeModals();}catch(e){} stack=['home']; show('home'); try{flipTo('all');}catch(e){}
+        P.classList.remove('pcol','pcol-go'); P.style.transform=''; P.style.opacity=''; P.style.borderRadius=''; P.style.transformOrigin=''; },300); }
+    else { P.classList.add('pcol-go'); P.style.transform=''; P.style.opacity=''; P.style.borderRadius='';
+      setTimeout(()=>{ P.classList.remove('pcol','pcol-go'); P.style.transformOrigin=''; },380); } };
+  scr.addEventListener('touchend',e=>{ if(e.touches.length<2){ if(g&&g.col) collapseEnd(g); g=null; } if(!e.touches.length){ if(Z<1.05&&Z!==1) reset(true);
       /* double-tap: zoom in to 2x there, or back out */
       pan=null; } },{passive:true});
   /* block taps on links/buttons after a pan so dragging doesn't click */
