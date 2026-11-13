@@ -27,7 +27,7 @@
   --lav:#ebedfc;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
-html,body{height:100%;background:#000;overflow:hidden}
+html,body{height:100%;background:#000;overflow:hidden;touch-action:manipulation}
 body{position:fixed;inset:0}
 body{font-family:Figtree,system-ui,sans-serif;color:#fff;-webkit-font-smoothing:antialiased}
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
@@ -3257,7 +3257,8 @@ IP.tools='<path d="M14.5 6.5a4 4 0 0 0-5 5L4 17l3 3 5.5-5.5a4 4 0 0 0 5-5l-2.5 2
   pg=$('#p-'+cur);
   let g=null, pan=null, lastTap=0;
   const dist=(a,b)=>Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY);
-  scr.addEventListener('touchstart',e=>{ pg=$('#p-'+cur)||pg;
+  const NOZ=()=>cur==='home';
+  scr.addEventListener('touchstart',e=>{ if(NOZ()) return; pg=$('#p-'+cur)||pg;
     if(e.touches.length===2){ const [a,b]=e.touches, m=loc((a.clientX+b.clientX)/2,(a.clientY+b.clientY)/2); g={d:dist(a,b),z:Z,tx:TX,ty:TY,mx:m[0],my:m[1]}; pan=null; }
     else if(e.touches.length===1&&Z>1.02){ const t=e.touches[0], m=loc(t.clientX,t.clientY); pan={x:m[0],y:m[1],tx:TX,ty:TY,moved:false}; } },{passive:true});
   scr.addEventListener('touchmove',e=>{
@@ -3267,12 +3268,11 @@ IP.tools='<path d="M14.5 6.5a4 4 0 0 0-5 5L4 17l3 3 5.5-5.5a4 4 0 0 0 5-5l-2.5 2
     else if(pan&&e.touches.length===1&&Z>1.02){ e.preventDefault(); const t=e.touches[0], m=loc(t.clientX,t.clientY); TX=pan.tx+(m[0]-pan.x); TY=pan.ty+(m[1]-pan.y); if(Math.abs(m[0]-pan.x)+Math.abs(m[1]-pan.y)>6) pan.moved=true; apply(false); } },{passive:false});
   scr.addEventListener('touchend',e=>{ if(e.touches.length<2) g=null; if(!e.touches.length){ if(Z<1.05&&Z!==1) reset(true);
       /* double-tap: zoom in to 2x there, or back out */
-      const now=Date.now(); if(!pan||!pan.moved){ if(now-lastTap<280&&e.changedTouches.length===1){ const t=e.changedTouches[0], m=loc(t.clientX,t.clientY); if(Z>1.02) reset(true); else zoomAt(2,m[0],m[1],true); lastTap=0; } else lastTap=now; }
       pan=null; } },{passive:true});
   /* block taps on links/buttons after a pan so dragging doesn't click */
   scr.addEventListener('click',e=>{ if(pan&&pan.moved){ e.stopPropagation(); e.preventDefault(); } },true);
   /* trackpad pinch (ctrl+wheel) on desktop */
-  scr.addEventListener('wheel',e=>{ if(!e.ctrlKey) return; e.preventDefault(); pg=$('#p-'+cur)||pg; const m=loc(e.clientX,e.clientY); zoomAt(Z*Math.exp(-e.deltaY*0.01),m[0],m[1],false); if(Z<=1.01) reset(false); },{passive:false}); }
+  scr.addEventListener('wheel',e=>{ if(!e.ctrlKey) return; e.preventDefault(); if(NOZ()) return; pg=$('#p-'+cur)||pg; const m=loc(e.clientX,e.clientY); zoomAt(Z*Math.exp(-e.deltaY*0.01),m[0],m[1],false); if(Z<=1.01) reset(false); },{passive:false}); }
 
 /* ===== Global pinned page title ===== */
 { const NAMES={verify:'Verify a Rep',military:'Military',playback:'Video Plans',compat:'Compatibility',buyouts:'Buyouts',social:'Social',psa:'Purchase & Service Agreement',moves:'Moves',protection:'Protection Plans',monitoring:'Monitoring',about:'About Vivint',awards:'Awards',sign:'Yard Sign',patents:'Patents',packages:'Packages',pricing:'Pricing Options',comparisons:'Comparisons',reviews:'Reviews',videos:'Video Library',ai:'AI Technologies',whatsnew:'What’s New',history:'History',install:'Installation'};
