@@ -1707,6 +1707,15 @@ html.booted #stage{animation:bootIn .35s ease both}
 .thm-pts{position:absolute}
 .thm-pts p{display:flex;gap:14px;align-items:flex-start;background:#1c1c1c;border-radius:20px;padding:18px 20px;margin:0 0 12px;font-size:16px;line-height:1.4;color:#e5e5ea}
 .thm-pts.row{display:flex;gap:12px}.thm-pts.row p{flex:1;margin:0;flex-direction:column;gap:10px;font-size:15px}
+#drawer .m2-f{align-items:center}
+#drawer .m2-dl{position:relative;overflow:hidden;display:flex;align-items:center;gap:10px;height:44px;padding:0 18px;border-radius:22px;background:#1f1f21;color:#fff;font-size:15px;font-weight:500;margin-right:auto;transition:transform .2s,background .2s}
+#drawer .m2-dl:active{transform:scale(.96)}
+#drawer .m2-dl .ic{color:var(--vg,#05E5AF);flex:none}
+#drawer .m2-dl>span{position:relative;z-index:1}
+#drawer .m2-dl>svg{position:relative;z-index:1}
+#drawer .m2-dl i{position:absolute;left:0;top:0;bottom:0;width:0;background:rgba(5,229,175,.22);transition:width .3s ease}
+#drawer .m2-dl.done{background:rgba(5,229,175,.12);box-shadow:inset 0 0 0 1px rgba(5,229,175,.4)}
+#drawer .m2-dl.busy{pointer-events:none}
 #p-verify{background:#000;left:calc(-1*var(--gx,0px))!important;right:auto!important;width:var(--W,1376px)!important}
 #p-verify .vr-ph{position:absolute;top:0;left:auto;right:-10%;width:110%;height:100%;object-fit:cover;object-position:4% 30%;animation:kbz 18s ease-out both}
 @keyframes kbz{from{transform:scale(1.08)}to{transform:scale(1)}}
@@ -3255,7 +3264,7 @@ IP.tools='<path d="M14.5 6.5a4 4 0 0 0-5 5L4 17l3 3 5.5-5.5a4 4 0 0 0 5-5l-2.5 2
    <div class="m2-g">${P.map(([g,l,i])=>`<button class="m2-t" data-go="${g}">${ic(i)}<span>${l}</span></button>`).join('')}</div>
    <div class="m2-l">More</div>
    <div class="m2-sg">${S.map(([g,l,i])=>`<button class="m2-s" data-go="${g}">${ic(i||g)}<span>${l}</span></button>`).join('')}</div>
-   <div class="m2-f"><a data-toast="Feedback">Feedback</a><a data-toast="Privacy Policy">Privacy Policy</a></div>`;
+   <div class="m2-f"><button class="m2-dl" id="dlBtn"><svg class="ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7 10.5l5 5 5-5M5 20h14"/></svg><span id="dlTxt">Download for Offline</span><i id="dlBar"></i></button><a data-toast="Feedback">Feedback</a><a data-toast="Privacy Policy">Privacy Policy</a></div>`;
   /* close X must close even though it's a child: make the svg pass clicks to the button */
   d.querySelector('#dclose svg').style.pointerEvents='none';
   const fromBurger=()=>{ const st=$('#stage'), z=st.getBoundingClientRect().width/st.offsetWidth, b=$('#burger').getBoundingClientRect(), r=d.getBoundingClientRect();
@@ -3558,6 +3567,30 @@ window.fsFill=fsFill; fsFill($('#dbScroll [data-t=specs] .strip'),'dbcp'); fsFil
   document.addEventListener('pointerup',up,true); document.addEventListener('pointercancel',up,true);
   window.addEventListener('click',e=>{ if(kill&&e.target.closest&&e.target.closest('#psheet .car')){ e.stopPropagation(); e.preventDefault(); kill=false; } },true);
   document.head.insertAdjacentHTML('beforeend','<style>#psheet .car{touch-action:none}</style>'); }
+
+/* offline download: service worker precaches the whole app (Home Screen / GitHub copy only) */
+{ const note=t=>{ const e=$('#toast'); e.textContent=t; e.classList.add('show'); clearTimeout(tt); tt=setTimeout(()=>e.classList.remove('show'),2600); };
+  const btn=()=>$('#dlBtn'), txt=t=>{ const e=$('#dlTxt'); if(e) e.textContent=t; }, bar=f=>{ const e=$('#dlBar'); if(e) e.style.width=(f*100).toFixed(1)+'%'; };
+  const ok='serviceWorker' in navigator && location.protocol==='https:' && /github\.io$/.test(location.hostname);
+  let reg=null, latest=null, have=null;
+  const paint=()=>{ const b=btn(); if(!b) return; b.classList.remove('busy');
+    if(have&&latest&&have!==String(latest)){ b.classList.remove('done'); txt('Update Offline Copy'); bar(0); }
+    else if(have){ b.classList.add('done'); txt('Available Offline ✓'); bar(0); }
+    else { b.classList.remove('done'); txt('Download for Offline'); bar(0); } };
+  if(ok){
+    navigator.serviceWorker.register('sw.js').then(r=>{ reg=r; return navigator.serviceWorker.ready; }).then(r=>{ r.active&&r.active.postMessage({type:'status'}); }).catch(()=>{});
+    fetch('offline.json',{cache:'no-store'}).then(r=>r.json()).then(j=>{ latest=j.v; paint(); }).catch(()=>{});
+    navigator.serviceWorker.addEventListener('message',e=>{ const d=e.data||{}, b=btn();
+      if(d.type==='status'){ have=d.done; paint(); }
+      if(d.type==='progress'&&b){ b.classList.add('busy'); b.classList.remove('done'); const f=d.N?d.n/d.N:0; bar(f); txt('Downloading… '+Math.round(f*100)+'%'); }
+      if(d.type==='done'){ have=String(d.v); latest=latest||d.v; paint(); note('Fast Pitch is ready to use offline'); }
+      if(d.type==='error'&&b){ b.classList.remove('busy'); bar(0); txt('Download failed — tap to retry'); } });
+  }
+  document.addEventListener('click',e=>{ if(!e.target.closest('#dlBtn')) return; e.preventDefault(); e.stopPropagation();
+    if(!ok){ note('Open Fast Pitch from your Home Screen app to download it'); return; }
+    if(!navigator.onLine){ note('Connect to WiFi to download'); return; }
+    navigator.serviceWorker.ready.then(r=>{ const b=btn(); b&&b.classList.add('busy'); txt('Preparing…'); r.active.postMessage({type:'download'}); }); },true);
+}
 
 barFor(cur);
 </script>
