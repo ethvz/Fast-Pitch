@@ -1620,6 +1620,18 @@ body.pkon #bar{z-index:61!important}
 #bar.hx-ctr #homeX .hxi{opacity:1}
 #bar #homeX .bbtn.on{background-color:transparent!important}
 #bar #homeX .bbtn{position:relative;z-index:1}
+
+/* ===== Product photo galleries (full screen, swipe) ===== */
+.lpage>.gal{transform:none!important;margin:0!important;width:var(--W,1376px)!important;height:1032px;border-radius:0!important;position:relative;overflow:hidden!important;clip-path:none!important;scroll-snap-align:start;scroll-margin-top:0!important;background:#000}
+.gal-tr{position:absolute;inset:0;display:flex;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;overscroll-behavior-x:contain}
+.gal-tr::-webkit-scrollbar{display:none}
+.gal-tr figure{flex:0 0 100%;height:100%;margin:0;scroll-snap-align:center;scroll-snap-stop:always;position:relative;overflow:hidden}
+.gal-tr img{width:100%;height:100%;object-fit:cover;display:block;user-select:none;-webkit-user-drag:none;pointer-events:none}
+.gal::after{content:"";position:absolute;left:0;right:0;bottom:0;height:220px;background:linear-gradient(0deg,rgba(0,0,0,.55),rgba(0,0,0,0));pointer-events:none}
+.gal-dots{position:absolute;left:50%;bottom:104px;transform:translateX(-50%);display:flex;gap:8px;padding:9px 12px;border-radius:999px;background:rgba(0,0,0,.35);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);z-index:2}
+.gal-dots i{width:8px;height:8px;border-radius:4px;background:rgba(255,255,255,.45);transition:width .35s cubic-bezier(.22,1,.36,1),background .3s;cursor:pointer}
+.gal-dots i.on{width:26px;background:#fff}
+.lpage>.gal:not(.in)>*{opacity:1!important}
 </style>
 <div id="stage">
   <div id="screen">
@@ -3346,6 +3358,28 @@ $$('.hcat .ht[data-k=shp2]').forEach(t=>{ if(t.querySelector('img[src*="scr.webp
 { const upd=c=>{ const l=c.scrollLeft, m=c.scrollWidth-c.clientWidth; c.style.setProperty('--fl',l<=48?1:.18); c.style.setProperty('--fr',l>=m-48?1:.18); };
   document.addEventListener('scroll',e=>{ if(e.target.matches&&e.target.matches('#psheet .car')) upd(e.target); },true);
   new MutationObserver(()=>$$('#psheet .car').forEach(upd)).observe($('#psheet'),{attributes:true,childList:true,subtree:true,attributeFilter:['class']}); $$('#psheet .car').forEach(upd); }
+
+/* ===== Product photo galleries ===== */
+IP.gal='<rect x="6.5" y="3.5" width="14" height="11" rx="2"/><path d="M3.5 7.5v10a2 2 0 0 0 2 2h11"/><path d="M20.5 11.5l-3.5-3.5-6.5 6.5"/>'; NLAB.gal='Gallery';
+{ const GN={ocp:7,hub:8,icp:7,dbcp:7,lock:7,therm:4,garage:5};
+  const html=k=>`<div class="gal" data-t="gal" data-gal="${k}"><div class="gal-tr">${Array.from({length:GN[k]},(_,i)=>`<figure><img src="assets/gal/${k}_${i}.webp?v=186" alt="" loading="${i?'lazy':'eager'}" decoding="async"></figure>`).join('')}</div><div class="gal-dots">${Array.from({length:GN[k]},(_,i)=>`<i class="${i?'':'on'}" data-gi="${i}"></i>`).join('')}</div></div>`;
+  const wire=g=>{ const tr=g.querySelector('.gal-tr'), ds=g.querySelectorAll('.gal-dots i'); let t;
+    tr.addEventListener('scroll',()=>{ cancelAnimationFrame(t); t=requestAnimationFrame(()=>{ const i=Math.round(tr.scrollLeft/tr.clientWidth); ds.forEach((d,j)=>d.classList.toggle('on',j===i)); }); },{passive:true});
+    g.querySelector('.gal-dots').addEventListener('click',e=>{ const d=e.target.closest('[data-gi]'); if(d) tr.scrollTo({left:+d.dataset.gi*tr.clientWidth,behavior:'smooth'}); }); };
+  const put=(box,k)=>{ if(!box) return; box.querySelectorAll(':scope>.gal').forEach(x=>{ if(x.dataset.gal!==k) x.remove(); }); if(!GN[k]) return; if(box.querySelector(':scope>.gal')) return;
+    const hero=[...box.children].find(c=>c.dataset.t==='hero'); if(!hero) return; hero.insertAdjacentHTML('afterend',html(k)); const g=hero.nextElementSibling; wire(g); g.classList.add('in'); };
+  put($('#ocScroll'),'ocp'); put($('#dbScroll'),'dbcp'); put($('#hbScroll'),'hub'); put($('#thScroll'),'therm');
+  const _pb=prBuild; prBuild=function(){ _pb.apply(this,arguments); put($('#prScroll'),PR.id); if(cur==='prod'&&window.galBtn) galBtn(); };
+  if($('#prScroll').children.length) put($('#prScroll'),PR.id);
+  const PG={ocp:'#ocScroll',dbcp:'#dbScroll',hub:'#hbScroll',therm:'#thScroll',prod:'#prScroll'};
+  const box=()=>{ const q=PG[cur]; const b=q&&$(q); return b&&b.querySelector(':scope>.gal')?b:null; };
+  window.galBtn=()=>{ const b=box(); const r=$('#barRight'); r.querySelectorAll('[data-galgo]').forEach(x=>{ if(!b) x.remove(); }); if(!b||!r.firstElementChild||r.querySelector('[data-galgo]')) return;
+    r.firstElementChild.insertAdjacentHTML('afterend',`<button class="bbtn" data-galgo="1">${SVGI('gal',22)}<span>Gallery</span></button>`); galSpy(); };
+  const _bf=barFor; barFor=function(p){ _bf(p); galBtn(); };
+  document.addEventListener('click',e=>{ if(!e.target.closest('[data-galgo]')) return; const b=box(); if(!b) return; const g=b.querySelector(':scope>.gal'); b.scrollTo({top:g.offsetTop,behavior:'smooth'}); },true);
+  const galSpy=()=>{ const b=box(), btn=$('#barRight [data-galgo]'); if(!b||!btn) return; const g=b.querySelector(':scope>.gal'); const on=Math.abs(b.scrollTop-g.offsetTop)<g.offsetHeight*.45;
+    btn.classList.toggle('on',on); if(on) $$('#barRight .bbtn:not([data-galgo])').forEach(x=>x.classList.remove('on')); };
+  Object.values(PG).forEach(q=>{ const b=$(q); if(b) b.addEventListener('scroll',()=>requestAnimationFrame(galSpy),{passive:true}); }); }
 
 barFor(cur);
 </script>
