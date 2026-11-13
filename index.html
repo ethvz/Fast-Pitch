@@ -3832,7 +3832,7 @@ const stripHot=(hot,attr)=>hot.replace(new RegExp('<div class="hot"[^>]*'+attr+'
 
 /* ===== History: Fast Recruit's swipeable timeline wheel, written for customers ===== */
 { const pg=$('#p-history'), N=10, S=9.5;
-  pg.innerHTML=`<img class="bg kb" src="assets/ph/office.webp?v=97" alt=""><div class="sc"></div><div class="hy2-h pv"><h1>There’s no shortcut<br><span>to protecting families since 1999.</span></h1></div><div class="hyx">${$('#hyTpl').innerHTML}</div>`;
+  pg.innerHTML=`<img class="bg kb" src="assets/ph/office.webp?v=97" alt=""><div class="sc"></div><div class="hy2-h pv"><h1>Protecting families<br>since 1999.</h1></div><div class="hyx">${$('#hyTpl').innerHTML}</div>`;
   const X=$('.hyx',pg), box=$('[data-hybox]',X), wh=$('[data-hyw]',X), hint=$('[data-hyhint]',X);
   const Y=$$('[data-hyy]',X), L=$$('[data-hyl]',X), D=$$('[data-hyd]',X);
   let p=0, drag=false, used=false, t=null, acc=0;
