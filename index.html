@@ -854,6 +854,7 @@ body,button,input{font-family:"Vivint Sans",Figtree,system-ui,sans-serif}
 #screen[data-dir=back] .page.on{animation-name:pgBack}
 .page.out{display:block!important;z-index:1;pointer-events:none;animation:pgOut .3s ease forwards}
 .page.on{z-index:2}
+.page.hxout{display:block!important;z-index:1;pointer-events:none}
 @keyframes pgIn{from{opacity:0;transform:translate3d(46px,0,0) scale(.985)}to{opacity:1;transform:none}}
 @keyframes pgBack{from{opacity:0;transform:translate3d(-46px,0,0) scale(.985)}to{opacity:1;transform:none}}
 @keyframes pgOut{to{opacity:0;transform:scale(.975)}}
@@ -3608,14 +3609,33 @@ $$('.hcat .ht[data-k=shp2]').forEach(t=>{ if(t.querySelector('img[src*="scr.webp
 { const HX=['about','videos','sign'];
   const sync=()=>{ const hx=$('#homeX'); if(!hx) return; const i=HX.indexOf(cur); if(!hx.querySelector('.hxi')) hx.insertAdjacentHTML('afterbegin','<i class="hxi"></i>'); if(i>=0) hx.style.setProperty('--hxi',i); };
   const _bf=barFor; barFor=function(p){ _bf(p); sync(); }; sync();
-  const goHX=to=>{ if(to===cur) return; stack[stack.length-1]=to; show(to); };
+  /* slide: outgoing page glides off to one side while the next one glides in from the other */
+  const slide=(fromEl,toEl,dir,dx0)=>{ if(!fromEl||!toEl) return; const W=fromEl.offsetWidth||1376;
+    fromEl.classList.add('hxout'); [fromEl,toEl].forEach(e=>{ e.style.transition='none'; e.style.animation='none'; });
+    fromEl.style.transform=`translateX(${dx0}px)`; toEl.style.transform=`translateX(${dir*W*.6+dx0}px)`; toEl.style.opacity='.4';
+    void toEl.offsetWidth;
+    requestAnimationFrame(()=>{ const T='transform .55s cubic-bezier(.22,1,.36,1), opacity .45s ease';
+      fromEl.style.transition=T; toEl.style.transition=T;
+      fromEl.style.transform=`translateX(${-dir*W*.45}px) scale(.94)`; fromEl.style.opacity='0'; toEl.style.transform='none'; toEl.style.opacity='1'; });
+    clearTimeout(slide.t); slide.t=setTimeout(()=>{ fromEl.classList.remove('hxout'); [fromEl,toEl].forEach(e=>{ e.style.transition=''; e.style.transform=''; e.style.opacity=''; e.style.animation=''; }); },600); };
+  const goHX=(to,dx0=0)=>{ if(to===cur) return; const i=HX.indexOf(cur), j=HX.indexOf(to), fromEl=$('#p-'+cur);
+    stack[stack.length-1]=to; show(to); if(i>=0&&j>=0) slide(fromEl,$('#p-'+to),j>i?1:-1,dx0); };
   /* tapping between them swaps in place (no history pile-up) */
   document.addEventListener('click',e=>{ const b=e.target.closest('#homeX [data-go]'); if(!b||!HX.includes(cur)) return; e.stopPropagation(); goHX(b.dataset.go); },true);
   let sx=null,sy=null,blocked=false;
   const scroller=el=>{ for(;el&&el!==document.body;el=el.parentElement){ if(el.scrollWidth>el.clientWidth+4&&/(auto|scroll)/.test(getComputedStyle(el).overflowX)) return true; } return false; };
   $('#screen').addEventListener('touchstart',e=>{ if(!HX.includes(cur)||e.touches.length!==1){ sx=null; return; } sx=e.touches[0].clientX; sy=e.touches[0].clientY; blocked=scroller(e.target); },{passive:true});
-  $('#screen').addEventListener('touchend',e=>{ if(sx===null||blocked) return; const dx=e.changedTouches[0].clientX-sx, dy=e.changedTouches[0].clientY-sy; sx=null;
-    if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.4){ const i=HX.indexOf(cur), j=i+(dx<0?1:-1); if(j>=0&&j<HX.length) goHX(HX[j]); } },{passive:true}); }
+  /* the page follows your finger, then finishes the slide (or springs back) */
+  const z=()=>{ const st=$('#stage'); return (st.getBoundingClientRect().width/st.offsetWidth)||1; };
+  let live=false;
+  $('#screen').addEventListener('touchmove',e=>{ if(sx===null||blocked) return; const dx=e.touches[0].clientX-sx, dy=e.touches[0].clientY-sy;
+    if(!live){ if(Math.abs(dx)>12&&Math.abs(dx)>Math.abs(dy)*1.4) live=true; else return; }
+    const i=HX.indexOf(cur), edge=(dx>0&&i===0)||(dx<0&&i===HX.length-1), el=$('#p-'+cur); if(!el) return;
+    const d=dx/z()*(edge?.25:.85); el.style.transition='none'; el.style.animation='none'; el.style.transform=`translateX(${d}px)`; el.style.opacity=String(1-Math.min(.5,Math.abs(d)/1400)); },{passive:true});
+  $('#screen').addEventListener('touchend',e=>{ if(sx===null||blocked){ sx=null; live=false; return; } const dx=e.changedTouches[0].clientX-sx, dy=e.changedTouches[0].clientY-sy; sx=null; const was=live; live=false;
+    const el=$('#p-'+cur), i=HX.indexOf(cur), j=i+(dx<0?1:-1);
+    if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.4&&j>=0&&j<HX.length){ goHX(HX[j],dx/z()*.85); return; }
+    if(was&&el){ el.style.transition='transform .4s cubic-bezier(.22,1,.36,1), opacity .3s'; el.style.transform=''; el.style.opacity=''; setTimeout(()=>{ el.style.transition=''; el.style.animation=''; },420); } },{passive:true}); }
 
 /* product carousel: edge fades only where there's more to scroll */
 { const upd=c=>{ const l=c.scrollLeft, m=c.scrollWidth-c.clientWidth; c.style.setProperty('--fl',l<=48?1:.18); c.style.setProperty('--fr',l>=m-48?1:.18); };
