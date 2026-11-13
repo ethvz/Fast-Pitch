@@ -3357,10 +3357,11 @@ document.addEventListener('click',e=>{ const c=e.target.closest('[data-vlf]'); i
     requestAnimationFrame(()=>bar.classList.toggle('hx-ctr',HX.includes(p)));
     $$('#homeX [data-go]').forEach(b=>b.classList.toggle('on',b.dataset.go===p)); }; }
 
+IP.nrg='<path d="M13 2.5L5.5 13.5H11L10 21.5l8-11.5h-5.5z"/>';
 IP.tools='<path d="M14.5 6.5a4 4 0 0 0-5 5L4 17l3 3 5.5-5.5a4 4 0 0 0 5-5l-2.5 2.5-2.5-.5-.5-2.5z"/>';
 /* ===== Menu v2: tiles by importance, card grows out of the hamburger ===== */
 { const P=[['about','About','about'],['videos','Videos','videos'],['awards','Awards','awards'],['sign','Yard Sign','ysign'],['packages','Packages','packages'],['pricing','Pricing Options','buyouts'],['protection','Protection Plans','protection'],['playback','Video Plans','vid'],['monitoring','Monitoring','monitoring'],['comparisons','Comparisons','comparisons']];
-  const S=[['install','Professional Installation','tools'],['verify','Verify a Rep'],['reviews','Reviews'],['compat','Compatibility'],['buyouts','Buyouts'],['military','Military'],['moves','Moves'],['social','Social'],['psa','PSA'],['ai','AI Technologies']];
+  const S=[['install','Professional Installation','tools'],['verify','Verify a Rep'],['history','History','hist'],['nrg','NRG','nrg'],['reviews','Reviews'],['compat','Compatibility'],['buyouts','Buyouts'],['military','Military'],['moves','Moves'],['social','Social'],['psa','PSA'],['ai','AI Technologies']];
   const ic=k=>SVGI(IP[k]?k:'about',24);
   const d=$('#drawer');
   d.innerHTML=`<div class="m2-h"><img src="assets/logo.svg?v=95" alt="vivint"><span class="sub">Fast Pitch 2027</span><button class="m2-wn" data-go="whatsnew">What’s New</button><button class="m2-x" id="dclose" aria-label="Close menu"><svg width="16" height="16" viewBox="0 0 16 16" stroke="#fff" stroke-width="1.9" stroke-linecap="round"><path d="M3 3l10 10M13 3L3 13"/></svg></button></div>
