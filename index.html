@@ -2465,7 +2465,7 @@ $('#allTiles').innerHTML=Object.entries(ALLPOS).map(([k,[x,y,w,h]])=>k==='shortc
   :`<div class="ht abs" data-k="${k}" ${TACT[k]} style="left:${x}px;top:${y}px;width:${w}px;height:${h}px"><div class="lg"></div>${(k==='dbcp'||k==='icp')?`<img class="cp big" src="assets/cat/${k}.webp?v=176" alt=""><div class="cl">${CNAME[k]}</div>`:ALLEQ.includes(k)?`<img class="cp" src="assets/cat/${k}.webp?v=176" alt=""><div class="cl">${CNAME[k]}</div>`:`<img src="assets/tiles/${k}.webp?v=176" alt="">`}</div>`).join('');
 { const T0=17, T1=946, N0=150, k=(T1-N0)/(T1-T0);
   $$('#allTiles .ht').forEach(el=>{ const y=parseFloat(el.style.top), h=parseFloat(el.style.height); el.style.top=(N0+(y-T0)*k).toFixed(1)+'px'; el.style.height=(h*k).toFixed(1)+'px'; });
-  $('#homeAll').insertAdjacentHTML('afterbegin','<div class="hall-h"><div><div class="eb">Vivint Smart Home</div><h1>One system. Every corner of your home.</h1></div></div>'); }
+  $('#homeAll').insertAdjacentHTML('afterbegin','<div class="hall-h"><div><div class="eb">Full Vivint Product Suite</div><h1>One system. Every corner of your home.</h1></div></div>'); }
 $('#p-home').insertAdjacentHTML('beforeend','<div id="flipLayer"></div>');
 /* All grid: built from one spec so every gap is exactly G on every iPad width */
 function allGrid(Wt){ const G=14, X0=20.6, Y0=74, Y1=946, top=Math.round((Y1-Y0)*0.40), cw=(Wt-2*G)/3, cx=[X0,X0+cw+G,X0+2*(cw+G)], half=(cw-G)/2, y2=Y0+top+G, rest=Y1-y2, P={};
