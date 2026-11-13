@@ -1686,6 +1686,27 @@ html.booted #stage{animation:bootIn .35s ease both}
 #thScroll [data-t=feat] h2{top:98px;font-size:50px;letter-spacing:-1.3px}
 #thScroll [data-t=feat] .sub{top:214px;font-size:17px;width:460px}
 #thfL{top:304px!important}
+.th-media img.cut{mix-blend-mode:normal}
+.thm video{position:absolute;left:0;width:700px;height:391px;border-radius:28px;object-fit:cover;background:#aaa}
+.thm-stat{position:absolute;left:28px;top:352px;width:300px;padding:18px 22px;border-radius:22px;background:rgba(20,20,20,.62);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);color:#fff}
+.thm-stat b{display:block;font-size:52px;font-weight:500;letter-spacing:-1.5px;line-height:1;color:var(--vg,#05E5AF)}
+.thm-stat span{display:block;margin-top:8px;font-size:15px;line-height:1.35;color:rgba(255,255,255,.85)}
+.thm-es{position:absolute;right:24px;top:54px;display:flex;align-items:center;gap:8px;height:40px;padding:0 16px;border-radius:20px;background:rgba(20,20,20,.62);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);font-size:14.5px;font-weight:500;color:#fff}
+.thm-es svg{color:var(--vg,#05E5AF);stroke:currentColor}
+.thm[data-k=ciq] .thm-card{padding:22px 26px;margin:0 0 12px;font-size:16px}
+.thm-card b{display:flex!important;align-items:center;justify-content:space-between;gap:12px}
+.thm-card b i{font-style:normal;font-size:12.5px;font-weight:500;color:#000;background:var(--vg,#05E5AF);border-radius:99px;padding:5px 11px;white-space:nowrap}
+.thm-card>div{flex:1}
+.thm-logo{display:flex;align-items:center;gap:12px;margin:0 0 18px 4px;font-size:26px;font-weight:500;color:#fff}
+.thm-logo svg{color:#fff;stroke:currentColor}
+.thm-fn{font-size:12.5px;color:rgba(255,255,255,.45);text-align:center;margin-top:4px}
+.thm>.thm-fn[style]{position:absolute;left:0;width:700px;margin:0}
+.thm-chips{position:absolute;left:0;top:516px;width:700px;display:flex;justify-content:center;gap:10px}
+.thm-chips span{display:flex;align-items:center;gap:8px;height:40px;padding:0 16px;border-radius:20px;background:#1c1c1c;font-size:15px;color:#e5e5ea}
+.thm-chips svg,.thm-pts svg{color:var(--vg,#05E5AF);stroke:currentColor;flex:none}
+.thm-pts{position:absolute}
+.thm-pts p{display:flex;gap:14px;align-items:flex-start;background:#1c1c1c;border-radius:20px;padding:18px 20px;margin:0 0 12px;font-size:16px;line-height:1.4;color:#e5e5ea}
+.thm-pts.row{display:flex;gap:12px}.thm-pts.row p{flex:1;margin:0;flex-direction:column;gap:10px;font-size:15px}
 .otab.th.lhero .lh-scrim{background:linear-gradient(90deg,rgba(0,0,0,.62) 0%,rgba(0,0,0,.3) 45%,rgba(0,0,0,0) 70%),linear-gradient(0deg,rgba(0,0,0,.5) 0%,rgba(0,0,0,0) 45%),linear-gradient(180deg,rgba(0,0,0,.45) 0%,rgba(0,0,0,0) 18%)!important}
 .th-media .thm img{opacity:1;transform:none;right:auto;bottom:auto}
 .thm{position:absolute;inset:0;opacity:0;transform:scale(.97);transition:opacity .45s ease,transform .6s var(--ease);pointer-events:none}
@@ -3032,6 +3053,7 @@ XACT.therm=[["home","The home is armed Away","Set the thermostat to Away and sta
 XWITH.therm=["smokeco",["Smoke detected: heat and A/C shut off","Slows the spread of smoke and flames","Doors unlock for a clear way out"]];
 XW2.therm=[["fob",["Arm from the fob: temperature adjusts","Doors lock, garage closes","One remote for the whole house"]],["motion",["Sensors know which rooms are in use","Comfort follows your routine","Saves when nobody’s home"]]];
 XFAQ.therm=[["How does Smart Comfort work?","It uses your Vivint sensors, your preferences and AI to adjust the temperature automatically, so you stay comfortable when you’re home and save when you’re not."],["How much can it save?","Up to $300 a year on heating and cooling, based on a year-long study of about 50,000 Vivint homes. Actual savings vary by climate, rates and home."],["Do I lose control of the temperature?","No. You set your preferred temperatures for Home, Sleep, Away and Travel, and you can change them any time from the app, the hub or the thermostat."],["What happens if there’s a fire?","With a Vivint Smoke & CO Detector, the system turns off your heating and cooling automatically to slow the spread of smoke and flames."],["Will it work with my system?","It works with conventional forced air, radiant and heat pump systems, with up to 3 stages of heating and 2 of cooling, on gas, propane, electric, oil or geothermal."],["How is it powered?","Four AA batteries, or 24 VAC wired power from your HVAC system."]];
+IP.hub='<rect x="3.5" y="5" width="17" height="11.5" rx="2.5"/><path d="M8 20h8M12 16.5V20"/>';IP.home='<path d="M4 11l8-6.5 8 6.5"/><path d="M6 9.5V20h12V9.5"/>';
 IP.scs='<path d="M3.5 11L12 4l8.5 7"/><path d="M5.5 9.5V20h13V9.5"/><path d="M9.5 17.5c0-3.2 2.1-5.3 5.3-5.3 0 3.2-2.1 5.3-5.3 5.3z"/>';
 IP.save='<circle cx="12" cy="12" r="8.5"/><path d="M14.6 9.3c-.5-.8-1.4-1.3-2.6-1.3-1.5 0-2.6.8-2.6 1.9 0 2.7 5.2 1.4 5.2 4.2 0 1.1-1.1 2-2.6 2-1.2 0-2.2-.5-2.8-1.4M12 6.4V8M12 16v1.6"/>';
 IP.ctl='<path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/>';
@@ -3041,13 +3063,12 @@ NLAB.ciq='Comfort IQ';
 const TH={tab:'hero',f:0,c:0,a:0};
 const THF=[['smart','Effortless Comfort','Smart Heating<br>&amp; Cooling','Adjusts on its own when you leave, come home or go to bed.','duo'],
  ['phone','Control from Anywhere','Control from<br>Anywhere','Change the temperature from the Vivint app, wherever you are.','ctrl'],
- ['feat','ENERGY STAR Certified','ENERGY STAR<br>Certified','Certified to cut wasted heating and cooling.','r45'],
- ['awards','Award-Winning Design','Simple<br>to Use','One clean face. Tap up or down, and it does the rest.','front'],
- ['ciq','Comfort IQ','Intelligent<br>Comfort','Comfort for your whole home, with smart adjustments, filter reminders and HVAC insights built in.','ciq'],
- ['scs','Smart Comfort System','A System That<br>Saves Money','The smartest way to heat and cool your home.','sys'],
- ['save','Energy Savings','Save up to $300<br>a Year*','On heating and cooling your home.','save'],
- ['ctl','Stay in Control','You Stay<br>in Control','Set your comfort preferences in the app and Smart Comfort takes it from there.','stay'],
- ['only','Only Vivint','Smarter Than<br>a Standalone','Smart Comfort can save more on energy costs than a standalone thermostat.','only']];
+ ['save','Energy Savings','Seamless<br>Energy Savings','ENERGY STAR® certified and built to cut wasted heating and cooling.','save'],
+ ['awards','Award-Winning Design','Simple<br>to Use','Award-winning design. Tap up or down, and it does the rest.','simple'],
+ ['ciq','Comfort IQ','Intelligent<br>Comfort','Vivint’s home comfort platform. Your system keeps getting smarter.','ciq'],
+ ['scs','Smart Comfort System','A System That<br>Saves Money','Vivint devices and proprietary AI adjust the temperature around your home’s activity.','sys'],
+ ['ctl','Stay in Control','You Stay<br>in Control','Set your preferences in the app. Smart Comfort takes it from there.','stay'],
+ ['only','Only Vivint','Smarter Than<br>a Standalone','Uses your whole Vivint system, not just one device or a fixed schedule.','only']];
 const THA=[['phone','Remote Temperature Control','ctrl',''],['smart','Smart Comfort','sc','Smart Comfort automatically adjusts your temperature based on your daily routine.'],['all','Multiple Zone Support','zone','See and set every thermostat in the house from one screen.'],['sensors','Smoke Detector Integration','smoke','When combined with a Vivint Smoke & CO Combo Detector, if smoke is detected the system will automatically turn off your HVAC to prevent the spread of smoke and flames throughout the home.']];
 const THC=['Comfort IQ','Smart Comfort','Energy Savings','Stay in Control','Only Vivint'];
 const THI=k=>`assets/th/${k}.webp?v=93`;
@@ -3055,18 +3076,20 @@ const THI=k=>`assets/th/${k}.webp?v=93`;
   const card=(x,y,w,h,ic,t,d)=>`<div class="th-card" style="left:${x}px;top:${y}px;width:${w}px;height:${h}px">${SVGI(ic,28)}<b>${t}</b>${d}</div>`;
   $('#thScroll').innerHTML=
   `<div class="otab th lhero" data-t="hero"><div class="lh-media"><img class="lh-ph kb" src="assets/ph/therm2.webp?v=209" alt="" style="object-position:50% 40%"></div><div class="lh-scrim"></div><div class="lh-txt"><div class="eb">Vivint Smart Comfort System</div><h1>Smart &amp;<br>comfortable.</h1><p>The thermostat that works with your whole system to keep you comfortable and save you money.</p></div></div>`+
-  `<div class="otab th" data-t="feat"><h2 id="thfH"></h2><div class="sub" id="thfS"></div><div class="th-list" id="thfL">${rows(THF,'data-thf',0)}</div><div class="th-media" id="thfM">${['duo','ctrl'].map(k=>`<img data-k="${k}" src="${THI(k)}" alt="">`).join('')}<img data-k="r45" src="assets/fs/therm_s.webp?v=208" alt="" style="padding:70px"><img data-k="front" src="assets/fs/therm.webp?v=208" alt="" style="padding:90px">`+
-   `<div class="thm" data-k="ciq">${[['smart','Smart Comfort','Adjusts the temperature automatically around your routine.'],['hist','Filter Reminders','Tells you when it’s time to change your filter.'],['specs','HVAC Insights','Shows how your heating and cooling system is running.']].map(([ic,t,d])=>`<div class="thm-card">${SVGI(ic,28)}<div><b>${t}</b>${d}</div></div>`).join('')}</div>`+
-   `<div class="thm" data-k="sys"><img src="${THI('house')}" alt="" style="left:0;top:40px;width:700px;height:394px"><div class="thm-txt" style="top:462px">Vivint’s Smart Comfort System uses Vivint devices and proprietary AI to automatically adjust the temperature based on preferences and home activity, keeping you comfortable and saving you money.</div></div>`+
-   `<div class="thm" data-k="save"><img src="${THI('map')}" alt="" style="left:0;top:20px;width:700px;height:470px"><div class="thm-fine" style="top:510px">*Estimated energy savings are based on results from a year-long, real-world independent study of approximately 50,000 Vivint customer homes across five major U.S. climate zones. Savings are estimated under two methodologies: (1) a 72°F constant setpoint baseline consistent with ASHRAE and DOE comfort standards and the methodology used by leading thermostat manufacturers for published savings comparisons; and (2) a per-home baseline comparing Smart Comfort performance against each home’s expected operation under occupants’ preferred constant comfort setpoints, representative of manual, scheduled, or other non-adaptive thermostat operations. Energy savings are estimates, not guarantees. Actual individual savings will vary and depend on many factors, including climate and seasonal conditions, utility rates, home characteristics, HVAC system performance, occupancy patterns, and user settings, and will likely be less.</div></div>`+
-   `<div class="thm" data-k="stay"><img src="${THI('stay')}" alt="" style="left:130px;top:0;width:434px;height:700px;border-radius:0;mix-blend-mode:lighten"></div>`+
-   `<div class="thm" data-k="only"><img src="${THI('only')}" alt="" style="left:0;top:60px;width:700px;height:403px"><div class="thm-txt" style="top:492px">A 2025 year-long study of 50,000 Vivint households showed greater average heating and cooling savings with Vivint’s Smart Comfort System than with a standalone thermostat.</div></div>`+
+  `<div class="otab th" data-t="feat"><h2 id="thfH"></h2><div class="sub" id="thfS"></div><div class="th-list" id="thfL">${rows(THF,'data-thf',0)}</div><div class="th-media" id="thfM">`+
+   `<img data-k="duo" class="cut" src="assets/th/duo2.webp?v=210" alt=""><img data-k="ctrl" class="cut" src="assets/th/ctrl2.webp?v=210" alt="">`+
+   `<div class="thm" data-k="save"><img src="assets/th/life.webp?v=210" alt="" style="left:0;top:30px;width:700px;height:480px;object-position:50% 20%"><div class="thm-stat"><b>$300</b><span>Save up to $300 a year on heating and cooling*</span></div><div class="thm-es">${SVGI('feat',20)}<span>ENERGY STAR® Certified</span></div><div class="thm-fine" style="top:532px">*Estimated energy savings are based on results from a year-long, real-world independent study of approximately 50,000 Vivint customer homes across five major U.S. climate zones. Savings are estimated under two methodologies: (1) a 72°F constant setpoint baseline consistent with ASHRAE and DOE comfort standards and the methodology used by leading thermostat manufacturers for published savings comparisons; and (2) a per-home baseline comparing Smart Comfort performance against each home’s expected operation under occupants’ preferred constant comfort setpoints, representative of manual, scheduled, or other non-adaptive thermostat operations. Energy savings are estimates, not guarantees. Actual individual savings will vary and depend on many factors, including climate and seasonal conditions, utility rates, home characteristics, HVAC system performance, occupancy patterns, and user settings, and will likely be less.</div></div>`+
+   `<img data-k="simple" class="cut" src="assets/th/l45.webp?v=210" alt="" style="padding:70px 90px">`+
+   `<div class="thm" data-k="ciq"><div class="thm-logo">${SVGI('ciq',30)}<span>Comfort IQ</span></div>${[['smart','Smart Comfort','Adjusts your temperature around your preferences and home activity.',''],['hist','Filter Reminders','Tells you when to change your air filter, so your system runs efficiently.','*'],['specs','HVAC Insights','Tracks how long your heating and cooling run, for a clearer picture of your system.','']].map(([ic,t,d,st])=>`<div class="thm-card">${SVGI(ic,28)}<div><b>${t}<i>Available now${st}</i></b>${d}</div></div>`).join('')}<div class="thm-fn">*Single-thermostat homes. Multi-thermostat homes coming soon.</div></div>`+
+   `<div class="thm" data-k="sys"><video id="thSys" src="assets/th/sys.mp4?v=210" poster="assets/th/sys_end.webp?v=210" muted playsinline preload="auto" style="top:100px"></video><div class="thm-chips">${[['smart','Thermostat'],['hub','Smart Hub'],['phone','Vivint App'],['sensors','Sensors']].map(([i,t])=>`<span>${SVGI(i,18)}${t}</span>`).join('')}</div></div>`+
+   `<div class="thm" data-k="stay"><img src="${THI('stay')}" alt="" style="left:-30px;top:0;width:434px;height:700px;border-radius:0;mix-blend-mode:lighten"><div class="thm-pts" style="left:420px;top:190px;width:290px">${[['home','Home, away, asleep or on vacation, it adjusts automatically.'],['hist','Learns your routines over time.'],['smart','No more manual reprogramming.']].map(([i,t])=>`<p>${SVGI(i,22)}<span>${t}</span></p>`).join('')}</div></div>`+
+   `<div class="thm" data-k="only"><img src="assets/th/only2.webp?v=210" alt="" style="left:0;top:40px;width:700px;height:401px"><div class="thm-pts row" style="left:0;top:470px;width:700px">${[['sensors','Uses occupancy, sensor and system data'],['smart','Responds to what’s actually happening'],['save','Saves more than a standalone thermostat*']].map(([i,t])=>`<p>${SVGI(i,22)}<span>${t}</span></p>`).join('')}</div><div class="thm-fn" style="top:600px;text-align:left">*2025 year-long study of 50,000 Vivint households.</div></div>`+
    `</div></div>`+
   `<div class="otab th" data-t="phone"><h2>In the<br>Vivint app.</h2><div class="th-list" style="top:400px" id="thaL">${rows(THA,'data-tha',0)}</div><div class="th-note" id="thaN"></div><div class="th-media" style="top:110px;height:760px" id="thaM">${THA.map(x=>`<img data-k="${x[2]}" class="${x[2]==='smoke'?'ph':''}" src="${THI(x[2])}" alt="">`).join('')}</div></div>`+
   `<div class="otab th" data-t="specs"><div class="strip"></div>${FSP(578,869,220,60)}<div class="hl"></div></div>`+
   XS_TABS.map(t=>xsSec('therm',t,'otab')).join('');
   const thR=()=>{ const f=THF[TH.f]; $('#thfH').innerHTML=f[2]; $('#thfS').textContent=f[3];
-    $$('#thfL button').forEach((b,i)=>b.classList.toggle('on',i===TH.f)); $$('#thfM>[data-k]').forEach(im=>im.classList.toggle('on',im.dataset.k===f[4]));
+    $$('#thfL button').forEach((b,i)=>b.classList.toggle('on',i===TH.f)); $$('#thfM>[data-k]').forEach(im=>im.classList.toggle('on',im.dataset.k===f[4])); { const v=$('#thSys'); if(v){ if(f[4]==='sys'){ if(TH._sv!==1){ TH._sv=1; try{v.currentTime=0;}catch(e){} v.play().catch(()=>{}); } } else { TH._sv=0; v.pause(); } } }
     $$('#thcP button').forEach((b,i)=>b.classList.toggle('on',i===TH.c)); $$('#thScroll .th-pan').forEach(x=>x.classList.toggle('on',+x.dataset.i===TH.c));
     const a=THA[TH.a]; $$('#thaL button').forEach((b,i)=>b.classList.toggle('on',i===TH.a)); $$('#thaM img').forEach(im=>im.classList.toggle('on',im.dataset.k===a[2])); const n=$('#thaN'); n.textContent=a[3]; n.classList.toggle('on',!!a[3]); };
   const TABS=['hero','feat','phone','specs','act','with','faq'];
