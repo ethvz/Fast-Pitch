@@ -1716,10 +1716,14 @@ html.booted #stage{animation:bootIn .35s ease both}
 #drawer .m2-dl i{position:absolute;left:0;top:0;bottom:0;width:0;background:rgba(5,229,175,.22);transition:width .3s ease}
 #drawer .m2-dl.done{background:rgba(5,229,175,.12);box-shadow:inset 0 0 0 1px rgba(5,229,175,.4)}
 #drawer .m2-dl.busy{pointer-events:none}
-#p-verify{background:#000;left:calc(-1*var(--gx,0px))!important;right:auto!important;width:var(--W,1376px)!important}
-#p-verify .vr-ph{position:absolute;top:0;left:auto;right:-10%;width:110%;height:100%;object-fit:cover;object-position:4% 30%;animation:kbz 18s ease-out both}
-@keyframes kbz{from{transform:scale(1.08)}to{transform:scale(1)}}
-#p-verify .vr-scrim{position:absolute;top:0;bottom:0;left:0;width:100%;background:linear-gradient(90deg,rgba(0,0,0,.8) 0%,rgba(0,0,0,.55) 30%,rgba(0,0,0,0) 55%),linear-gradient(0deg,rgba(0,0,0,.55) 0%,rgba(0,0,0,0) 30%)}
+#p-verify{background:transparent!important;left:calc(-1*var(--gx,0px))!important;right:auto!important;width:var(--W,1376px)!important}
+#stage:has(#p-verify.on),#stage:has(#p-verify.on) .screen,#stage:has(#p-verify.on) #screen{background:transparent!important;background-image:none!important}
+#vrBg{position:fixed;inset:0;z-index:-1;overflow:hidden;opacity:0;visibility:hidden;transition:opacity .45s ease,visibility 0s .45s;background:#000}
+body:has(#p-verify.on) #vrBg{opacity:1;visibility:visible;transition:opacity .45s ease}
+#vrBg img{position:absolute;left:0;top:0;width:125vw;min-height:100vh;object-fit:cover;object-position:0% 0%;transform-origin:30% 20%}
+body:has(#p-verify.on) #vrBg img{animation:kbz 18s ease-out both}
+@keyframes kbz{from{scale:1.08}to{scale:1}}
+#vrBg .sc{position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.8) 0%,rgba(0,0,0,.55) 30%,rgba(0,0,0,0) 55%),linear-gradient(0deg,rgba(0,0,0,.55) 0%,rgba(0,0,0,0) 30%)}
 #p-verify .vr-txt{position:absolute;left:calc(72px + var(--gx,0px));bottom:140px;width:480px;color:#fff}
 #p-verify .vr-eb{font-size:14px;letter-spacing:3px;text-transform:uppercase;font-weight:500;color:var(--vg,#05E5AF);margin-bottom:18px}
 #p-verify h1{font-size:76px;line-height:.98;letter-spacing:-2.6px;font-weight:500;margin:0}
@@ -1756,8 +1760,6 @@ html.booted #stage{animation:bootIn .35s ease both}
 
     <!-- VERIFY -->
     <section class="page" id="p-verify">
-      <img class="vr-ph" src="assets/ph/verify2.webp?v=213" alt="">
-      <div class="vr-scrim"></div>
       <div class="vr-txt">
         <h1>Know who&rsquo;s<br>at your door.</h1>
         <p>Every Vivint rep can be checked in seconds. Look up their name on vivint.com before you let anyone in.</p>
@@ -3591,6 +3593,9 @@ window.fsFill=fsFill; fsFill($('#dbScroll [data-t=specs] .strip'),'dbcp'); fsFil
     if(!navigator.onLine){ note('Connect to WiFi to download'); return; }
     navigator.serviceWorker.ready.then(r=>{ const b=btn(); b&&b.classList.add('busy'); txt('Preparing…'); r.active.postMessage({type:'download'}); }); },true);
 }
+
+/* Verify a Rep: photo lives outside the stage so it fills the whole screen, edge to edge, at any window shape */
+document.body.insertAdjacentHTML('afterbegin','<div id="vrBg"><img src="assets/ph/verify2.webp?v=213" alt=""><div class="sc"></div></div>');
 
 barFor(cur);
 </script>
