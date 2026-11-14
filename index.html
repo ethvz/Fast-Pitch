@@ -1890,6 +1890,16 @@ body.hasbk #gTitle{transform:translateX(118px)}
 .dbm-hub{position:absolute;left:590px;top:100px;width:620px;height:766px;opacity:0;transition:opacity .4s;pointer-events:none}
 .dbm-hub video{width:100%;height:100%;object-fit:contain;mix-blend-mode:screen;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 22%);mask-image:linear-gradient(90deg,transparent 0,#000 22%)}
 .dbm-hub.on{opacity:1}
+
+/* Doorbell highlights v3: phone beside the menu, big product image behind it running under the side nav, soft faded edges */
+.dbm .dbm-h{left:70px!important;width:350px!important}.dbm .dbm-h small{font-size:16px}.dbm-list{left:56px!important;width:360px!important}
+.dbm-list button{font-size:19px;height:52px}
+.dbm-phone{left:470px!important;top:104px!important}
+.dbm-card{left:690px!important;top:0!important;width:820px!important;height:964px!important;border-radius:0!important;overflow:visible!important;
+  -webkit-mask-image:radial-gradient(ellipse 60% 54% at 52% 50%,#000 50%,transparent 100%);mask-image:radial-gradient(ellipse 60% 54% at 52% 50%,#000 50%,transparent 100%)}
+.dbm-card img.dflt{padding:90px 140px!important}
+.dbm-phone.big{transform:translate3d(240px,-4px,0) scale(1.06)!important}
+.dbm-hub{left:560px!important;top:120px!important;width:580px!important;height:717px!important}
 </style>
 <div id="stage">
   <div id="screen">
@@ -4121,7 +4131,7 @@ document.head.insertAdjacentHTML('beforeend',`<style>
   /* balance the layout: same space from the screen edge to the list as from the visuals to the other edge */
   const sec=$('#dbmList').closest('.otab'); let fitKey='';
   const balance=()=>{ const key=innerWidth+'x'+innerHeight; if(fitKey===key) return; const box=sec.parentElement, br=box.getBoundingClientRect(), sr=sec.getBoundingClientRect(); if(!sr.width) return; const k=sr.width/sec.offsetWidth;
-    sec.style.setProperty('--dbx','0px'); const l=L.getBoundingClientRect().left; const rgt=sr.left+(868+372)*k; /* phone's resting right edge */
+    sec.style.setProperty('--dbx','0px'); fitKey=key; return; const l=L.getBoundingClientRect().left; const rgt=sr.left+(868+372)*k; /* phone's resting right edge */
     const dx=((br.right-rgt)-(l-br.left))/2/k; sec.style.setProperty('--dbx',dx.toFixed(1)+'px'); fitKey=key; };
   new IntersectionObserver(es=>{ if(es[0].isIntersecting) setTimeout(balance,60); },{threshold:[.4]}).observe(sec);
   window.addEventListener('resize',()=>{ fitKey=''; setTimeout(balance,200); });
