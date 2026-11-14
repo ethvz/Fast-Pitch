@@ -4030,5 +4030,26 @@ document.head.insertAdjacentHTML('beforeend',`<style>
     let i=secs.indexOf(sec)+1; while(secs[i]&&secs[i].classList.contains('hum')) i++; /* the scroll animation belongs to Overview: skip past it */
     const nx=secs[i]; if(nx) jump(box,nx.dataset.t); },true); }
 
+/* Specs sections: center the body on the screen and keep it clear of the side nav (scales down only when it has to) */
+{ let shownAt=0; const _sw=show; show=function(p){ shownAt=performance.now(); _sw(p); };
+  const leafs=pane=>[...pane.querySelectorAll('*')].filter(e=>{ if(e.closest('.fsp,.nxa')) return false; const r=e.getBoundingClientRect(); if(r.width<2||r.height<2) return false; const cs=getComputedStyle(e); if(cs.visibility==='hidden'||cs.display==='none') return false;
+      if(/^(IMG|VIDEO|CANVAS|svg)$/i.test(e.tagName)) return true; return [...e.childNodes].some(n=>n.nodeType===3&&n.textContent.trim()); });
+  const fit=(box,sec)=>{ const panes=[...sec.querySelectorAll('.fsp-pane,.hbpane')]; if(!panes.length) return; const pill=sec.querySelector(':scope>.fsp.spill'); if(!pill) return;
+    const key=innerWidth+'x'+innerHeight; const br=box.getBoundingClientRect(), kb=br.height/(box.offsetHeight||1)||1, sr=sec.getBoundingClientRect(), k=sr.width/(sec.offsetWidth||1)||1; if(!sr.width) return;
+    const mt=parseFloat(getComputedStyle(sec).scrollMarginTop)||0, snapTop=br.top+mt*kb;
+    const rail=$('#barRight.pnav'), rr=rail&&rail.getBoundingClientRect(), railL=rr&&rr.width?rr.left:br.right; const tt=$('#gTitle'), tr=tt&&tt.getBoundingClientRect();
+    const cx=br.left+br.width/2, X=x=>(x-sr.left)/k, Y=y=>(y-snapTop)/k;
+    const L=X(br.left+28), R=X(railL-22), C=X(cx), T=Math.max(Y(tr&&tr.height?tr.bottom+14:br.top+70),20), B=pill.offsetTop-16;
+    panes.forEach(pn=>{ if(pn.__fit===key) return; pn.style.transform=''; const pr=pn.getBoundingClientRect(); const ls=leafs(pn); if(!ls.length) return;
+      let u0=1e9,v0=1e9,u1=-1e9,v1=-1e9; ls.forEach(e=>{ const r=e.getBoundingClientRect(); u0=Math.min(u0,(r.left-pr.left)/k); v0=Math.min(v0,(r.top-pr.top)/k); u1=Math.max(u1,(r.right-pr.left)/k); v1=Math.max(v1,(r.bottom-pr.top)/k); });
+      const bw=u1-u0, bh=v1-v0, half=Math.min(C-L,R-C); const sc=Math.min(1,(2*half)/bw,(B-T)/bh);
+      const tx=C-sc*(u0+u1)/2; const h=sc*bh, top=Math.min(Math.max((v0+v1)/2-h/2,T),B-h), ty=top-sc*v0;
+      pn.style.transformOrigin='0 0'; pn.style.transform=`translate(${tx.toFixed(1)}px,${ty.toFixed(1)}px) scale(${sc.toFixed(4)})`; pn.__fit=key; }); };
+  const run=box=>{ if(!box||performance.now()-shownAt<800) return; box.querySelectorAll(':scope>*').forEach(sec=>{ if(sec.querySelector(':scope>.fsp.spill')) fit(box,sec); }); };
+  const io=new IntersectionObserver(es=>es.forEach(en=>{ if(en.isIntersecting) setTimeout(()=>run(en.target.parentElement),120); }),{threshold:[.3]});
+  const watch=box=>box.querySelectorAll(':scope>*').forEach(sec=>{ if(!sec.__spw&&sec.querySelector(':scope>.fsp.spill')){ sec.__spw=1; io.observe(sec); } });
+  $$('.lpage').forEach(box=>{ watch(box); new MutationObserver(()=>watch(box)).observe(box,{childList:true}); });
+  window.addEventListener('resize',()=>setTimeout(()=>$$('.page.on .lpage').forEach(run),200)); }
+
 barFor(cur);
 </script>
