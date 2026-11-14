@@ -1873,14 +1873,18 @@ body.hasbk #gTitle{transform:translateX(118px)}
 .dbm-list button.on{background:#1c1c1c;color:var(--vg);font-weight:500}
 .dbm-list button.on .lvi:not(.red){color:var(--vg)}
 .dbm-card{position:absolute;left:500px;top:130px;width:420px;height:720px;border-radius:36px;overflow:hidden;background:transparent}
-.dbm-card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transform:scale(1.04);transition:opacity .45s ease,transform .6s cubic-bezier(.22,1,.36,1)}
+.dbm-card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transform:scale(1.03);transition:opacity .4s ease,transform .6s cubic-bezier(.22,1,.36,1)}
 .dbm-card img.dflt{object-fit:contain;padding:40px;box-sizing:border-box}
 .dbm-card img.on{opacity:1;transform:none}
-.dbm-phone{position:absolute;left:868px;top:100px;width:372px;height:748px;border-radius:60px;box-sizing:border-box;border:3px solid rgba(235,238,238,.9);background:#000;padding:11px 12px;box-shadow:0 30px 70px rgba(0,0,0,.7),-18px 0 40px rgba(0,0,0,.55);transition:opacity .35s,transform .45s cubic-bezier(.22,1,.36,1)}
-.dbm-phone video{width:100%;height:100%;object-fit:cover;border-radius:48px;display:block;background:#000;opacity:0;transition:opacity .25s}
+.dbm>.dbm-h,.dbm>.dbm-list,.dbm>.dbm-card,.dbm>.dbm-phone,.dbm>.dbm-hub{margin-left:var(--dbx,0px)}
+.dbm-card{z-index:1;transform:translateZ(0)}.dbm-hub{z-index:2}.dbm-phone{z-index:3}
+.dbm-phone video{position:absolute;left:12px;top:11px;width:calc(100% - 24px)!important;height:calc(100% - 22px)!important}
+.dbm-phone video.top{z-index:2}
+.dbm-phone{position:absolute;will-change:transform;-webkit-transform:translateZ(0);left:868px;top:100px;width:372px;height:748px;border-radius:60px;box-sizing:border-box;border:3px solid rgba(235,238,238,.9);background:#000;padding:11px 12px;box-shadow:0 30px 70px rgba(0,0,0,.7),-18px 0 40px rgba(0,0,0,.55);transition:opacity .35s,transform .45s cubic-bezier(.22,1,.36,1)}
+.dbm-phone video{width:100%;height:100%;object-fit:cover;border-radius:48px;display:block;background:#000;opacity:0;transition:opacity .35s ease}
 .dbm-phone video.rdy{opacity:1}
 .dbm-phone.still video{opacity:.25}
-.dbm-phone.big{transform:translate(-150px,-4px) scale(1.06)}
+.dbm-phone.big{transform:translate3d(-150px,-4px,0) scale(1.06)}
 .dbm-phone.off{opacity:0;transform:translateX(30px) scale(.97);pointer-events:none}
 .dbm-card{transition:opacity .35s}.dbm-card.off{opacity:0}
 .dbm-hub{position:absolute;left:590px;top:100px;width:620px;height:766px;opacity:0;transition:opacity .4s;pointer-events:none}
@@ -2202,7 +2206,7 @@ body.hasbk #gTitle{transform:translateX(118px)}
         <h2 class="dbm-h" id="dbmH"></h2>
         <div class="dbm-list" id="dbmList"></div>
         <div class="dbm-card" id="dbmCard"></div>
-        <div class="dbm-phone" id="dbmPhone"><video id="dbmPv" muted playsinline loop preload="auto"></video></div>
+        <div class="dbm-phone" id="dbmPhone"><video id="dbmPv" muted playsinline loop preload="auto"></video><video id="dbmPv2" muted playsinline loop preload="auto"></video></div>
         <div class="dbm-hub" id="dbmHub"><video id="dbmHv" muted playsinline loop preload="auto"></video></div>
       </div>
       <div class="otab db" data-t="featold" hidden>
@@ -4095,11 +4099,11 @@ document.head.insertAdjacentHTML('beforeend',`<style>
    [['chip'],'Smart Processing','Next Level Processing','A dedicated on-board chip processes video fast, so alerts arrive sooner.',5,2],
    [['sliders'],'Customize Everything','Make It Yours','Set zones, alerts and schedules so you only hear about what matters.','solo',7],
    [['hub'],'View on Smart Hub','Answer at Your Smart Hub','See and talk to visitors right from the Smart Hub inside your home.',null,'hub']];
-  let m=0; const V='?v=55';
-  const L=$('#dbmList'), card=$('#dbmCard'), pv=$('#dbmPv'), hv=$('#dbmHv'), ph=$('#dbmPhone'), hb=$('#dbmHub'), H=$('#dbmH');
+  let m=0, cv=null; const V='?v=55';
+  const L=$('#dbmList'), card=$('#dbmCard'), pv=$('#dbmPv'), pv2=$('#dbmPv2'), hv=$('#dbmHv'), ph=$('#dbmPhone'), hb=$('#dbmHub'), H=$('#dbmH');
   L.innerHTML=M.map(([ic,t],i)=>`<button class="${i?'':'on'}" data-dbm="${i}">${LSV(ic[0],28,ic[1]||'')}<span>${t}</span></button>`).join('');
   card.innerHTML=[0,1,2,3,4,5].map(i=>`<img src="assets/db/fv${i}.webp${V}" alt="" data-fv="${i}">`).join('')+`<img src="assets/db/dbcp_a1.webp${V}" alt="" data-fv="d" class="dflt">`;
-  hv.src=`assets/db/hub.mp4${V}`;
+  hv.src=`assets/db/hub.mp4${V}`; cv=pv2;
   const live=()=>!!$('#dbmList').closest('[data-vis="1"]');
   const render=()=>{ const [,,h,line,fv,clip]=M[m];
     $$('#dbmList button').forEach((b,i)=>b.classList.toggle('on',i===m));
@@ -4108,9 +4112,19 @@ document.head.insertAdjacentHTML('beforeend',`<style>
     const hub=clip==='hub', none=clip==null;
     ph.classList.toggle('off',hub); hb.classList.toggle('on',hub); const solo=fv==='solo'; card.classList.toggle('off',hub||solo); ph.classList.toggle('big',solo); ph.classList.toggle('still',none);
     const u=(hub||none)?null:`assets/db/ph${clip}.mp4${V}`;
-    if(u&&pv.__u!==u){ pv.__u=u; pv.classList.remove('rdy'); pv.addEventListener('playing',()=>pv.classList.add('rdy'),{once:true}); pv.src=u; pv.currentTime=0; }
-    if(live()){ if(hub){ pv.pause(); hv.currentTime=0; hv.play().catch(()=>{}); } else { hv.pause(); if(!none) pv.play().catch(()=>{}); else pv.pause(); } } };
+    /* two video layers: the new clip loads underneath and fades in over the old one, so the screen never goes blank */
+    if(u&&cv.__u!==u){ const nx=cv===pv?pv2:pv, old=cv; nx.__u=u; nx.classList.remove('rdy','top'); nx.src=u; nx.currentTime=0;
+      const go=()=>{ nx.classList.add('rdy','top'); old.classList.remove('top'); setTimeout(()=>{ if(cv!==old){ old.classList.remove('rdy'); old.pause(); } },420); };
+      nx.addEventListener('playing',go,{once:true}); cv=nx; }
+    if(live()){ if(hub){ cv.pause(); hv.currentTime=0; hv.play().catch(()=>{}); } else { hv.pause(); if(!none) cv.play().catch(()=>{}); else cv.pause(); } } };
   document.addEventListener('click',e=>{ const b=e.target.closest('[data-dbm]'); if(!b) return; m=+b.dataset.dbm; render(); });
+  /* balance the layout: same space from the screen edge to the list as from the visuals to the other edge */
+  const sec=$('#dbmList').closest('.otab'); let fitKey='';
+  const balance=()=>{ const key=innerWidth+'x'+innerHeight; if(fitKey===key) return; const box=sec.parentElement, br=box.getBoundingClientRect(), sr=sec.getBoundingClientRect(); if(!sr.width) return; const k=sr.width/sec.offsetWidth;
+    sec.style.setProperty('--dbx','0px'); const l=L.getBoundingClientRect().left; const rgt=sr.left+(868+372)*k; /* phone's resting right edge */
+    const dx=((br.right-rgt)-(l-br.left))/2/k; sec.style.setProperty('--dbx',dx.toFixed(1)+'px'); fitKey=key; };
+  new IntersectionObserver(es=>{ if(es[0].isIntersecting) setTimeout(balance,60); },{threshold:[.4]}).observe(sec);
+  window.addEventListener('resize',()=>{ fitKey=''; setTimeout(balance,200); });
   /* tap-anywhere advances through the list */
   new MutationObserver(()=>{ if(live()) render(); else { pv.pause(); hv.pause(); } }).observe($('#dbmList').closest('.otab'),{attributes:true,attributeFilter:['data-vis']});
   render(); }
