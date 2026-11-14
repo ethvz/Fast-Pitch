@@ -1900,6 +1900,14 @@ body.hasbk #gTitle{transform:translateX(118px)}
 .dbm-card img.dflt{padding:90px 140px!important}
 .dbm-phone.big{transform:translate3d(240px,-4px,0) scale(1.06)!important}
 .dbm-hub{left:560px!important;top:120px!important;width:580px!important;height:717px!important}
+
+/* Doorbell highlights v4: menu centered vertically, phone centered on screen and a touch larger */
+.dbm-col{position:absolute;left:56px;top:0;bottom:68px;width:370px;display:flex;flex-direction:column;justify-content:center;gap:26px;margin-left:var(--dbx,0px)}
+.dbm-col .dbm-h{position:relative!important;left:14px!important;top:auto!important;margin:0!important;min-height:178px;display:flex;flex-direction:column;justify-content:flex-end}
+.dbm-col .dbm-list{position:relative!important;left:0!important;top:auto!important}
+.dbm-phone{left:502px!important;transform:scale(1.08)}
+.dbm-phone.big{transform:scale(1.16)!important}
+.dbm-phone.off{transform:translateX(30px) scale(1.04)!important}
 </style>
 <div id="stage">
   <div id="screen">
@@ -2213,8 +2221,8 @@ body.hasbk #gTitle{transform:translateX(118px)}
       </div>
       <div class="otab hum" data-t="spin"><div class="hum-st"><canvas id="dbScrubV" data-seq="assets/seq/db-frames.jpg?v=217" width="1376" height="1032"></canvas></div></div>
       <div class="otab db dbm" data-t="feat">
-        <h2 class="dbm-h" id="dbmH"></h2>
-        <div class="dbm-list" id="dbmList"></div>
+        <div class="dbm-col"><h2 class="dbm-h" id="dbmH"></h2>
+        <div class="dbm-list" id="dbmList"></div></div>
         <div class="dbm-card" id="dbmCard"></div>
         <div class="dbm-phone" id="dbmPhone"><video id="dbmPv" muted playsinline loop preload="auto"></video><video id="dbmPv2" muted playsinline loop preload="auto"></video></div>
         <div class="dbm-hub" id="dbmHub"><video id="dbmHv" muted playsinline loop preload="auto"></video></div>
@@ -4131,7 +4139,8 @@ document.head.insertAdjacentHTML('beforeend',`<style>
   /* balance the layout: same space from the screen edge to the list as from the visuals to the other edge */
   const sec=$('#dbmList').closest('.otab'); let fitKey='';
   const balance=()=>{ const key=innerWidth+'x'+innerHeight; if(fitKey===key) return; const box=sec.parentElement, br=box.getBoundingClientRect(), sr=sec.getBoundingClientRect(); if(!sr.width) return; const k=sr.width/sec.offsetWidth;
-    sec.style.setProperty('--dbx','0px'); fitKey=key; return; const l=L.getBoundingClientRect().left; const rgt=sr.left+(868+372)*k; /* phone's resting right edge */
+    sec.style.setProperty('--dbx','0px'); fitKey=key;
+    /* phone centered on the screen */ const cx=br.left+br.width/2; ph.style.setProperty('left',((cx-sr.left)/k-186).toFixed(1)+'px','important'); return; const l=L.getBoundingClientRect().left; const rgt=sr.left+(868+372)*k; /* phone's resting right edge */
     const dx=((br.right-rgt)-(l-br.left))/2/k; sec.style.setProperty('--dbx',dx.toFixed(1)+'px'); fitKey=key; };
   new IntersectionObserver(es=>{ if(es[0].isIntersecting) setTimeout(balance,60); },{threshold:[.4]}).observe(sec);
   window.addEventListener('resize',()=>{ fitKey=''; setTimeout(balance,200); });
