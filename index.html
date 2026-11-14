@@ -1880,9 +1880,11 @@ body.hasbk #gTitle{transform:translateX(118px)}
 .dbm-phone video{width:100%;height:100%;object-fit:cover;border-radius:48px;display:block;background:#000;opacity:0;transition:opacity .25s}
 .dbm-phone video.rdy{opacity:1}
 .dbm-phone.still video{opacity:.25}
+.dbm-phone.big{transform:translate(-150px,-4px) scale(1.06)}
 .dbm-phone.off{opacity:0;transform:translateX(30px) scale(.97);pointer-events:none}
-.dbm-hub{position:absolute;left:820px;top:200px;width:460px;height:560px;opacity:0;transition:opacity .4s;pointer-events:none}
-.dbm-hub video{width:100%;height:100%;object-fit:contain;mix-blend-mode:screen}
+.dbm-card{transition:opacity .35s}.dbm-card.off{opacity:0}
+.dbm-hub{position:absolute;left:590px;top:100px;width:620px;height:766px;opacity:0;transition:opacity .4s;pointer-events:none}
+.dbm-hub video{width:100%;height:100%;object-fit:contain;mix-blend-mode:screen;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 22%);mask-image:linear-gradient(90deg,transparent 0,#000 22%)}
 .dbm-hub.on{opacity:1}
 </style>
 <div id="stage">
@@ -4091,8 +4093,8 @@ document.head.insertAdjacentHTML('beforeend',`<style>
    [['loop'],'10-Day Recording*','Never Miss a Moment','Up to 10 days of continuous footage, so you can always go back and check.',2,1],
    [['bulb'],'Light Integration','Light Up Every Visit','Porch lights turn on automatically when someone walks up.',null,4],
    [['chip'],'Smart Processing','Next Level Processing','A dedicated on-board chip processes video fast, so alerts arrive sooner.',5,2],
-   [['sliders'],'Customize Everything','Make It Yours','Set zones, alerts and schedules so you only hear about what matters.',null,7],
-   [['hub'],'Smart Hub','Answer at Your Smart Hub','See and talk to visitors right from the Smart Hub inside your home.',null,'hub']];
+   [['sliders'],'Customize Everything','Make It Yours','Set zones, alerts and schedules so you only hear about what matters.','solo',7],
+   [['hub'],'View on Smart Hub','Answer at Your Smart Hub','See and talk to visitors right from the Smart Hub inside your home.',null,'hub']];
   let m=0; const V='?v=55';
   const L=$('#dbmList'), card=$('#dbmCard'), pv=$('#dbmPv'), hv=$('#dbmHv'), ph=$('#dbmPhone'), hb=$('#dbmHub'), H=$('#dbmH');
   L.innerHTML=M.map(([ic,t],i)=>`<button class="${i?'':'on'}" data-dbm="${i}">${LSV(ic[0],28,ic[1]||'')}<span>${t}</span></button>`).join('');
@@ -4104,7 +4106,7 @@ document.head.insertAdjacentHTML('beforeend',`<style>
     if(H.dataset.i!==String(m)){ H.classList.add('swap'); setTimeout(()=>{ H.innerHTML=`${h}<small>${line}</small>`; H.classList.remove('swap'); },H.dataset.i?140:0); H.dataset.i=m; }
     $$('#dbmCard img').forEach(im=>im.classList.toggle('on',fv==null?im.dataset.fv==='d':im.dataset.fv===String(fv)));
     const hub=clip==='hub', none=clip==null;
-    ph.classList.toggle('off',hub); hb.classList.toggle('on',hub); ph.classList.toggle('still',none);
+    ph.classList.toggle('off',hub); hb.classList.toggle('on',hub); const solo=fv==='solo'; card.classList.toggle('off',hub||solo); ph.classList.toggle('big',solo); ph.classList.toggle('still',none);
     const u=(hub||none)?null:`assets/db/ph${clip}.mp4${V}`;
     if(u&&pv.__u!==u){ pv.__u=u; pv.classList.remove('rdy'); pv.addEventListener('playing',()=>pv.classList.add('rdy'),{once:true}); pv.src=u; pv.currentTime=0; }
     if(live()){ if(hub){ pv.pause(); hv.currentTime=0; hv.play().catch(()=>{}); } else { hv.pause(); if(!none) pv.play().catch(()=>{}); else pv.pause(); } } };
