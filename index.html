@@ -1914,6 +1914,10 @@ body.hasbk #gTitle{transform:translateX(118px)}
 .dbm-cap div{flex:1}.dbm-cap b{display:block;font-size:30px;font-weight:600;letter-spacing:-.5px;color:var(--vg)}
 .dbm-cap span{display:block;margin-top:4px;font-size:15px;line-height:1.35;color:rgba(255,255,255,.72)}
 .dbm-cap i{flex:none;width:1px;background:rgba(255,255,255,.18)}
+
+/* Doorbell highlights: everything appears together (no staggered rise per element) */
+.lpage>.dbm>*,.lpage>.dbm.in>*{animation:none!important}
+.dbm-card img{will-change:opacity}
 </style>
 <div id="stage">
   <div id="screen">
@@ -4150,7 +4154,10 @@ document.head.insertAdjacentHTML('beforeend',`<style>
     sec.style.setProperty('--dbx','0px'); fitKey=key;
     /* phone centered on the screen */ const cx=br.left+br.width/2; ph.style.setProperty('left',((cx-sr.left)/k-186).toFixed(1)+'px','important'); return; const l=L.getBoundingClientRect().left; const rgt=sr.left+(868+372)*k; /* phone's resting right edge */
     const dx=((br.right-rgt)-(l-br.left))/2/k; sec.style.setProperty('--dbx',dx.toFixed(1)+'px'); fitKey=key; };
-  new IntersectionObserver(es=>{ if(es[0].isIntersecting) setTimeout(balance,60); },{threshold:[.4]}).observe(sec);
+  new IntersectionObserver(es=>{ if(es[0].isIntersecting) balance(); },{threshold:[0]}).observe(sec);
+  /* lay out as soon as the page opens (before the section is on screen) so nothing moves after you arrive */
+  const _sw=show; show=function(p){ _sw(p); if(p==='dbcp'){ fitKey=''; balance(); requestAnimationFrame(()=>{ fitKey=''; balance(); }); } };
+  $$('#dbmCard img').forEach(im=>{ try{ im.decode().catch(()=>{}); }catch(e){} });
   window.addEventListener('resize',()=>{ fitKey=''; setTimeout(balance,200); });
   /* tap-anywhere advances through the list */
   new MutationObserver(()=>{ if(live()) render(); else { pv.pause(); hv.pause(); } }).observe($('#dbmList').closest('.otab'),{attributes:true,attributeFilter:['data-vis']});
