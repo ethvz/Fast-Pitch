@@ -3874,10 +3874,15 @@ const FSD={"door":{"f":{"im":[["door",[565.3,146.7,790.0,786.7]]],"co":[{"t":"Au
 
 /* ===== Features | Specs: live callouts + live spec tables (replaces the screenshot strips) ===== */
 const FSV='?v=208';
-function fsFeat(d){ const im=d.im.map(([u,[a,b,c,e]])=>`<img class="fsp-im" src="assets/fs/${u}.webp${FSV}" alt="" style="left:${a}px;top:${b}px;width:${c-a}px;height:${e-b}px">`).join('');
+function fsTight(d){ if(d.__t) return d; d=JSON.parse(JSON.stringify(d)); d.__t=1; const IL=Math.min(...d.im.map(x=>x[1][0])), IR=Math.max(...d.im.map(x=>x[1][2])), G=50;
+  const Ls=d.co.filter(c=>c.a==='r'&&c.x+c.w<=IL), Rs=d.co.filter(c=>c.a==='l'&&c.x>=IR);
+  const dL=Ls.length?Math.max(0,IL-G-Math.max(...Ls.map(c=>c.x+c.w))):0, dR=Rs.length?Math.max(0,Math.min(...Rs.map(c=>c.x))-IR-G):0;
+  Ls.forEach(c=>c.x+=dL); Rs.forEach(c=>c.x-=dR);
+  const mx=x=>x<IL?x+dL:x>IR?x-dR:x; d.segs=d.segs.map(([a,b,c,e])=>[mx(a),b,mx(c),e]); d.dots=d.dots.map(([x,y])=>[mx(x),y]); return d; }
+function fsFeat(d){ d=fsTight(d); const im=d.im.map(([u,[a,b,c,e]])=>`<img class="fsp-im" src="assets/fs/${u}.webp${FSV}" alt="" style="left:${a}px;top:${b}px;width:${c-a}px;height:${e-b}px">`).join('');
   const ln=`<svg class="fsp-ln" viewBox="0 0 1376 964" preserveAspectRatio="none">${d.segs.map(([a,b,c,e])=>`<line x1="${a}" y1="${b}" x2="${c}" y2="${e}"/>`).join('')}${d.dots.map(([x,y])=>`<circle cx="${x}" cy="${y}" r="4.6"/>`).join('')}</svg>`;
   const co=d.co.map(c=>`<div class="fsp-co ${c.a}" style="left:${c.x}px;top:${c.y}px;width:${c.w}px"><b>${c.t}</b>${c.b?`<p>${c.b}</p>`:''}</div>`).join('');
-  return `<div class="fsp-pane ${d.cls||''}">${im}${ln}${co}${d.note?`<div class="fsp-note">${d.note}</div>`:''}</div>`; }
+  return `<div class="fsp-pane ${d.cls||''}">${im}${ln}${co}${d.note?`<div class="fsp-note" style="left:${Math.min(...d.im.map(x=>x[1][0]))}px;top:${Math.max(...d.im.map(x=>x[1][3]))+22}px;bottom:auto">${d.note}</div>`:''}</div>`; }
 function fsSpec(d){ const im=d.im.map(([u,b])=>{ const [a,t,c,e]=b||[150,180,650,780]; return `<img class="fsp-im" src="assets/fs/${u}.webp${FSV}" alt="" style="left:${a}px;top:${t}px;width:${c-a}px;height:${e-t}px">`; }).join('');
   const y0=(d.rows[0]?d.rows[0][2]:300)-14, kw=d.vx-d.kx;
   return `<div class="fsp-pane">${im}<div class="fst" style="left:${d.kx}px;top:${y0}px"><div class="fst-h">Specifications</div>${d.rows.map(([k,v])=>`<div class="r"><b style="width:${kw}px">${k}</b><span>${String(v).replace(/\n/g,'<br>')}</span></div>`).join('')}</div></div>`; }
