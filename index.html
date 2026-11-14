@@ -2897,9 +2897,9 @@ const DBC=[['arlo','Arlo','Arlo Video Doorbell 2K (2<sup>nd</sup> Gen)','bat',['
 const DBV='?v=55';
 const CHK='<svg width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#1bfba5"/><path d="M4.5 8.2l2.3 2.3 4.7-4.8" fill="none" stroke="#062a1d" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 function dbBuild(){
-  $('#dbfVis').innerHTML=DBF.map((_,i)=>`<img src="assets/db/fv${i}.webp${DBV}" alt="">`).join('');
-  $('#dbfList').innerHTML='<i class="dbf-sel"></i>'+DBF.map(([n],i)=>`<div class="dbf-row" data-dbf="${i}"><img src="assets/db/fi${i}.png${DBV}" alt="">${n}</div>`).join('');
-  $('#dbTiles').innerHTML='<i class="dbt-sel"></i>'+DBT.map((n,i)=>`<div class="dbt" data-dbp="${i}" style="left:${(i%3)*172}px;top:${Math.floor(i/3)*170}px"><img src="assets/db/ti${i}.png${DBV}" alt="">${n}</div>`).join('');
+  $('#dbfVis').innerHTML='';
+  $('#dbfList').innerHTML='<i class="dbf-sel"></i>'+DBF.map(([n],i)=>`<div class="dbf-row" data-dbf="${i}"><img alt="">${n}</div>`).join('');
+  $('#dbTiles').innerHTML='<i class="dbt-sel"></i>'+DBT.map((n,i)=>`<div class="dbt" data-dbp="${i}" style="left:${(i%3)*172}px;top:${Math.floor(i/3)*170}px"><img alt="">${n}</div>`).join('');
   $('#dbCmp').innerHTML=`<div class="dbgrid" id="dbGrid"><h2 class="dbc-h">Camera Comparison</h2><div class="dbc-vs">Vs.</div>
     <div class="dbc-me"><span class="dbbadge">Wired</span><h3>Vivint Doorbell Camera Pro (Gen 2)</h3><img src="assets/db/dbcp_a1.webp${DBV}" alt=""></div><div class="dbc-div"></div>
     <div class="dbcards">`+DBC.map(([k,,n,b],i)=>`<div class="dbcard" data-dbc="${i}"><div class="dbwell"><img src="assets/db/cp_${k}_t.webp?v=101" alt=""></div><div class="nm"><span class="dbbadge${b==='bat'?' bat':''}">${b==='bat'?'Battery':'Wired'}</span><div>${n}</div></div><div class="dbplus"><svg width="22" height="22" viewBox="0 0 22 22" stroke="#fff" stroke-width="2.6" stroke-linecap="round"><path d="M11 3v16M3 11h16"/></svg></div></div>`).join('')+`</div></div>
