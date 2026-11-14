@@ -3699,14 +3699,17 @@ IP.gal='<rect x="6.5" y="3.5" width="14" height="11" rx="2"/><path d="M3.5 7.5v1
     tr.addEventListener('scroll',()=>{ cancelAnimationFrame(t); t=requestAnimationFrame(()=>{ const i=Math.round(tr.scrollLeft/tr.clientWidth); ds.forEach((d,j)=>d.classList.toggle('on',j===i)); }); },{passive:true});
     g.querySelector('.gal-dots').addEventListener('click',e=>{ const d=e.target.closest('[data-gi]'); if(d) tr.scrollTo({left:+d.dataset.gi*tr.clientWidth,behavior:'smooth'}); }); };
   const put=(box,k)=>{ if(!box) return; box.querySelectorAll(':scope>.gal').forEach(x=>{ if(x.dataset.gal!==k) x.remove(); }); if(!GN[k]) return; if(box.querySelector(':scope>.gal')) return;
-    const hero=[...box.children].find(c=>c.dataset.t==='spin')||[...box.children].find(c=>c.dataset.t==='hero'); if(!hero) return; hero.insertAdjacentHTML('afterend',html(k)); const g=hero.nextElementSibling; wire(g); g.classList.add('in'); };
+    /* gallery sits second to last, just above FAQs */
+    const faq=[...box.children].find(c=>c.dataset.t==='faq'); if(faq) faq.insertAdjacentHTML('beforebegin',html(k)); else box.insertAdjacentHTML('beforeend',html(k));
+    const g=box.querySelector(':scope>.gal'); wire(g); g.classList.add('in'); };
   put($('#ocScroll'),'ocp'); put($('#dbScroll'),'dbcp'); put($('#hbScroll'),'hub'); put($('#thScroll'),'therm');
   const _pb=prBuild; prBuild=function(){ _pb.apply(this,arguments); put($('#prScroll'),PR.id); if(cur==='prod'&&window.galBtn) galBtn(); };
   if($('#prScroll').children.length) put($('#prScroll'),PR.id);
   const PG={ocp:'#ocScroll',dbcp:'#dbScroll',hub:'#hbScroll',therm:'#thScroll',prod:'#prScroll'};
   const box=()=>{ const q=PG[cur]; const b=q&&$(q); return b&&b.querySelector(':scope>.gal')?b:null; };
   window.galBtn=()=>{ const b=box(); const r=$('#barRight'); r.querySelectorAll('[data-galgo]').forEach(x=>{ if(!b) x.remove(); }); if(!b||!r.firstElementChild||r.querySelector('[data-galgo]')) return;
-    r.firstElementChild.insertAdjacentHTML('afterend',`<button class="bbtn" data-galgo="1">${SVGI('gal',22)}<span>Gallery</span></button>`); galSpy(); };
+    const gb=`<button class="bbtn" data-galgo="1">${SVGI('gal',22)}<span>Gallery</span></button>`, fq=[...r.querySelectorAll('.bbtn')].find(x=>Object.entries(x.dataset).some(([k,v])=>/tab$/.test(k)&&v==='faq'));
+    if(fq) fq.insertAdjacentHTML('beforebegin',gb); else r.insertAdjacentHTML('beforeend',gb); galSpy(); };
   const _bf=barFor; barFor=function(p){ _bf(p); galBtn(); };
   document.addEventListener('click',e=>{ if(!e.target.closest('[data-galgo]')) return; const b=box(); if(!b) return; const g=b.querySelector(':scope>.gal'); b.scrollTo({top:g.offsetTop,behavior:'smooth'}); },true);
   const galSpy=()=>{ const b=box(), btn=$('#barRight [data-galgo]'); if(!b||!btn) return; const g=b.querySelector(':scope>.gal'); const br=b.getBoundingClientRect(), gr=g.getBoundingClientRect(), line=br.top+br.height*.45; const on=!b.__jt&&gr.top<=line&&gr.bottom>line;
@@ -3983,6 +3986,37 @@ document.body.insertAdjacentHTML('beforeend','<svg width="0" height="0" style="p
     while(ORDER.length>2){ const old=ORDER.shift(); (VG[old]||[]).forEach(k=>{ const b=BL.get(k); if(b&&b.url){ URL.revokeObjectURL(b.url); } BL.delete(k); }); }
     L.forEach(k=>{ if(BL.has(k)) return; BL.set(k,{}); fetch(k+'?v=56').then(r=>r.ok?r.blob():null).then(bl=>{ if(bl&&BL.has(k)) BL.get(k).url=URL.createObjectURL(bl); }).catch(()=>BL.delete(k)); }); };
   const _sw=show; show=function(p){ _sw(p); if(VG[p]) setTimeout(()=>load(p),350); }; if(VG[cur]) load(cur); }
+
+/* Next-section arrow: pulsing chevron at the bottom of every section; a big invisible tap area jumps to the next one */
+document.head.insertAdjacentHTML('beforeend',`<style>
+.lpage>[data-t=hero]::after,#monScroll>.mtab[data-t="0"]::after{display:none!important}
+.nxa{position:absolute;left:50%;bottom:52px;width:280px;height:118px;margin-left:-140px;z-index:30;border:0;padding:0;background:transparent;-webkit-tap-highlight-color:transparent;cursor:pointer;touch-action:manipulation}
+.nxa i{position:absolute;left:50%;top:38px;width:20px;height:20px;margin-left:-10px;border-right:2px solid #fff;border-bottom:2px solid #fff;border-radius:2px;transform:rotate(45deg);filter:drop-shadow(0 1px 3px rgba(0,0,0,.6));animation:cue 1.9s ease-in-out infinite;pointer-events:none}
+.nxa:active i{animation-play-state:paused;opacity:1}
+.nxa.ov{display:none}
+.nxa.sm{width:110px;margin-left:-55px;height:84px;bottom:66px}.nxa.sm i{top:24px}
+.lpage>.nxpos{position:relative}
+</style>`);
+{ const add=box=>{ const secs=[...box.children].filter(c=>!c.hidden&&c.dataset&&c.dataset.t!=null);
+    secs.forEach((c,i)=>{ const last=i===secs.length-1, skip=last||c.classList.contains('hum')||c.classList.contains('gal')&&false;
+      let a=c.querySelector(':scope>.nxa'); if(skip){ if(a) a.remove(); return; } if(a) return;
+      if(getComputedStyle(c).position==='static') c.classList.add('nxpos');
+      c.insertAdjacentHTML('beforeend','<button class="nxa" aria-label="Next section"><i></i></button>'); io.observe(c.lastElementChild); }); };
+  /* keep the tap area off text and controls: measured the first time each arrow is fully on screen; shrinks to a tight target if anything is underneath */
+  const hitsUnder=a=>{ const s=a.parentElement, r=a.getBoundingClientRect(); let hit=false; a.style.pointerEvents='none';
+    for(let x=r.left+4;x<r.right&&!hit;x+=12) for(let y=r.top+4;y<r.bottom&&!hit;y+=10){ for(const e of document.elementsFromPoint(x,y)){ if(a.contains(e)) continue; if(!s.contains(e)||e===s) break;
+        if(e.closest('button,a,[data-ph],[data-dbp],[data-hbm],.lvt,.lvl,.dbt,.hbm,.cpill,.chip,input,select')&&!e.closest('.nxa')){ hit=true; break; }
+        if([...e.childNodes].some(n=>n.nodeType===3&&n.textContent.trim().length>1)){ hit=true; break; }
+        if(/^(IMG|VIDEO|CANVAS)$/.test(e.tagName)) break; } }
+    a.style.pointerEvents=''; return hit; };
+  const io=new IntersectionObserver(es=>es.forEach(en=>{ const a=en.target; if(!en.isIntersecting||en.intersectionRatio<.99||a.__fit) return; a.__fit=1;
+    requestAnimationFrame(()=>{ if(hitsUnder(a)){ a.classList.add('sm'); if(hitsUnder(a)) a.classList.add('ov'); } }); }),{threshold:[.99]});
+  $$('.lpage').forEach(box=>{ add(box); new MutationObserver(()=>add(box)).observe(box,{childList:true}); });
+  const _sw=show; show=function(p){ _sw(p); const b=$('#p-'+p+' .lpage'); if(b) add(b); };
+  document.addEventListener('click',e=>{ const a=e.target.closest('.nxa'); if(!a) return; e.stopPropagation(); e.preventDefault();
+    const sec=a.parentElement, box=sec.parentElement; const secs=[...box.children].filter(c=>!c.hidden&&c.offsetHeight&&c.dataset.t!=null);
+    let i=secs.indexOf(sec)+1; while(secs[i]&&secs[i].classList.contains('hum')) i++; /* the scroll animation belongs to Overview: skip past it */
+    const nx=secs[i]; if(nx) jump(box,nx.dataset.t); },true); }
 
 barFor(cur);
 </script>
