@@ -4159,7 +4159,7 @@ document.head.insertAdjacentHTML('beforeend',`<style>
   document.addEventListener('click',e=>{ const b=e.target.closest('[data-dbm]'); if(!b) return; m=+b.dataset.dbm; render(); });
   /* balance the layout: same space from the screen edge to the list as from the visuals to the other edge */
   const sec=$('#dbmList').closest('.otab'); let fitKey='';
-  const balance=()=>{ const key=innerWidth+'x'+innerHeight; if(fitKey===key) return; const box=sec.parentElement, br=box.getBoundingClientRect(), sr=sec.getBoundingClientRect(); if(!sr.width) return; const k=sr.width/sec.offsetWidth;
+  const balance=()=>{ const key=innerWidth+'x'+innerHeight; const box=sec.parentElement, br=box.getBoundingClientRect(), sr=sec.getBoundingClientRect(); if(!sr.width) return; const k=sr.width/sec.offsetWidth;
     sec.style.setProperty('--dbx','0px'); fitKey=key;
     /* phone centered on the screen */ const cx=br.left+br.width/2; ph.style.setProperty('left',((cx-sr.left)/k-186).toFixed(1)+'px','important');
     /* storage caption: keep its spot, but never under the phone or the side nav; shrink to fit when space is tight */
@@ -4170,9 +4170,13 @@ document.head.insertAdjacentHTML('beforeend',`<style>
     const dx=((br.right-rgt)-(l-br.left))/2/k; sec.style.setProperty('--dbx',dx.toFixed(1)+'px'); fitKey=key; };
   new IntersectionObserver(es=>{ if(es[0].isIntersecting) balance(); },{threshold:[0]}).observe(sec);
   /* lay out as soon as the page opens (before the section is on screen) so nothing moves after you arrive */
-  const _sw=show; show=function(p){ _sw(p); if(p==='dbcp'){ fitKey=''; balance(); requestAnimationFrame(()=>{ fitKey=''; balance(); }); } };
+  const _sw=show; show=function(p){ _sw(p); if(p==='dbcp'){ balance(); requestAnimationFrame(balance); setTimeout(balance,600); } };
   $$('#dbmCard img').forEach(im=>{ try{ im.decode().catch(()=>{}); }catch(e){} });
-  window.addEventListener('resize',()=>{ fitKey=''; setTimeout(balance,200); });
+  /* re-center whenever the screen size settles or changes (Home Screen apps report their final size a beat late) */
+  const again=()=>{ balance(); setTimeout(balance,250); setTimeout(balance,900); };
+  window.addEventListener('resize',again); window.addEventListener('orientationchange',again);
+  if(window.visualViewport) visualViewport.addEventListener('resize',again);
+  try{ new ResizeObserver(()=>balance()).observe(sec.parentElement); }catch(e){}
   /* tap-anywhere advances through the list */
   new MutationObserver(()=>{ if(live()) render(); else { pv.pause(); hv.pause(); } }).observe($('#dbmList').closest('.otab'),{attributes:true,attributeFilter:['data-vis']});
   render(); }
