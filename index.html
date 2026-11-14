@@ -1921,6 +1921,8 @@ body.hasbk #gTitle{transform:translateX(118px)}
 .dbm-card img{will-change:opacity}
 
 .dbm-card img.rr{object-fit:contain!important;padding:70px 150px 70px 150px!important;box-sizing:border-box}
+
+.dbm-card img.rr[data-fv=sd]{padding:60px 200px 250px!important}
 </style>
 <div id="stage">
   <div id="screen">
@@ -4122,19 +4124,19 @@ document.head.insertAdjacentHTML('beforeend',`<style>
 /* Doorbell: Highlights + App merged into one section — list on the left, product close-up + live app view on the right */
 { const M=[ // [icon, label, headline, line, product image idx (fv), app clip (ph) | 'hub']
    [['hd'],'HDR Video','The Best Porch Protection','Crisp 1080p HDR keeps faces and packages clear in bright sun and deep shade.','lens',0],
-   [['expand'],'180° View','See Every Angle','A 180° view of your porch, so nothing slips out of frame.',3,6],
+   [['expand'],'180° View','See Every Angle','A 180° view of your porch, so nothing slips out of frame.','scan',6],
    [['mic'],'2-Way Talk','Hear and Speak Clearly','Talk to visitors from anywhere, with clear audio both ways.','speaker',5],
    [['ring','red'],'Smart Deter','Stop Trouble Before It Starts','A red light ring and warning tones tell lurkers they’ve been seen.','redring',3],
    [['box'],'Package Detect','Know When It Arrives','Get an alert the moment a package lands on your porch.','blue34',2],
-   [['loop'],'24/7 Continuous Playback','Never Miss a Moment','Every second is recorded, so you can always go back and check.',2,1,'<div><b>10 days</b><span>of continuous recording, stored locally on the device</span></div><i></i><div><b>30 days*</b><span>of activity clips saved to the cloud</span></div><em>*45 days with the Premium Video plan</em>'],
+   [['loop'],'24/7 Continuous Playback','Never Miss a Moment','Every second is recorded, so you can always go back and check.','sd',1,'<div><b>10 days</b><span>of continuous recording, stored locally on the device</span></div><i></i><div><b>30 days*</b><span>of activity clips saved to the cloud</span></div><em>*45 days with the Premium Video plan</em>'],
    [['bulb'],'Light Integration','Light Up Every Visit','Porch lights turn on automatically when someone walks up.','whitering',4],
-   [['chip'],'Smart Processing','Next Level Processing','A dedicated on-board chip processes video fast, so alerts arrive sooner.',5,2],
+   [['chip'],'Smart Processing','Next Level Processing','A dedicated on-board chip processes video fast, so alerts arrive sooner.','chip',2],
    [['sliders'],'Customize Everything','Make It Yours','Set zones, alerts and schedules so you only hear about what matters.','solo',7],
    [['hub'],'View on Smart Hub','Answer at Your Smart Hub','See and talk to visitors right from the Smart Hub inside your home.',null,'hub']];
   let m=0, cv=null; const V='?v=55';
   const L=$('#dbmList'), card=$('#dbmCard'), pv=$('#dbmPv'), pv2=$('#dbmPv2'), hv=$('#dbmHv'), ph=$('#dbmPhone'), hb=$('#dbmHub'), H=$('#dbmH');
   L.innerHTML=M.map(([ic,t],i)=>`<button class="${i?'':'on'}" data-dbm="${i}">${LSV(ic[0],28,ic[1]||'')}<span>${t}</span></button>`).join('');
-  card.innerHTML=[2,3,5].map(i=>`<img src="assets/db/fv${i}.webp${V}" alt="" data-fv="${i}">`).join('')+['lens','speaker','redring','blue34','whitering'].map(k=>`<img class="rr" src="assets/dbr/${k}.webp?v=270" alt="" data-fv="${k}">`).join('')+`<img src="assets/dbr/red34.webp?v=270" alt="" data-fv="d" class="dflt rr">`;
+  card.innerHTML=['lens','speaker','redring','blue34','whitering','scan','sd','chip'].map(k=>`<img class="rr" src="assets/dbr/${k}.webp?v=270" alt="" data-fv="${k}">`).join('')+`<img src="assets/dbr/red34.webp?v=270" alt="" data-fv="d" class="dflt rr">`;
   hv.src=`assets/db/hub.mp4${V}`; cv=pv2;
   const live=()=>!!$('#dbmList').closest('[data-vis="1"]');
   const cap=$('#dbmCap');
