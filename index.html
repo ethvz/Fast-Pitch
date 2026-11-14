@@ -733,7 +733,7 @@ body:not(.ishome) #screen::after{display:none;content:"";position:absolute;left:
 @keyframes ocbIn{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:none}}
 
 /* Doorbell page: home-tile gray, borderless */
-#p-dbcp .dbt{background:var(--mono-tile);border-radius:22px}
+#p-dbcp .dbt{background:transparent;border-radius:22px}
 #p-dbcp .dbt-sel,#p-dbcp .dbf-sel{background:#3a3a3c!important;border:0!important;box-shadow:none!important}
 #p-dbcp .dbt.on{background:transparent}
 #p-dbcp .dbcard,#p-dbcp .dbai,#p-dbcp .dbback,#p-dbcp .dbplus,#p-dbcp .vcard,#p-dbcp .hc,#p-dbcp .cpill,#p-dbcp .xreplay,#p-dbcp .vplay{background:var(--mono-tile)!important;border:0!important;box-shadow:none!important}
@@ -1535,7 +1535,10 @@ body.pkon #bar{z-index:61!important}
 #ocPhoneVid{z-index:1}
 #ocPhoneHot>*{z-index:6;transform:translateZ(0)}
 #screen .page.pcol{overflow:hidden;will-change:transform,opacity;animation:none!important}
-#screen .page.pcol-go{transition:transform .32s cubic-bezier(.4,0,.2,1),opacity .32s ease,border-radius .32s ease}
+#screen .page.pcol-go{transition:transform .32s cubic-bezier(.4,0,.2,1),opacity .32s ease,clip-path .32s ease,-webkit-clip-path .32s ease}
+#screen .page.pcol{z-index:5!important;box-shadow:0 30px 80px rgba(0,0,0,.6)}
+#screen #p-home.pbg{display:block;z-index:1!important;animation:none!important;transform:scale(.96);transform-origin:50% 50%;pointer-events:none}
+#screen #p-home.pbg-go{transition:opacity .32s ease,transform .32s ease;transform:scale(1)}
 #screen .page.zm-anim{transition:transform .35s cubic-bezier(.22,1,.36,1)}
 #zoomOut{position:absolute;left:50%;top:18px;z-index:70;transform:translate(-50%,-14px) scale(.9);opacity:0;pointer-events:none;display:flex;align-items:center;gap:8px;height:44px;padding:0 18px 0 14px;border-radius:22px;background:rgba(28,28,30,.92);box-shadow:0 0 0 1px rgba(255,255,255,.1),0 8px 24px rgba(0,0,0,.45);color:#fff;font-size:15px;font-weight:500;transition:opacity .25s ease,transform .35s cubic-bezier(.22,1,.36,1)}
 #zoomOut.on{opacity:1;pointer-events:auto;transform:translate(-50%,0) scale(1)}
@@ -2577,7 +2580,7 @@ function ocRender(){
 function ocTab(k){ if(k==='cube') return; if(k==='play'){ if(OC.mode==='g2') return toast('Gen 2 videos'); k='videos'; }
   if(k==='cmp'){ OC.arlo=false; ocRender();  }
   jump($('#ocScroll'),k); }
-const ocSpy=spy($('#ocScroll'),t=>{ OC.tab=t; $('#p-ocp .ptitle').classList.toggle('hide',t==='cmp'); if(cur==='ocp') $$('#barRight [data-octab]').forEach(b=>b.classList.toggle('on',b.dataset.octab===t||(b.dataset.octab==='play'&&t==='videos'))); });
+const ocSpy=spy($('#ocScroll'),t=>{ OC.tab=t; $('#p-ocp .ptitle').classList.toggle('hide',t==='cmp'); if(cur==='ocp') $$('#barRight [data-octab]').forEach(b=>b.classList.toggle('on',b.dataset.octab===t||(b.dataset.octab==='hero'&&t==='spin')||(b.dataset.octab==='play'&&t==='videos'))); });
 
 /* ---------- generic product pages (sensors, app, lock, plug, garage) ---------- */
 const SENS=['chime','fob','motion','keypad','glass','door','window','water','fire','smokeco','pendant'];
@@ -2858,7 +2861,7 @@ function dbRender(){
     vs.classList.add('on'); g.classList.add('off'); }
 }
 function dbTab(k){ if(k==='cube') return; if(k==='play') k='videos'; jump($('#dbScroll'),k); }
-const dbSpy=spy($('#dbScroll'),t=>{ DB.tab=t; if(cur==='dbcp') $$('#barRight [data-dbtab]').forEach(b=>b.classList.toggle('on',b.dataset.dbtab===t||(b.dataset.dbtab==='play'&&t==='videos')));
+const dbSpy=spy($('#dbScroll'),t=>{ DB.tab=t; if(cur==='dbcp') $$('#barRight [data-dbtab]').forEach(b=>b.classList.toggle('on',b.dataset.dbtab===t||(b.dataset.dbtab==='hero'&&t==='spin')||(b.dataset.dbtab==='play'&&t==='videos')));
   $('#p-dbcp .ptitle').classList.toggle('hide',t==='cmp'||t==='phone');
   if(t==='cmp'&&!DB.noted&&cur==='dbcp'){ DB.noted=true;  }
   if(t==='phone') dbRender(); const hv=$('#dbHv'); if(hv){ if(t==='hero') hv.play().catch(()=>{}); else hv.pause(); } });
@@ -3584,19 +3587,24 @@ IP.tools='<path d="M14.5 6.5a4 4 0 0 0-5 5L4 17l3 3 5.5-5.5a4 4 0 0 0 5-5l-2.5 2
       if(g.z<=1.02&&ratio<1&&!g.zoomed){ /* already fully zoomed out: pinching in collapses the page toward home */
         const c=Math.max(.35,1-(1-ratio)*1.1); g.c=c; const r=scr.getBoundingClientRect(), zk=k();
         if(!g.col){ g.col=1; pg.classList.add('pcol'); pg.style.transformOrigin=`${g.mx}px ${g.my}px`; }
-        pg.style.transform=`scale(${c})`; pg.style.opacity=String(Math.min(1,.25+c)); pg.style.borderRadius=`${Math.round((1-c)*120)}px`; return; }
+        pg.style.transform=`scale(${c})`; pg.style.opacity=String(Math.min(1,.35+c)); pg.style.clipPath=pg.style.webkitClipPath=`inset(0 round ${Math.round(Math.min(1,(1-c)*6)*44/c)}px)`;
+        const hm=$('#p-home'); if(hm&&!hm.classList.contains('pbg')) hm.classList.add('pbg'); if(hm) hm.style.opacity=String(Math.min(1,(1-c)*2.2)); return; }
       if(ratio>1) g.zoomed=1;
-      if(g.col){ g.col=0; g.c=1; pg.classList.remove('pcol'); pg.style.transform=''; pg.style.opacity=''; pg.style.borderRadius=''; }
+      if(g.col){ g.col=0; g.c=1; pg.classList.remove('pcol'); pg.style.transform=''; pg.style.opacity=''; pg.style.clipPath=pg.style.webkitClipPath=''; const hm=$('#p-home'); if(hm){ hm.classList.remove('pbg'); hm.style.opacity=''; } }
       const nz=Math.min(3,Math.max(1,g.z*ratio)); /* keep the pinch point under the fingers and follow two-finger pan */
       Z=nz; TX=m[0]-(g.mx-g.tx)*nz/g.z; TY=m[1]-(g.my-g.ty)*nz/g.z; apply(false); }
     else if(pan&&e.touches.length===1&&Z>1.02){ e.preventDefault(); const t=e.touches[0], m=loc(t.clientX,t.clientY); TX=pan.tx+(m[0]-pan.x); TY=pan.ty+(m[1]-pan.y); if(Math.abs(m[0]-pan.x)+Math.abs(m[1]-pan.y)>6) pan.moved=true; apply(false); } },{passive:false});
-  const collapseEnd=gg=>{ const P=pg; if(!P) return;
-    if(gg.c<.84){ /* commit: finish collapsing, then land on home */
-      P.classList.add('pcol','pcol-go'); P.style.transform='scale(.18)'; P.style.opacity='0'; P.style.borderRadius='160px';
-      setTimeout(()=>{ try{closeMenu();closeModals();}catch(e){} stack=['home']; show('home'); try{flipTo('all');}catch(e){}
-        P.classList.remove('pcol','pcol-go'); P.style.transform=''; P.style.opacity=''; P.style.borderRadius=''; P.style.transformOrigin=''; },300); }
-    else { P.classList.add('pcol-go'); P.style.transform=''; P.style.opacity=''; P.style.borderRadius='';
-      setTimeout(()=>{ P.classList.remove('pcol','pcol-go'); P.style.transformOrigin=''; },380); } };
+  const collapseEnd=gg=>{ const P=pg, hm=$('#p-home'); if(!P) return;
+    if(gg.c<.84){ /* commit: finish collapsing into the home screen behind it */
+      P.classList.add('pcol','pcol-go'); P.style.transform='scale(.2)'; P.style.opacity='0'; P.style.clipPath=P.style.webkitClipPath='inset(0 round 220px)';
+      if(hm){ hm.classList.add('pbg-go'); hm.style.opacity='1'; }
+      setTimeout(()=>{ try{closeMenu();closeModals();}catch(e){} stack=['home']; if(hm) hm.classList.add('hxno'); show('home'); try{flipTo('all');}catch(e){}
+        if(hm){ hm.classList.remove('pbg','pbg-go'); hm.style.opacity=''; setTimeout(()=>hm.classList.remove('hxno'),50); }
+        P.classList.remove('pcol','pcol-go'); P.style.transform=''; P.style.opacity=''; P.style.clipPath=P.style.webkitClipPath=''; P.style.transformOrigin=''; },320); }
+    else { P.classList.add('pcol-go'); P.style.transform=''; P.style.opacity=''; P.style.clipPath=P.style.webkitClipPath='inset(0 round 0px)';
+      if(hm){ hm.classList.add('pbg-go'); hm.style.opacity='0'; }
+      setTimeout(()=>{ P.classList.remove('pcol','pcol-go'); P.style.transformOrigin=''; P.style.clipPath=P.style.webkitClipPath='';
+        if(hm){ hm.classList.remove('pbg','pbg-go'); hm.style.opacity=''; } },380); } };
   scr.addEventListener('touchend',e=>{ if(e.touches.length<2){ if(g&&g.col) collapseEnd(g); g=null; } if(!e.touches.length){ if(Z<1.05&&Z!==1) reset(true);
       /* double-tap: zoom in to 2x there, or back out */
       pan=null; } },{passive:true});
@@ -3793,13 +3801,19 @@ document.body.insertAdjacentHTML('afterbegin','<div id="vrBg"><img src="assets/p
    Inside sections taller than the screen (e.g. the 360° scroll animation) there is no settling, so they scroll freely. */
 document.head.insertAdjacentHTML('beforeend','<style>.lpage{scroll-snap-type:none!important;scroll-behavior:auto!important}</style>');
 $$('.lpage').forEach(box=>{ let t=0, touching=false, lastY=box.scrollTop, dir=1, raf=0, T=null, vel=0, lastT=0;
-  const stopAnim=()=>{ if(raf){ cancelAnimationFrame(raf); raf=0; } };
-  const spring=(to,v0=0)=>{ stopAnim(); let x=box.scrollTop, v=v0, prev=performance.now(); const K=230, D=2*Math.sqrt(K)*0.78; /* slightly under-damped: a touch of bounce */
+  const unlock=()=>{ box.style.overflowY=''; };
+  const stopAnim=()=>{ if(raf){ cancelAnimationFrame(raf); raf=0; unlock(); } };
+  const spring=(to,v0=0)=>{ stopAnim(); let x=box.scrollTop, v=v0, prev=performance.now(); const K=200, D=2*Math.sqrt(K)*0.86; /* slightly under-damped: a touch of bounce */
+    box.style.overflowY='hidden'; /* stops iOS momentum so it can't fight the spring */
     const step=now=>{ const dt=Math.min(.032,(now-prev)/1000); prev=now; const a=-K*(x-to)-D*v; v+=a*dt; x+=v*dt; box.scrollTop=x;
-      if(Math.abs(x-to)<.5&&Math.abs(v)<8){ box.scrollTop=to; raf=0; return; } raf=requestAnimationFrame(step); };
+      if(Math.abs(x-to)<.5&&Math.abs(v)<8){ box.scrollTop=to; raf=0; unlock(); return; } raf=requestAnimationFrame(step); };
     raf=requestAnimationFrame(step); };
   const layout=()=>{ const H=box.clientHeight, pts=[], free=[]; if(!H) return null;
-    [...box.children].forEach(c=>{ if(c.hidden||!c.offsetHeight) return; const mt=parseFloat(getComputedStyle(c).scrollMarginTop)||0, top=Math.max(0,c.offsetTop-mt), h=c.offsetHeight+mt; pts.push(top); if(h>H+40){ pts.push(top+h-H); free.push([top,top+h-H]); } });
+    let prevTop=null;
+    [...box.children].forEach(c=>{ if(c.hidden||!c.offsetHeight) return; const mt=parseFloat(getComputedStyle(c).scrollMarginTop)||0, top=Math.max(0,c.offsetTop-mt), h=c.offsetHeight+mt;
+      if(c.classList.contains('hum')&&prevTop!=null){ /* scroll animation is part of Overview: one free region from the top of Overview to the end of the animation */
+        pts.push(top+h-H); free.push([prevTop,top+h-H]); prevTop=null; return; }
+      pts.push(top); prevTop=top; if(h>H+40){ pts.push(top+h-H); free.push([top,top+h-H]); } });
     pts.push(Math.max(0,box.scrollHeight-H)); const P=[...new Set(pts.map(Math.round))].sort((a,b)=>a-b); return {H,P,free}; };
   const inFree=(L,y)=>L.free.some(([a,b])=>y>a+2&&y<b-2);
   const settle=()=>{ if(touching||raf||box.__jt||box.closest('.zm,.pcol')) return; const L=layout(); if(!L) return; const y=box.scrollTop; if(inFree(L,y)) return;
@@ -3816,8 +3830,8 @@ $$('.lpage').forEach(box=>{ let t=0, touching=false, lastY=box.scrollTop, dir=1,
       if(flick&&L&&!box.__jt){ const d=dy<0?1:-1, y0=S.y0;
         const startFree=L.free.find(([a,b])=>(y0>a+2&&y0<b-2)||(d>0&&Math.abs(y0-a)<=2)||(d<0&&Math.abs(y0-b)<=2)); /* entering a tall section: scroll it naturally */
         if(!startFree){ const tgt=d>0?L.P.find(v=>v>y0+2):[...L.P].reverse().find(v=>v<y0-2);
-          if(tgt!=null){ const nf=L.free.find(([a,b])=>Math.abs(a-tgt)<2&&d<0); /* flicking up into a tall section lands at its bottom edge */
-            spring(nf?nf[1]:tgt, -v*1000*.6); return; } } } }
+          const touchesFree=tgt!=null&&L.free.some(([a,b])=>tgt>=a-2&&tgt<=b+2);
+          if(tgt!=null&&!touchesFree){ spring(tgt, -v*1000*.6); return; } } } }
     t=setTimeout(settle,200); };
   ['touchend','touchcancel'].forEach(ev=>box.addEventListener(ev,end,{passive:true}));
   box.addEventListener('wheel',()=>stopAnim(),{passive:true});
