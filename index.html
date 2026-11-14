@@ -2603,17 +2603,17 @@ function glassAt(sec,x,y,w,h,cls){ let g=sec.querySelector(':scope>.fglass'+(cls
 function pillSet(pill,p,anim){ if(!pill) return; const ind=pill.querySelector('.ind'), tr=anim?'transform .42s cubic-bezier(.22,.9,.2,1)':'none';
   ind.style.transition=tr; ind.style.transform=`translateX(${p*100}%)`; pill.querySelectorAll('button').forEach((b,i)=>b.classList.toggle('on',i===(p>.5?1:0))); }
 function stripSet(sec,p,anim){ const st=sec.querySelector('.strip'), tr=anim?'transform .42s cubic-bezier(.22,.9,.2,1)':'none';
-  st.style.transition=tr; st.style.transform=`translate3d(${-1376*p}px,0,0)`; pillSet(sec.querySelector('.spill'),p,anim); }
+  const stp=st.classList.contains('wide')?(st.firstElementChild.offsetWidth||1376):1376; st.style.transition=tr; st.style.transform=`translate3d(${-stp*p}px,0,0)`; pillSet(sec.querySelector('.spill'),p,anim); }
 function stripCommit(sec,v){ const i=(v==='s'||v===1)?1:0; stripSet(sec,i,true);
   if(sec.dataset.t==='hero'){ PR.door=i; prTitle(); const sp=$('#prScroll .psec[data-t=specs]'); if(sp){ prRender('specs'); pillSet(sp.querySelector('.dwseg'),i,true);} return; }
   if(sec.closest('#hbScroll')||sec.closest('#dbScroll')||sec.closest('#thScroll')) return; if(sec.closest('#prScroll')) PR.st.specs.spec=i?'s':'f'; else OC.spec=i?'s':'f'; }
 /* drag the Features|Specs strip with the finger; the pill indicator tracks it live */
 function bindStrips(box){ let d=null;
   box.addEventListener('pointerdown',e=>{ const sec=e.target.closest('[data-t]'); if(!sec||!sec.querySelector(':scope > .strip')||false) return;
-    const m=new DOMMatrix(getComputedStyle(sec.querySelector('.strip')).transform); d={sec,x:e.clientX,y:e.clientY,t:Date.now(),p0:-m.m41/1376,axis:null,sc:sec.getBoundingClientRect().width/1376}; },{passive:true});
+    const m=new DOMMatrix(getComputedStyle(sec.querySelector('.strip')).transform); const st0=sec.querySelector('.strip'), stp=st0.classList.contains('wide')?(st0.firstElementChild.offsetWidth||1376):1376; d={sec,stp,x:e.clientX,y:e.clientY,t:Date.now(),p0:-m.m41/stp,axis:null,sc:sec.getBoundingClientRect().width/1376}; },{passive:true});
   box.addEventListener('pointermove',e=>{ if(!d) return; const dx=e.clientX-d.x, dy=e.clientY-d.y;
     if(!d.axis){ if(Math.abs(dx)<8&&Math.abs(dy)<8) return; d.axis=Math.abs(dx)>Math.abs(dy)?'x':'y'; if(d.axis==='x') d.sec.__drag=1; }
-    if(d.axis!=='x') return; let p=d.p0-dx/d.sc/1376; if(p<0) p=p*.3; if(p>1) p=1+(p-1)*.3; d.p=p; stripSet(d.sec,p,false); },{passive:true});
+    if(d.axis!=='x') return; let p=d.p0-dx/d.sc/d.stp; if(p<0) p=p*.3; if(p>1) p=1+(p-1)*.3; d.p=p; stripSet(d.sec,p,false); },{passive:true});
   const end=e=>{ if(!d) return; const s0=d; d=null; s0.sec.__drag=0; if(s0.axis!=='x') return; swiped=Date.now();
     const dx=e?e.clientX-s0.x:0, v=dx/Math.max(Date.now()-s0.t,1); let p=s0.p??s0.p0;
     const tgt=Math.abs(v)>.4?(v<0?1:0):(p>.5?1:0); stripCommit(s0.sec,tgt); };
@@ -2765,7 +2765,7 @@ const PTITLE={icp:'Vivint Indoor Camera Pro',motion:'Vivint Motion Sensor',glass
 function prTitle(){ $('#prTitle').textContent=PR.id==='window'&&PR.door?'Vivint Door Sensor':(PTITLE[PR.id]||''); }
 function prBuild(){ const box=$('#prScroll'); PR.st={}; prTitle(); $('#p-prod .ptitle').classList.toggle('dk',PR.id==='icp');
   box.innerHTML=prSecs().map(t=>{PR.st[t]={sub:0,spec:'f',tip:false};return t==='which'?SMK_WHICH():XS_TABS.includes(t)?xsSec(PR.id,t,'psec'):(t==='hero'&&LHERO[PR.id])?LH(PR.id):(t==='hero'&&PR.id==='window')
-  ?`<div class="psec" data-t="hero" data-vis="0"><div class="strip"><div class="dws"><img src="assets/ph/dws_surf.webp?v=1" alt=""><div class="dws-t" style="left:72px;bottom:290px"><h1>Every door<br>and window<br>protected</h1></div></div><div class="dws"><img src="assets/ph/dws_rec.webp?v=1" alt="" style="object-position:30% 50%"><div class="dws-t" style="left:700px;top:150px"><h1>Discreet<br>protection</h1></div></div></div><div class="dwseg spill"><i class="ind"></i><button class="on" data-door="0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4v16"/><rect x="6.5" y="7" width="6" height="10" rx="1.5"/><rect x="14.5" y="9" width="4" height="6" rx="1"/></svg>Surface Mount</button><button data-door="1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h6v16H4M20 4h-6v16h6"/><circle cx="12" cy="12" r="1.6"/></svg>Recessed</button></div><div class="hl"></div></div>`
+  ?`<div class="psec dwhero" data-t="hero" data-vis="0"><div class="strip wide"><div class="dws"><img src="assets/ph/dws_surf.webp?v=1" alt=""><div class="dws-t" style="left:72px;bottom:290px"><h1>Every door<br>and window<br>protected</h1></div></div><div class="dws"><img src="assets/ph/dws_rec.webp?v=1" alt="" style="object-position:30% 50%"><div class="dws-t" style="left:700px;top:150px"><h1>Discreet<br>protection</h1></div></div></div><div class="dwseg spill"><i class="ind"></i><button class="on" data-door="0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4v16"/><rect x="6.5" y="7" width="6" height="10" rx="1.5"/><rect x="14.5" y="9" width="4" height="6" rx="1"/></svg>Surface Mount</button><button data-door="1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h6v16H4M20 4h-6v16h6"/><circle cx="12" cy="12" r="1.6"/></svg>Recessed</button></div><div class="hl"></div></div>`
   :(t==='hero'&&PR.id==='icp')
   ?`<div class="psec ichv" data-t="hero" data-vis="0"><video class="ich-vid" src="assets/p/ic_hero.mp4?v=63" poster="assets/p/ic_hero_v.jpg?v=63" muted playsinline loop autoplay preload="auto"></video><div class="ich-txt"><h1>Be home.<br>From anywhere.</h1><p>Check in, talk to the kids, and see what’s happening, all from your phone.</p></div><button class="dbai" data-go="ai">AI</button></div>`
   :t==='specs'
@@ -4187,6 +4187,7 @@ document.head.insertAdjacentHTML('beforeend',`<style>
 .dws-t p{margin-top:24px;font-size:23px;line-height:1.42;color:rgba(20,20,20,.78)}
 
 .psec .lvmask{z-index:5}.psec .lvt{z-index:6;transform:translateZ(0)}
+#prScroll>.psec.dwhero{overflow:visible!important}.strip.wide{left:calc(-1*var(--gx));width:calc(2*var(--W))}.strip.wide>.dws{width:var(--W)}.strip.wide>.dws img{width:100%}.strip.wide .dws-t{margin-left:var(--gx)}
 </style>`);
 { const add=box=>{ const secs=[...box.children].filter(c=>!c.hidden&&c.dataset&&c.dataset.t!=null);
     secs.forEach((c,i)=>{ const last=i===secs.length-1, skip=last||c.classList.contains('hum')||c.classList.contains('gal')&&false;
