@@ -4202,5 +4202,33 @@ document.head.insertAdjacentHTML('beforeend',`<style>
   new MutationObserver(()=>{ if(live()) render(); else { pv.pause(); hv.pause(); } }).observe($('#dbmList').closest('.otab'),{attributes:true,attributeFilter:['data-vis']});
   render(); }
 
+/* Auto-fade hard crop edges: any product/photo image whose picture runs into the edge of its frame (and isn't a full-screen
+   background or a photo filling a rounded tile) gets a soft gradient on just those edges. */
+{ const cache=new Map(); const cv=document.createElement('canvas'); cv.width=cv.height=48; const cx=cv.getContext('2d',{willReadFrequently:true});
+  const SKIP='.ht,.tile,.dbcard,.dbwell,.vcard,.rv2-sc,#barRight,.bbtn,.lvl,.lvt,.dbm-card,.gal,.gal-tr,figure,.pk-sign2,.sgn-sc,#psheet,.ocpk,.dbvs,.hc';
+  const roundedFrame=(im,r)=>{ let e=im.parentElement; for(let i=0;i<4&&e&&e!==document.body;i++,e=e.parentElement){ const cs=getComputedStyle(e); if((cs.overflow!=='visible'||cs.clipPath!=='none')&&parseFloat(cs.borderTopLeftRadius)>8){ const q=e.getBoundingClientRect(); if(Math.abs(q.left-r.left)<8&&Math.abs(q.right-r.right)<8) return true; } } return false; };
+  const edges=(im)=>{ const key=im.currentSrc||im.src; if(cache.has(key)) return cache.get(key); let res=null;
+    try{ cx.clearRect(0,0,48,48); cx.drawImage(im,0,0,48,48); const d=cx.getImageData(0,0,48,48).data;
+      const sideV=(xy)=>{ let hit=0; for(let i=0;i<48;i++){ const [x,y]=xy(i); const o=(y*48+x)*4, a=d[o+3]/255, l=(d[o]*.3+d[o+1]*.59+d[o+2]*.11)/255; if(a>.5&&l>.07) hit++; } return hit/48; };
+      res={t:sideV(i=>[i,0]),b:sideV(i=>[i,47]),l:sideV(i=>[0,i]),r:sideV(i=>[47,i])}; }catch(e){ res=null; }
+    cache.set(key,res); return res; };
+  const ONLY=/assets\/(move\d|th\/life|th\/only2|och\/s[01]|cat\/ocp)\./; /* photos that are actually cropped mid-picture */
+  const apply=im=>{ if(!ONLY.test(im.getAttribute('src')||'')) return; if(im.__af===im.currentSrc) return; if(!im.complete||!im.naturalWidth) return; const r=im.getBoundingClientRect(); if(r.width<110||r.height<110) return;
+    if(im.closest(SKIP)) return; if(r.width>innerWidth*.9||r.height>innerHeight*.9) return; /* full-screen backgrounds keep their edges */
+    if(roundedFrame(im,r)) return; const cs=getComputedStyle(im); if(cs.maskImage&&cs.maskImage!=='none'||cs.webkitMaskImage&&cs.webkitMaskImage!=='none') return;
+    const e=edges(im); im.__af=im.currentSrc; if(!e) return;
+    const hard={t:e.t>.22,b:e.b>.22,l:e.l>.22,r:e.r>.22}; if(!hard.t&&!hard.b&&!hard.l&&!hard.r) return;
+    /* picture's box inside the element (object-fit: contain leaves margins) */
+    const W=im.clientWidth,H=im.clientHeight, nw=im.naturalWidth, nh=im.naturalHeight; let L=0,T=0,CW=W,CH=H;
+    if(cs.objectFit==='contain'||cs.objectFit==='scale-down'){ const pl=parseFloat(cs.paddingLeft)||0, pt=parseFloat(cs.paddingTop)||0, bw=W-pl-(parseFloat(cs.paddingRight)||0), bh=H-pt-(parseFloat(cs.paddingBottom)||0); const sc=Math.min(bw/nw,bh/nh); CW=nw*sc; CH=nh*sc; L=pl+(bw-CW)/2; T=pt+(bh-CH)/2; }
+    const fx=Math.max(18,CW*.12), fy=Math.max(18,CH*.12);
+    const h=`linear-gradient(90deg,${hard.l?`transparent ${L}px,#000 ${L+fx}px`:'#000 0'},${hard.r?`#000 ${L+CW-fx}px,transparent ${L+CW}px`:'#000 100%'})`;
+    const v=`linear-gradient(180deg,${hard.t?`transparent ${T}px,#000 ${T+fy}px`:'#000 0'},${hard.b?`#000 ${T+CH-fy}px,transparent ${T+CH}px`:'#000 100%'})`;
+    im.style.webkitMaskImage=im.style.maskImage=h+','+v; im.style.webkitMaskComposite='source-in'; im.style.maskComposite='intersect'; im.dataset.af=Object.keys(hard).filter(k=>hard[k]).join(''); };
+  const io=new IntersectionObserver(es=>es.forEach(en=>{ if(en.isIntersecting){ const im=en.target; if(im.complete) setTimeout(()=>apply(im),60); else im.addEventListener('load',()=>apply(im),{once:true}); } }),{threshold:.2});
+  const watch=()=>$$('img:not([data-afw])').forEach(im=>{ im.dataset.afw=1; io.observe(im); });
+  watch(); new MutationObserver(()=>{ clearTimeout(watch.t); watch.t=setTimeout(watch,120); }).observe(document.body,{childList:true,subtree:true});
+  window.addEventListener('resize',()=>$$('img[data-af]').forEach(im=>{ im.__af=''; im.style.maskImage=im.style.webkitMaskImage=''; apply(im); })); }
+
 barFor(cur);
 </script>
