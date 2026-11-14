@@ -1926,6 +1926,14 @@ body.hasbk #gTitle{transform:translateX(118px)}
 .dbm-card img.rr[data-fv=sdz]{padding:70px 140px 194px 200px!important}
 
 .lpage>.otab.dbm{overflow:visible!important}
+
+/* View on Smart Hub: the full panel (Doorbell view from the Smart Hub page) */
+.dbm-hub{left:700px!important;top:250px!important;width:600px!important;height:422px!important}
+.dbm-hub video{mix-blend-mode:normal!important;-webkit-mask-image:none!important;mask-image:none!important;object-fit:contain}
+
+.dbm-hub{left:770px!important;top:290px!important;width:520px!important;height:366px!important;overflow:visible}
+.dbm-hub video{position:relative;z-index:2;width:100%;height:100%}
+.dbm-hubdb{position:absolute;right:100%;margin-right:30px;top:50%;height:640px;transform:translateY(-50%);filter:drop-shadow(0 20px 40px rgba(0,0,0,.6))}
 </style>
 <div id="stage">
   <div id="screen">
@@ -2244,7 +2252,7 @@ body.hasbk #gTitle{transform:translateX(118px)}
         <div class="dbm-card" id="dbmCard"></div>
         <div class="dbm-phone" id="dbmPhone"><video id="dbmPv" playsinline loop preload="auto"></video><video id="dbmPv2" playsinline loop preload="auto"></video></div>
         <div class="dbm-cap" id="dbmCap"></div>
-        <div class="dbm-hub" id="dbmHub"><video id="dbmHv" playsinline loop preload="auto"></video></div>
+        <div class="dbm-hub" id="dbmHub"><img class="dbm-hubdb" src="assets/dbr/blue34.webp?v=277" alt=""><video id="dbmHv" playsinline loop preload="auto"></video></div>
       </div>
       <div class="otab db" data-t="featold" hidden>
         <div class="dbf-vis" id="dbfVis"></div>
@@ -4050,7 +4058,7 @@ document.body.insertAdjacentHTML('beforeend','<svg width="0" height="0" style="p
 
 /* Instant video switching: each product page's clips are pulled into memory when the page opens, and any video
    pointed at one of them plays from memory (no network/disk wait). Keeps the two most recent pages' clips. */
-{ const VG={"ocp": ["assets/oc/ph0.mp4", "assets/oc/ph1.mp4", "assets/oc/ph2.mp4", "assets/oc/ph3.mp4", "assets/oc/ph4.mp4", "assets/oc/ph5.mp4", "assets/oc/ph6.mp4", "assets/oc/ph7.mp4", "assets/oc/vai.mp4"], "dbcp": ["assets/db/hub.mp4", "assets/db/ph0.mp4", "assets/db/ph1.mp4", "assets/db/ph2.mp4", "assets/db/ph3.mp4", "assets/db/ph4.mp4", "assets/db/ph5.mp4", "assets/db/ph6.mp4", "assets/db/ph7.mp4"], "hub": ["assets/hb/m0.mp4", "assets/hb/m1.mp4", "assets/hb/m2.mp4", "assets/hb/m3.mp4", "assets/hb/m4.mp4", "assets/hb/m5.mp4"], "prod": ["assets/p/gp1.mp4", "assets/p/gp2.mp4", "assets/p/ic_hero.mp4", "assets/p/icph0.mp4", "assets/p/icph1.mp4", "assets/p/icph2.mp4", "assets/p/icph3.mp4", "assets/p/lk0.mp4", "assets/p/lk1.mp4", "assets/p/lk2.mp4", "assets/p/lk3.mp4"], "therm": ["assets/th/sys.mp4"]}; const BL=new Map(), ORDER=[];
+{ const VG={"ocp": ["assets/oc/ph0.mp4", "assets/oc/ph1.mp4", "assets/oc/ph2.mp4", "assets/oc/ph3.mp4", "assets/oc/ph4.mp4", "assets/oc/ph5.mp4", "assets/oc/ph6.mp4", "assets/oc/ph7.mp4", "assets/oc/vai.mp4"], "dbcp": ["assets/hb/m4.mp4", "assets/db/hub.mp4", "assets/db/ph0.mp4", "assets/db/ph1.mp4", "assets/db/ph2.mp4", "assets/db/ph3.mp4", "assets/db/ph4.mp4", "assets/db/ph5.mp4", "assets/db/ph6.mp4", "assets/db/ph7.mp4"], "hub": ["assets/hb/m0.mp4", "assets/hb/m1.mp4", "assets/hb/m2.mp4", "assets/hb/m3.mp4", "assets/hb/m4.mp4", "assets/hb/m5.mp4"], "prod": ["assets/p/gp1.mp4", "assets/p/gp2.mp4", "assets/p/ic_hero.mp4", "assets/p/icph0.mp4", "assets/p/icph1.mp4", "assets/p/icph2.mp4", "assets/p/icph3.mp4", "assets/p/lk0.mp4", "assets/p/lk1.mp4", "assets/p/lk2.mp4", "assets/p/lk3.mp4"], "therm": ["assets/th/sys.mp4"]}; const BL=new Map(), ORDER=[];
   const key=u=>{ try{ return new URL(u,location.href).pathname.replace(/^.*?(assets\/)/,'assets/'); }catch(e){ return u; } };
   const D=Object.getOwnPropertyDescriptor(HTMLMediaElement.prototype,'src');
   Object.defineProperty(HTMLMediaElement.prototype,'src',{configurable:true,enumerable:D.enumerable,get(){ return D.get.call(this); },
@@ -4140,7 +4148,7 @@ document.head.insertAdjacentHTML('beforeend',`<style>
   const L=$('#dbmList'), card=$('#dbmCard'), pv=$('#dbmPv'), pv2=$('#dbmPv2'), hv=$('#dbmHv'), ph=$('#dbmPhone'), hb=$('#dbmHub'), H=$('#dbmH');
   L.innerHTML=M.map(([ic,t],i)=>`<button class="${i?'':'on'}" data-dbm="${i}">${LSV(ic[0],28,ic[1]||'')}<span>${t}</span></button>`).join('');
   card.innerHTML=['lens','speaker','redring','blue34','whitering','scan','sdz','chipz'].map(k=>`<img class="rr" src="assets/dbr/${k}.webp?v=277" alt="" data-fv="${k}">`).join('')+`<img src="assets/dbr/red34.webp?v=270" alt="" data-fv="d" class="dflt rr">`;
-  hv.src=`assets/db/hub.mp4${V}`; cv=pv2;
+  hv.src=`assets/hb/m4.mp4?v=60`; hv.poster='assets/hb/m4p.jpg?v=60'; cv=pv2;
   const live=()=>!!$('#dbmList').closest('[data-vis="1"]');
   const cap=$('#dbmCap');
   const render=()=>{ const [,,h,line,fv,clip,cp]=M[m]; if(cp){ cap.innerHTML=cp; } cap.classList.toggle('on',!!cp);
