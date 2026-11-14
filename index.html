@@ -4247,5 +4247,11 @@ document.head.insertAdjacentHTML('beforeend',`<style>
   watch(); new MutationObserver(()=>{ clearTimeout(watch.t); watch.t=setTimeout(watch,120); }).observe(document.body,{childList:true,subtree:true});
   window.addEventListener('resize',()=>$$('img[data-af]').forEach(im=>{ im.__af=''; im.style.maskImage=im.style.webkitMaskImage=''; apply(im); })); }
 
+/* Energy Savings photo: always reach the right edge of the screen */
+{ const fit=()=>{ const im=$('.thm-full'); if(!im) return; const r=im.getBoundingClientRect(); if(!r.width) return; const k=r.width/(im.offsetWidth||1)||1;
+    const scr=$('#stage').getBoundingClientRect(); const need=(Math.max(innerWidth,scr.right)-r.left)/k+4; im.style.setProperty('width',need.toFixed(0)+'px','important'); };
+  const _sw=show; show=function(p){ _sw(p); if(p==='therm'){ setTimeout(fit,50); setTimeout(fit,700); } };
+  window.addEventListener('resize',()=>setTimeout(fit,150)); document.addEventListener('click',e=>{ if(e.target.closest('[data-thf]')) setTimeout(fit,30); }); setTimeout(fit,500); }
+
 barFor(cur);
 </script>
