@@ -2753,7 +2753,7 @@ function secRender(id,t,S){ let src,hot='',clip=null,box=null,tip=null; const do
   if(t==='hero'&&id==='window'){ src='window'; hot=''; }
   if(t==='specs'){ src=(id==='icp'?'ic':(id==='window'&&door?'door':id))+'_'+S.spec; hot=''; if(id==='window') hot+=seg; }
   if(t==='phone'&&id!=='icp'){ src='app_'+S.sub; hot=APPF.map((n,i)=>H(860+(i%3)*160-70,258+Math.floor(i/3)*163-70,140,140,`data-prsub="${i}"`,14)).join(''); }
-  if(t==='lock'){ src='l'+S.sub; if(S.sub<4){clip='lk'+S.sub;box=[0,0,1376,780];}
+  if(t==='lock'){ src='l'+S.sub; if(S.sub<4){clip=S.sub===3?'lk3b':'lk'+S.sub;box=[0,0,1376,780];}
     hot=[368,528,688,848,1006].map((x,i)=>H(x-70,795,140,146,`data-prsub="${i}"`,16)).join(''); }
   if(t==='garage'){ src='garage_feat'; hot=H(236,698,68,68,'data-prtip="1"',34); if(S.tip) tip=[104,648,392,188,'Works with all major brands of garage door openers manufactured after 1993 that have standard safety sensors']; }
   if(t==='gphone'){ src='g'+S.sub; if(S.sub){clip='gp'+S.sub;box=[224,36,448,900];}
@@ -4127,7 +4127,7 @@ document.body.insertAdjacentHTML('beforeend','<svg width="0" height="0" style="p
 
 /* Instant video switching: each product page's clips are pulled into memory when the page opens, and any video
    pointed at one of them plays from memory (no network/disk wait). Keeps the two most recent pages' clips. */
-{ const VG={"ocp": ["assets/oc/ph0.mp4", "assets/oc/ph1.mp4", "assets/oc/ph2.mp4", "assets/oc/ph3.mp4", "assets/oc/ph4.mp4", "assets/oc/ph5.mp4", "assets/oc/ph6.mp4", "assets/oc/ph7.mp4", "assets/oc/vai.mp4"], "dbcp": ["assets/hb/m4.mp4", "assets/db/hub.mp4", "assets/db/ph0.mp4", "assets/db/ph1.mp4", "assets/db/ph2.mp4", "assets/db/ph3.mp4", "assets/db/ph4.mp4", "assets/db/ph5.mp4", "assets/db/ph6.mp4", "assets/db/ph7.mp4"], "hub": ["assets/hb/m0.mp4", "assets/hb/m1.mp4", "assets/hb/m2.mp4", "assets/hb/m3.mp4", "assets/hb/m4.mp4", "assets/hb/m5.mp4"], "prod": ["assets/p/gp1.mp4", "assets/p/gp2.mp4", "assets/p/ic_hero.mp4", "assets/p/icph0.mp4", "assets/p/icph1.mp4", "assets/p/icph2.mp4", "assets/p/icph3.mp4", "assets/p/lk0.mp4", "assets/p/lk1.mp4", "assets/p/lk2.mp4", "assets/p/lk3.mp4"], "therm": ["assets/th/sys.mp4"]}; const BL=new Map(), ORDER=[];
+{ const VG={"ocp": ["assets/oc/ph0.mp4", "assets/oc/ph1.mp4", "assets/oc/ph2.mp4", "assets/oc/ph3.mp4", "assets/oc/ph4.mp4", "assets/oc/ph5.mp4", "assets/oc/ph6.mp4", "assets/oc/ph7.mp4", "assets/oc/vai.mp4"], "dbcp": ["assets/hb/m4.mp4", "assets/db/hub.mp4", "assets/db/ph0.mp4", "assets/db/ph1.mp4", "assets/db/ph2.mp4", "assets/db/ph3.mp4", "assets/db/ph4.mp4", "assets/db/ph5.mp4", "assets/db/ph6.mp4", "assets/db/ph7.mp4"], "hub": ["assets/hb/m0.mp4", "assets/hb/m1.mp4", "assets/hb/m2.mp4", "assets/hb/m3.mp4", "assets/hb/m4.mp4", "assets/hb/m5.mp4"], "prod": ["assets/p/gp1.mp4", "assets/p/gp2.mp4", "assets/p/ic_hero.mp4", "assets/p/icph0.mp4", "assets/p/icph1.mp4", "assets/p/icph2.mp4", "assets/p/icph3.mp4", "assets/p/lk0.mp4", "assets/p/lk1.mp4", "assets/p/lk2.mp4", "assets/p/lk3b.mp4"], "therm": ["assets/th/sys.mp4"]}; const BL=new Map(), ORDER=[];
   const key=u=>{ try{ return new URL(u,location.href).pathname.replace(/^.*?(assets\/)/,'assets/'); }catch(e){ return u; } };
   const D=Object.getOwnPropertyDescriptor(HTMLMediaElement.prototype,'src');
   Object.defineProperty(HTMLMediaElement.prototype,'src',{configurable:true,enumerable:D.enumerable,get(){ return D.get.call(this); },
@@ -4187,15 +4187,17 @@ document.head.insertAdjacentHTML('beforeend',`<style>
 .dws-t p{margin-top:24px;font-size:23px;line-height:1.42;color:rgba(20,20,20,.78)}
 
 /* ===== Liquid Glass (replaces flat grays) — no backlights ===== */
-:root{--lg-fill:linear-gradient(160deg,rgba(255,255,255,.15),rgba(255,255,255,.05) 55%,rgba(255,255,255,.08)),rgba(28,28,30,.32);
- --lg-edge:inset 0 1px 0 rgba(255,255,255,.26),inset 0 -1px 0 rgba(255,255,255,.06),inset 0 0 0 1px rgba(255,255,255,.11);
- --lg-on:linear-gradient(165deg,rgba(255,255,255,.32),rgba(255,255,255,.10) 60%,rgba(255,255,255,.16));
- --lg-on-edge:inset 0 1px 0 rgba(255,255,255,.45),inset 0 0 0 1px rgba(255,255,255,.16),0 2px 10px rgba(0,0,0,.25)}
-#bar .gbtn,#bar .bbtn:not(.on),.pricingBtn,.gbtn,.gpill,.cpill,.hx .cpill,.dbai:not(.aiorb),.dbback,.dbplus,.vfil b,.vplay,#homeSeg,.fsp,.dwseg,.htog,.dwseg.lt,.fsp.lt,.hb3pill,#barRight.pnav,.ocb:not(.aiorb),.fglass,.fglass.tl,.th-pills,.hy-pills,.hy-ar,.vl2-chips,.smk-tog,.pk-tog,.pbx-tog,#p-pricing .seg,#prodBtn,#homeX,#bar #amtBtn,#zoomOut,#bkPill,.ocar-back,.ab .arr,.cv2 .cvx,#psheet .pan,#psheet .x,#stage #drawer,#drawer .m2-wn,#drawer .m2-x,.thm-stat,.thm-es,.xw-link,.ptitle::before{background:var(--lg-fill)!important;-webkit-backdrop-filter:blur(26px) saturate(180%)!important;backdrop-filter:blur(26px) saturate(180%)!important;border-color:transparent!important;box-shadow:var(--lg-edge)!important}
+:root{--lg-fill:linear-gradient(160deg,rgba(255,255,255,.07),rgba(255,255,255,.015) 45%,rgba(255,255,255,.04));
+ --lg-edge:inset 1.5px 1.5px 0 -0.5px rgba(255,255,255,.55),inset -1px -1px 0 -0.5px rgba(255,255,255,.28),inset 0 0 14px rgba(255,255,255,.07),inset 0 -10px 18px -12px rgba(255,255,255,.10),0 6px 22px rgba(0,0,0,.28);
+ --lg-on:linear-gradient(165deg,rgba(255,255,255,.20),rgba(255,255,255,.06) 55%,rgba(255,255,255,.12));
+ --lg-on-edge:inset 1.5px 1.5px 0 -0.5px rgba(255,255,255,.7),inset -1px -1px 0 -0.5px rgba(255,255,255,.35),inset 0 0 12px rgba(255,255,255,.12),0 2px 10px rgba(0,0,0,.25);
+ --lg-bf:blur(7px) saturate(190%) brightness(1.06)}
+#bar .gbtn,#bar .bbtn:not(.on),.pricingBtn,.gbtn,.gpill,.cpill,.hx .cpill,.dbai:not(.aiorb),.dbback,.dbplus,.vfil b,.vplay,#homeSeg,.fsp,.dwseg,.htog,.dwseg.lt,.fsp.lt,.hb3pill,#barRight.pnav,.ocb:not(.aiorb),.fglass,.fglass.tl,.th-pills,.hy-pills,.hy-ar,.vl2-chips,.smk-tog,.pk-tog,.pbx-tog,#p-pricing .seg,#prodBtn,#homeX,#bar #amtBtn,#zoomOut,#bkPill,.ocar-back,.ab .arr,.cv2 .cvx,#psheet .pan,#psheet .x,#stage #drawer,#drawer .m2-wn,#drawer .m2-x,.thm-stat,.thm-es,.xw-link,.ptitle::before{background:var(--lg-fill)!important;-webkit-backdrop-filter:var(--lg-bf)!important;backdrop-filter:var(--lg-bf)!important;border-color:transparent!important;box-shadow:var(--lg-edge)!important}
 .lg,.dbcard,.vcard,.hc,.kit,#p-pricing .kit,.mcard,.rc,.rv2-sc .rc,.ptab,.step .n,#p-military .sheet,.pc,.xa-list,.xw-p,.xw-why div,.xf,.xf-q i,.xa-ic,.xw-plus,.xw-pick button,.xw-pick img,.th-card,.aw-c,.aw-row,.aw-row .go,.ab,.ab .logos div,.mcard .price,.ocar-w span,.ocar-l,#psheet .pi,.smk-c,.smk-c .go,.vl2-c,#drawer .m2-t,#drawer .m2-dl,.cv2 .hc,.cv2 .cv-card,.pbx-bar,.pbx-k .k2,.pbx-r,.psa-key div,.thm-chips span,.thm-pts p,.thm-card,.thm-txt,#p-nrg .ng-card,#p-nrg .ng-f,#p-nrg .ng-chips div,#p-verify .vr-pts span,.hbt .c,.ocpk .dbcard,#p-dbcp .dbcard,#p-dbcp .dbai:not(.aiorb),#p-dbcp .dbback,#p-dbcp .dbplus,#p-dbcp .vcard,#p-dbcp .hc,#p-dbcp .cpill,#p-dbcp .xreplay,#p-dbcp .vplay{background:var(--lg-fill)!important;border-color:transparent!important;box-shadow:var(--lg-edge)!important}
 .dwseg .ind,.fsp .ind,.fsp.lt .ind,.htog .ind,#homeSeg .sind,.dbt-sel,.dbf-sel,#p-dbcp .dbt-sel,#p-dbcp .dbf-sel,.hb3pill .ind,#barRight.pnav .bbtn.on,.bbtn.on,.cpill.on,.hx .cpill.on,.vfil b.on,.hbm.on,.hc.p3,.hbt .c.me,#burger,.th-pills button.on,.hy-pills button.on,.xw-pick button.on,.vl2-chips b.on,#bar #homeX .bbtn.on,#bar #amtBtn.on,.smk-tog i,.pk-tog i,.pbx-tog i,#p-pricing .seg i,#psheet .pi.cur,.smk-c.me,.cv2 .hc.on,.xf.on,.th-list button.on,.dbm-list button.on,.cv2 .hd.on,.psa-nav button.on,.lvl button.on,.lvt.on,.aw-row:active,.pbx-bar.full i{background:var(--lg-on)!important;box-shadow:var(--lg-on-edge)!important;border-color:transparent!important}
-#burger{-webkit-backdrop-filter:blur(26px) saturate(180%)!important;backdrop-filter:blur(26px) saturate(180%)!important}
+#burger{-webkit-backdrop-filter:var(--lg-bf)!important;backdrop-filter:var(--lg-bf)!important}
 #bar #barRight.pnav .bbtn:not(.on),#bar #homeX .bbtn:not(.on){background:transparent!important;box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+html.lgref{--lg-bf:url(#lgRefract) blur(3px) saturate(190%) brightness(1.06)}
 </style>`);
 { const add=box=>{ const secs=[...box.children].filter(c=>!c.hidden&&c.dataset&&c.dataset.t!=null);
     secs.forEach((c,i)=>{ const last=i===secs.length-1, skip=last||c.classList.contains('hum')||c.classList.contains('gal')&&false;
@@ -4403,6 +4405,12 @@ window.USMAP={w:1000,h:620,ut:[222.1, 266.2],c:[[72.8,371.6,9],[907.0,214.8,9],[
   const _bf=barFor; barFor=function(p){ _bf(p); if(p!=='prod'||PR.id!=='lock') return; const r=$('#barRight'); if(r.querySelector('[data-prtab=colors]')) return;
     const ref=r.querySelector('[data-galgo]')||r.querySelector('[data-prtab=faq]'); const h=`<button class="bbtn${PR.tab==='colors'?' on':''}" data-prtab="colors">${SVGI('colors',22)}<span>Colors</span></button>`; if(ref) ref.insertAdjacentHTML('beforebegin',h); else r.insertAdjacentHTML('beforeend',h); };
   if(cur==='prod'&&PR.id==='lock'){ try{ prBuild(); barFor('prod'); }catch(e){} } }
+
+
+/* Liquid Glass refraction: SVG lens displacement on the backdrop (Chromium renders it; Safari falls back to clear frosted glass) */
+{ const map=`<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200' preserveAspectRatio='none'><defs><linearGradient id='x'><stop offset='0' stop-color='#000'/><stop offset='.1' stop-color='#800000'/><stop offset='.9' stop-color='#800000'/><stop offset='1' stop-color='#f00'/></linearGradient><linearGradient id='y' x2='0' y2='1'><stop offset='0' stop-color='#000'/><stop offset='.12' stop-color='#008000'/><stop offset='.88' stop-color='#008000'/><stop offset='1' stop-color='#0f0'/></linearGradient></defs><rect width='200' height='200' fill='url(#x)'/><rect width='200' height='200' fill='url(#y)' style='mix-blend-mode:screen'/></svg>`;
+  document.body.insertAdjacentHTML('beforeend',`<svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="lgRefract" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feImage href="data:image/svg+xml,${encodeURIComponent(map)}" x="0" y="0" width="100%" height="100%" preserveAspectRatio="none" result="m"/><feDisplacementMap in="SourceGraphic" in2="m" scale="30" xChannelSelector="R" yChannelSelector="G"/></filter></svg>`);
+  const ua=navigator.userAgent; if(/Chrome\//.test(ua)&&!/CriOS|EdgiOS|FxiOS/.test(ua)) document.documentElement.classList.add('lgref'); }
 
 barFor(cur);
 </script>
