@@ -2764,7 +2764,7 @@ const TIPX='<span class="tx" data-prtip="0"><svg width="11" height="11" viewBox=
 const PTITLE={icp:'Vivint Indoor Camera Pro',motion:'Vivint Motion Sensor',glass:'Vivint Glass Break Detector',window:'Vivint Door & Window Sensor',water:'Vivint Water Sensor',smokeco:'Vivint Smoke & CO Detector',fire:'Vivint Firefighter',pendant:'Vivint Emergency Pendant',fob:'Vivint Key Fob',chime:'Vivint Chime Extender',keypad:'Vivint Keypad',app:'Vivint App',lock:'Vivint Smart Lock',plug:'Vivint Smart Plug',garage:'Smart Garage Door Controller'};
 function prTitle(){ $('#prTitle').textContent=PR.id==='window'&&PR.door?'Vivint Door Sensor':(PTITLE[PR.id]||''); }
 function prBuild(){ const box=$('#prScroll'); PR.st={}; prTitle(); $('#p-prod .ptitle').classList.toggle('dk',PR.id==='icp');
-  box.innerHTML=prSecs().map(t=>{PR.st[t]={sub:0,spec:'f',tip:false};return t==='which'?SMK_WHICH():XS_TABS.includes(t)?xsSec(PR.id,t,'psec'):(t==='hero'&&LHERO[PR.id])?LH(PR.id):(t==='hero'&&PR.id==='window')
+  box.innerHTML=prSecs().map(t=>{PR.st[t]={sub:0,spec:'f',tip:false};return t==='sens'?SENS_SEC():t==='which'?SMK_WHICH():XS_TABS.includes(t)?xsSec(PR.id,t,'psec'):(t==='hero'&&LHERO[PR.id])?LH(PR.id):(t==='hero'&&PR.id==='window')
   ?`<div class="psec dwhero" data-t="hero" data-vis="0"><div class="strip wide"><div class="dws"><img src="assets/ph/dws_surf.webp?v=1" alt=""><div class="dws-t" style="left:72px;bottom:358px"><h1>Every door<br>and window<br>protected</h1></div></div><div class="dws"><img src="assets/ph/dws_rec.webp?v=1" alt="" style="object-position:30% 50%"><div class="dws-t" style="left:700px;top:150px"><h1>Discreet<br>protection</h1></div></div></div><div class="dwseg spill"><i class="ind"></i><button class="on" data-door="0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4v16"/><rect x="6.5" y="7" width="6" height="10" rx="1.5"/><rect x="14.5" y="9" width="4" height="6" rx="1"/></svg>Surface Mount</button><button data-door="1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h6v16H4M20 4h-6v16h6"/><circle cx="12" cy="12" r="1.6"/></svg>Recessed</button></div><div class="hl"></div></div>`
   :(t==='hero'&&PR.id==='icp')
   ?`<div class="psec ichv" data-t="hero" data-vis="0"><video class="ich-vid" src="assets/p/ic_hero.mp4?v=63" poster="assets/p/ic_hero_v.jpg?v=63" muted playsinline loop autoplay preload="auto"></video><div class="ich-txt"><h1>Be home.<br>From anywhere.</h1><p>Check in, talk to the kids, and see what’s happening, all from your phone.</p></div><button class="dbai" data-go="ai">AI</button></div>`
@@ -2773,7 +2773,7 @@ function prBuild(){ const box=$('#prScroll'); PR.st={}; prTitle(); $('#p-prod .p
   :`<div class="psec" data-t="${t}" data-vis="0"><img class="full" alt=""><video class="ovid" muted playsinline loop hidden></video><div class="hl"></div><div class="tip">${TIPX}<div class="tt"></div></div></div>`}).join('');
   box.scrollTop=0; prRender(); }
 function prRender(only){ const box=$('#prScroll');
-  [...box.children].forEach(sec=>{ const t=sec.dataset.t; if(only&&only!==t) return; if(sec.classList.contains('xs')||t==='which') return; if(t==='hero'&&LHERO[PR.id]) return; const r=secRender(PR.id,t,PR.st[t]);
+  [...box.children].forEach(sec=>{ const t=sec.dataset.t; if(only&&only!==t) return; if(sec.classList.contains('xs')||t==='which'||t==='sens') return; if(t==='hero'&&LHERO[PR.id]) return; const r=secRender(PR.id,t,PR.st[t]);
     if(t==='hero'&&PR.id==='window'){ if(!sec.__drag) stripSet(sec,PR.door?1:0,false); return; }
     if(t==='hero'&&PR.id==='icp'){ const v=sec.querySelector('video'); v.__u='hero'; if(sec.dataset.vis==='1'||cur==='prod') v.play().catch(()=>{}); return; }
     if(t==='specs'){ const b=r.src.replace(/_[fs](\?.*)?$/,''); window.fsFill&&fsFill(sec.querySelector('.strip'),b);
@@ -4225,6 +4225,27 @@ input,textarea,[contenteditable="true"]{-webkit-user-select:text!important;user-
 .hg-dots i{width:8px;height:8px;border-radius:4px;background:rgba(255,255,255,.45);transition:width .3s,background .3s;cursor:pointer}
 .hg-dots i.on{width:22px;background:#fff}
 .hgw.hg-away .nxa{opacity:0;pointer-events:none}
+
+/* Security sensors: shared "which sensor goes where" section (motion / glass / door-window) */
+.sns-w{background:#000}
+.sns-w .eb{position:absolute;left:72px;top:96px;font-size:14px;letter-spacing:2.4px;text-transform:uppercase;font-weight:500}
+.sns-w h2{position:absolute;left:72px;top:128px;font-size:60px;line-height:1.02;font-weight:500;letter-spacing:-1.8px}
+.sns-c{position:absolute;top:262px;width:384px;height:636px;border-radius:32px;background:#1c1c1c;padding:30px 30px 0;box-sizing:border-box}
+.sns-c.me{background:#26262a;box-shadow:inset 0 0 0 1.5px rgba(5,229,175,.55)}
+.sns-c img{position:absolute;right:22px;top:22px;width:104px;height:120px;object-fit:contain}
+.sns-c .nm{font-size:12.5px;letter-spacing:2px;text-transform:uppercase;color:#8e8e93;font-weight:500}
+.sns-c h3{font-size:31px;line-height:1.08;font-weight:500;letter-spacing:-.8px;margin-top:10px;width:230px;min-height:100px}
+.sns-c .md{display:flex;gap:8px;margin-top:18px}
+.sns-c .md span{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border-radius:16px;font-size:14.5px;background:#2c2c2e;color:#8e8e93}
+.sns-c .md span.y{background:rgba(5,229,175,.14);color:var(--vg)}
+.sns-c .md span svg{width:14px;height:14px}
+.sns-c .best{margin-top:16px;font-size:13px;letter-spacing:1.6px;text-transform:uppercase;color:#8e8e93;font-weight:500}
+.sns-c .bv{margin-top:6px;font-size:19px;line-height:1.3;color:#fff}
+.sns-c ul{margin-top:16px;list-style:none;padding:0;display:flex;flex-direction:column;gap:11px}
+.sns-c li{display:flex;gap:10px;font-size:16px;line-height:1.35;color:#d1d1d6}
+.sns-c li svg{flex:none;margin-top:1px}
+.sns-c .go{position:absolute;left:30px;bottom:26px;height:46px;padding:0 20px;border-radius:23px;background:#3a3a3c;color:#fff;font-size:15.5px;display:flex;align-items:center;gap:8px}
+.sns-c.me .go{background:none;padding:0;color:var(--vg)}
 </style>`);
 { const add=box=>{ const secs=[...box.children].filter(c=>!c.hidden&&c.dataset&&c.dataset.t!=null);
     secs.forEach((c,i)=>{ const last=i===secs.length-1, skip=last||c.classList.contains('hum')||c.classList.contains('gal')&&false;
@@ -4446,6 +4467,29 @@ window.USMAP={w:1000,h:620,ut:[222.1, 266.2],c:[[72.8,371.6,9],[907.0,214.8,9],[
 /* overview gallery: re-attach if a hero gets rebuilt; start on photo 1 when a product is opened fresh */
 { const PGx={ocp:['#ocScroll','ocp'],dbcp:['#dbScroll','dbcp'],hub:['#hbScroll','hub'],therm:['#thScroll','therm']};
   const _sg=show; show=function(p){ const fresh=window.__fresh===p; _sg.apply(this,arguments); const m=PGx[p]; if(m&&window.__hgReset){ const b=$(m[0]); if(fresh) __hgReset(b); } }; }
+
+
+/* Security sensors section: same section on Motion, Glass Break and Door/Window, under Overview */
+{ const SN=['motion','glass','window']; NLAB.sens='Sensors';
+  IP.sens='<path d="M12 12h.01"/><path d="M8.5 15.5a5 5 0 0 1 0-7"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M5.6 18.4a9 9 0 0 1 0-12.8"/><path d="M18.4 5.6a9 9 0 0 1 0 12.8"/>';
+  const CK='<svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="#05E5AF" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="8.5" stroke="rgba(5,229,175,.35)"/><path d="M6.2 10.2l2.5 2.5 5-5.2"/></svg>';
+  const Y='<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 8.3l2.8 2.8 6.2-6.4"/></svg>', N='<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4.5 4.5l7 7M11.5 4.5l-7 7"/></svg>';
+  const D={motion:{img:'fs/motion',nm:'Motion Sensor',h:'Catches anyone moving inside.',stay:0,best:'Open spaces like living rooms an intruder can&rsquo;t avoid',li:['Only armed in Armed Away mode','Sets off the alarm the moment it detects motion','Adjustable pet sensitivity ignores pets under 60 lbs'],go:'View Motion Sensor'},
+    glass:{img:'fs/glass_f',nm:'Glass Break Sensor',h:'Hears glass break across the whole room.',stay:1,best:'Rooms with lots of windows',li:['Listens for the exact pitch of breaking glass','One sensor covers every window in the room','Ideal for rear-facing windows hidden from the street'],go:'View Glass Break'},
+    window:{img:'fs/window_f',nm:'Door/Window Sensor',h:'Knows the second a door or window opens.',stay:1,best:'Every entry door and any window you open often',li:['Sets off the alarm when the contacts separate','Tells you if a door or window is left open','Non-emergency mode for liquor cabinets, gun safes and interior doors: alerts you, no alarm'],go:'View Door/Window'}};
+  const card=(k,i)=>{ const d=D[k], me=k===PR.id;
+    return `<div class="sns-c${me?' me':''}" style="left:${72+i*408}px"><img src="assets/${d.img}.webp?v=176" alt=""><div class="nm">${d.nm}</div><h3>${d.h}</h3>
+      <div class="md"><span class="${d.stay?'y':''}">${d.stay?Y:N}Armed Stay</span><span class="y">${Y}Armed Away</span></div>
+      <div class="best">Best for</div><div class="bv">${d.best}</div>
+      <ul>${d.li.map(x=>`<li>${CK}<span>${x}</span></li>`).join('')}</ul>
+      ${me?'<span class="go">You&rsquo;re viewing this one</span>':`<button class="go" data-sensgo="${k}">${d.go}<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></button>`}</div>`; };
+  window.SENS_SEC=()=>`<div class="psec sns-w" data-t="sens"><div class="eb">Security sensors</div><h2>Which sensor goes where?</h2>${SN.map(card).join('')}</div>`;
+  const K=x=>Array.isArray(x)?x[0]:x; const add=a=>{ if(!SN.includes(PR.id)||a.some(x=>K(x)==='sens')) return a; const i=a.findIndex(x=>K(x)==='hero'); a.splice(i+1,0,typeof a[0]==='string'?'sens':['sens','i_hero']); return a; };
+  const _pb=prBar, _ps=prSecs;
+  prSecs=function(){ return add(_ps()); };
+  prBar=function(){ if(!SN.includes(PR.id)) return _pb(); const a=PRB.sensorv, b=PRB.sensor; PRB.sensorv=add(a.slice()); PRB.sensor=add(b.slice()); const h=_pb(); PRB.sensorv=a; PRB.sensor=b; return h; };
+  document.addEventListener('click',e=>{ const b=e.target.closest('[data-sensgo]'); if(!b) return; e.stopPropagation(); openPr(b.dataset.sensgo); },true);
+  if(cur==='prod'&&SN.includes(PR.id)){ try{ prBuild(); barFor('prod'); }catch(e){} } }
 
 barFor(cur);
 </script>
