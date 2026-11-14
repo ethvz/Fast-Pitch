@@ -4076,7 +4076,7 @@ const stripHot=(hot,attr)=>hot.replace(new RegExp('<div class="hot"[^>]*'+attr+'
     if(id==='icp'&&t==='feat') r.hot=lvList(LV.icfeat,100,442,'data-prsub',a)+stripHot(r.hot,'data-prsub');
     else if(id==='icp'&&t==='phone') r.hot=lvMask(350,760,660,190)+lvTiles(LV.icph,i=>[370+i*160,786],140,146,'data-prsub',a)+stripHot(r.hot,'data-prsub');
     else if(t==='phone'&&id!=='icp') r.hot=lvMask(770,170,500,660)+lvTiles(LV.app,i=>[790+(i%3)*160,188+Math.floor(i/3)*163],140,140,'data-prsub',a)+stripHot(r.hot,'data-prsub');
-    else if(t==='lock') r.hot=lvMask(280,770,820,190)+lvTiles(LV.lock,i=>[378+i*160,795],140,146,'data-prsub',a)+stripHot(r.hot,'data-prsub');
+    else if(t==='lock') r.hot=lvMask(280,800,820,164)+lvTiles(LV.lock,i=>[378+i*160,795],140,146,'data-prsub',a)+stripHot(r.hot,'data-prsub');
     else if(t==='gphone') r.hot=lvMask(915,255,180,500)+lvTiles(LV.gph,i=>[934,[277,427,593][i]],140,146,'data-prsub',a)+stripHot(r.hot,'data-prsub');
     else return r;
     r.lv=1; return r; };
