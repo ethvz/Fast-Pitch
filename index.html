@@ -4500,5 +4500,17 @@ window.USMAP={w:1000,h:620,ut:[222.1, 266.2],c:[[72.8,371.6,9],[907.0,214.8,9],[
   document.addEventListener('click',e=>{ const b=e.target.closest('[data-sensgo]'); if(!b) return; e.stopPropagation(); openPr(b.dataset.sensgo); },true);
   if(cur==='prod'&&SN.includes(PR.id)){ try{ prBuild(); barFor('prod'); }catch(e){} } }
 
+
+/* keep the screen awake for the whole pitch: Wake Lock API, with a silent looping video as the fallback */
+{ let lock=null, vid=null;
+  const fallback=()=>{ if(!vid){ vid=document.createElement('video'); vid.src='assets/nosleep.mp4'; vid.muted=true; vid.loop=true; vid.playsInline=true; vid.setAttribute('playsinline',''); vid.setAttribute('aria-hidden','true');
+      vid.style.cssText='position:fixed;left:0;top:0;width:1px;height:1px;opacity:0;pointer-events:none;z-index:-1'; document.body.appendChild(vid); }
+    if(vid.paused) vid.play().catch(()=>{}); };
+  const keep=async()=>{ if(document.visibilityState!=='visible') return;
+    try{ if('wakeLock' in navigator){ if(!lock||lock.released){ lock=await navigator.wakeLock.request('screen'); lock.addEventListener('release',()=>{ lock=null; }); } return; } }catch(e){}
+    fallback(); };
+  keep(); ['pointerdown','touchend','click','keydown'].forEach(t=>document.addEventListener(t,keep,{passive:true,capture:true}));
+  document.addEventListener('visibilitychange',keep); window.addEventListener('pageshow',keep); window.addEventListener('focus',keep); }
+
 barFor(cur);
 </script>
