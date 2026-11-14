@@ -1936,6 +1936,16 @@ body.hasbk #gTitle{transform:translateX(118px)}
 .dbm-hubdb{position:absolute;right:100%;margin-right:30px;top:50%;height:640px;transform:translateY(-50%);filter:drop-shadow(0 20px 40px rgba(0,0,0,.6))}
 
 .dbm-card img.rr[data-fv=scanz]{padding:78px 80px 78px 180px!important}
+
+/* One AI orb everywhere (the Outdoor Camera style), without the radiating glow */
+.aiorb{border-radius:50%!important;isolation:isolate;overflow:visible!important;display:grid!important;place-items:center;color:#fff!important;background:none!important;border:0!important;box-shadow:none!important;font-weight:600;letter-spacing:.5px;cursor:pointer;animation:aiFloat 4s ease-in-out infinite!important;text-shadow:none!important}
+.aiorb::before,.aiorb::after{display:none!important;content:none!important}
+.aiorb .aig{position:absolute;inset:0;border-radius:50%;overflow:hidden;z-index:-1;filter:url(#aiGoo) saturate(1.35);background:#0a0716}
+.aiorb .aig i{position:absolute;border-radius:50%;mix-blend-mode:screen;filter:blur(3px)}
+.aiorb .aih{position:absolute;inset:0;border-radius:50%;z-index:0;pointer-events:none;background:radial-gradient(circle at 34% 26%,rgba(255,255,255,.75) 0,rgba(255,255,255,.18) 18%,rgba(255,255,255,0) 40%),radial-gradient(circle at 60% 110%,rgba(0,0,0,0) 40%,rgba(0,0,0,.55) 75%);box-shadow:inset 0 -6px 12px rgba(0,0,0,.55),inset 0 4px 8px rgba(255,255,255,.25)}
+.aiorb .ait{position:relative;z-index:1;font-weight:700;text-shadow:0 1px 6px rgba(0,0,0,.45),0 0 14px rgba(255,255,255,.35)}
+.dbai.aiorb{width:64px!important;height:64px!important;top:56px!important;right:56px!important}
+.aiorb .ait{font-size:19px}.hot.aiorb .ait{font-size:28px}
 </style>
 <div id="stage">
   <div id="screen">
@@ -4046,7 +4056,8 @@ const stripHot=(hot,attr)=>hot.replace(new RegExp('<div class="hot"[^>]*'+attr+'
 
 /* AI orb: inner gooey blobs + glass highlight */
 document.body.insertAdjacentHTML('beforeend','<svg width="0" height="0" style="position:absolute"><filter id="aiGoo"><feGaussianBlur in="SourceGraphic" stdDeviation="4" result="b"/><feColorMatrix in="b" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 22 -9" result="g"/><feComposite in="SourceGraphic" in2="g" operator="atop"/></filter></svg>');
-{ const orb=()=>$$('.ocb[data-go="ai"]').forEach(b=>{ if(b.querySelector('.aig')) return; b.innerHTML='<span class="aig"><i class="b1"></i><i class="b2"></i><i class="b3"></i><i class="b4"></i></span><span class="aih"></span><span class="ait">AI</span>'; });
+{ const orb=()=>$$('.ocb[data-go="ai"],.hot[data-go="ai"],.dbai').forEach(b=>{ b.classList.add('aiorb'); if(b.querySelector('.aig')) return; b.innerHTML='<span class="aig"><i class="b1"></i><i class="b2"></i><i class="b3"></i><i class="b4"></i></span><span class="aih"></span><span class="ait">AI</span>'; });
+  new MutationObserver(()=>{ if($$('.hot[data-go="ai"]:not(.aiorb),.dbai:not(.aiorb),.ocb[data-go="ai"]:not(.aiorb)').length) orb(); }).observe(document.body,{childList:true,subtree:true});
   const _o=ocRender; ocRender=function(){ _o.apply(this,arguments); orb(); }; orb(); }
 /* Back pill: shows on pages opened from a link inside another page (AI, History, NRG, Gives Back, Patents…), not on main-flow pages */
 { $('#screen').insertAdjacentHTML('beforeend','<button id="bkPill" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>Back</button>');
