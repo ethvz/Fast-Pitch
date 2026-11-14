@@ -3841,7 +3841,29 @@ IP.gal='<rect x="6.5" y="3.5" width="14" height="11" rx="2"/><path d="M3.5 7.5v1
   const wire=g=>{ const tr=g.querySelector('.gal-tr'), ds=g.querySelectorAll('.gal-dots i'); let t;
     tr.addEventListener('scroll',()=>{ cancelAnimationFrame(t); t=requestAnimationFrame(()=>{ const i=Math.round(tr.scrollLeft/tr.clientWidth); ds.forEach((d,j)=>d.classList.toggle('on',j===i)); }); },{passive:true});
     g.querySelector('.gal-dots').addEventListener('click',e=>{ const d=e.target.closest('[data-gi]'); if(d) tr.scrollTo({left:+d.dataset.gi*tr.clientWidth,behavior:'smooth'}); }); };
-  const put=(box,k)=>{ if(!box) return; box.querySelectorAll(':scope>.gal').forEach(x=>{ if(x.dataset.gal!==k) x.remove(); }); if(!GN[k]) return; if(box.querySelector(':scope>.gal')) return;
+  /* gallery now lives inside the Overview: the overview is photo 1, swipe left for the rest */
+  const hgSet=(h,p,anim)=>{ const L=h.querySelector(':scope>.hgl'); if(!L) return; const W=L.offsetWidth||1376, n=+L.dataset.n; p=Math.max(-.25,Math.min(n+.25,p)); h.__hp=p;
+    const tr=anim?'translate .5s cubic-bezier(.22,1,.36,1), transform .5s cubic-bezier(.22,1,.36,1)':'none';
+    [...h.children].forEach(c=>{ if(c.matches('.hgl,.hg-dots,.nxa')) return; c.style.transition=anim?tr:(c.__hgT??''); c.style.translate=`${-Math.max(0,Math.min(1,p))*W - Math.min(0,p)*0}px 0`; });
+    const t=L.firstElementChild; t.style.transition=anim?'transform .5s cubic-bezier(.22,1,.36,1)':'none'; t.style.transform=`translate3d(${(1-p)*W}px,0,0)`;
+    const i=Math.round(Math.max(0,Math.min(n,p))); h.querySelectorAll('.hg-dots i').forEach((d,j)=>d.classList.toggle('on',j===i)); h.classList.toggle('hg-away',p>.5); };
+  const hgAdd=(box,k)=>{ if(!box||!GN[k]) return; const h=box.querySelector(':scope>[data-t=hero]'); if(!h||h.querySelector(':scope>.hgl')) return;
+    h.insertAdjacentHTML('beforeend',`<div class="hgl" data-n="${GN[k]}"><div class="hgl-tr">${Array.from({length:GN[k]},(_,i)=>`<figure><img src="assets/gal/${k}_${i}.webp?v=196" alt="" loading="lazy" decoding="async"></figure>`).join('')}</div></div><div class="hg-dots">${Array.from({length:GN[k]+1},(_,i)=>`<i class="${i?'':'on'}" data-hgi="${i}"></i>`).join('')}</div>`);
+    h.classList.add('hgw'); hgSet(h,0,false);
+    if(h.__hgBound) return; h.__hgBound=1; let d=null;
+    h.addEventListener('pointerdown',e=>{ if(e.target.closest('.hg-dots')) return; d={x:e.clientX,y:e.clientY,t:Date.now(),p0:h.__hp||0,axis:null,sc:h.getBoundingClientRect().width/h.offsetWidth}; },{passive:true});
+    h.addEventListener('pointermove',e=>{ if(!d) return; const dx=e.clientX-d.x, dy=e.clientY-d.y;
+      if(!d.axis){ if(Math.abs(dx)<10&&Math.abs(dy)<10) return; d.axis=Math.abs(dx)>Math.abs(dy)*1.2?'x':'y'; }
+      if(d.axis!=='x') return; const W=h.querySelector('.hgl').offsetWidth; d.p=d.p0-dx/d.sc/W; hgSet(h,d.p,false); },{passive:true});
+    const end=e=>{ if(!d) return; const s0=d; d=null; if(s0.axis!=='x') return; h.__hgMoved=Date.now();
+      const dx=e?e.clientX-s0.x:0, v=dx/Math.max(Date.now()-s0.t,1), n=+h.querySelector('.hgl').dataset.n, p=s0.p??s0.p0;
+      let tgt=Math.abs(v)>.35?(v<0?Math.floor(s0.p0)+1:Math.ceil(s0.p0)-1):Math.round(p); tgt=Math.max(0,Math.min(n,tgt)); hgSet(h,tgt,true); };
+    h.addEventListener('pointerup',end,{passive:true}); h.addEventListener('pointercancel',()=>end(null));
+    h.addEventListener('click',e=>{ if(Date.now()-(h.__hgMoved||0)<350){ e.stopPropagation(); e.preventDefault(); return; }
+      const dt=e.target.closest('[data-hgi]'); if(dt){ e.stopPropagation(); hgSet(h,+dt.dataset.hgi,true); } },true); };
+  window.__hgReset=box=>{ const h=box&&box.querySelector(':scope>.hgw'); if(h) hgSet(h,0,false); };
+  const put=(box,k)=>{ if(!box) return; box.querySelectorAll(':scope>.gal').forEach(x=>x.remove()); hgAdd(box,k); };
+  const putOld=(box,k)=>{ if(!box) return; box.querySelectorAll(':scope>.gal').forEach(x=>{ if(x.dataset.gal!==k) x.remove(); }); if(!GN[k]) return; if(box.querySelector(':scope>.gal')) return;
     /* gallery sits second to last, just above FAQs */
     const faq=[...box.children].find(c=>c.dataset.t==='faq'); if(faq) faq.insertAdjacentHTML('beforebegin',html(k)); else box.insertAdjacentHTML('beforeend',html(k));
     const g=box.querySelector(':scope>.gal'); wire(g); g.classList.add('in'); };
@@ -4192,6 +4214,17 @@ document.head.insertAdjacentHTML('beforeend',`<style>
 *,*::before,*::after{-webkit-user-select:none!important;user-select:none!important;-webkit-touch-callout:none!important}
 img,video,svg,a{-webkit-user-drag:none!important}
 input,textarea,[contenteditable="true"]{-webkit-user-select:text!important;user-select:text!important}
+
+/* overview photo carousel (gallery merged into Overview) */
+.hgw{touch-action:pan-y}
+.hgl{position:absolute;top:0;left:calc(-1*var(--gx));width:var(--W);height:1032px;overflow:hidden;pointer-events:none;z-index:7}
+.hgl-tr{position:absolute;top:0;left:0;height:100%;display:flex;will-change:transform}
+.hgl figure{flex:none;width:var(--W);height:100%;margin:0;background:#000}
+.hgl img{width:100%;height:100%;object-fit:cover;display:block}
+.hg-dots{position:absolute;left:50%;bottom:92px;transform:translateX(-50%);display:flex;align-items:center;gap:9px;z-index:9;padding:9px 13px;border-radius:20px;background:rgba(0,0,0,.38);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
+.hg-dots i{width:8px;height:8px;border-radius:4px;background:rgba(255,255,255,.45);transition:width .3s,background .3s;cursor:pointer}
+.hg-dots i.on{width:22px;background:#fff}
+.hgw.hg-away .nxa{opacity:0;pointer-events:none}
 </style>`);
 { const add=box=>{ const secs=[...box.children].filter(c=>!c.hidden&&c.dataset&&c.dataset.t!=null);
     secs.forEach((c,i)=>{ const last=i===secs.length-1, skip=last||c.classList.contains('hum')||c.classList.contains('gal')&&false;
@@ -4408,6 +4441,11 @@ window.USMAP={w:1000,h:620,ut:[222.1, 266.2],c:[[72.8,371.6,9],[907.0,214.8,9],[
 { const ok=e=>e.target&&e.target.closest&&e.target.closest('input,textarea,[contenteditable="true"]');
   ['copy','cut','selectstart','dragstart'].forEach(t=>document.addEventListener(t,e=>{ if(!ok(e)) e.preventDefault(); },true));
   document.addEventListener('contextmenu',e=>{ if(!ok(e)) e.preventDefault(); },true); }
+
+
+/* overview gallery: re-attach if a hero gets rebuilt; start on photo 1 when a product is opened fresh */
+{ const PGx={ocp:['#ocScroll','ocp'],dbcp:['#dbScroll','dbcp'],hub:['#hbScroll','hub'],therm:['#thScroll','therm']};
+  const _sg=show; show=function(p){ const fresh=window.__fresh===p; _sg.apply(this,arguments); const m=PGx[p]; if(m&&window.__hgReset){ const b=$(m[0]); if(fresh) __hgReset(b); } }; }
 
 barFor(cur);
 </script>
