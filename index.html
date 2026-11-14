@@ -1963,6 +1963,18 @@ body.hasbk #gTitle{transform:translateX(118px)}
 
 .thm img.thm-full,.thm img.thm-estar{mix-blend-mode:normal!important}
 .thm img.thm-full{top:-190px!important;height:1060px!important}
+
+#thSaveBg{position:absolute;z-index:3;pointer-events:none;opacity:0;transition:opacity .45s ease}
+#thSaveBg.on{opacity:1}
+#thSaveBg>img:first-child{width:100%;height:100%;object-fit:cover;object-position:50% 40%;-webkit-mask-image:linear-gradient(90deg,transparent 0,rgba(0,0,0,.35) 12%,#000 40%);mask-image:linear-gradient(90deg,transparent 0,rgba(0,0,0,.35) 12%,#000 40%)}
+.thm img.thm-full{display:none!important}
+
+#thSaveBg>img:first-child{position:absolute;inset:0}
+#thSaveBg .es{position:absolute;right:20%;top:15%;width:118px;height:auto;border-radius:8px;box-shadow:0 10px 30px rgba(0,0,0,.45)}
+#thSaveBg .st{position:absolute;left:9%;bottom:17%;color:#fff;text-shadow:0 2px 18px rgba(0,0,0,.7)}
+#thSaveBg .st b{display:block;font-size:104px;letter-spacing:-3px;font-weight:600;line-height:1;color:var(--vg,#05E5AF)}
+#thSaveBg .st span{display:block;font-size:21px;max-width:340px;margin-top:10px;line-height:1.35}
+.thm[data-k=save] .thm-big,.thm[data-k=save] .thm-estar{display:none!important}
 </style>
 <div id="stage">
   <div id="screen">
@@ -4252,6 +4264,19 @@ document.head.insertAdjacentHTML('beforeend',`<style>
     const scr=$('#stage').getBoundingClientRect(); const need=(Math.max(innerWidth,scr.right)-r.left)/k+4; im.style.setProperty('width',need.toFixed(0)+'px','important'); };
   const _sw=show; show=function(p){ _sw(p); if(p==='therm'){ setTimeout(fit,50); setTimeout(fit,700); } };
   window.addEventListener('resize',()=>setTimeout(fit,150)); document.addEventListener('click',e=>{ if(e.target.closest('[data-thf]')) setTimeout(fit,30); }); setTimeout(fit,500); }
+
+/* Energy Savings photo lives outside the page frame so it can reach the true right edge of any screen (pages clip at the
+   stage width, which is narrower than wide/letterboxed windows). It follows the section while scrolling. */
+{ const scr=$('#screen'); scr.insertAdjacentHTML('afterbegin','<div id="thSaveBg"><img src="assets/th/life_half.webp?v=291" alt=""><img class="es" src="assets/th/estar.webp?v=211" alt="ENERGY STAR"><div class="st"><b>$300</b><span>Save up to $300 a year on heating and cooling*</span></div></div>');
+  const ov=$('#thSaveBg');
+  const sync=()=>{ if(cur!=='therm'){ ov.classList.remove('on'); return; } const pane=$('.thm[data-k=save]'), sec=pane&&pane.closest('.otab'); if(!sec){ ov.classList.remove('on'); return; }
+    const on=pane.classList.contains('on'); const sr=sec.getBoundingClientRect(), cr=scr.getBoundingClientRect(), st=$('#stage').getBoundingClientRect(); const k=cr.width/(scr.offsetWidth||1)||1;
+    const midX=st.left+st.width/2, L=(midX-cr.left)/k, R=(st.right-cr.left)/k, T=(sr.top-cr.top)/k-60, H=sr.height/k+120;
+    Object.assign(ov.style,{left:L+'px',width:(R-L+2)+'px',top:T+'px',height:H+'px'}); ov.classList.toggle('on',on); };
+  let q=0; const tick=()=>{ if(!q) q=requestAnimationFrame(()=>{ q=0; sync(); }); };
+  $('#thScroll').addEventListener('scroll',tick,{passive:true}); window.addEventListener('resize',()=>setTimeout(sync,150));
+  document.addEventListener('click',()=>setTimeout(sync,20)); new MutationObserver(tick).observe($('#thScroll'),{attributes:true,subtree:true,attributeFilter:['class']});
+  const _sw=show; show=function(p){ _sw(p); setTimeout(sync,30); setTimeout(sync,600); }; }
 
 barFor(cur);
 </script>
