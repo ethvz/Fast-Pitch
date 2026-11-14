@@ -2766,7 +2766,7 @@ const PTITLE={icp:'Vivint Indoor Camera Pro',motion:'Vivint Motion Sensor',glass
 function prTitle(){ $('#prTitle').textContent=PR.id==='window'&&PR.door?'Vivint Door Sensor':(PTITLE[PR.id]||''); }
 function prBuild(){ const box=$('#prScroll'); PR.st={}; prTitle(); $('#p-prod .ptitle').classList.toggle('dk',PR.id==='icp');
   box.innerHTML=prSecs().map(t=>{PR.st[t]={sub:0,spec:'f',tip:false};return t==='which'?SMK_WHICH():XS_TABS.includes(t)?xsSec(PR.id,t,'psec'):(t==='hero'&&LHERO[PR.id])?LH(PR.id):(t==='hero'&&PR.id==='window')
-  ?`<div class="psec" data-t="hero" data-vis="0"><div class="strip"><img src="assets/p/window.webp?v=176" alt=""><img src="assets/p/door.webp?v=176" alt=""></div><div class="dwseg spill"><i class="ind"></i><button class="on" data-door="0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4v16"/><rect x="6.5" y="7" width="6" height="10" rx="1.5"/><rect x="14.5" y="9" width="4" height="6" rx="1"/></svg>Surface Mount</button><button data-door="1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h6v16H4M20 4h-6v16h6"/><circle cx="12" cy="12" r="1.6"/></svg>Recessed</button></div><div class="hl"></div></div>`
+  ?`<div class="psec" data-t="hero" data-vis="0"><div class="strip"><div class="dws"><img src="assets/ph/dws_surf.webp?v=1" alt=""><div class="dws-t" style="left:72px;bottom:290px"><h1>Know when<br>it opens.</h1><p>Every door and window, watched 24/7.</p></div></div><div class="dws"><img src="assets/ph/dws_rec.webp?v=1" alt="" style="object-position:30% 50%"><div class="dws-t" style="left:700px;top:150px"><h1>Out of sight.<br>Always on.</h1><p>Recessed into the frame, so all you see is the door.</p></div></div></div><div class="dwseg spill"><i class="ind"></i><button class="on" data-door="0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4v16"/><rect x="6.5" y="7" width="6" height="10" rx="1.5"/><rect x="14.5" y="9" width="4" height="6" rx="1"/></svg>Surface Mount</button><button data-door="1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h6v16H4M20 4h-6v16h6"/><circle cx="12" cy="12" r="1.6"/></svg>Recessed</button></div><div class="hl"></div></div>`
   :(t==='hero'&&PR.id==='icp')
   ?`<div class="psec ichv" data-t="hero" data-vis="0"><video class="ich-vid" src="assets/p/ic_hero.mp4?v=63" poster="assets/p/ic_hero_v.jpg?v=63" muted playsinline loop autoplay preload="auto"></video><div class="ich-txt"><h1>Be home.<br>From anywhere.</h1><p>Check in, talk to the kids, and see what’s happening, all from your phone.</p></div><button class="dbai" data-go="ai">AI</button></div>`
   :t==='specs'
@@ -3326,6 +3326,7 @@ const LHERO={
  keypad:['keypad','Control where<br>you need it.','Arm and disarm from any room with backlit, one-touch buttons.'],
  lock:['lock3','Effortless<br>entry.','Lock up from anywhere.<br>Give every guest a code of their own.'],
  plug:['plug3','Power when<br>you need it.','And not when you don’t.'],
+ chime:['chime3','Hear the door<br>in every room.','Plug it in anywhere your doorbell can’t reach.'],
  garage:['garage2','Never forget to<br>close the garage.','Check it, close it and get alerts from anywhere.']};
 let LH=id=>{ const [ph,h,p,x]=LHERO[id]; return `<div class="psec lhero" data-t="hero" data-vis="0"><div class="lh-media"><img class="lh-ph kb" src="assets/ph/${ph}.webp?v=${ph==="firefighter"?131:87}" alt=""></div><div class="lh-scrim"></div><div class="lh-txt"${x?` style="left:${x}px"`:''}><h1>${h}</h1><p>${p}</p></div></div>`; };
 
@@ -4173,6 +4174,18 @@ document.head.insertAdjacentHTML('beforeend',`<style>
 .lhero:has(img[src*="lock3"]) .lh-txt p{color:rgba(20,20,20,.78);text-shadow:none}
 .lhero:has(img[src*="lock3"]) .nxa{filter:invert(1)}
 #p-prod:has(img[src*="lock3"]) .ptitle{text-shadow:none}
+
+.lhero:has(img[src*="chime3"]) .lh-scrim{background:linear-gradient(0deg,rgba(0,0,0,.55) 0,rgba(0,0,0,0) 12%)}
+.lhero:has(img[src*="chime3"]) .lh-txt{bottom:120px}
+.lhero:has(img[src*="chime3"]) .lh-txt h1{color:#141414;text-shadow:none}
+.lhero:has(img[src*="chime3"]) .lh-txt p{color:rgba(20,20,20,.78);text-shadow:none}
+.lhero:has(img[src*="chime3"]) .nxa,.psec:has(.dws) .nxa{filter:invert(1)}
+/* door/window hero slides: live text */
+.strip>.dws{position:relative;width:1376px;height:964px;flex:none;overflow:hidden}
+.strip>.dws img{position:absolute;inset:0;width:1376px;height:964px;object-fit:cover}
+.dws-t{position:absolute;width:600px;color:#141414}
+.dws-t h1{font-size:88px;line-height:.98;font-weight:500;letter-spacing:-2.6px}
+.dws-t p{margin-top:24px;font-size:23px;line-height:1.42;color:rgba(20,20,20,.78)}
 </style>`);
 { const add=box=>{ const secs=[...box.children].filter(c=>!c.hidden&&c.dataset&&c.dataset.t!=null);
     secs.forEach((c,i)=>{ const last=i===secs.length-1, skip=last||c.classList.contains('hum')||c.classList.contains('gal')&&false;
