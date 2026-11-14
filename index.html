@@ -1922,7 +1922,8 @@ body.hasbk #gTitle{transform:translateX(118px)}
 
 .dbm-card img.rr{object-fit:contain!important;padding:70px 150px 70px 150px!important;box-sizing:border-box}
 
-.dbm-card img.rr[data-fv=sd]{padding:60px 200px 250px!important}
+.dbm-card img.rr[data-fv=sdz],.dbm-card img.rr[data-fv=chipz]{padding:120px 100px 120px 230px!important}
+.dbm-card img.rr[data-fv=sdz]{padding:30px 100px 250px 230px!important}
 
 .lpage>.otab.dbm{overflow:visible!important}
 </style>
@@ -4130,15 +4131,15 @@ document.head.insertAdjacentHTML('beforeend',`<style>
    [['mic'],'2-Way Talk','Hear and Speak Clearly','Talk to visitors from anywhere, with clear audio both ways.','speaker',5],
    [['ring','red'],'Smart Deter','Stop Trouble Before It Starts','A red light ring and warning tones tell lurkers they’ve been seen.','redring',3],
    [['box'],'Package Detect','Know When It Arrives','Get an alert the moment a package lands on your porch.','blue34',2],
-   [['loop'],'24/7 Continuous Playback','Never Miss a Moment','Every second is recorded, so you can always go back and check.','sd',1,'<div><b>10 days</b><span>of continuous recording, stored locally on the device</span></div><i></i><div><b>30 days*</b><span>of activity clips saved to the cloud</span></div><em>*45 days with the Premium Video plan</em>'],
+   [['loop'],'24/7 Continuous Playback','Never Miss a Moment','Every second is recorded, so you can always go back and check.','sdz',1,'<div><b>10 days</b><span>of continuous recording, stored locally on the device</span></div><i></i><div><b>30 days*</b><span>of activity clips saved to the cloud</span></div><em>*45 days with the Premium Video plan</em>'],
    [['bulb'],'Light Integration','Light Up Every Visit','Porch lights turn on automatically when someone walks up.','whitering',4],
-   [['chip'],'Smart Processing','Next Level Processing','A dedicated on-board chip processes video fast, so alerts arrive sooner.','chip',2],
+   [['chip'],'Smart Processing','Next Level Processing','A dedicated on-board chip processes video fast, so alerts arrive sooner.','chipz',2],
    [['sliders'],'Customize Everything','Make It Yours','Set zones, alerts and schedules so you only hear about what matters.','solo',7],
    [['hub'],'View on Smart Hub','Answer at Your Smart Hub','See and talk to visitors right from the Smart Hub inside your home.',null,'hub']];
   let m=0, cv=null; const V='?v=55';
   const L=$('#dbmList'), card=$('#dbmCard'), pv=$('#dbmPv'), pv2=$('#dbmPv2'), hv=$('#dbmHv'), ph=$('#dbmPhone'), hb=$('#dbmHub'), H=$('#dbmH');
   L.innerHTML=M.map(([ic,t],i)=>`<button class="${i?'':'on'}" data-dbm="${i}">${LSV(ic[0],28,ic[1]||'')}<span>${t}</span></button>`).join('');
-  card.innerHTML=['lens','speaker','redring','blue34','whitering','scan','sd','chip'].map(k=>`<img class="rr" src="assets/dbr/${k}.webp?v=274" alt="" data-fv="${k}">`).join('')+`<img src="assets/dbr/red34.webp?v=270" alt="" data-fv="d" class="dflt rr">`;
+  card.innerHTML=['lens','speaker','redring','blue34','whitering','scan','sdz','chipz'].map(k=>`<img class="rr" src="assets/dbr/${k}.webp?v=275" alt="" data-fv="${k}">`).join('')+`<img src="assets/dbr/red34.webp?v=270" alt="" data-fv="d" class="dflt rr">`;
   hv.src=`assets/db/hub.mp4${V}`; cv=pv2;
   const live=()=>!!$('#dbmList').closest('[data-vis="1"]');
   const cap=$('#dbmCap');
