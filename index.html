@@ -3324,7 +3324,8 @@ const LHERO={
  pendant:['pendant','Peace of mind<br>at home.','Help is one press away, anywhere in the house.'],
  fob:['fob','Your whole home,<br>on your keychain.','One press arms the system, locks every door, closes the garage and sets the thermostat.'],
  keypad:['keypad','Control where<br>you need it.','Arm and disarm from any room with backlit, one-touch buttons.'],
- lock:['lock2','Effortless<br>entry.','Lock up from anywhere.<br>Give every guest a code of their own.'],
+ lock:['lock3','Effortless<br>entry.','Lock up from anywhere.<br>Give every guest a code of their own.'],
+ plug:['plug3','Power when<br>you need it.','And not when you don’t.'],
  garage:['garage2','Never forget to<br>close the garage.','Check it, close it and get alerts from anywhere.']};
 let LH=id=>{ const [ph,h,p,x]=LHERO[id]; return `<div class="psec lhero" data-t="hero" data-vis="0"><div class="lh-media"><img class="lh-ph kb" src="assets/ph/${ph}.webp?v=${ph==="firefighter"?131:87}" alt=""></div><div class="lh-scrim"></div><div class="lh-txt"${x?` style="left:${x}px"`:''}><h1>${h}</h1><p>${p}</p></div></div>`; };
 
@@ -4163,6 +4164,15 @@ document.head.insertAdjacentHTML('beforeend',`<style>
 .usm-t i{display:block;font-style:normal;font-size:30px;font-weight:600;letter-spacing:5px;text-transform:uppercase;color:rgba(255,255,255,.85)}
 .usm-t b{display:block;font-size:168px;font-weight:700;letter-spacing:-5px;line-height:1;margin:6px 0 4px;color:var(--orange,#FF6B35);font-variant-numeric:tabular-nums}
 .usm-t span{display:block;font-size:54px;font-weight:700;letter-spacing:3px;text-transform:uppercase}
+
+/* light lock hero: dark text, no dark scrim */
+.lhero:has(img[src*="lock3"]) .lh-scrim{background:linear-gradient(0deg,rgba(0,0,0,.6) 0,rgba(0,0,0,0) 13%),linear-gradient(90deg,rgba(255,255,255,.35) 0%,rgba(255,255,255,0) 45%)}
+.lhero:has(img[src*="lock3"]) .lh-txt{bottom:190px}
+.lhero:has(img[src*="plug3"]) .lh-txt{bottom:96px}
+.lhero:has(img[src*="lock3"]) .lh-txt h1{color:#141414;text-shadow:none}
+.lhero:has(img[src*="lock3"]) .lh-txt p{color:rgba(20,20,20,.78);text-shadow:none}
+.lhero:has(img[src*="lock3"]) .nxa{filter:invert(1)}
+#p-prod:has(img[src*="lock3"]) .ptitle{text-shadow:none}
 </style>`);
 { const add=box=>{ const secs=[...box.children].filter(c=>!c.hidden&&c.dataset&&c.dataset.t!=null);
     secs.forEach((c,i)=>{ const last=i===secs.length-1, skip=last||c.classList.contains('hum')||c.classList.contains('gal')&&false;
