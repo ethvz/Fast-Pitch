@@ -1909,11 +1909,12 @@ body.hasbk #gTitle{transform:translateX(118px)}
 .dbm-phone.big{transform:scale(1.16)!important}
 .dbm-phone.off{transform:translateX(30px) scale(1.04)!important}
 
-.dbm-cap{position:absolute;left:910px;top:780px;width:440px;box-sizing:border-box;padding:18px 24px;border-radius:22px;background:rgba(0,0,0,.62);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);display:flex;align-items:stretch;gap:22px;z-index:4;opacity:0;transform:translateY(8px);transition:opacity .35s,transform .45s cubic-bezier(.22,1,.36,1);pointer-events:none;margin-left:var(--dbx,0px)}
+.dbm-cap{position:absolute;left:910px;top:780px;width:440px;box-sizing:border-box;padding:0;display:flex;flex-wrap:wrap;align-items:stretch;gap:22px;text-shadow:0 1px 3px rgba(0,0,0,.9),0 0 18px rgba(0,0,0,.85);z-index:4;opacity:0;transform:translateY(8px);transition:opacity .35s,transform .45s cubic-bezier(.22,1,.36,1);pointer-events:none;margin-left:var(--dbx,0px)}
 .dbm-cap.on{opacity:1;transform:none}
 .dbm-cap div{flex:1}.dbm-cap b{display:block;font-size:30px;font-weight:600;letter-spacing:-.5px;color:var(--vg)}
 .dbm-cap span{display:block;margin-top:4px;font-size:15px;line-height:1.35;color:rgba(255,255,255,.72)}
-.dbm-cap i{flex:none;width:1px;background:rgba(255,255,255,.18)}
+.dbm-cap i{flex:none;width:1px;background:rgba(255,255,255,.3)}
+.dbm-cap em{flex:0 0 100%;font-style:normal;font-size:13px;color:rgba(255,255,255,.6);margin-top:-8px}
 
 /* Doorbell highlights: everything appears together (no staggered rise per element) */
 .lpage>.dbm>*,.lpage>.dbm.in>*{animation:none!important}
@@ -4123,7 +4124,7 @@ document.head.insertAdjacentHTML('beforeend',`<style>
    [['mic'],'2-Way Talk','Hear and Speak Clearly','Talk to visitors from anywhere, with clear audio both ways.',1,5],
    [['ring','red'],'Smart Deter','Stop Trouble Before It Starts','A red light ring and warning tones tell lurkers they’ve been seen.',4,3],
    [['box'],'Package Detect','Know When It Arrives','Get an alert the moment a package lands on your porch.',null,2],
-   [['loop'],'24/7 Continuous Playback','Never Miss a Moment','Every second is recorded, so you can always go back and check.',2,1,'<div><b>10 days</b><span>of continuous recording, stored locally on the device</span></div><i></i><div><b>30 days*</b><span>of activity clips saved to the cloud</span></div>'],
+   [['loop'],'24/7 Continuous Playback','Never Miss a Moment','Every second is recorded, so you can always go back and check.',2,1,'<div><b>10 days</b><span>of continuous recording, stored locally on the device</span></div><i></i><div><b>30 days*</b><span>of activity clips saved to the cloud</span></div><em>*45 days with the Premium Video plan</em>'],
    [['bulb'],'Light Integration','Light Up Every Visit','Porch lights turn on automatically when someone walks up.',null,4],
    [['chip'],'Smart Processing','Next Level Processing','A dedicated on-board chip processes video fast, so alerts arrive sooner.',5,2],
    [['sliders'],'Customize Everything','Make It Yours','Set zones, alerts and schedules so you only hear about what matters.','solo',7],
