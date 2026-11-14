@@ -3994,6 +3994,7 @@ document.head.insertAdjacentHTML('beforeend',`<style>
 .nxa i{position:absolute;left:50%;top:38px;width:20px;height:20px;margin-left:-10px;border-right:2px solid #fff;border-bottom:2px solid #fff;border-radius:2px;transform:rotate(45deg);filter:drop-shadow(0 1px 3px rgba(0,0,0,.6));animation:cue 1.9s ease-in-out infinite;pointer-events:none}
 .nxa:active i{animation-play-state:paused;opacity:1}
 .nxa.ov{display:none}
+.lpage>*>.nxa{animation:none!important;translate:none!important}
 .nxa.sm{width:110px;margin-left:-55px;height:84px;bottom:66px}.nxa.sm i{top:24px}
 .lpage>.nxpos{position:relative}
 </style>`);
@@ -4010,12 +4011,19 @@ document.head.insertAdjacentHTML('beforeend',`<style>
         if(/^(IMG|VIDEO|CANVAS)$/.test(e.tagName)) break; } }
     a.style.pointerEvents=''; return hit; };
   const io=new IntersectionObserver(es=>es.forEach(en=>{ const a=en.target; if(!en.isIntersecting||en.intersectionRatio<.99||a.__fit) return; a.__fit=1;
-    requestAnimationFrame(()=>{ if(hitsUnder(a)){ a.classList.add('sm'); if(hitsUnder(a)) a.classList.add('ov'); } }); }),{threshold:[.99]});
+    requestAnimationFrame(()=>{ if(hitsUnder(a)){ a.classList.add('sm'); center(a.parentElement.parentElement); if(hitsUnder(a)) a.classList.add('ov'); } }); }),{threshold:[.99]});
   /* center each arrow on the visible page (some sections are laid out on the fixed-width stage, which isn't centered on wider/narrower screens) */
-  const center=box=>{ if(!box||!box.offsetWidth) return; const br=box.getBoundingClientRect(), cx=br.left+br.width/2;
-    box.querySelectorAll(':scope>*>.nxa').forEach(a=>{ const s=a.parentElement, r=s.getBoundingClientRect(), k=r.width/(s.offsetWidth||1)||1; a.style.left=((cx-r.left)/k)+'px'; }); };
+  const center=box=>{ if(!box||!box.offsetWidth) return; const br=box.getBoundingClientRect(), cx=br.left+br.width/2, kb=br.height/(box.offsetHeight||1)||1;
+    const lg=$('#barlogo'), lr=lg&&lg.getBoundingClientRect(), ly=lr&&lr.height?lr.top+lr.height/2:null; /* vertical: level with the Vivint logo in the footer */
+    box.querySelectorAll(':scope>*>.nxa').forEach(a=>{ const s=a.parentElement, r=s.getBoundingClientRect(); if(!r.width) return; const k=r.width/(s.offsetWidth||1)||1;
+      a.style.left=((cx-r.left)/k)+'px';
+      if(ly!=null){ const it=a.classList.contains('sm')?24:38, mt=parseFloat(getComputedStyle(s).scrollMarginTop)||0;
+        a.style.bottom='auto'; a.style.top=((ly-br.top-mt*kb)/k - (it+15))+'px'; } });
+    /* Features/Specs pills: centered on the visible page */
+    box.querySelectorAll('.fsp.spill').forEach(el=>{ const r=el.getBoundingClientRect(); if(!r.width) return; const k=r.width/(el.offsetWidth||1)||1;
+      el.style.left=(parseFloat(el.style.left||getComputedStyle(el).left)+(cx-(r.left+r.width/2))/k)+'px'; }); };
   window.addEventListener('resize',()=>setTimeout(()=>$$('.page.on .lpage').forEach(center),120));
-  $$('.lpage').forEach(box=>{ add(box); new MutationObserver(()=>{ add(box); center(box); }).observe(box,{childList:true}); });
+  $$('.lpage').forEach(box=>{ add(box); let q=0; new MutationObserver(()=>{ add(box); if(!q) q=requestAnimationFrame(()=>{ q=0; center(box); }); }).observe(box,{childList:true,subtree:true}); });
   const _sw=show; show=function(p){ _sw(p); const b=$('#p-'+p+' .lpage'); if(b){ add(b); center(b); requestAnimationFrame(()=>center(b)); setTimeout(()=>center(b),700); } };
   document.addEventListener('click',e=>{ const a=e.target.closest('.nxa'); if(!a) return; e.stopPropagation(); e.preventDefault();
     const sec=a.parentElement, box=sec.parentElement; const secs=[...box.children].filter(c=>!c.hidden&&c.offsetHeight&&c.dataset.t!=null);
