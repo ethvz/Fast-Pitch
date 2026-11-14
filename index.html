@@ -1934,6 +1934,8 @@ body.hasbk #gTitle{transform:translateX(118px)}
 .dbm-hub{left:770px!important;top:290px!important;width:520px!important;height:366px!important;overflow:visible}
 .dbm-hub video{position:relative;z-index:2;width:100%;height:100%}
 .dbm-hubdb{position:absolute;right:100%;margin-right:30px;top:50%;height:640px;transform:translateY(-50%);filter:drop-shadow(0 20px 40px rgba(0,0,0,.6))}
+
+.dbm-card img.rr[data-fv=scanz]{padding:78px 80px 78px 180px!important}
 </style>
 <div id="stage">
   <div id="screen">
@@ -4135,7 +4137,7 @@ document.head.insertAdjacentHTML('beforeend',`<style>
 /* Doorbell: Highlights + App merged into one section — list on the left, product close-up + live app view on the right */
 { const M=[ // [icon, label, headline, line, product image idx (fv), app clip (ph) | 'hub']
    [['hd'],'HDR Video','The Best Porch Protection','Crisp 1080p HDR keeps faces and packages clear in bright sun and deep shade.','lens',0],
-   [['expand'],'180° View','See Every Angle','A 180° view of your porch, so nothing slips out of frame.','scan',6],
+   [['expand'],'180° View','See Every Angle','A 180° view of your porch, so nothing slips out of frame.','scanz',6],
    [['mic'],'2-Way Talk','Hear and Speak Clearly','Talk to visitors from anywhere, with clear audio both ways.','speaker',5],
    [['ring','red'],'Smart Deter','Stop Trouble Before It Starts','A red light ring and warning tones tell lurkers they’ve been seen.','redring',3],
    [['box'],'Package Detect','Know When It Arrives','Get an alert the moment a package lands on your porch.','blue34',2],
@@ -4147,7 +4149,7 @@ document.head.insertAdjacentHTML('beforeend',`<style>
   let m=0, cv=null; const V='?v=55';
   const L=$('#dbmList'), card=$('#dbmCard'), pv=$('#dbmPv'), pv2=$('#dbmPv2'), hv=$('#dbmHv'), ph=$('#dbmPhone'), hb=$('#dbmHub'), H=$('#dbmH');
   L.innerHTML=M.map(([ic,t],i)=>`<button class="${i?'':'on'}" data-dbm="${i}">${LSV(ic[0],28,ic[1]||'')}<span>${t}</span></button>`).join('');
-  card.innerHTML=['lens','speaker','redring','blue34','whitering','scan','sdz','chipz'].map(k=>`<img class="rr" src="assets/dbr/${k}.webp?v=277" alt="" data-fv="${k}">`).join('')+`<img src="assets/dbr/red34.webp?v=270" alt="" data-fv="d" class="dflt rr">`;
+  card.innerHTML=['lens','speaker','redring','blue34','whitering','scanz','sdz','chipz'].map(k=>`<img class="rr" src="assets/dbr/${k}.webp?v=277" alt="" data-fv="${k}">`).join('')+`<img src="assets/dbr/red34.webp?v=270" alt="" data-fv="d" class="dflt rr">`;
   hv.src=`assets/hb/m4.mp4?v=60`; hv.poster='assets/hb/m4p.jpg?v=60'; cv=pv2;
   const live=()=>!!$('#dbmList').closest('[data-vis="1"]');
   const cap=$('#dbmCap');
