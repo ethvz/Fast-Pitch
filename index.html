@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta charset="utf-8">
 <title>Fast Pitch 2027</title>
 <meta name="description" content="Vivint Smart Home: one system, every corner of your home.">
 <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
@@ -4149,7 +4150,7 @@ document.body.insertAdjacentHTML('beforeend','<svg width="0" height="0" style="p
 
 /* Instant video switching: each product page's clips are pulled into memory when the page opens, and any video
    pointed at one of them plays from memory (no network/disk wait). Keeps the two most recent pages' clips. */
-{ const VG={"ocp": ["assets/oc/ph0.mp4", "assets/oc/ph1.mp4", "assets/oc/ph2.mp4", "assets/oc/ph3.mp4", "assets/oc/ph4.mp4", "assets/oc/ph5.mp4", "assets/oc/ph6.mp4", "assets/oc/ph7.mp4", "assets/oc/vai.mp4"], "dbcp": ["assets/hb/m4.mp4", "assets/db/hub.mp4", "assets/db/ph0.mp4", "assets/db/ph1.mp4", "assets/db/ph2.mp4", "assets/db/ph3.mp4", "assets/db/ph4.mp4", "assets/db/ph5.mp4", "assets/db/ph6.mp4", "assets/db/ph7.mp4"], "hub": ["assets/hb/m0.mp4", "assets/hb/m1.mp4", "assets/hb/m2.mp4", "assets/hb/m3.mp4", "assets/hb/m4.mp4", "assets/hb/m5.mp4"], "prod": ["assets/p/gp1.mp4", "assets/p/gp2.mp4", "assets/p/ic_hero.mp4", "assets/p/icph0.mp4", "assets/p/icph1.mp4", "assets/p/icph2.mp4", "assets/p/icph3.mp4", "assets/p/lk0.mp4", "assets/p/lk1.mp4", "assets/p/lk2.mp4", "assets/p/lk3b.mp4"], "therm": ["assets/th/sys.mp4"]}; const BL=new Map(), ORDER=[];
+{ const VG={"ocp": ["assets/oc/ph0.mp4", "assets/oc/ph1.mp4", "assets/oc/ph2.mp4", "assets/oc/ph3.mp4", "assets/oc/ph4.mp4", "assets/oc/ph5.mp4", "assets/oc/ph6.mp4", "assets/oc/ph7.mp4", "assets/oc/vai.mp4"], "dbcp": ["assets/hb/m4.mp4", "assets/db/hub.mp4", "assets/db/ph0.mp4", "assets/db/ph1.mp4","assets/db/ph1fov.mp4", "assets/db/ph2.mp4", "assets/db/ph3.mp4", "assets/db/ph4.mp4", "assets/db/ph5.mp4", "assets/db/ph6.mp4", "assets/db/ph7.mp4"], "hub": ["assets/hb/m0.mp4", "assets/hb/m1.mp4", "assets/hb/m2.mp4", "assets/hb/m3.mp4", "assets/hb/m4.mp4", "assets/hb/m5.mp4"], "prod": ["assets/p/gp1.mp4", "assets/p/gp2.mp4", "assets/p/ic_hero.mp4", "assets/p/icph0.mp4", "assets/p/icph1.mp4", "assets/p/icph2.mp4", "assets/p/icph3.mp4", "assets/p/lk0.mp4", "assets/p/lk1.mp4", "assets/p/lk2.mp4", "assets/p/lk3b.mp4"], "therm": ["assets/th/sys.mp4"]}; const BL=new Map(), ORDER=[];
   const key=u=>{ try{ return new URL(u,location.href).pathname.replace(/^.*?(assets\/)/,'assets/'); }catch(e){ return u; } };
   const D=Object.getOwnPropertyDescriptor(HTMLMediaElement.prototype,'src');
   Object.defineProperty(HTMLMediaElement.prototype,'src',{configurable:true,enumerable:D.enumerable,get(){ return D.get.call(this); },
@@ -4307,7 +4308,7 @@ input,textarea,[contenteditable="true"]{-webkit-user-select:text!important;user-
 /* Doorbell: Highlights + App merged into one section — list on the left, product close-up + live app view on the right */
 { const M=[ // [icon, label, headline, line, product image idx (fv), app clip (ph) | 'hub']
    [['hd'],'HDR Video','The Best Porch Protection','Crisp 1080p HDR keeps faces and packages clear in bright sun and deep shade.','lens',0],
-   [['expand'],'180° View','See Every Angle','A 180° view of your porch, so nothing slips out of frame.','scanz',6],
+   [['expand'],'180° View','See Every Angle','A 180° view of your porch, so nothing slips out of frame.','scanz','1fov'],
    [['mic'],'2-Way Talk','Hear and Speak Clearly','Talk to visitors from anywhere, with clear audio both ways.','speaker',5],
    [['ring','red'],'Smart Deter','Stop Trouble Before It Starts','A red light ring and warning tones tell lurkers they’ve been seen.','redring',3],
    [['box'],'Package Detect','Know When It Arrives','Get an alert the moment a package lands on your porch.','blue34',2],
