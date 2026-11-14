@@ -1922,8 +1922,8 @@ body.hasbk #gTitle{transform:translateX(118px)}
 
 .dbm-card img.rr{object-fit:contain!important;padding:70px 150px 70px 150px!important;box-sizing:border-box}
 
-.dbm-card img.rr[data-fv=sdz],.dbm-card img.rr[data-fv=chipz]{padding:120px 100px 120px 230px!important}
-.dbm-card img.rr[data-fv=sdz]{padding:30px 100px 250px 230px!important}
+.dbm-card img.rr[data-fv=sdz],.dbm-card img.rr[data-fv=chipz]{padding:40px 106px 40px 200px!important}
+.dbm-card img.rr[data-fv=sdz]{padding:30px 106px 250px 200px!important}
 
 .lpage>.otab.dbm{overflow:visible!important}
 </style>
@@ -4139,7 +4139,7 @@ document.head.insertAdjacentHTML('beforeend',`<style>
   let m=0, cv=null; const V='?v=55';
   const L=$('#dbmList'), card=$('#dbmCard'), pv=$('#dbmPv'), pv2=$('#dbmPv2'), hv=$('#dbmHv'), ph=$('#dbmPhone'), hb=$('#dbmHub'), H=$('#dbmH');
   L.innerHTML=M.map(([ic,t],i)=>`<button class="${i?'':'on'}" data-dbm="${i}">${LSV(ic[0],28,ic[1]||'')}<span>${t}</span></button>`).join('');
-  card.innerHTML=['lens','speaker','redring','blue34','whitering','scan','sdz','chipz'].map(k=>`<img class="rr" src="assets/dbr/${k}.webp?v=275" alt="" data-fv="${k}">`).join('')+`<img src="assets/dbr/red34.webp?v=270" alt="" data-fv="d" class="dflt rr">`;
+  card.innerHTML=['lens','speaker','redring','blue34','whitering','scan','sdz','chipz'].map(k=>`<img class="rr" src="assets/dbr/${k}.webp?v=276" alt="" data-fv="${k}">`).join('')+`<img src="assets/dbr/red34.webp?v=270" alt="" data-fv="d" class="dflt rr">`;
   hv.src=`assets/db/hub.mp4${V}`; cv=pv2;
   const live=()=>!!$('#dbmList').closest('[data-vis="1"]');
   const cap=$('#dbmCap');
