@@ -4145,6 +4145,13 @@ document.head.insertAdjacentHTML('beforeend',`<style>
 .lpage>*>.nxa{animation:none!important;translate:none!important}
 .nxa.sm{width:110px;margin-left:-55px;height:84px;bottom:66px}.nxa.sm i{top:24px}
 .lpage>.nxpos{position:relative}
+
+/* side rail: slightly larger */
+#bar:not(.home) #barRight.pnav{width:76px!important;padding:6px!important}
+#bar:not(.home) #barRight.pnav .bbtn{width:64px!important;height:64px!important;border-radius:32px!important;gap:4px}
+#bar:not(.home) #barRight.pnav .bbtn span{font-size:10.5px!important}
+#bar:not(.home) #barRight.pnav .bbtn .ic{width:22px!important;height:22px!important}
+#bar:not(.home) #barRight.pnav .rdiv{width:32px}
 </style>`);
 { const add=box=>{ const secs=[...box.children].filter(c=>!c.hidden&&c.dataset&&c.dataset.t!=null);
     secs.forEach((c,i)=>{ const last=i===secs.length-1, skip=last||c.classList.contains('hum')||c.classList.contains('gal')&&false;
