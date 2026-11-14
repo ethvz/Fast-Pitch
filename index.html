@@ -4186,21 +4186,7 @@ document.head.insertAdjacentHTML('beforeend',`<style>
 .dws-t h1{font-size:88px;line-height:.98;font-weight:500;letter-spacing:-2.6px}
 .dws-t p{margin-top:24px;font-size:23px;line-height:1.42;color:rgba(20,20,20,.78)}
 
-/* ===== Liquid Glass (replaces flat grays) — no backlights ===== */
-:root{--lg-fill:linear-gradient(160deg,rgba(255,255,255,.07),rgba(255,255,255,.015) 45%,rgba(255,255,255,.04));
- --lg-edge:inset 1.5px 1.5px 0 -0.5px rgba(255,255,255,.55),inset -1px -1px 0 -0.5px rgba(255,255,255,.28),inset 0 0 14px rgba(255,255,255,.07),inset 0 -10px 18px -12px rgba(255,255,255,.10),0 6px 22px rgba(0,0,0,.28);
- --lg-on:linear-gradient(165deg,rgba(255,255,255,.20),rgba(255,255,255,.06) 55%,rgba(255,255,255,.12));
- --lg-on-edge:inset 1.5px 1.5px 0 -0.5px rgba(255,255,255,.7),inset -1px -1px 0 -0.5px rgba(255,255,255,.35),inset 0 0 12px rgba(255,255,255,.12),0 2px 10px rgba(0,0,0,.25);
- --lg-tile:linear-gradient(135deg,rgba(255,255,255,.11) 0%,rgba(255,255,255,.025) 32%,rgba(255,255,255,0) 62%,rgba(255,255,255,.05) 100%),rgba(255,255,255,.015);
- --lg-tile-edge:inset 1.5px 1.5px 0 -0.5px rgba(255,255,255,.5),inset -1px -1px 0 -0.5px rgba(255,255,255,.22),inset 0 0 0 1px rgba(255,255,255,.07),inset 0 0 26px rgba(255,255,255,.06),inset 0 18px 30px -24px rgba(255,255,255,.18);
- --lg-bf:blur(7px) saturate(190%) brightness(1.06)}
-#bar .gbtn,#bar .bbtn:not(.on),.pricingBtn,.gbtn,.gpill,.cpill,.hx .cpill,.dbai:not(.aiorb),.dbback,.dbplus,.vfil b,.vplay,#homeSeg,.fsp,.dwseg,.htog,.dwseg.lt,.fsp.lt,.hb3pill,#barRight.pnav,.ocb:not(.aiorb),.fglass,.fglass.tl,.th-pills,.hy-pills,.hy-ar,.vl2-chips,.smk-tog,.pk-tog,.pbx-tog,#p-pricing .seg,#prodBtn,#homeX,#bar #amtBtn,#zoomOut,#bkPill,.ocar-back,.ab .arr,.cv2 .cvx,#psheet .pan,#psheet .x,#stage #drawer,#drawer .m2-wn,#drawer .m2-x,.thm-stat,.thm-es,.xw-link,.ptitle::before{background:var(--lg-fill)!important;-webkit-backdrop-filter:var(--lg-bf)!important;backdrop-filter:var(--lg-bf)!important;border-color:transparent!important;box-shadow:var(--lg-edge)!important}
-.lg,.dbcard,.vcard,.hc,.kit,#p-pricing .kit,.mcard,.rc,.rv2-sc .rc,.ptab,.step .n,#p-military .sheet,.pc,.xa-list,.xw-p,.xw-why div,.xf,.xf-q i,.xa-ic,.xw-plus,.xw-pick button,.xw-pick img,.th-card,.aw-c,.aw-row,.aw-row .go,.ab,.ab .logos div,.mcard .price,.ocar-w span,.ocar-l,#psheet .pi,.smk-c,.smk-c .go,.vl2-c,#drawer .m2-t,#drawer .m2-dl,.cv2 .hc,.cv2 .cv-card,.pbx-bar,.pbx-k .k2,.pbx-r,.psa-key div,.thm-chips span,.thm-pts p,.thm-card,.thm-txt,#p-nrg .ng-card,#p-nrg .ng-f,#p-nrg .ng-chips div,#p-verify .vr-pts span,.hbt .c,.ocpk .dbcard,#p-dbcp .dbcard,#p-dbcp .dbai:not(.aiorb),#p-dbcp .dbback,#p-dbcp .dbplus,#p-dbcp .vcard,#p-dbcp .hc,#p-dbcp .cpill,#p-dbcp .xreplay,#p-dbcp .vplay{background:var(--lg-tile)!important;border-color:transparent!important;box-shadow:var(--lg-tile-edge)!important}
-.dwseg .ind,.fsp .ind,.fsp.lt .ind,.htog .ind,#homeSeg .sind,.dbt-sel,.dbf-sel,#p-dbcp .dbt-sel,#p-dbcp .dbf-sel,.hb3pill .ind,#barRight.pnav .bbtn.on,.bbtn.on,.cpill.on,.hx .cpill.on,.vfil b.on,.hbm.on,.hc.p3,.hbt .c.me,#burger,.th-pills button.on,.hy-pills button.on,.xw-pick button.on,.vl2-chips b.on,#bar #homeX .bbtn.on,#bar #amtBtn.on,.smk-tog i,.pk-tog i,.pbx-tog i,#p-pricing .seg i,#psheet .pi.cur,.smk-c.me,.cv2 .hc.on,.xf.on,.th-list button.on,.dbm-list button.on,.cv2 .hd.on,.psa-nav button.on,.lvl button.on,.lvt.on,.aw-row:active,.pbx-bar.full i{background:var(--lg-on)!important;box-shadow:var(--lg-on-edge)!important;border-color:transparent!important}
-#burger{-webkit-backdrop-filter:var(--lg-bf)!important;backdrop-filter:var(--lg-bf)!important}
-#bar #barRight.pnav .bbtn:not(.on),#bar #homeX .bbtn:not(.on){background:transparent!important;box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
 .psec .lvmask{z-index:5}.psec .lvt{z-index:6;transform:translateZ(0)}
-html.lgref{--lg-bf:url(#lgRefract) blur(3px) saturate(190%) brightness(1.06)}
 </style>`);
 { const add=box=>{ const secs=[...box.children].filter(c=>!c.hidden&&c.dataset&&c.dataset.t!=null);
     secs.forEach((c,i)=>{ const last=i===secs.length-1, skip=last||c.classList.contains('hum')||c.classList.contains('gal')&&false;
@@ -4410,10 +4396,7 @@ window.USMAP={w:1000,h:620,ut:[222.1, 266.2],c:[[72.8,371.6,9],[907.0,214.8,9],[
   if(cur==='prod'&&PR.id==='lock'){ try{ prBuild(); barFor('prod'); }catch(e){} } }
 
 
-/* Liquid Glass refraction: SVG lens displacement on the backdrop (Chromium renders it; Safari falls back to clear frosted glass) */
-{ const map=`<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200' preserveAspectRatio='none'><defs><linearGradient id='x'><stop offset='0' stop-color='#000'/><stop offset='.1' stop-color='#800000'/><stop offset='.9' stop-color='#800000'/><stop offset='1' stop-color='#f00'/></linearGradient><linearGradient id='y' x2='0' y2='1'><stop offset='0' stop-color='#000'/><stop offset='.12' stop-color='#008000'/><stop offset='.88' stop-color='#008000'/><stop offset='1' stop-color='#0f0'/></linearGradient></defs><rect width='200' height='200' fill='url(#x)'/><rect width='200' height='200' fill='url(#y)' style='mix-blend-mode:screen'/></svg>`;
-  document.body.insertAdjacentHTML('beforeend',`<svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="lgRefract" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feImage href="data:image/svg+xml,${encodeURIComponent(map)}" x="0" y="0" width="100%" height="100%" preserveAspectRatio="none" result="m"/><feDisplacementMap in="SourceGraphic" in2="m" scale="30" xChannelSelector="R" yChannelSelector="G"/></filter></svg>`);
-  const ua=navigator.userAgent; if(/Chrome\//.test(ua)&&!/CriOS|EdgiOS|FxiOS/.test(ua)) document.documentElement.classList.add('lgref'); }
+
 
 barFor(cur);
 </script>
