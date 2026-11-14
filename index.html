@@ -2184,7 +2184,7 @@ body.hasbk #gTitle{transform:translateX(118px)}
         <div class="dbeb">Vivint Doorbell Camera Pro (Gen 2)</div><div class="dbtiles" id="dbTiles"></div>
       </div>
       <div class="otab db" data-t="cmp"><div id="dbCmp"></div></div>
-      <div class="otab" data-t="specs"><div class="strip"></div><div class="fsp spill" style="left:578px;top:869px;width:220px;height:60px"><i class="ind"></i><button class="on" data-fs="f">Features</button><button data-fs="s">Specs</button></div><div class="hl"></div></div>
+      <div class="otab" data-t="specs"><div class="strip"></div><div class="fsp spill" style="left:578px;top:869px;width:220px;height:60px"><i class="ind"></i><button class="on" data-fs="f">Hardware</button><button data-fs="s">Specs</button></div><div class="hl"></div></div>
       <div class="otab tall db" data-t="videos" hidden><div id="dbVlib"></div></div>
     </div><div class="ptitle">Vivint Doorbell Camera Pro (Gen 2)</div></section>
     <!-- SMART HUB PRO 2 — live build -->
@@ -2199,7 +2199,7 @@ body.hasbk #gTitle{transform:translateX(118px)}
       </div>
       <div class="otab hb" data-t="feat">
         <div class="strip"><div class="hbpane" id="hbCall"></div><div class="hbpane" id="hbSpec"></div></div>
-        <div class="fsp spill" style="left:578px;top:869px;width:220px;height:60px"><i class="ind"></i><button class="on" data-fs="f">Features</button><button data-fs="s">Specs</button></div>
+        <div class="fsp spill" style="left:578px;top:869px;width:220px;height:60px"><i class="ind"></i><button class="on" data-fs="f">Hardware</button><button data-fs="s">Specs</button></div>
       </div>
       <div class="otab hb" data-t="hist"><div class="hx3" id="hbX"><div class="hbpane" id="hbHist"></div><div class="hbpane" id="hbNew"></div><div class="hbpane" id="hbOut"></div></div><div class="hb3pill" id="hb3"><i class="ind"></i><button class="on" data-hb3="0">Historical</button><button data-hb3="1">What’s New</button><button data-hb3="2">Internet Outage</button></div></div>
       <div class="otab hb" data-t="cmp"><div id="hbCmp"></div></div>
@@ -2455,7 +2455,7 @@ const FEAT=[
 const G2F=['Detect and Deter','4K HDR Sensor','1,800 Lumen Spotlight','High Speed Memory','140 Degree Lens','80 Decibel Speaker','Online, All the Time','Smart Processing Chip'];
 const PH=[[0,'Crisp HDR Video'],[1,'Spot and Follow Lurkers'],[2,'Full 10 Day Recording'],[3,'5.3X HD Zoom'],[4,'Smart Deter'],[5,'Vehicle Detection'],[6,'High Fidelity 2-way Talk'],[7,'Customize Everything']];
 const whistle=new Audio('assets/oc/whistle.mp3');
-const FSP=(x,y,w,h)=>`<div class="fsp spill" style="left:${x}px;top:${y}px;width:${w}px;height:${h}px"><i class="ind"></i><button class="on" data-fs="f">Features</button><button data-fs="s">Specs</button></div>`;
+const FSP=(x,y,w,h)=>`<div class="fsp spill" style="left:${x}px;top:${y}px;width:${w}px;height:${h}px"><i class="ind"></i><button class="on" data-fs="f">Hardware</button><button data-fs="s">Specs</button></div>`;
 const TSEL={"oc/p0":[56.0,770.0],"oc/p1":[215.3,770.7],"oc/p2":[375.3,770.0],"oc/p3":[535.3,770.0],"oc/p4":[694.7,770.0],"oc/p5":[854.7,770.0],"oc/p6":[1014.0,770.0],"oc/p7":[1174.0,770.0],"oc/g2_phone":[56.0,770.0],"p/ic_p0":[370.0,786.0],"p/ic_p1":[530.0,786.0],"p/ic_p2":[690.0,786.7],"p/ic_p3":[849.3,786.0],"p/l0":[297.3,792.7],"p/l1":[458.0,794.0],"p/l2":[616.7,793.3],"p/l3":[778.0,793.3],"p/l4":[937.3,793.3],"p/g0":[935.3,278.0],"p/g1":[935.3,443.3],"p/g2":[935.3,607.3],"p/app_0":[790.0,187.3],"p/app_1":[950.0,187.3],"p/app_10":[950.0,681.3],"p/app_11":[1110.0,682.0],"p/app_2":[1110.0,187.3],"p/app_3":[790.0,352.0],"p/app_4":[950.0,352.0],"p/app_5":[1109.3,352.0],"p/app_6":[790.0,516.0],"p/app_7":[950.0,516.7],"p/app_8":[1110.0,516.7],"p/app_9":[790.0,681.3]};
 function tileGlass(img){ const k=(img.getAttribute('src')||'').replace(/^assets\//,'').replace(/\.webp.*$/,''), r=TSEL[k], sec=img.parentElement;
   if(!r){ const g=sec.querySelector(':scope>.fglass.tl'); if(g) g.hidden=true; return; } glassAt(sec,r[0]-1,r[1]-1,143,148,'tl'); }
@@ -2992,12 +2992,12 @@ const IP={
  mon4:'<circle cx="12" cy="9" r="6"/><path d="M8.5 14l-1.5 7 5-3 5 3-1.5-7"/>',
  mon5:'<circle cx="12" cy="12" r="9"/><path d="M10 8.5l5.5 3.5-5.5 3.5z"/>'};
 const SVGI=(k,sz=24)=>`<svg class="ic" width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">${IP[k]||''}</svg>`;
-const NLAB={cube:'PreView',hero:'Overview',feat:'Features',phone:'App',cmp:'Compare',specs:'Specs',hist:'History',play:'Videos',videos:'Videos',modes:'Modes',lock:'Lock',garage:'Garage',gphone:'App',build:'Build',mon0:'Overview',mon1:'Response',mon2:'Insurance',mon3:'Emergencies',mon4:'Trusted',mon5:'Video'};
+const NLAB={cube:'PreView',hero:'Overview',feat:'Highlights',phone:'App',cmp:'Compare',specs:'Specs',hist:'History',play:'Videos',videos:'Videos',modes:'Modes',lock:'Lock',garage:'Garage',gphone:'App',build:'Build',mon0:'Overview',mon1:'Response',mon2:'Insurance',mon3:'Emergencies',mon4:'Trusted',mon5:'Video'};
 function navify(){ const r=$('#barRight'); if(!r) return; const items=[...r.children].filter(e=>e.matches('.bbtn'));
   if(!items.length){ r.classList.remove('pnav'); return; }
   r.classList.add('pnav');
   items.forEach(b=>{ const d=b.dataset; let k=d.octab||d.prtab||d.dbtab||d.hbtab||(d.mon!==undefined?'mon'+d.mon:'')||(b.tagName==='A'?'cube':'');
-    if(!k) return; const key=k==='play'?'play':k; b.innerHTML=SVGI(key==='videos'?'play':key,22)+`<span>${NLAB[key]||key}</span>`; }); }
+    if(!k) return; let key=k==='play'?'play':k; if(d.hbtab==='feat') key='specs'; /* Hub's callout/spec section is its Specs */ b.innerHTML=SVGI(key==='videos'?'play':key,22)+`<span>${NLAB[key]||key}</span>`; }); }
 const _barFor=barFor; barFor=function(p){ _barFor(p); navify(); };
 /* menu icons */
 $$('#mitems .mi img').forEach(im=>{ const m=im.getAttribute('src').match(/m_([a-z]+)\.png/); if(m){ im.insertAdjacentHTML('beforebegin',SVGI(m[1],26)); im.remove(); } });
@@ -3157,7 +3157,7 @@ navify=function(){ const r=$('#barRight'); if(!r) return;
   if(!items.length){ r.classList.remove('pnav'); return; }
   r.classList.add('pnav');
   items.forEach(b=>{ const d=b.dataset; let k=d.octab||d.prtab||d.dbtab||d.hbtab||(d.mon!==undefined?'mon'+d.mon:'')||(d.sign!==undefined?'sign'+d.sign:'');
-    if(!k) return; b.innerHTML=SVGI(k==='videos'?'play':k,22)+`<span>${NLAB[k]||k}</span>`; }); };
+    if(!k) return; if(d.hbtab==='feat') k='specs'; b.innerHTML=SVGI(k==='videos'?'play':k,22)+`<span>${NLAB[k]||k}</span>`; }); };
 { const _ts=trackSet; trackSet=function(p,a){ _ts(p,a); const near=Math.round(Math.max(0,Math.min(3,p))); $$('#barRight [data-hcat]').forEach(b=>b.classList.toggle('on',b.dataset.hcat===HORD[near])); }; }
 
 /* page transitions */
