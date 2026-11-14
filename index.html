@@ -1861,6 +1861,29 @@ body.hasbk #gTitle{transform:translateX(118px)}
 .thm-card b{display:block;font-size:23px;font-weight:500;color:#fff;margin-bottom:6px}
 .thm-txt{position:absolute;left:0;width:700px;background:#1c1c1c;border-radius:24px;padding:24px 28px;font-size:17.5px;line-height:1.45;color:#d1d1d6}
 .thm-fine{position:absolute;left:0;width:700px;font-size:10.5px;line-height:1.45;color:rgba(255,255,255,.42)}
+
+/* Doorbell merged Highlights + App */
+.dbm .dbm-eb{position:absolute;left:62px;top:96px;font-size:15px;letter-spacing:2.4px;text-transform:uppercase;color:var(--vg);font-weight:500}
+.dbm .dbm-h{position:absolute;left:60px;top:118px;width:400px;font-size:40px;line-height:1.08;font-weight:600;letter-spacing:-.8px;color:#fff;margin:0;transition:opacity .14s,transform .14s}
+.dbm .dbm-h small{display:block;margin-top:14px;font-size:17px;line-height:1.4;font-weight:400;letter-spacing:0;color:rgba(255,255,255,.62)}
+.dbm .dbm-h.swap{opacity:0;transform:translateY(6px)}
+.dbm-list{position:absolute;left:46px;top:330px;width:400px;display:flex;flex-direction:column;gap:2px}
+.dbm-list button{display:flex;align-items:center;gap:16px;height:54px;padding:0 18px;border:0;border-radius:16px;background:transparent;color:rgba(255,255,255,.55);font:inherit;font-size:20px;text-align:left;cursor:pointer;transition:background .25s,color .25s}
+.dbm-list button .lvi{flex:none;color:currentColor}
+.dbm-list button.on{background:#1c1c1c;color:var(--vg);font-weight:500}
+.dbm-list button.on .lvi:not(.red){color:var(--vg)}
+.dbm-card{position:absolute;left:500px;top:130px;width:420px;height:720px;border-radius:36px;overflow:hidden;background:#111}
+.dbm-card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transform:scale(1.04);transition:opacity .45s ease,transform .6s cubic-bezier(.22,1,.36,1)}
+.dbm-card img.dflt{object-fit:contain;padding:40px;box-sizing:border-box}
+.dbm-card img.on{opacity:1;transform:none}
+.dbm-phone{position:absolute;left:868px;top:100px;width:372px;height:748px;border-radius:60px;box-sizing:border-box;border:3px solid rgba(235,238,238,.9);background:#000;padding:11px 12px;box-shadow:0 30px 70px rgba(0,0,0,.7),-18px 0 40px rgba(0,0,0,.55);transition:opacity .35s,transform .45s cubic-bezier(.22,1,.36,1)}
+.dbm-phone video{width:100%;height:100%;object-fit:cover;border-radius:48px;display:block;background:#000;opacity:0;transition:opacity .25s}
+.dbm-phone video.rdy{opacity:1}
+.dbm-phone.still video{opacity:.25}
+.dbm-phone.off{opacity:0;transform:translateX(30px) scale(.97);pointer-events:none}
+.dbm-hub{position:absolute;left:820px;top:200px;width:460px;height:560px;opacity:0;transition:opacity .4s;pointer-events:none}
+.dbm-hub video{width:100%;height:100%;object-fit:contain;mix-blend-mode:screen}
+.dbm-hub.on{opacity:1}
 </style>
 <div id="stage">
   <div id="screen">
@@ -2173,12 +2196,19 @@ body.hasbk #gTitle{transform:translateX(118px)}
         <button class="dbai" data-go="ai">AI</button>
       </div>
       <div class="otab hum" data-t="spin"><div class="hum-st"><canvas id="dbScrubV" data-seq="assets/seq/db-frames.jpg?v=217" width="1376" height="1032"></canvas></div></div>
-      <div class="otab db" data-t="feat">
+      <div class="otab db dbm" data-t="feat">
+        <h2 class="dbm-h" id="dbmH"></h2>
+        <div class="dbm-list" id="dbmList"></div>
+        <div class="dbm-card" id="dbmCard"></div>
+        <div class="dbm-phone" id="dbmPhone"><video id="dbmPv" muted playsinline loop preload="auto"></video></div>
+        <div class="dbm-hub" id="dbmHub"><video id="dbmHv" muted playsinline loop preload="auto"></video></div>
+      </div>
+      <div class="otab db" data-t="featold" hidden>
         <div class="dbf-vis" id="dbfVis"></div>
         <h2 class="dbf-h" id="dbfH"></h2>
         <div class="dbf-list" id="dbfList"></div>
       </div>
-      <div class="otab db" data-t="phone">
+      <div class="otab db" data-t="phone" hidden>
         <video class="dbhub" id="dbHub" muted playsinline loop preload="auto"></video>
         <div class="dbphone" id="dbPhone"><video id="dbPv" muted playsinline loop preload="auto"></video></div>
         <div class="dbeb">Vivint Doorbell Camera Pro (Gen 2)</div><div class="dbtiles" id="dbTiles"></div>
@@ -2323,7 +2353,7 @@ function barFor(p){
   if(p==='ocp') r.innerHTML=(OC.mode==='p3'?['hero','feat','phone','cmp','specs','hist','act','with','faq']:['hero','feat','phone']).map(k=>k==='cube'?`<a class="bbtn" href="${VW}" target="_blank" rel="noopener" data-octab="cube"><img src="assets/oc/i_cube.png" alt="PreView"></a>`:`<button class="bbtn${k===OC.tab||(k==='play'&&OC.tab==='videos')?' on':''}" data-octab="${k}">${k==='hist'?HISTICO:`<img src="assets/oc/i_${k}.png" alt="">`}</button>`).join('');
   if(p==='prod') r.innerHTML=prBar();
   if(p==='hub') r.innerHTML=[['hero','i_hero'],['modes',HBICO],['feat','i_specs'],['hist',HISTICO],['cmp','i_cmp'],['act','i_hero'],['with','i_hero'],['faq','i_hero']].map(([k,ic])=>k==='cube'?`<a class="bbtn" href="${VW}" target="_blank" rel="noopener"><img src="assets/oc/i_cube.png" alt="PreView"></a>`:`<button class="bbtn${k===HB.tab||(k==='play'&&HB.tab==='videos')?' on':''}" data-hbtab="${k}">${ic.startsWith('<')?ic:`<img src="assets/oc/${ic}.png" alt="">`}</button>`).join('');
-  if(p==='dbcp') r.innerHTML=['hero','feat','phone','cmp','specs','act','with','faq'].map(k=>k==='cube'?`<a class="bbtn" href="${VW}" target="_blank" rel="noopener"><img src="assets/oc/i_cube.png" alt="PreView"></a>`:`<button class="bbtn${k===DB.tab||(k==='play'&&DB.tab==='videos')?' on':''}" data-dbtab="${k}">${k==='feat'?DBICO:`<img src="assets/oc/i_${k}.png" alt="">`}</button>`).join('');
+  if(p==='dbcp') r.innerHTML=['hero','feat','cmp','specs','act','with','faq'].map(k=>k==='cube'?`<a class="bbtn" href="${VW}" target="_blank" rel="noopener"><img src="assets/oc/i_cube.png" alt="PreView"></a>`:`<button class="bbtn${k===DB.tab||(k==='play'&&DB.tab==='videos')?' on':''}" data-dbtab="${k}">${k==='feat'?DBICO:`<img src="assets/oc/i_${k}.png" alt="">`}</button>`).join('');
   if(p==='sign') r.innerHTML=`<button class="bbtn${signHouse?'':' on'}" data-sign="0"><svg width="30" height="30" viewBox="0 0 30 30" fill="none" stroke="#fff" stroke-width="2"><circle cx="15" cy="15" r="13"/><path d="M8 15h14"/></svg></button><button class="bbtn${signHouse?' on':''}" data-sign="1"><svg width="30" height="30" viewBox="0 0 30 30" fill="none" stroke="#fff" stroke-width="2"><rect x="3" y="4" width="24" height="22" rx="2"/><path d="M3 21l7-7 6 6 4-4 7 7"/><circle cx="20" cy="10" r="2"/></svg></button>`;
 }
 function show(p){ document.body.classList.toggle('ishome',p==='home');
@@ -3844,7 +3874,7 @@ $$('.lpage').forEach(box=>{ let t=0, touching=false, lastY=box.scrollTop, dir=1,
 });
 
 /* tap anywhere on a product section that has a list of tabs (features, app screens, modes, actions…) to go to the next tab; wraps to the first */
-{ const TABS=['data-thf','data-tha','data-feat','data-ph','data-dbf','data-dbp','data-hbm','data-prsub'];
+{ const TABS=['data-thf','data-tha','data-feat','data-ph','data-dbf','data-dbp','data-dbm','data-hbm','data-prsub'];
   /* some lists mark the current tab with a class, others keep it in page state */
   const curIdx=(a,items,sec)=>{ if(a==='data-feat') return OC.feat|0; if(a==='data-ph') return OC.phone|0; if(a==='data-prsub'){ const st=PR.st&&PR.st[sec.dataset.t]; return st?st.sub|0:0; }
     return items.findIndex(x=>x.classList.contains('on')||x.classList.contains('act')); };
@@ -4050,6 +4080,38 @@ document.head.insertAdjacentHTML('beforeend',`<style>
   const watch=box=>box.querySelectorAll(':scope>*').forEach(sec=>{ if(!sec.__spw&&sec.querySelector(':scope>.fsp.spill')){ sec.__spw=1; io.observe(sec); } });
   $$('.lpage').forEach(box=>{ watch(box); new MutationObserver(()=>watch(box)).observe(box,{childList:true}); });
   window.addEventListener('resize',()=>setTimeout(()=>$$('.page.on .lpage').forEach(run),200)); }
+
+/* Doorbell: Highlights + App merged into one section — list on the left, product close-up + live app view on the right */
+{ const M=[ // [icon, label, headline, line, product image idx (fv), app clip (ph) | 'hub']
+   [['hd'],'HDR Video','The Best Porch Protection','Crisp 1080p HDR keeps faces and packages clear in bright sun and deep shade.',0,0],
+   [['expand'],'180° View','See Every Angle','A 180° view of your porch, so nothing slips out of frame.',3,6],
+   [['mic'],'2-Way Talk','Hear and Speak Clearly','Talk to visitors from anywhere, with clear audio both ways.',1,5],
+   [['ring','red'],'Smart Deter','Stop Trouble Before It Starts','A red light ring and warning tones tell lurkers they’ve been seen.',4,3],
+   [['box'],'Package Detect','Know When It Arrives','Get an alert the moment a package lands on your porch.',null,2],
+   [['loop'],'10-Day Recording*','Never Miss a Moment','Up to 10 days of continuous footage, so you can always go back and check.',2,1],
+   [['bulb'],'Light Integration','Light Up Every Visit','Porch lights turn on automatically when someone walks up.',null,4],
+   [['chip'],'Smart Processing','Next Level Processing','A dedicated on-board chip processes video fast, so alerts arrive sooner.',5,2],
+   [['sliders'],'Customize Everything','Make It Yours','Set zones, alerts and schedules so you only hear about what matters.',null,7],
+   [['hub'],'Smart Hub','Answer at Your Smart Hub','See and talk to visitors right from the Smart Hub inside your home.',null,'hub']];
+  let m=0; const V='?v=55';
+  const L=$('#dbmList'), card=$('#dbmCard'), pv=$('#dbmPv'), hv=$('#dbmHv'), ph=$('#dbmPhone'), hb=$('#dbmHub'), H=$('#dbmH');
+  L.innerHTML=M.map(([ic,t],i)=>`<button class="${i?'':'on'}" data-dbm="${i}">${LSV(ic[0],28,ic[1]||'')}<span>${t}</span></button>`).join('');
+  card.innerHTML=[0,1,2,3,4,5].map(i=>`<img src="assets/db/fv${i}.webp${V}" alt="" data-fv="${i}">`).join('')+`<img src="assets/db/dbcp_a1.webp${V}" alt="" data-fv="d" class="dflt">`;
+  hv.src=`assets/db/hub.mp4${V}`;
+  const live=()=>!!$('#dbmList').closest('[data-vis="1"]');
+  const render=()=>{ const [,,h,line,fv,clip]=M[m];
+    $$('#dbmList button').forEach((b,i)=>b.classList.toggle('on',i===m));
+    if(H.dataset.i!==String(m)){ H.classList.add('swap'); setTimeout(()=>{ H.innerHTML=`${h}<small>${line}</small>`; H.classList.remove('swap'); },H.dataset.i?140:0); H.dataset.i=m; }
+    $$('#dbmCard img').forEach(im=>im.classList.toggle('on',fv==null?im.dataset.fv==='d':im.dataset.fv===String(fv)));
+    const hub=clip==='hub', none=clip==null;
+    ph.classList.toggle('off',hub); hb.classList.toggle('on',hub); ph.classList.toggle('still',none);
+    const u=(hub||none)?null:`assets/db/ph${clip}.mp4${V}`;
+    if(u&&pv.__u!==u){ pv.__u=u; pv.classList.remove('rdy'); pv.addEventListener('playing',()=>pv.classList.add('rdy'),{once:true}); pv.src=u; pv.currentTime=0; }
+    if(live()){ if(hub){ pv.pause(); hv.currentTime=0; hv.play().catch(()=>{}); } else { hv.pause(); if(!none) pv.play().catch(()=>{}); else pv.pause(); } } };
+  document.addEventListener('click',e=>{ const b=e.target.closest('[data-dbm]'); if(!b) return; m=+b.dataset.dbm; render(); });
+  /* tap-anywhere advances through the list */
+  new MutationObserver(()=>{ if(live()) render(); else { pv.pause(); hv.pause(); } }).observe($('#dbmList').closest('.otab'),{attributes:true,attributeFilter:['data-vis']});
+  render(); }
 
 barFor(cur);
 </script>
