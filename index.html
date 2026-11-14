@@ -4188,6 +4188,10 @@ document.head.insertAdjacentHTML('beforeend',`<style>
 
 .psec .lvmask{z-index:5}.psec .lvt{z-index:6;transform:translateZ(0)}
 #prScroll>.psec.dwhero{overflow:visible!important}.strip.wide{left:calc(-1*var(--gx));width:calc(2*var(--W));height:1032px}.strip.wide>.dws{width:var(--W);height:1032px}.strip.wide>.dws img{width:100%;height:100%}.strip.wide>.dws::after{content:'';position:absolute;left:0;right:0;bottom:0;height:13%;background:linear-gradient(0deg,rgba(0,0,0,.6),rgba(0,0,0,0));pointer-events:none}.strip.wide .dws-t{margin-left:var(--gx)}
+/* no highlighting, copying, callouts or image dragging anywhere */
+*,*::before,*::after{-webkit-user-select:none!important;user-select:none!important;-webkit-touch-callout:none!important}
+img,video,svg,a{-webkit-user-drag:none!important}
+input,textarea,[contenteditable="true"]{-webkit-user-select:text!important;user-select:text!important}
 </style>`);
 { const add=box=>{ const secs=[...box.children].filter(c=>!c.hidden&&c.dataset&&c.dataset.t!=null);
     secs.forEach((c,i)=>{ const last=i===secs.length-1, skip=last||c.classList.contains('hum')||c.classList.contains('gal')&&false;
@@ -4398,6 +4402,12 @@ window.USMAP={w:1000,h:620,ut:[222.1, 266.2],c:[[72.8,371.6,9],[907.0,214.8,9],[
 
 
 
+
+
+/* block copy / cut / long-press menu / text selection (form fields excepted) */
+{ const ok=e=>e.target&&e.target.closest&&e.target.closest('input,textarea,[contenteditable="true"]');
+  ['copy','cut','selectstart','dragstart'].forEach(t=>document.addEventListener(t,e=>{ if(!ok(e)) e.preventDefault(); },true));
+  document.addEventListener('contextmenu',e=>{ if(!ok(e)) e.preventDefault(); },true); }
 
 barFor(cur);
 </script>
