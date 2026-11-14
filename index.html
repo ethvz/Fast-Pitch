@@ -4247,6 +4247,11 @@ input,textarea,[contenteditable="true"]{-webkit-user-select:text!important;user-
 .sns-c li svg{flex:none;margin-top:1px}
 .sns-c .go{position:absolute;left:30px;bottom:26px;height:46px;padding:0 20px;border-radius:23px;background:#3a3a3c;color:#fff;font-size:15.5px;display:flex;align-items:center;gap:8px}
 .sns-c.me .go{background:none;padding:0;color:var(--vg)}
+
+
+/* product pages: vertical section rail on the left */
+#stage.lnav #bar:not(.home) #barRight.pnav{right:auto!important;left:18px!important}
+#stage.lnav #p-prod .lpage>*,#stage.lnav #p-ocp .lpage>*,#stage.lnav #p-dbcp .lpage>*,#stage.lnav #p-hub .lpage>*,#stage.lnav #p-therm .lpage>*{--gx:var(--gxl,0px)}
 </style>`);
 { const add=box=>{ const secs=[...box.children].filter(c=>!c.hidden&&c.dataset&&c.dataset.t!=null);
     secs.forEach((c,i)=>{ const last=i===secs.length-1, skip=last||c.classList.contains('hum')||c.classList.contains('gal')&&false;
@@ -4264,7 +4269,7 @@ input,textarea,[contenteditable="true"]{-webkit-user-select:text!important;user-
     requestAnimationFrame(()=>{ if(hitsUnder(a)){ a.classList.add('sm'); center(a.parentElement.parentElement); if(hitsUnder(a)) a.classList.add('ov'); } }); }),{threshold:[.99]});
   /* center each arrow on the visible page (some sections are laid out on the fixed-width stage, which isn't centered on wider/narrower screens) */
   const center=box=>{ if(!box||!box.offsetWidth) return; const br=box.getBoundingClientRect(), cx=br.left+br.width/2, kb=br.height/(box.offsetHeight||1)||1;
-    const lg=$('#barlogo'), lr=lg&&lg.getBoundingClientRect(), ly=lr&&lr.height?lr.top+lr.height/2:null; /* vertical: level with the Vivint logo in the footer */
+    const lg=$('#barlogo'), lr=lg&&lg.getBoundingClientRect(); let ly=lr&&lr.height?lr.top+lr.height/2:null; /* vertical: level with the Vivint logo in the footer */
     box.querySelectorAll(':scope>*>.nxa').forEach(a=>{ const s=a.parentElement, r=s.getBoundingClientRect(); if(!r.width) return; const k=r.width/(s.offsetWidth||1)||1;
       a.style.left=((cx-r.left)/k)+'px';
       if(ly!=null){ const it=a.classList.contains('sm')?24:38, mt=parseFloat(getComputedStyle(s).scrollMarginTop)||0;
@@ -4293,9 +4298,9 @@ input,textarea,[contenteditable="true"]{-webkit-user-select:text!important;user-
   const fit=(box,sec)=>{ const panes=[...sec.querySelectorAll('.fsp-pane,.hbpane')]; if(!panes.length) return; const pill=sec.querySelector(':scope>.fsp.spill'); if(!pill) return;
     const key=innerWidth+'x'+innerHeight; const br=box.getBoundingClientRect(), kb=br.height/(box.offsetHeight||1)||1, sr=sec.getBoundingClientRect(), k=sr.width/(sec.offsetWidth||1)||1; if(!sr.width) return;
     const mt=parseFloat(getComputedStyle(sec).scrollMarginTop)||0, snapTop=br.top+mt*kb;
-    const rail=$('#barRight.pnav'), rr=rail&&rail.getBoundingClientRect(), railL=rr&&rr.width?rr.left:br.right; const tt=$('#gTitle'), tr=tt&&tt.getBoundingClientRect();
+    const rail=$('#barRight.pnav'), rr=rail&&rail.getBoundingClientRect(), vr=rr&&rr.width&&rr.height>rr.width, onL=vr&&rr.left<br.left+br.width/2, railL=vr&&!onL?rr.left:br.right, railR=onL?rr.right:null; const tt=$('#gTitle'), tr=tt&&tt.getBoundingClientRect();
     const cx=br.left+br.width/2, X=x=>(x-sr.left)/k, Y=y=>(y-snapTop)/k;
-    const L=X(br.left+28), R=X(railL-22), C=X(cx), T=Math.max(Y(tr&&tr.height?tr.bottom+14:br.top+70),20), B=pill.offsetTop-16;
+    const L=X(railR!=null?railR+22:br.left+28), R=X(railL-22), C=X(cx), T=Math.max(Y(tr&&tr.height?tr.bottom+14:br.top+70),20), B=pill.offsetTop-16;
     panes.forEach(pn=>{ if(pn.__fit===key) return; pn.style.transform=''; const pr=pn.getBoundingClientRect(); const ls=leafs(pn); if(!ls.length) return;
       let u0=1e9,v0=1e9,u1=-1e9,v1=-1e9; ls.forEach(e=>{ const r=e.getBoundingClientRect(); u0=Math.min(u0,(r.left-pr.left)/k); v0=Math.min(v0,(r.top-pr.top)/k); u1=Math.max(u1,(r.right-pr.left)/k); v1=Math.max(v1,(r.bottom-pr.top)/k); });
       const bw=u1-u0, bh=v1-v0, half=Math.min(C-L,R-C);
@@ -4349,7 +4354,7 @@ input,textarea,[contenteditable="true"]{-webkit-user-select:text!important;user-
     sec.style.setProperty('--dbx','0px'); fitKey=key;
     /* phone centered on the screen */ const cx=br.left+br.width/2; ph.style.setProperty('left',((cx-sr.left)/k-186).toFixed(1)+'px','important');
     /* storage caption: keep its spot, but never under the phone or the side nav; shrink to fit when space is tight */
-    { const c=$('#dbmCap'); if(c){ c.style.transform=''; c.style.left=''; const pr=ph.getBoundingClientRect(), rl=$('#barRight.pnav'), rr=rl&&rl.getBoundingClientRect();
+    { const c=$('#dbmCap'); if(c){ c.style.transform=''; c.style.left=''; const pr=ph.getBoundingClientRect(), rl=$('#barRight.pnav'), rr0=rl&&rl.getBoundingClientRect(), rr=rr0&&rr0.height>rr0.width&&rr0.left>innerWidth/2?rr0:null;
         const minL=pr.right+18*k, maxR=(rr&&rr.width?rr.left:br.right)-14*k; const cr=c.getBoundingClientRect(); let L=Math.max(cr.left,minL);
         const sc=Math.min(1,(maxR-L)/cr.width); c.style.left=(910+(L-cr.left)/k)+'px'; c.style.transformOrigin='0 0'; c.style.setProperty('transform',sc<.97?`scale(${sc.toFixed(3)})`:'none','important'); } }
     return; const l=L.getBoundingClientRect().left; const rgt=sr.left+(868+372)*k; /* phone's resting right edge */
@@ -4511,6 +4516,15 @@ window.USMAP={w:1000,h:620,ut:[222.1, 266.2],c:[[72.8,371.6,9],[907.0,214.8,9],[
     fallback(); };
   keep(); ['pointerdown','touchend','click','keydown'].forEach(t=>document.addEventListener(t,keep,{passive:true,capture:true}));
   document.addEventListener('visibilitychange',keep); window.addEventListener('pageshow',keep); window.addEventListener('focus',keep); }
+
+
+/* product pages: section rail on the LEFT edge; page content shifts right just enough to clear it */
+{ const PRODP=['prod','ocp','dbcp','hub','therm'], st=$('#stage');
+  const setVars=()=>{ const gx=parseFloat(getComputedStyle(st).getPropertyValue('--gx'))||0, S=Math.max(0,96-gx); st.style.setProperty('--lns',S+'px'); st.style.setProperty('--gxl',(gx+S)+'px');
+    };
+  const apply=p=>{ st.classList.toggle('lnav',PRODP.includes(p)); setVars(); requestAnimationFrame(setVars); setTimeout(setVars,300); $$('.page.on .fsp-pane,.page.on .hbpane').forEach(x=>x.__fit=null); };
+  const _bfb=barFor; barFor=function(p){ _bfb.apply(this,arguments); apply(p); requestAnimationFrame(()=>window.dispatchEvent(new Event('resize'))); };
+  window.addEventListener('resize',()=>{ setVars(); }); apply(cur); }
 
 barFor(cur);
 </script>
