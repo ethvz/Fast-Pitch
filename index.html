@@ -4161,7 +4161,12 @@ document.head.insertAdjacentHTML('beforeend',`<style>
   const sec=$('#dbmList').closest('.otab'); let fitKey='';
   const balance=()=>{ const key=innerWidth+'x'+innerHeight; if(fitKey===key) return; const box=sec.parentElement, br=box.getBoundingClientRect(), sr=sec.getBoundingClientRect(); if(!sr.width) return; const k=sr.width/sec.offsetWidth;
     sec.style.setProperty('--dbx','0px'); fitKey=key;
-    /* phone centered on the screen */ const cx=br.left+br.width/2; ph.style.setProperty('left',((cx-sr.left)/k-186).toFixed(1)+'px','important'); return; const l=L.getBoundingClientRect().left; const rgt=sr.left+(868+372)*k; /* phone's resting right edge */
+    /* phone centered on the screen */ const cx=br.left+br.width/2; ph.style.setProperty('left',((cx-sr.left)/k-186).toFixed(1)+'px','important');
+    /* storage caption: keep its spot, but never under the phone or the side nav; shrink to fit when space is tight */
+    { const c=$('#dbmCap'); if(c){ c.style.transform=''; c.style.left=''; const pr=ph.getBoundingClientRect(), rl=$('#barRight.pnav'), rr=rl&&rl.getBoundingClientRect();
+        const minL=pr.right+18*k, maxR=(rr&&rr.width?rr.left:br.right)-14*k; const cr=c.getBoundingClientRect(); let L=Math.max(cr.left,minL);
+        const sc=Math.min(1,(maxR-L)/cr.width); c.style.left=(910+(L-cr.left)/k)+'px'; c.style.transformOrigin='0 0'; c.style.setProperty('transform',sc<.97?`scale(${sc.toFixed(3)})`:'none','important'); } }
+    return; const l=L.getBoundingClientRect().left; const rgt=sr.left+(868+372)*k; /* phone's resting right edge */
     const dx=((br.right-rgt)-(l-br.left))/2/k; sec.style.setProperty('--dbx',dx.toFixed(1)+'px'); fitKey=key; };
   new IntersectionObserver(es=>{ if(es[0].isIntersecting) balance(); },{threshold:[0]}).observe(sec);
   /* lay out as soon as the page opens (before the section is on screen) so nothing moves after you arrive */
