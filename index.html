@@ -3913,7 +3913,7 @@ window.fsFill=fsFill; fsFill($('#dbScroll [data-t=specs] .strip'),'dbcp'); fsFil
     else if(have){ b.classList.add('done'); txt('Available Offline ✓'); bar(0); }
     else { b.classList.remove('done'); txt('Download for Offline'); bar(0); } };
   if(ok){
-    navigator.serviceWorker.register('sw.js').then(r=>{ reg=r; return navigator.serviceWorker.ready; }).then(r=>{ r.active&&r.active.postMessage({type:'status'}); }).catch(()=>{});
+    navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).then(r=>{ reg=r; return navigator.serviceWorker.ready; }).then(r=>{ r.active&&r.active.postMessage({type:'status'}); }).catch(()=>{});
     fetch('offline.json',{cache:'no-store'}).then(r=>r.json()).then(j=>{ latest=j.v; paint(); }).catch(()=>{});
     navigator.serviceWorker.addEventListener('message',e=>{ const d=e.data||{}, b=btn();
       if(d.type==='status'){ have=d.done; paint(); }

@@ -3,7 +3,7 @@
    - Pages: network first, cached copy when offline.
    - Assets: exact cached copy if present, otherwise network (and keep a copy); offline falls back to any cached version of the same file.
    - Video/audio: answers Range requests from the cache so iOS can play/scrub offline. */
-const CACHE = 'fp-offline-v1';
+const CACHE = 'fp-offline-v1'; /* r2: pages always bypass the HTTP cache so updates show on next launch */
 const SCOPE = self.registration.scope;
 
 self.addEventListener('install', () => self.skipWaiting());
@@ -49,7 +49,7 @@ self.addEventListener('fetch', e => {
     e.respondWith((async () => {
       const c = await caches.open(CACHE);
       try {
-        const r = await Promise.race([fetch(req), new Promise((_, rej) => setTimeout(() => rej('t'), 4000))]);
+        const r = await Promise.race([fetch(req, { cache: 'no-store' }), new Promise((_, rej) => setTimeout(() => rej('t'), 4000))]);
         if (r && r.ok) c.put(SCOPE, r.clone());
         return r;
       } catch (err) {
