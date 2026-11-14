@@ -1536,6 +1536,7 @@ body.pkon #bar{z-index:61!important}
 #ocPhoneHot>*{z-index:6;transform:translateZ(0)}
 #screen .page.pcol{overflow:hidden;will-change:transform,opacity;animation:none!important}
 #screen .page.pcol-go{transition:transform .32s cubic-bezier(.4,0,.2,1),opacity .32s ease,clip-path .32s ease,-webkit-clip-path .32s ease}
+body.pcoll #gTitle{opacity:0!important;transition:opacity .2s}
 #screen .page.pcol{z-index:5!important;box-shadow:0 30px 80px rgba(0,0,0,.6)}
 #screen #p-home.pbg{display:block;z-index:1!important;animation:none!important;transform:scale(.96);transform-origin:50% 50%;pointer-events:none}
 #screen #p-home.pbg-go{transition:opacity .32s ease,transform .32s ease;transform:scale(1)}
@@ -3588,18 +3589,20 @@ IP.tools='<path d="M14.5 6.5a4 4 0 0 0-5 5L4 17l3 3 5.5-5.5a4 4 0 0 0 5-5l-2.5 2
         const c=Math.max(.35,1-(1-ratio)*1.1); g.c=c; const r=scr.getBoundingClientRect(), zk=k();
         if(!g.col){ g.col=1; pg.classList.add('pcol'); pg.style.transformOrigin=`${g.mx}px ${g.my}px`; }
         pg.style.transform=`scale(${c})`; pg.style.opacity=String(Math.min(1,.35+c)); pg.style.clipPath=pg.style.webkitClipPath=`inset(0 round ${Math.round(Math.min(1,(1-c)*6)*44/c)}px)`;
-        const hm=$('#p-home'); if(hm&&!hm.classList.contains('pbg')) hm.classList.add('pbg'); if(hm) hm.style.opacity=String(Math.min(1,(1-c)*2.2)); return; }
+        const hm=$('#p-home'); if(hm&&!hm.classList.contains('pbg')){ hm.classList.add('pbg'); document.body.classList.add('pcoll'); } if(hm) hm.style.opacity=String(Math.min(1,(1-c)*2.2)); return; }
       if(ratio>1) g.zoomed=1;
-      if(g.col){ g.col=0; g.c=1; pg.classList.remove('pcol'); pg.style.transform=''; pg.style.opacity=''; pg.style.clipPath=pg.style.webkitClipPath=''; const hm=$('#p-home'); if(hm){ hm.classList.remove('pbg'); hm.style.opacity=''; } }
+      if(g.col){ g.col=0; g.c=1; pg.classList.remove('pcol'); pg.style.transform=''; pg.style.opacity=''; pg.style.clipPath=pg.style.webkitClipPath=''; const hm=$('#p-home'); if(hm){ hm.classList.remove('pbg'); hm.style.opacity=''; } document.body.classList.remove('pcoll'); }
       const nz=Math.min(3,Math.max(1,g.z*ratio)); /* keep the pinch point under the fingers and follow two-finger pan */
       Z=nz; TX=m[0]-(g.mx-g.tx)*nz/g.z; TY=m[1]-(g.my-g.ty)*nz/g.z; apply(false); }
     else if(pan&&e.touches.length===1&&Z>1.02){ e.preventDefault(); const t=e.touches[0], m=loc(t.clientX,t.clientY); TX=pan.tx+(m[0]-pan.x); TY=pan.ty+(m[1]-pan.y); if(Math.abs(m[0]-pan.x)+Math.abs(m[1]-pan.y)>6) pan.moved=true; apply(false); } },{passive:false});
-  const collapseEnd=gg=>{ const P=pg, hm=$('#p-home'); if(!P) return;
+  const collapseEnd=gg=>{ const P=pg, hm=$('#p-home'); if(!P) return; setTimeout(()=>document.body.classList.remove('pcoll'),gg.c<.84?340:380);
     if(gg.c<.84){ /* commit: finish collapsing into the home screen behind it */
       P.classList.add('pcol','pcol-go'); P.style.transform='scale(.2)'; P.style.opacity='0'; P.style.clipPath=P.style.webkitClipPath='inset(0 round 220px)';
       if(hm){ hm.classList.add('pbg-go'); hm.style.opacity='1'; }
-      setTimeout(()=>{ try{closeMenu();closeModals();}catch(e){} stack=['home']; if(hm) hm.classList.add('hxno'); show('home'); try{flipTo('all');}catch(e){}
-        if(hm){ hm.classList.remove('pbg','pbg-go'); hm.style.opacity=''; setTimeout(()=>hm.classList.remove('hxno'),50); }
+      setTimeout(()=>{ try{closeMenu();closeModals();}catch(e){} stack=['home']; if(hm) hm.style.animation='none'; show('home'); if(hm){ hm.classList.add('hxno'); hm.classList.remove('pbg','pbg-go'); hm.style.opacity=''; hm.style.transform='none'; hm.style.animation=''; }
+        try{flipTo('all');}catch(e){}
+        if(hm){ const fin=()=>{ try{ hm.getAnimations({subtree:true}).forEach(a=>a.finish()); $$('#lpT,#gTitle,#bar').forEach(x=>x.getAnimations({subtree:true}).forEach(a=>a.finish())); }catch(e){} };
+          fin(); requestAnimationFrame(()=>{ fin(); requestAnimationFrame(()=>{ fin(); hm.style.transform=''; }); }); }
         P.classList.remove('pcol','pcol-go'); P.style.transform=''; P.style.opacity=''; P.style.clipPath=P.style.webkitClipPath=''; P.style.transformOrigin=''; },320); }
     else { P.classList.add('pcol-go'); P.style.transform=''; P.style.opacity=''; P.style.clipPath=P.style.webkitClipPath='inset(0 round 0px)';
       if(hm){ hm.classList.add('pbg-go'); hm.style.opacity='0'; }
