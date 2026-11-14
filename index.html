@@ -2479,7 +2479,7 @@ function show(p){ document.body.classList.toggle('ishome',p==='home');
   if(p==='ocp') setTimeout(ocSpy,0);
   $$('.scroll',el).forEach(s=>s.scrollTop=0);
 }
-function go(p){ closeMenu(); closeModals(); if(p==='monitoring'){ monTab=0; const m=$('#monScroll'); if(m) m.scrollTop=0; } if(p==='hub'){Object.assign(HB,{m:0,tab:'hero',noted:false,x:0}); if($('#hbX')) hb3Set(0,false); $('#hbScroll').scrollTop=0;} if(p==='dbcp'){Object.assign(DB,{f:0,p:0,c:null,tab:'hero',noted:false}); $('#dbScroll').scrollTop=0;} if(p==='ocp'){Object.assign(OC,{mode:'p3',tab:'hero',spot:false,light:false,deter:false,feat:0,tip:false,phone:0,spec:'f',specSpot:false,hist:null,hcmp:0,arlo:false}); $('#ocScroll').scrollTop=0; ocRender();} if(p===cur) return; stack.push(p); show(p); }
+function go(p){ closeMenu(); closeModals(); if(p==='monitoring'){ monTab=0; const m=$('#monScroll'); if(m) m.scrollTop=0; } if(p==='hub'){Object.assign(HB,{m:0,tab:'hero',noted:false,x:0}); if($('#hbX')) hb3Set(0,false); $('#hbScroll').scrollTop=0;} if(p==='dbcp'){Object.assign(DB,{f:0,p:0,c:null,tab:'hero',noted:false}); $('#dbScroll').scrollTop=0;} if(p==='ocp'){Object.assign(OC,{mode:'p3',tab:'hero',spot:false,light:false,deter:false,feat:0,tip:false,phone:0,spec:'f',specSpot:false,hist:null,hcmp:0,arlo:false}); $('#ocScroll').scrollTop=0; ocRender();} if(p===cur) return; if(/^(ocp|dbcp|hub|therm|monitoring|prod)$/.test(p)) window.__fresh=p; stack.push(p); show(p); }
 function back(){ if($('.modal.on')){closeModals();return;} if(cur==='protection'&&$('#covTbl').style.display!=='none'){cov(false);return;}
   if(stack.length>1){stack.pop(); show(stack[stack.length-1]);} }
 function openMenu(){document.body.classList.add('menu')} function closeMenu(){document.body.classList.remove('menu')}
@@ -3941,10 +3941,11 @@ document.body.insertAdjacentHTML('afterbegin','<div id="vrBg"><img src="assets/p
     const prevEl=lastKey?$('#p-'+(lastKey.startsWith('prod:')?'prod':lastKey)):null;
     if(prevEl&&lastKey!=='home'&&lastKey!==keyOf(p)){ saved[lastKey]=grab(prevEl); left[lastKey]=n; }
     _show(p); const k=keyOf(p), el=$('#p-'+p); if(!el||p==='home'){ lastKey=k; return; }
+    const fresh=window.__fresh===p; window.__fresh=null;
     if(k!==lastKey){ n++;
-      const since=left[k]==null?Infinity:n-left[k]-1;   /* pages viewed in between */
+      const since=fresh?Infinity:left[k]==null?Infinity:n-left[k]-1;   /* pages viewed in between */
       if(since<=1&&saved[k]){ const list=saved[k]; put(el,all=>list.forEach(([key,t,l])=>{ const x=typeof key==='string'?document.getElementById(key):all[key]; if(x) noSmooth(x,()=>{ x.scrollTop=t; x.scrollLeft=l; x.dispatchEvent(new Event('scroll')); }); })); }
-      else if(left[k]!=null){ scrollers(el).forEach(x=>{ if(x.scrollTop||x.scrollLeft) noSmooth(x,()=>{ x.scrollTop=0; x.scrollLeft=0; x.dispatchEvent(new Event('scroll')); }); }); }
+      else if(left[k]!=null||fresh){ scrollers(el).forEach(x=>{ if(x.scrollTop||x.scrollLeft) noSmooth(x,()=>{ x.scrollTop=0; x.scrollLeft=0; x.dispatchEvent(new Event('scroll')); }); }); }
     }
     lastKey=k; };
 }
