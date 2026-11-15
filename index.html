@@ -4265,12 +4265,12 @@ input,textarea,[contenteditable="true"]{-webkit-user-select:text!important;user-
 .ocm .dbm-list button{height:48px;font-size:18.5px}
 .ocm .dbm-h{min-height:160px}
 .ocm-fade{position:absolute;top:0;bottom:0;left:calc(-1*var(--gx,0px));width:calc(var(--gx,0px) + 560px);z-index:5;pointer-events:none;background:linear-gradient(90deg,#000 0,#000 62%,rgba(0,0,0,.85) 76%,rgba(0,0,0,0) 100%)}
-.ocm-phone{position:absolute;z-index:3;left:300px;top:262px;width:800px;height:398px;border-radius:58px;box-sizing:border-box;border:3px solid rgba(235,238,238,.9);background:#000;padding:11px 12px;box-shadow:0 30px 70px rgba(0,0,0,.7);transition:width .5s cubic-bezier(.22,1,.36,1),height .5s cubic-bezier(.22,1,.36,1),top .5s cubic-bezier(.22,1,.36,1),margin-left .5s cubic-bezier(.22,1,.36,1);will-change:transform}
-.ocm-phone.port{width:372px;height:748px;top:96px;border-radius:60px}
-.ocm-phone video{position:absolute;left:12px;top:11px;width:calc(100% - 24px);height:calc(100% - 22px);object-fit:cover;border-radius:46px;background:#000;opacity:0;transition:opacity .35s ease}
+.ocm-phone{position:absolute;z-index:3;left:300px;top:372px;width:920px;height:454px;transition:width .5s cubic-bezier(.22,1,.36,1),height .5s cubic-bezier(.22,1,.36,1),top .5s cubic-bezier(.22,1,.36,1),left .5s cubic-bezier(.22,1,.36,1);will-change:transform;filter:drop-shadow(0 30px 50px rgba(0,0,0,.7))}
+.ocm-phone.port{width:556px;height:732px;top:150px}
+.ocm-phone video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:transparent;opacity:0;transition:opacity .35s ease}
 .ocm-phone video.rdy{opacity:1}.ocm-phone video.top{z-index:2}
-.ocm-card{position:absolute;z-index:1;top:30px;height:900px;left:900px;width:600px;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 16%,#000 62%,transparent 100%);mask-image:linear-gradient(90deg,transparent 0,#000 16%,#000 62%,transparent 100%)}
-.ocm-card img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:40% 50%;opacity:0;transform:scale(1.03);transition:opacity .45s ease,transform .7s cubic-bezier(.22,1,.36,1)}
+.ocm-card{position:absolute;z-index:1;top:100px;height:740px;left:900px;width:600px;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 30%,#000 70%,transparent 100%);mask-image:linear-gradient(90deg,transparent 0,#000 30%,#000 70%,transparent 100%)}
+.ocm-card img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:62% 50%;opacity:0;transform:scale(1.03);transition:opacity .45s ease,transform .7s cubic-bezier(.22,1,.36,1)}
 .ocm-card img.on{opacity:1;transform:none}
 </style>`);
 { const add=box=>{ const secs=[...box.children].filter(c=>!c.hidden&&c.dataset&&c.dataset.t!=null);
@@ -4579,8 +4579,8 @@ window.USMAP={w:1000,h:620,ut:[222.1, 266.2],c:[[72.8,371.6,9],[907.0,214.8,9],[
   document.addEventListener('click',e=>{ const b=e.target.closest('[data-ocm]'); if(!b) return; m=+b.dataset.ocm; render(); });
   /* phone centered on the screen; photos start just behind the phone and fade off the right edge of the screen */
   const balance=()=>{ const box=sec.parentElement, br=box.getBoundingClientRect(), sr=sec.getBoundingClientRect(); if(!sr.width) return; const k=sr.width/sec.offsetWidth;
-    const cx=(br.left+br.width/2-sr.left)/k, w=ph.classList.contains('port')?372:800; ph.style.left=(cx-w/2).toFixed(1)+'px';
-    const right=(br.right-sr.left)/k, cl=cx+w/2-150; card.style.left=cl.toFixed(1)+'px'; card.style.width=Math.max(420,right-cl).toFixed(1)+'px'; };
+    const cx=(br.left+br.width/2-sr.left)/k+70, w=ph.classList.contains('port')?556:920; ph.style.left=(cx-w/2).toFixed(1)+'px';
+    const right=(br.right-sr.left)/k, cl=cx+w/2-380; card.style.left=cl.toFixed(1)+'px'; card.style.width=Math.max(700,right-cl).toFixed(1)+'px'; };
   const _sw=show; show=function(p){ _sw.apply(this,arguments); if(p==='ocp'){ balance(); requestAnimationFrame(balance); setTimeout(balance,600); } };
   const again=()=>{ balance(); setTimeout(balance,250); setTimeout(balance,900); };
   window.addEventListener('resize',again); window.addEventListener('orientationchange',again); if(window.visualViewport) visualViewport.addEventListener('resize',again);
