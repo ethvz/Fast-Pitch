@@ -4302,6 +4302,11 @@ input,textarea,[contenteditable="true"]{-webkit-user-select:text!important;user-
 .ocm-cap span{font-size:14px}
 .ocm-cap i{width:56px;height:1px}
 .ocm-cap em{margin-top:0}
+/* baked from the layout art board (Nov 14) */
+.ocm-card img[data-im="ocm/sd"]{translate:100.9px -98.1px;scale:.911}
+.ocm-card img[data-im="ocm/sensor"]{translate:165.9px 104px;scale:1.62}
+.ocm-card img[data-im="och/c0"]{translate:64.8px -192.5px;scale:1.356}
+.ocm-card img[data-im="ocm/spk"]{translate:-104.1px 362.1px;scale:2.345}
 </style>`);
 { const add=box=>{ const secs=[...box.children].filter(c=>!c.hidden&&c.dataset&&c.dataset.t!=null);
     secs.forEach((c,i)=>{ const last=i===secs.length-1, skip=last||c.classList.contains('hum')||c.classList.contains('gal')&&false;
@@ -4613,7 +4618,7 @@ window.USMAP={w:1000,h:620,ut:[222.1, 266.2],c:[[72.8,371.6,9],[907.0,214.8,9],[
   /* phone centered on the screen; photos start just behind the phone and fade off the right edge of the screen */
   const balance=()=>{ const box=sec.parentElement, br=box.getBoundingClientRect(), sr=sec.getBoundingClientRect(); if(!sr.width) return; const k=sr.width/sec.offsetWidth;
     const port=ph.classList.contains('port'), cx0=(br.left+br.width/2-sr.left)/k+70, w=port?556:920, hh=port?732:454; const lrr=L.getBoundingClientRect(), lr=(lrr.right-sr.left)/k; const right0=(br.right-sr.left)/k;
-    let pl=cx0-w/2; if(!port) pl=Math.min(Math.max(pl,lr+28),right0-w-10); ph.style.left=pl.toFixed(1)+'px'; const cx=pl+w/2;
+    let pl=cx0-w/2; if(!port) pl=Math.min(Math.max(pl,lr+28),right0-w-10); ph.style.left=(port?pl:Math.max(pl,Math.min(pl+168.5,right0-w-10))).toFixed(1)+'px'; /* art-board bake: phone nudged right where the screen has room */ const cx=pl+w/2;
     { const bv=$('#ocmBv'), bl=lr-120; bv.style.left=bl.toFixed(1)+'px'; bv.style.width=(right0-bl).toFixed(1)+'px'; }
     /* bottom of the phone lines up with the bottom of the menu */ const lb=L.lastElementChild&&L.lastElementChild.getBoundingClientRect(); if(lb&&lb.height){ const bot=(lb.bottom-sr.top)/k; ph.style.top=Math.max(20,bot-hh).toFixed(1)+'px'; }
     /* clip the recording's square corners to its own rounded phone frame */ const sc=w/(port?504:1152), ins=port?[6,10,23,9]:[3,5,7,4]; const cp=`inset(${ins.map(v=>(v*sc).toFixed(1)+'px').join(' ')} round ${(85*sc).toFixed(1)}px)`; ph.querySelectorAll('video').forEach(v=>{ v.style.clipPath=cp; v.style.webkitClipPath=cp; });
