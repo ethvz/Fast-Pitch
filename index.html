@@ -1635,6 +1635,22 @@ body.pcoll #gTitle{opacity:0!important;transition:opacity .2s}
 #flipLayer .ht[data-f=shp2] .sm::after{content:"Smart Hub Pro II";position:absolute;left:0;right:0;bottom:6%;text-align:center;font-size:11.5px;color:rgba(255,255,255,.5);letter-spacing:-.1px;pointer-events:none;z-index:3}
 .hubt{position:absolute;left:0;right:0;top:16px;text-align:center;font-size:16px;color:rgba(255,255,255,.72);letter-spacing:-.1px;pointer-events:none;z-index:3}
 
+/* Vivint App emulator section */
+.appemu{background:radial-gradient(ellipse at 72% 50%,rgba(5,229,175,.10),transparent 55%),#000}
+.appemu .ae-copy{position:absolute;left:calc(var(--gx,0px) + 120px);top:50%;transform:translateY(-50%);width:440px;color:#fff}
+.appemu .ae-copy .eb{font-size:14px;letter-spacing:2.4px;text-transform:uppercase;color:var(--vg);font-weight:500;margin-bottom:14px}
+.appemu .ae-copy h2{font-size:60px;line-height:1.04;font-weight:500;letter-spacing:-1.6px;margin:0 0 20px}
+.appemu .ae-copy p{font-size:21px;line-height:1.4;color:#a1a1a6;margin:0}
+.appemu .ae-phone{position:absolute;left:calc(var(--gx,0px) + 760px);top:50%;width:420px;height:862px;margin-top:-431px;border-radius:68px;background:linear-gradient(145deg,#3a3a3c,#1c1c1e 40%,#2c2c2e);padding:12px;box-shadow:0 0 0 1.5px #48484a,0 40px 100px rgba(0,0,0,.7),inset 0 0 0 1px rgba(255,255,255,.08)}
+.appemu .ae-btn{position:absolute;width:4px;border-radius:2px;background:#2c2c2e}
+.appemu .ae-b1{left:-4px;top:170px;height:34px}.appemu .ae-b2{left:-4px;top:230px;height:64px}.appemu .ae-b3{right:-4px;top:250px;height:100px}
+.appemu .ae-screen{position:relative;width:100%;height:100%;border-radius:57px;background:#000;overflow:hidden;color:#fff;font-family:-apple-system,'SF Pro Text',system-ui,sans-serif}
+.appemu .ae-island{position:absolute;left:50%;top:12px;width:122px;height:36px;margin-left:-61px;border-radius:18px;background:#000;z-index:5;box-shadow:0 0 0 1px #111}
+.appemu .ae-sb{position:absolute;left:0;right:0;top:0;height:58px;display:flex;align-items:center;justify-content:space-between;padding:4px 34px 0 46px;z-index:4;font-size:16px}
+.appemu .ae-sb span{display:flex;gap:6px;align-items:center}
+.appemu .ae-splash{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px}
+.appemu .ae-splash img{width:150px;filter:invert(1) brightness(2)}
+.appemu .ae-splash span{font-size:13px;color:#8e8e93}
 /* Cameras page: Spotlight tile matches the Smart Hub tile width so the left column lines up */
 .hcat .hrow>.ht[data-k=ocspot]:first-child{flex:0 0 calc((100% - 14px)*631/1263)!important}
 
@@ -2786,7 +2802,7 @@ function prBuild(){ const box=$('#prScroll'); PR.st={}; prTitle(); $('#p-prod .p
   :`<div class="psec" data-t="${t}" data-vis="0"><img class="full" alt=""><video class="ovid" muted playsinline loop hidden></video><div class="hl"></div><div class="tip">${TIPX}<div class="tt"></div></div></div>`}).join('');
   box.scrollTop=0; prRender(); }
 function prRender(only){ const box=$('#prScroll');
-  [...box.children].forEach(sec=>{ const t=sec.dataset.t; if(only&&only!==t) return; if(sec.classList.contains('xs')||t==='which'||t==='sens') return; if(t==='hero'&&LHERO[PR.id]) return; const r=secRender(PR.id,t,PR.st[t]);
+  [...box.children].forEach(sec=>{ const t=sec.dataset.t; if(only&&only!==t) return; if(sec.classList.contains('xs')||t==='which'||t==='sens'||t==='emu') return; if(t==='hero'&&LHERO[PR.id]) return; const r=secRender(PR.id,t,PR.st[t]);
     if(t==='hero'&&PR.id==='window'){ if(!sec.__drag) stripSet(sec,PR.door?1:0,false); return; }
     if(t==='hero'&&PR.id==='icp'){ const v=sec.querySelector('video'); v.__u='hero'; if(sec.dataset.vis==='1'||cur==='prod') v.play().catch(()=>{}); return; }
     if(t==='specs'){ const b=r.src.replace(/_[fs](\?.*)?$/,''); window.fsFill&&fsFill(sec.querySelector('.strip'),b);
@@ -3470,6 +3486,17 @@ const THI=k=>`assets/th/${k}.webp?v=93`;
   const _g=go; go=function(p){ if(p==='history') set(0); _g(p); }; set(0); }
 
 $('#back').innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M15 4l-8 8 8 8"/></svg>';
+/* ===== Vivint App page: "App" emulator section (above the feature section, now "Highlights") ===== */
+{ PRB.app=[['hero','i_hero'],['emu','i_phone'],['phone','i_phone']];
+  IP.emu=IP.phone; NLAB.emu='App';
+  const EMU=()=>`<div class="psec appemu" data-t="emu" data-vis="0">
+    <div class="ae-copy"><div class="eb">The Vivint App</div><h2>Your whole home.<br>One app.</h2><p>Arm the system, check cameras, lock doors and set the temperature, from anywhere.</p></div>
+    <div class="ae-phone"><div class="ae-btn ae-b1"></div><div class="ae-btn ae-b2"></div><div class="ae-btn ae-b3"></div>
+      <div class="ae-screen" id="appEmu"><div class="ae-island"></div><div class="ae-sb"><b>9:41</b><span><svg width="17" height="11" viewBox="0 0 17 11"><rect x="0" y="7" width="3" height="4" rx="1" fill="#fff"/><rect x="4.5" y="5" width="3" height="6" rx="1" fill="#fff"/><rect x="9" y="2.5" width="3" height="8.5" rx="1" fill="#fff"/><rect x="13.5" y="0" width="3" height="11" rx="1" fill="#fff"/></svg><svg width="25" height="12" viewBox="0 0 25 12"><rect x=".5" y=".5" width="21" height="11" rx="3.5" fill="none" stroke="rgba(255,255,255,.4)"/><rect x="2" y="2" width="18" height="8" rx="2" fill="#fff"/><path d="M23 4v4" stroke="rgba(255,255,255,.4)" stroke-width="1.5" stroke-linecap="round"/></svg></span></div>
+        <div class="ae-splash"><img src="assets/logo.svg" alt="vivint"><span>Interactive app demo coming soon</span></div>
+        <div class="ae-home"></div></div></div></div>`;
+  const _pb=prBuild; prBuild=function(){ _pb.apply(this,arguments); const s=$('#prScroll [data-t="emu"]'); if(s) s.outerHTML=EMU(); };
+  const _nv=navify; navify=function(){ _nv.apply(this,arguments); if(typeof cur!=='undefined'&&cur==='prod'&&PR.id==='app'){ const b=$('#barRight [data-prtab="phone"]'); if(b) b.innerHTML=SVGI('feat',22)+'<span>Highlights</span>'; } }; }
 /* ===== Products quick switcher ===== */
 { const G=[['Smart Hub & Mobile App',[['shp2','Smart Hub Pro 2','shp2_home'],['app','Vivint App']]],
    ['Cameras',[['ocp','Outdoor Camera Pro'],['ocspot','Outdoor Camera + Spotlight'],['dbcp','Doorbell Camera Pro'],['icp','Indoor Camera Pro']]],
