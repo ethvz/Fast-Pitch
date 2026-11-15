@@ -2266,7 +2266,7 @@ body.hasbk #gTitle{transform:translateX(118px)}
       </div>
       <div class="otab hum" data-t="spin"><div class="hum-st"><canvas id="humV" data-seq="assets/seq/oc-frames.jpg?v=217" width="1376" height="1032"></canvas></div></div>
       <div class="otab dbm ocm" data-t="feat">
-        <div class="ocm-card" id="ocmCard"></div>
+        <div class="ocm-card" id="ocmCard"></div><div class="ocm-bv" id="ocmBv"><video id="ocmBvV" src="assets/ocm/radar.mp4?v=1" poster="assets/ocm/radar.jpg?v=1" muted playsinline loop preload="auto"></video></div>
         <div class="ocm-phone" id="ocmPhone"><video id="ocmPv" playsinline loop preload="auto"></video><video id="ocmPv2" playsinline loop preload="auto"></video></div>
         <div class="ocm-fade"></div>
         <div class="dbm-col ocm-col"><h2 class="dbm-h" id="ocmH"></h2><div class="dbm-list" id="ocmList"></div></div>
@@ -4282,6 +4282,14 @@ input,textarea,[contenteditable="true"]{-webkit-user-select:text!important;user-
 .ocm.bleed .ocm-card{-webkit-mask-image:linear-gradient(90deg,transparent 0,rgba(0,0,0,.35) 18%,#000 46%);mask-image:linear-gradient(90deg,transparent 0,rgba(0,0,0,.35) 18%,#000 46%)}
 .ocm.bleed .ocm-card{top:0;height:1032px}
 .ocm.bleed .ocm-card img.bleedim{object-fit:cover!important;object-position:50% 50%!important;padding:0!important}
+
+.ocm-bv{position:absolute;top:0;height:964px;left:0;width:1376px;z-index:2;opacity:0;pointer-events:none;transition:opacity .45s ease;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 22%);mask-image:linear-gradient(90deg,transparent 0,#000 22%)}
+.ocm-bv video{width:100%;height:100%;object-fit:cover;object-position:50% 50%}
+.ocm.vidm .ocm-bv{opacity:1}
+.ocm.vidm .ocm-card,.ocm.vidm .ocm-phone{opacity:0!important;pointer-events:none}
+.ocm.vidm .ocm-phone video{opacity:0}
+/* camera photos sit higher so they show above the phone (fine if they run off the top) */
+.ocm:not(.solo):not(.bleed) .ocm-card img{top:2%;height:70%;object-fit:contain;object-position:62% 0%}
 </style>`);
 { const add=box=>{ const secs=[...box.children].filter(c=>!c.hidden&&c.dataset&&c.dataset.t!=null);
     secs.forEach((c,i)=>{ const last=i===secs.length-1, skip=last||c.classList.contains('hum')||c.classList.contains('gal')&&false;
@@ -4563,11 +4571,11 @@ window.USMAP={w:1000,h:620,ut:[222.1, 266.2],c:[[72.8,371.6,9],[907.0,214.8,9],[
    [['square','red'],'Smart Deter','Stop Trouble Before It Starts','Lights and warning tones tell lurkers they’ve been seen the moment they step into your detection zone.','ocm/detect',4],
    [['hd'],'4K HDR Video','See Every Detail','A 4K sensor and HDR tuning keep faces and plates clear in bright sun and deep shade.','och/c0',0],
    [['zoom'],'5.3X HD Zoom','Zoom Without the Blur','Zoom in up to 5.3X during live video and stay in sharp HD.','och/s0',3],
-   [['chip'],'AI + RADAR','Smarter, Faster Detection','AI and RADAR run right on the camera, so alerts are quicker and only for real threats.','ocm/fast',1],
+   [['chip'],'AI + RADAR','Smarter, Faster Detection','AI and RADAR run right on the camera, so alerts are quicker and only for real threats.','ocm/fast',null,'vid'],
    [['car'],'Vehicle Protection','A Shield Around Your Car','Get alerted the moment someone gets too close to your parked car.','och/c1',5],
    [['sun'],'Spotlight Tracking','Spot and Follow Lurkers','The spotlight locks on and follows anyone who shouldn’t be there.','ocm/spot',1],
    [['expand'],'140° Lens','Everything in View','A 140° lens covers your yard from corner to corner.','och/c0',0],
-   [['loop'],'10-Day Recording','Never Miss a Moment','Up to 10 days of continuous recording, so you can go back to anything.','och/s0',2],
+   [['loop'],'24/7 Continuous Playback','Never Miss a Moment','Records around the clock, so you can scroll back to any moment.','ocm/fast',2],
    [['mic'],'2-Way Talk','Speak Up From Anywhere','High-fidelity 2-way audio lets you talk to anyone on your property.','och/c1',6],
    [['wifi'],'Online, All the Time','Stay Connected','A dual-band Wi-Fi bridge gives up to 2X stronger signal than other wireless cameras.','ocm/stay',null],
    [['weather'],'Weather Resistant','Built to Last','An automotive-grade housing stands up to heat, cold, rain and snow, year after year.','ocm/rain',null,'bleed'],
@@ -4577,6 +4585,7 @@ window.USMAP={w:1000,h:620,ut:[222.1, 266.2],c:[[72.8,371.6,9],[907.0,214.8,9],[
   card.innerHTML=[...new Set(M.map(x=>x[4]))].map(k=>`<img src="assets/${k}.webp?v=2" alt="" data-im="${k}"${k==='ocm/rain'?' class="bleedim"':''}>`).join(''); cv=pv2;
   const live=()=>!!sec.closest('.page.on')&&sec.dataset.vis==='1';
   const render=()=>{ const [,,h,line,im,clip,mode]=M[m]; if(sec.classList.contains('bleed')!==(mode==='bleed')){ sec.classList.toggle('bleed',mode==='bleed'); setTimeout(balance,20); }
+    { const vm=mode==='vid', bv=$('#ocmBvV'); sec.classList.toggle('vidm',vm); if(vm&&live()){ bv.currentTime=0; bv.play().catch(()=>{}); } else bv.pause(); }
     $$('#ocmList button').forEach((b,i)=>b.classList.toggle('on',i===m));
     if(H.dataset.i!==String(m)){ H.classList.add('swap'); setTimeout(()=>{ H.innerHTML=`${h}<small>${line}</small>`; H.classList.remove('swap'); },H.dataset.i?140:0); H.dataset.i=m; }
     $$('#ocmCard img').forEach(x=>x.classList.toggle('on',x.dataset.im===im));
@@ -4591,7 +4600,9 @@ window.USMAP={w:1000,h:620,ut:[222.1, 266.2],c:[[72.8,371.6,9],[907.0,214.8,9],[
   document.addEventListener('click',e=>{ const b=e.target.closest('[data-ocm]'); if(!b) return; m=+b.dataset.ocm; render(); });
   /* phone centered on the screen; photos start just behind the phone and fade off the right edge of the screen */
   const balance=()=>{ const box=sec.parentElement, br=box.getBoundingClientRect(), sr=sec.getBoundingClientRect(); if(!sr.width) return; const k=sr.width/sec.offsetWidth;
-    const port=ph.classList.contains('port'), cx=(br.left+br.width/2-sr.left)/k+70, w=port?556:920, hh=port?732:454; ph.style.left=(cx-w/2).toFixed(1)+'px';
+    const port=ph.classList.contains('port'), cx0=(br.left+br.width/2-sr.left)/k+70, w=port?556:920, hh=port?732:454; const lrr=L.getBoundingClientRect(), lr=(lrr.right-sr.left)/k; const right0=(br.right-sr.left)/k;
+    let pl=cx0-w/2; if(!port) pl=Math.min(Math.max(pl,lr+28),right0-w-10); ph.style.left=pl.toFixed(1)+'px'; const cx=pl+w/2;
+    { const bv=$('#ocmBv'), bl=lr-120; bv.style.left=bl.toFixed(1)+'px'; bv.style.width=(right0-bl).toFixed(1)+'px'; }
     /* bottom of the phone lines up with the bottom of the menu */ const lb=L.lastElementChild&&L.lastElementChild.getBoundingClientRect(); if(lb&&lb.height){ const bot=(lb.bottom-sr.top)/k; ph.style.top=Math.max(20,bot-hh).toFixed(1)+'px'; }
     /* clip the recording's square corners to its own rounded phone frame */ const sc=w/(port?504:1152), ins=port?[6,10,23,9]:[3,5,7,4]; const cp=`inset(${ins.map(v=>(v*sc).toFixed(1)+'px').join(' ')} round ${(85*sc).toFixed(1)}px)`; ph.querySelectorAll('video').forEach(v=>{ v.style.clipPath=cp; v.style.webkitClipPath=cp; });
     const right=(br.right-sr.left)/k; let cl=cx-120;
