@@ -2008,7 +2008,7 @@ body.hasbk #gTitle{transform:translateX(118px)}
       <div id="homeTrack"><div id="homeAll" class="hpane"><div id="allTiles"></div>
       <div class="amb"></div>
       </div>
-      <div class="hpane hcat" data-c="cams" style="left:1376px"></div><div class="hpane hcat" data-c="smart" style="left:2752px"></div><div class="hpane hcat" data-c="sensors" style="left:4128px"></div></div>
+      <div class="hpane hcat" data-c="sensors" style="left:1376px"></div><div class="hpane hcat" data-c="smart" style="left:2752px"></div><div class="hpane hcat" data-c="cams" style="left:4128px"></div></div>
     </section>
 
     <!-- VERIFY -->
@@ -2381,7 +2381,7 @@ body.hasbk #gTitle{transform:translateX(118px)}
     <button id="burger" aria-label="Menu"><svg width="30" height="24" viewBox="0 0 30 24" fill="none" stroke="#141a1a" stroke-width="2.4" stroke-linecap="round"><path d="M2 3h26M2 12h18M2 21h26"/></svg></button>
     <button id="back" aria-label="Back"><svg width="14" height="22" viewBox="0 0 14 22" fill="none" stroke="var(--mint)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M11 3l-8 8 8 8"/></svg></button>
     <img id="barlogo" src="assets/logo.svg?v=95" alt="vivint — home" role="button" data-home="1" style="cursor:pointer">
-    <div id="homeSeg"><i class="sind"></i><button class="on" data-hcat="all">All Products</button><button data-hcat="cams">Cameras</button><button data-hcat="smart">Smart Home</button><button data-hcat="sensors">Sensors</button></div>
+    <div id="homeSeg"><i class="sind"></i><button class="on" data-hcat="all">All Products</button><button data-hcat="sensors">Sensors</button><button data-hcat="smart">Smart Home</button><button data-hcat="cams">Cameras</button></div>
     <div id="barRight"></div>
   </div>
 
@@ -2816,7 +2816,7 @@ const timg=(c,k)=>(TIMG[c]&&TIMG[c][k])||k;
 const HCAT={cams:[['shp2','ocp'],['ocspot','dbcp','icp']],smart:[['shp2','lock'],['garage','therm','plug']],
  sensors:[['shp2','keypad','app'],['motion','glass','window','water','smokeco'],['fire','pendant','fob','chime']]};
 let hcat='all';
-const HORD=['all','cams','smart','sensors'];
+const HORD=['all','sensors','smart','cams'];
 const paneOf=c=>c==='all'?$('#homeAll'):$(`.hpane[data-c="${c}"]`);
 $$('.hpane.hcat').forEach(box=>{ const c=box.dataset.c, rows=HCAT[c], w=HROW[c];
   box.innerHTML=`<div class="hhead"><div class="eb">${HHEAD[c][0]}</div><h2>${HHEAD[c][1]}</h2></div>`+rows.map((r,ri)=>`<div class="hrow" style="flex:${w[ri]} 1 0">`+r.map(k=>`<div class="ht" data-k="${k}" ${TACT[k]} style="flex-grow:${TILE[k][0]}"><div class="lg"></div>${CROPK.includes(k)?`<img src="assets/tiles/${timg(c,k)}.webp?v=176" alt="">`:`<img class="cp" src="assets/cat/${timg(c,k)}.webp?v=176" alt=""><div class="cl">${CNAME[k]}</div>`}</div>`).join('')+'</div>').join(''); });
@@ -3299,7 +3299,7 @@ Object.assign(NLAB,{sign0:'Sign',sign1:'In yard'});
 IP.ysign='<circle cx="12" cy="10.5" r="9"/><path d="M12 19.5V23"/><text x="12" y="12.3" text-anchor="middle" font-size="5.6" font-weight="700" letter-spacing="-.2" fill="currentColor" stroke="none" font-family="Vivint Sans,Figtree,sans-serif">vivint</text>';
 navify=function(){ const r=$('#barRight'); if(!r) return;
   if($('#bar').classList.contains('home')){
-    r.innerHTML=[['all','All'],['cams','Cameras'],['smart','Smart Home'],['sensors','Sensors']].map(([k,l])=>`<button class="bbtn${hcat===k?' on':''}" data-hcat="${k}">${SVGI(k,22)}<span>${l}</span></button>`).join('')+
+    r.innerHTML=[['all','All'],['sensors','Sensors'],['smart','Smart Home'],['cams','Cameras']].map(([k,l])=>`<button class="bbtn${hcat===k?' on':''}" data-hcat="${k}">${SVGI(k,22)}<span>${l}</span></button>`).join('')+
       '';
     let hx=$('#homeX'); if(!hx){ $('#bar').insertAdjacentHTML('beforeend','<div id="homeX"></div>'); hx=$('#homeX'); }
     hx.innerHTML=`<button class="bbtn" data-go="about">${SVGI('about',22)}<span>About</span></button><button class="bbtn" data-go="videos">${SVGI('vid',22)}<span>Videos</span></button><button class="bbtn" data-go="sign">${SVGI('ysign',22)}<span>Yard Sign</span></button>`;
@@ -3472,9 +3472,9 @@ const THI=k=>`assets/th/${k}.webp?v=93`;
 $('#back').innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M15 4l-8 8 8 8"/></svg>';
 /* ===== Products quick switcher ===== */
 { const G=[['Smart Hub & Mobile App',[['shp2','Smart Hub Pro 2','shp2_home'],['app','Vivint App']]],
-   ['Sensors',[['keypad','Keypad'],['motion','Motion Sensor'],['glass','Glass Break'],['window','Door & Window'],['water','Water Sensor'],['smokeco','Smoke & CO Detector'],['fire','Smoke/CO Monitor'],['pendant','Panic Pendant'],['fob','Key Fob'],['chime','Chime Extender']]],
+   ['Cameras',[['ocp','Outdoor Camera Pro'],['ocspot','Outdoor Camera + Spotlight'],['dbcp','Doorbell Camera Pro'],['icp','Indoor Camera Pro']]],
    ['Smart Home',[['lock','Smart Lock'],['garage','Garage Control'],['therm','Smart Thermostat'],['plug','Smart Plug']]],
-   ['Cameras',[['ocp','Outdoor Camera Pro'],['ocspot','Outdoor Camera + Spotlight'],['dbcp','Doorbell Camera Pro'],['icp','Indoor Camera Pro']]]];
+   ['Sensors',[['keypad','Keypad'],['motion','Motion Sensor'],['glass','Glass Break'],['window','Door & Window'],['water','Water Sensor'],['smokeco','Smoke & CO Detector'],['fire','Smoke/CO Monitor'],['pendant','Panic Pendant'],['fob','Key Fob'],['chime','Chime Extender']]]];
   const ic='<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="7" height="7" rx="1.8"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.8"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.8"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.8"/></svg>';
   $('#bar').insertAdjacentHTML('beforeend',`<button id="prodBtn" aria-label="All Products">${ic}All Products</button>`);
   $('#stage').insertAdjacentHTML('beforeend',`<div id="psheet"><div class="dim"></div><div class="pan"><div class="hd"><b>Products</b><button class="x" aria-label="Close"><svg width="14" height="14" viewBox="0 0 14 14" stroke="#fff" stroke-width="1.9" stroke-linecap="round"><path d="M2 2l10 10M12 2L2 12"/></svg></button></div>
