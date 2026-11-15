@@ -1993,6 +1993,11 @@ body.hasbk #gTitle{transform:translateX(118px)}
 .thc .thm[data-k=save] .thm-fine{display:none!important}
 #thSaveBg .st em{display:block;font-style:normal;font-size:9.5px;line-height:1.4;color:rgba(255,255,255,.42);max-width:470px;margin-top:16px}
 .strip.fsx>.fsp-pane{background:transparent!important}
+#stage #covTbl.cv2.mx{background:transparent!important;animation:none!important}
+.cv2.mx .cv-card{animation:none!important;z-index:2}
+.cvMorph{position:absolute;border-radius:32px;overflow:hidden;color:#fff;z-index:1;pointer-events:none}
+.cvMorph .lbl{position:absolute;left:50%;top:160px;transform-origin:0 0;transform:rotate(90deg) translateY(-50%);white-space:nowrap;font-size:42px;font-weight:700}
+.cvMorph>svg:first-child{stroke:#fff}
 </style>
 <div id="stage">
   <div id="screen">
@@ -3584,6 +3589,23 @@ IP.tools='<path d="M14.5 6.5a4 4 0 0 0-5 5L4 17l3 3 5.5-5.5a4 4 0 0 0 5-5l-2.5 2
   box.addEventListener('click',e=>{ if(e.target===box||e.target.closest('.cvx')){ e.stopPropagation(); cov(false); } });
   document.addEventListener('click',e=>{ const h=e.target.closest('[data-cvs]'); if(!h) return; sel=+h.dataset.cvs;
     $$('#covTbl .hd').forEach((x,i)=>x.classList.toggle('on',i===sel)); $$('#covTbl .hc').forEach((x,i)=>x.classList.toggle('on',i%3===sel)); }); }
+/* Protection: the "Prefer more protection?" tab expands into the coverage card (and shrinks back) instead of opening an overlay */
+{ let busy=0; const E='cubic-bezier(.22,1,.36,1)', RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const rel=(box,el)=>{ const b=box.getBoundingClientRect(), r=el.getBoundingClientRect(), k=b.width/box.offsetWidth||1; return {left:(r.left-b.left)/k+'px',top:(r.top-b.top)/k+'px',width:r.width/k+'px',height:r.height/k+'px'}; };
+  cov=function(on){ const box=$('#covTbl'), tab=$('#p-protection .ptab'), card=box.querySelector('.cv-card'), fades=[$('#p-protection h2'),$('#p-protection .wlist')];
+    if(busy) return; if(on===(box.style.display!=='none')) return;
+    const d=RM?0:1; box.classList.add('mx'); fades.forEach(f=>{ f.style.transition='opacity .4s ease'; f.style.opacity=on?.12:1; });
+    if(on){ box.style.display='block'; card.style.opacity=0; }
+    const A=rel(box,tab), B=rel(box,card); busy=1;
+    const m=document.createElement('div'); m.className='cvMorph'; m.innerHTML=tab.innerHTML; box.appendChild(m);
+    tab.style.visibility='hidden';
+    const kf=on?[{...A,backgroundColor:'#1c1c1c'},{...B,backgroundColor:'#121212'}]:[{...B,backgroundColor:'#121212'},{...A,backgroundColor:'#1c1c1c'}];
+    const lab=[...m.children]; lab.forEach(c=>c.animate(on?[{opacity:1},{opacity:0}]:[{opacity:0},{opacity:0,offset:.6},{opacity:1}],{duration:on?160*d:520*d,fill:'forwards'}));
+    if(!on) card.animate([{opacity:1},{opacity:0}],{duration:150*d,fill:'forwards'});
+    const a=m.animate(kf,{duration:(on?560:480)*d,easing:E,fill:'forwards',delay:on?0:90*d});
+    if(on) setTimeout(()=>{ card.animate([{opacity:0},{opacity:1}],{duration:260*d,easing:'ease-out',fill:'forwards'}).onfinish=()=>{ card.style.opacity=''; m.remove(); busy=0; }; },320*d);
+    a.onfinish=()=>{ if(on) return; m.remove(); card.getAnimations().forEach(x=>x.cancel()); box.style.display='none'; tab.style.visibility=''; tab.style.display='block'; busy=0; };
+  }; }
 
 /* ===== Playback: Clip / Playback / Premium Video ===== */
 { const OK='<svg width="20" height="20" viewBox="0 0 22 22" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 11.5l4 4 8-9"/></svg>';
