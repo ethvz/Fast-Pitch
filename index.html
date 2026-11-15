@@ -4620,7 +4620,7 @@ window.USMAP={w:1000,h:620,ut:[222.1, 266.2],c:[[72.8,371.6,9],[907.0,214.8,9],[
     /* 5.3X zoom: lens close-up spans the phone's width, filling the space above it */
     { const si=card.querySelector('img[data-im="ocm/zoom"]'); if(si&&!port){ const ptop=parseFloat(ph.style.top)||372, hh2=Math.max(260,ptop-30); si.style.height=hh2.toFixed(1)+'px'; si.style.width=w.toFixed(1)+'px'; si.style.top=Math.max(0,ptop-12-hh2).toFixed(1)+'px'; si.style.left=(pl-cl).toFixed(1)+'px'; } }
     /* 4K sensor: exploded view at phone width; lens stack and sensor sit above the phone, speaker parts tuck behind it */
-    { const si=card.querySelector('img[data-im="ocm/sensor"]'); if(si&&!port){ const ptop=parseFloat(ph.style.top)||372, hh2=w*1119/1600; si.style.width=w.toFixed(1)+'px'; si.style.height=hh2.toFixed(1)+'px'; si.style.top=Math.max(0,ptop-6-.665*hh2).toFixed(1)+'px'; si.style.left=(pl-cl).toFixed(1)+'px'; } } };
+    { const si=card.querySelector('img[data-im="ocm/sensor"]'); if(si&&!port){ const ptop=parseFloat(ph.style.top)||372, sw=Math.max(w,right0+40-pl), hh2=sw*1119/1600; si.style.width=sw.toFixed(1)+'px'; si.style.height=hh2.toFixed(1)+'px'; si.style.top=Math.max(0,ptop-6-.665*hh2).toFixed(1)+'px'; si.style.left=(pl-cl).toFixed(1)+'px'; } } };
   const _sw=show; show=function(p){ _sw.apply(this,arguments); if(p==='ocp'){ balance(); requestAnimationFrame(balance); setTimeout(balance,600); } };
   const again=()=>{ balance(); setTimeout(balance,250); setTimeout(balance,900); };
   window.addEventListener('resize',again); window.addEventListener('orientationchange',again); if(window.visualViewport) visualViewport.addEventListener('resize',again);
