@@ -4714,6 +4714,9 @@ barFor(cur);
       if(v.im) f.push(`drop-shadow(${x}px ${y}px ${b/2}px ${col})`); else o+=`box-shadow:${x}px ${y}px ${b}px ${col}!important;`; }
     if(f.length) o+=`filter:${f.join(' ')}!important;`;
     if(n('rf')) o+=`-webkit-box-reflect:below 2px linear-gradient(transparent 45%,rgba(255,255,255,${(n('rf')/100).toFixed(2)}))!important;`;
+    { const g=[]; if(n('fdt')) g.push(`linear-gradient(to bottom,transparent ${n('mt')}%,#000 ${n('mt')+n('fdt')}%)`); if(n('fdb')) g.push(`linear-gradient(to top,transparent ${n('mb')}%,#000 ${n('mb')+n('fdb')}%)`);
+      if(n('fdl')) g.push(`linear-gradient(to right,transparent ${n('ml')}%,#000 ${n('ml')+n('fdl')}%)`); if(n('fdr')) g.push(`linear-gradient(to left,transparent ${n('mr')}%,#000 ${n('mr')+n('fdr')}%)`);
+      if(g.length){ const gi=g.join(','); o+=`-webkit-mask-image:${gi}!important;mask-image:${gi}!important;-webkit-mask-size:100% 100%!important;mask-size:100% 100%!important;-webkit-mask-repeat:no-repeat!important;mask-repeat:no-repeat!important;`+(g.length>1?'-webkit-mask-composite:source-in!important;mask-composite:intersect!important;':''); } }
     if(n('mt')||n('mr')||n('mb')||n('ml')||n('mrad')) o+=`clip-path:inset(${n('mt')}% ${n('mr')}% ${n('mb')}% ${n('ml')}% round ${n('mrad')}px)!important;`;
     if(v.ff) o+=`font-family:${v.ff}!important;`; if(v.fz) o+=`font-size:${n('fz')}px!important;`;
     if(v.fw) o+=`font-weight:${v.fw==='b'?700:400}!important;`; if(v.fi) o+=`font-style:${v.fi==='i'?'italic':'normal'}!important;`;
@@ -4837,12 +4840,34 @@ body.ly-on.ly-has:not(.ly-noinsp) #lyInsp{opacity:1;pointer-events:auto;transfor
 #lyBox.lk{border-style:dashed}
 .lyBar button.fmt.on{background:#fff;color:#000}
 .lyBar button.fmt svg{width:18px;height:18px}
+#lyCrop{position:fixed;z-index:9000;display:none;pointer-events:none}
+body.ly-crop #lyCrop{display:block}
+body.ly-crop #lyBox{display:none!important}
+#lyCrop .win{position:absolute;pointer-events:auto;cursor:move;touch-action:none;box-shadow:0 0 0 1px rgba(255,255,255,.9),0 0 0 4000px rgba(0,0,0,.55);outline:1px solid rgba(0,0,0,.35)}
+#lyCrop .win .g1,#lyCrop .win .g2{position:absolute;inset:0;pointer-events:none}
+#lyCrop .win .g1{border-left:1px solid rgba(255,255,255,.35);border-right:1px solid rgba(255,255,255,.35);left:33.33%;right:33.33%}
+#lyCrop .win .g2{border-top:1px solid rgba(255,255,255,.35);border-bottom:1px solid rgba(255,255,255,.35);top:33.33%;bottom:33.33%}
+#lyCrop i{position:absolute;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.6);touch-action:none;z-index:1}
+#lyCrop i[data-h=t],#lyCrop i[data-h=b]{left:50%;width:44px;height:6px;margin-left:-22px;border-radius:3px;cursor:ns-resize}
+#lyCrop i[data-h=t]{top:-3px}#lyCrop i[data-h=b]{bottom:-3px}
+#lyCrop i[data-h=l],#lyCrop i[data-h=r]{top:50%;height:44px;width:6px;margin-top:-22px;border-radius:3px;cursor:ew-resize}
+#lyCrop i[data-h=l]{left:-3px}#lyCrop i[data-h=r]{right:-3px}
+#lyCrop i[data-h=tl],#lyCrop i[data-h=tr],#lyCrop i[data-h=bl],#lyCrop i[data-h=br]{width:22px;height:22px;background:none;box-shadow:none;border:0 solid #fff;filter:drop-shadow(0 1px 3px rgba(0,0,0,.6))}
+#lyCrop i[data-h=tl]{left:-4px;top:-4px;border-width:5px 0 0 5px;cursor:nwse-resize}
+#lyCrop i[data-h=tr]{right:-4px;top:-4px;border-width:5px 5px 0 0;cursor:nesw-resize}
+#lyCrop i[data-h=bl]{left:-4px;bottom:-4px;border-width:0 0 5px 5px;cursor:nesw-resize}
+#lyCrop i[data-h=br]{right:-4px;bottom:-4px;border-width:0 5px 5px 0;cursor:nwse-resize}
+#lyCrop button{position:fixed;top:72px;pointer-events:auto;height:40px;padding:0 20px;border-radius:20px;border:0;font:600 14px -apple-system,system-ui,sans-serif;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.5);z-index:2}
+#lyCrop .cdone{left:50%;margin-left:6px;background:#ffd60a;color:#000}
+#lyCrop .creset{right:50%;margin-right:6px;background:rgba(44,44,46,.95);color:#fff}
+body.ly-crop #lyInsp{opacity:.98}
+#lyInsp .kfh{font-size:11.5px;color:rgba(235,235,245,.5);margin:-2px 0 4px}
 body.ly-on [contenteditable=true]{outline:2px solid #05E5AF!important;cursor:text;-webkit-user-select:text!important;user-select:text!important}
 `; document.head.appendChild(st);
   const mk=(tag,id,html)=>{ const e=document.createElement(tag); e.id=id; if(html!=null) e.innerHTML=html; document.body.appendChild(e); return e; };
   const ico='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16v4z"/><path d="M13.5 6.5l4 4"/></svg>';
   const btn=mk('button','lyBtn',ico+'Edit layout');
-  const bar=mk('div','lyBar',`<span class="lyseg"><button data-m="c" class="on">Content</button><button data-m="s">Shapes</button></span><span class="lyt" data-hint></span><span class="lysel"><span class="lysep"></span><button data-a="txt">Edit text</button><button data-a="rs">Reset</button></span><span class="lysep"></span><button data-a="undo" disabled>Undo</button><button data-a="fmt" class="fmt on" title="Format"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4l6 6-8.5 8.5a3 3 0 01-4.2 0l-1.8-1.8a3 3 0 010-4.2z"/><path d="M5 19c-1 1-2 1.5-3 1.5"/></svg>Format</button><button data-a="discard" class="dis" hidden>Remove edits</button><button data-a="pub" class="pub" hidden>Publish ↑</button><button data-a="done" class="go">Done</button>`); bar.classList.add('lyBar');
+  const bar=mk('div','lyBar',`<span class="lyseg"><button data-m="c" class="on">Content</button><button data-m="s">Shapes</button></span><span class="lyt" data-hint></span><span class="lysel"><span class="lysep"></span><button data-a="crop">Crop</button><button data-a="txt">Edit text</button><button data-a="rs">Reset</button></span><span class="lysep"></span><button data-a="undo" disabled>Undo</button><button data-a="fmt" class="fmt on" title="Format"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4l6 6-8.5 8.5a3 3 0 01-4.2 0l-1.8-1.8a3 3 0 010-4.2z"/><path d="M5 19c-1 1-2 1.5-3 1.5"/></svg>Format</button><button data-a="discard" class="dis" hidden>Remove edits</button><button data-a="pub" class="pub" hidden>Publish ↑</button><button data-a="done" class="go">Done</button>`); bar.classList.add('lyBar');
   const box=mk('div','lyBox','<b></b><i></i>');
   const toast=mk('div','lyToast');
   const modal=mk('div','lyModal','<div class="lyCard"><h3></h3><p></p><div class="row"><button data-x="no">Cancel</button><button data-x="yes" class="go">Publish</button></div></div>');
@@ -4859,7 +4884,7 @@ body.ly-on [contenteditable=true]{outline:2px solid #05E5AF!important;cursor:tex
   const groupSel=el=>{ const p=el.parentElement; if(!p) return selOf(el); const cls=[...el.classList].filter(c=>!STATE.test(c)&&!/^ly/.test(c)).map(c=>'.'+CSS.escape(c)).join(''); return selOf(p)+' > '+el.tagName.toLowerCase()+cls; };
   const TXT='h1,h2,h3,h4,h5,h6,p,small,li,blockquote,figcaption,label,.sub,.lede';
   const leafText=el=>{ for(const c of el.children){ if(!/^(BR|B|I|EM|STRONG|SPAN|SMALL|SUP|SUB)$/.test(c.tagName)) return false; } return el.textContent.trim().length>0; };
-  const isUI=el=>!!el.closest('#lyBar,#lyInsp,#lyBtn,#lyBox,#lyToast,#lyModal');
+  const isUI=el=>!!el.closest('#lyBar,#lyInsp,#lyBtn,#lyBox,#lyToast,#lyModal,#lyCrop');
   const visible=el=>{ const cs=getComputedStyle(el); return !(+cs.opacity<.05||cs.visibility==='hidden'); };
   const pickContent=(x,y)=>{ for(const el of document.elementsFromPoint(x,y)){ if(isUI(el)) return null; if(el.closest('button,a,[data-ocm],[data-dbm],nav,.rail,input,select,textarea')) return null; if(!visible(el)) continue;
       if(/^(IMG|VIDEO|CANVAS|PICTURE)$/.test(el.tagName)) return el; if(el.tagName==='svg'||el.closest('svg')) return el.closest('svg');
@@ -4875,6 +4900,7 @@ body.ly-on [contenteditable=true]{outline:2px solid #05E5AF!important;cursor:tex
   const place=()=>{ if(!cur||!on){ document.body.classList.remove('ly-has'); return; } const r=cur.getBoundingClientRect(); Object.assign(box.style,{left:(r.left-4)+'px',top:(r.top-4)+'px',width:(r.width+8)+'px',height:(r.height+8)+'px',borderRadius:mode==='s'?getComputedStyle(cur).borderRadius:'6px'});
     { const bl=r.left-4, bt=r.top-4, W=innerWidth, Hh=innerHeight; const ix=Math.min(r.right+4,W-20), iy=Math.min(r.bottom+4,Hh-90); const ki=box.querySelector('i'); ki.style.left=(ix-bl-13)+'px'; ki.style.top=(iy-bt-13)+'px'; const bx=Math.min(Math.max(r.left+r.width/2,40),W-40), by=Math.max(r.top-40,140); const kb=box.querySelector('b'); kb.style.left=(bx-bl)+'px'; kb.style.top=(by-bt-12)+'px'; }
     document.body.classList.add('ly-has'); const v=E()[hid(keyOf(cur))]||{};
+    bar.querySelector('[data-a=crop]').style.display=isImg(cur)?'':'none';
     bar.querySelector('[data-a=txt]').style.display=(!/^(IMG|VIDEO|CANVAS|svg|PICTURE)$/.test(cur.tagName)&&cur.textContent.trim())?'':'none';
     sync(); };
   after=place;
@@ -4889,7 +4915,7 @@ body.ly-on [contenteditable=true]{outline:2px solid #05E5AF!important;cursor:tex
   const P=(k,opts)=>`<span class="kp"><select data-k="${k}">${opts.map(([v,l])=>`<option value="${v}">${l}</option>`).join('')}</select></span>`;
   const SEC=(id,title,head,body,show)=>`<div class="ks${KOPEN[id]?' open':''}" data-sec="${id}"${show?` data-show="${show}"`:''}><div class="kh"><button class="kt" data-tog="${id}">${SV.chev}${title}</button>${head||''}</div>${body?`<div class="kb">${body}</div>`:''}</div>`;
   const SEG=(k,items)=>`<div class="kseg">${items.map(([v,l,t])=>`<button data-set="${k}:${v}" title="${t||''}">${l}</button>`).join('')}</div>`;
-  const KOPEN={fill:1,border:1,corner:1,shadow:1,refl:0,op:1,mask:1,adj:1,font:1,align:1,space:1,caps:0,order:1,size:1,pos:1,rot:1};
+  const KOPEN={fill:1,border:1,corner:1,shadow:1,refl:0,op:1,mask:1,fade:1,adj:1,font:1,align:1,space:1,caps:0,order:1,size:1,pos:1,rot:1};
   const AL=d=>`<svg viewBox="0 0 16 12"><path d="${d}" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>`;
   const PRE_SHAPE=[{ft:'color',bg:'#05e5af',fg:'#000000',bs:'none',sh:'none'},{ft:'color',bg:'#ffffff',fg:'#111111',bs:'none',sh:'none'},{ft:'color',bg:'#1c1c1e',fg:'#ffffff',bs:'none',sh:'none'},
     {ft:'none',bs:'solid',bw:1.5,bc:'#ffffff',fg:'#ffffff',sh:'none'},{ft:'color',bg:'rgba(255,255,255,0.1)',bs:'solid',bw:1,bc:'rgba(255,255,255,0.3)',fg:'#ffffff',sh:'none'},{ft:'grad',bg:'#05e5af',bg2:'#06624f',ga:135,fg:'#000000',bs:'none',sh:'drop',shb:24,sho:8,shp:45,sha:270,shc:'#000000'}];
@@ -4909,7 +4935,8 @@ body.ly-on [contenteditable=true]{outline:2px solid #05E5AF!important;cursor:tex
       +SEC('shadow','Shadow',P('sh',[['','Default'],['none','No Shadow'],['drop','Drop Shadow']]),`<div data-show="sh:drop">${S('shb','Blur',0,100,1,'pt')}${S('sho','Offset',0,100,1,'pt')}${S('shp','Opacity',0,100,1,'%')}${S('sha','Angle',0,359,1,'°')}${C('shc','Color')}</div>`)
       +SEC('refl','Reflection',`<label class="ksw"><input type="checkbox" data-chk="rf"><i></i></label>`,`<div data-show="rf:on">${S('rf','Amount',0,100,1,'%')}</div>`)
       +SEC('op','Opacity','',S('op','Opacity',0,100,1,'%'));
-    const image=!img?'':SEC('mask','Mask','',`${S('mt','Top',0,90,1,'%')}${S('mb','Bottom',0,90,1,'%')}${S('ml','Left',0,90,1,'%')}${S('mr','Right',0,90,1,'%')}${S('mrad','Corner',0,400,1,'px')}<div class="kbtns">${B('maskReset','Reset Mask')}</div>`)
+    const image=!img?'':SEC('mask','Mask & Crop','',`<div class="kbtns">${B('crop','<svg viewBox="0 0 20 20" width="18" height="18"><path d="M5 1v14h14M1 5h14v14" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>Crop Photo')}</div>${S('mt','Top',0,95,1,'%')}${S('mb','Bottom',0,95,1,'%')}${S('ml','Left',0,95,1,'%')}${S('mr','Right',0,95,1,'%')}${S('mrad','Corner',0,400,1,'px')}<div class="kbtns">${B('maskReset','Reset Mask')}</div>`)
+      +SEC('fade','Gradient Fade','',`<div class="kfh">Fade each edge to transparent</div>${S('fdt','Top',0,100,1,'%')}${S('fdb','Bottom',0,100,1,'%')}${S('fdl','Left',0,100,1,'%')}${S('fdr','Right',0,100,1,'%')}<div class="kbtns">${B('fadeAll','Soft Edges')}${B('fadeReset','No Fade')}</div>`)
       +SEC('adj','Adjust Image','',`${S('ex','Exposure',-100,100,1,'')}${S('co','Contrast',-100,100,1,'')}${S('sa','Saturation',-100,100,1,'')}${S('wa','Warmth',-100,100,1,'')}${S('bl','Blur',0,20,.5,'px')}<div class="kbtns">${B('enhance','✦ Enhance')}${B('adjReset','Reset')}</div>`);
     const text=!txt?'':SEC('font','Font','',`<div class="kr"><span class="kl">Font</span>${P('ff',[['','Default'],["'Vivint Sans',Helvetica,Arial,sans-serif",'Vivint Sans'],["Figtree,system-ui,sans-serif",'Figtree'],["-apple-system,'SF Pro Display',system-ui,sans-serif",'SF Pro'],["'Helvetica Neue',Helvetica,Arial,sans-serif",'Helvetica Neue'],["Georgia,serif",'Georgia'],["'Snell Roundhand','Brush Script MT',cursive",'Snell Roundhand']])}</div>`
         +`<div class="kr"><span class="kl">Style</span><div class="kseg">${[['fw','b','<b>B</b>'],['fi','i','<i>I</i>'],['fu','u','<u>U</u>'],['fu','s','<s>S</s>']].map(([k,val,l])=>`<button data-tgl="${k}:${val}">${l}</button>`).join('')}</div></div>`
@@ -4976,6 +5003,9 @@ body.ly-on [contenteditable=true]{outline:2px solid #05E5AF!important;cursor:tex
     const a=b.dataset.act; if(!a) return;
     if(a==='fh'||a==='fv'){ change(v=>{ v[a]=v[a]?0:1; }); sync(); return; }
     if(a==='front'||a==='back'||a==='fwd'||a==='bwd'){ const cs=getComputedStyle(cur); change(v=>{ const z0=v.z!=null&&v.z!==''?num(v.z):(parseInt(cs.zIndex)||0); v.z=a==='front'?Math.max(z0,40)+1:a==='back'?0:a==='fwd'?z0+1:Math.max(0,z0-1); if(cs.position==='static') v.zp=1; }); say(a==='front'?'Brought to front':a==='back'?'Sent to back':a==='fwd'?'Brought forward':'Sent backward',1200); return; }
+    if(a==='crop'){ cropEl?cropOff():cropOn(); return; }
+    if(a==='fadeAll'){ change(v=>Object.assign(v,{fdt:18,fdb:18,fdl:18,fdr:18})); sync(); return; }
+    if(a==='fadeReset'){ change(v=>{ ['fdt','fdb','fdl','fdr'].forEach(k=>delete v[k]); }); sync(); return; }
     if(a==='maskReset'){ change(v=>{ ['mt','mr','mb','ml','mrad'].forEach(k=>delete v[k]); }); sync(); return; }
     if(a==='adjReset'){ change(v=>{ ['ex','co','sa','wa','bl'].forEach(k=>delete v[k]); }); sync(); return; }
     if(a==='enhance'){ change(v=>Object.assign(v,{ex:6,co:12,sa:18})); sync(); return; }
@@ -4986,9 +5016,34 @@ body.ly-on [contenteditable=true]{outline:2px solid #05E5AF!important;cursor:tex
     const mv=ev=>{ let a=Math.atan2(ev.clientX-cx,-(ev.clientY-cy))*180/Math.PI; a=Math.round(a); for(const t of [-180,-90,0,90,180]) if(Math.abs(a-t)<4) a=t; const v=get(); v.r=a; if(isImg(cur)) v.im=1; write(); };
     const upd=()=>{ removeEventListener('pointermove',mv,true); removeEventListener('pointerup',upd,true); save(curId); }; addEventListener('pointermove',mv,true); addEventListener('pointerup',upd,true); mv(e); });
   ins.addEventListener('keydown',e=>e.stopPropagation());
+  /* ---------- crop: drag the edges of the photo (sets the mask insets) ---------- */
+  const crop=mk('div','lyCrop','<div class="win"><i data-h="t"></i><i data-h="b"></i><i data-h="l"></i><i data-h="r"></i><i data-h="tl"></i><i data-h="tr"></i><i data-h="bl"></i><i data-h="br"></i><span class="g1"></span><span class="g2"></span></div><button class="cdone">Done</button><button class="creset">Reset</button>');
+  let cropEl=null, cdrag=null;
+  const cropMap=v=>({t:v.fv?'mb':'mt',b:v.fv?'mt':'mb',l:v.fh?'mr':'ml',r:v.fh?'ml':'mr'});
+  const cropPlace=()=>{ if(!cropEl) return; const r=cropEl.getBoundingClientRect(), v=get(), m=cropMap(v);
+    Object.assign(crop.style,{left:r.left+'px',top:r.top+'px',width:r.width+'px',height:r.height+'px'});
+    const w=crop.querySelector('.win'); Object.assign(w.style,{top:num(v[m.t])+'%',bottom:num(v[m.b])+'%',left:num(v[m.l])+'%',right:num(v[m.r])+'%',borderRadius:num(v.mrad)+'px'});
+    /* keep every handle on screen even when the photo runs past the edges */
+    const wr=w.getBoundingClientRect(), T=84, Bm=innerHeight-90, Lm=12, Rm=innerWidth-12, vx0=Math.max(wr.left,Lm), vx1=Math.min(wr.right,Rm), vy0=Math.max(wr.top,T), vy1=Math.min(wr.bottom,Bm), cx=(vx0+vx1)/2-wr.left, cy=(vy0+vy1)/2-wr.top;
+    const H=k=>w.querySelector(`[data-h=${k}]`), tt=Math.max(-3,T-wr.top), bb=Math.max(-3,wr.bottom-Bm), ll=Math.max(-3,Lm-wr.left), rr=Math.max(-3,wr.right-Rm);
+    Object.assign(H('t').style,{top:tt+'px',left:cx+'px'}); Object.assign(H('b').style,{bottom:bb+'px',left:cx+'px'}); Object.assign(H('l').style,{left:ll+'px',top:cy+'px'}); Object.assign(H('r').style,{right:rr+'px',top:cy+'px'});
+    const c4=(k,a,b)=>Object.assign(H(k).style,a,b); c4('tl',{top:(tt-1)+'px'},{left:(ll-1)+'px'}); c4('tr',{top:(tt-1)+'px'},{right:(rr-1)+'px'}); c4('bl',{bottom:(bb-1)+'px'},{left:(ll-1)+'px'}); c4('br',{bottom:(bb-1)+'px'},{right:(rr-1)+'px'}); };
+  const cropOn=()=>{ if(!cur||!isImg(cur)) return; cropEl=cur; get(); ['clip-path','-webkit-mask-image','mask-image'].forEach(p=>cropEl.style.setProperty(p,'none','important')); document.body.classList.add('ly-crop'); snap(); cropPlace(); say('Drag the edges or corners to crop · drag inside to move the crop',2500); };
+  const cropOff=()=>{ if(!cropEl) return; ['clip-path','-webkit-mask-image','mask-image'].forEach(p=>cropEl.style.removeProperty(p)); cropEl=null; document.body.classList.remove('ly-crop'); if(curId) save(curId); place(); };
+  crop.addEventListener('pointerdown',e=>{ e.preventDefault(); e.stopPropagation(); if(e.target.closest('.cdone')){ cropOff(); return; }
+    if(e.target.closest('.creset')){ change(v=>{ ['mt','mr','mb','ml'].forEach(k=>delete v[k]); }); cropPlace(); return; }
+    const h=e.target.dataset.h||(e.target.closest('.win')?'move':null); if(!h) return; const v=get(), m=cropMap(v), r=cropEl.getBoundingClientRect();
+    cdrag={h,x:e.clientX,y:e.clientY,w:r.width,hh:r.height,m,t0:num(v[m.t]),b0:num(v[m.b]),l0:num(v[m.l]),r0:num(v[m.r])}; },true);
+  addEventListener('pointermove',e=>{ if(!cdrag) return; e.preventDefault(); const d=cdrag, v=get(), px=(e.clientX-d.x)/d.w*100, py=(e.clientY-d.y)/d.hh*100, cl=(a,lo,hi)=>Math.round(Math.max(lo,Math.min(hi,a))*10)/10;
+    let t=d.t0,b=d.b0,l=d.l0,r=d.r0;
+    if(d.h==='move'){ const dx=cl(px,-l,r), dy=cl(py,-t,b); l+=dx; r-=dx; t+=dy; b-=dy; }
+    else { if(d.h.includes('t')) t=cl(d.t0+py,0,95-b); if(d.h.includes('b')) b=cl(d.b0-py,0,95-t); if(d.h.includes('l')) l=cl(d.l0+px,0,95-r); if(d.h.includes('r')) r=cl(d.r0-px,0,95-l); }
+    v[d.m.t]=t; v[d.m.b]=b; v[d.m.l]=l; v[d.m.r]=r; v.im=1; write(); cropPlace(); },{capture:true,passive:false});
+  addEventListener('pointerup',()=>{ if(cdrag){ cdrag=null; save(curId); } },true);
+  addEventListener('resize',cropPlace);
   const snap=()=>{ undo.push([curId,JSON.stringify(L[curId]||null)]); if(undo.length>80) undo.shift(); bar.querySelector('[data-a=undo]').disabled=false; };
   const pend={}; const save=id=>{ clearTimeout(pend[id]); pend[id]=setTimeout(async()=>{ if(!col){ delete pend[id]; return; } const v=L[id]; try{ if(!v) await col.doc(id).delete(); else { const o={}; for(const k in v) if(v[k]!==undefined) o[k]=v[k]; o.at=Date.now(); await col.doc(id).set(o); } pubState(); }catch(e){ say(e&&e.code==='permission_denied'?'You don’t have edit access':'Couldn’t save, try again'); } delete pend[id]; },350); };
-  const select=el=>{ endTxt(); cur=el; group=false; curId=el?hid(selOf(el)):null; place(); };
+  const select=el=>{ if(typeof cropOff==='function'&&cropEl&&el!==cropEl) cropOff(); endTxt(); cur=el; group=false; curId=el?hid(selOf(el)):null; place(); };
   /* drag / resize / rotate */
   let drag=null;
   document.addEventListener('pointerdown',e=>{ if(!on) return; if(isUI(e.target)&&!e.target.closest('#lyBox')) return; if(e.target.closest('[contenteditable=true]')) return;
@@ -5018,6 +5073,7 @@ body.ly-on [contenteditable=true]{outline:2px solid #05E5AF!important;cursor:tex
     if(a==='done'){ setOn(false); return; }
     if(a==='pub'){ publish(); return; }
     if(a==='discard'){ discard(); return; }
+    if(a==='crop'){ cropEl?cropOff():cropOn(); return; }
     if(a==='fmt'){ const h=document.body.classList.toggle('ly-noinsp'); b.classList.toggle('on',!h); return; }
     if(a==='undo'){ const u=undo.pop(); if(u){ const [id,j]=u; const v=JSON.parse(j); if(v) L[id]=v; else delete L[id]; write(); save(id); } b.disabled=!undo.length; return; }
     if(!cur) return; const v=get();
@@ -5025,7 +5081,7 @@ body.ly-on [contenteditable=true]{outline:2px solid #05E5AF!important;cursor:tex
     if(a==='rl'||a==='rr'){ snap(); v.r=Math.round((num(v.r)+(a==='rr'?1:-1))*10)/10; write(); save(curId); }
     if(a==='rs'){ snap(); const hadTxt=typeof v.txt==='string'||typeof v.html==='string'; L[curId]={sel:v.sel,dx:0,dy:0,s:1}; if(hadTxt) say('Reload to see the original text'); write(); save(curId); }
     if(a==='txt'){ if(txtEl){ endTxt(); return; } txtEl=cur; cur.__lyHtml=cur.children.length>0; cur.__lyOrig=cur.__lyOrig??cur.innerText; cur.__lyHorig=cur.__lyHorig??cur.innerHTML; cur.setAttribute('contenteditable','true'); cur.focus(); try{ const r=document.createRange(); r.selectNodeContents(cur); const s=getSelection(); s.removeAllRanges(); s.addRange(r); }catch(_){} b.textContent='Save text'; } });
-  document.addEventListener('keydown',e=>{ if(!on||!cur||txtEl||/^(INPUT)$/.test((document.activeElement||{}).tagName||'')) return; const v=get(), s=e.shiftKey?10:1; const m={ArrowLeft:[-s,0],ArrowRight:[s,0],ArrowUp:[0,-s],ArrowDown:[0,s]}[e.key]; if(m){ e.preventDefault(); v.dx=num(v.dx)+m[0]; v.dy=num(v.dy)+m[1]; write(); save(curId); } if(e.key==='Escape') select(null); });
+  document.addEventListener('keydown',e=>{ if(!on||!cur||txtEl||/^(INPUT)$/.test((document.activeElement||{}).tagName||'')) return; const v=get(), s=e.shiftKey?10:1; const m={ArrowLeft:[-s,0],ArrowRight:[s,0],ArrowUp:[0,-s],ArrowDown:[0,s]}[e.key]; if(m){ e.preventDefault(); v.dx=num(v.dx)+m[0]; v.dy=num(v.dy)+m[1]; write(); save(curId); } if(e.key==='Escape'){ if(cropEl) cropOff(); else select(null); }; });
   const setOn=v=>{ on=v; document.body.classList.toggle('ly-on',v); if(!v){ endTxt(); select(null); } else { setMode(mode); say('Drag to move · green dot resizes · white dot rotates'); } };
   btn.addEventListener('click',()=>setOn(true));
   addEventListener('resize',()=>place()); addEventListener('scroll',()=>place(),true); setInterval(()=>{ if(on&&cur) place(); },400);
