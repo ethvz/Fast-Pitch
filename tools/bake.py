@@ -20,10 +20,22 @@ m = re.search(r'(<script id="lyBakedData" type="application/json">)(.*?)(</scrip
 if not m: sys.exit('lyBakedData block not found in index.html')
 baked = json.loads(m.group(2).replace('<\\/', '</') or '{}')
 
+NEUTRAL = ('sel', 'at', 'orig', 'horig', 'im', 'zp', 'lk')
+
 def effective(d):
-    return any([(d.get('dx') or 0) != 0, (d.get('dy') or 0) != 0, (d.get('s') or 1) != 1, (d.get('r') or 0) != 0,
-                isinstance(d.get('txt'), str), isinstance(d.get('html'), str),
-                *[d.get(k) not in (None, '') for k in ('bg', 'fg', 'rad', 'w', 'h')]])
+    for k, v in d.items():
+        if k in NEUTRAL: continue
+        if k in ('dx', 'dy', 'r'):
+            if (v or 0) != 0: return True
+        elif k == 's':
+            if (v or 1) != 1: return True
+        elif k == 'op':
+            if v not in (None, '', 100): return True
+        elif k in ('txt', 'html'):
+            if isinstance(v, str): return True
+        elif v not in (None, '', False, 0) or (k in ('rad', 'bw') and v == 0):
+            return True
+    return False
 
 n = 0
 for f in sorted(glob.glob(os.path.join(docs_dir, '**', '*.json'), recursive=True)):
