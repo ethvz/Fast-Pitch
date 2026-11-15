@@ -2266,7 +2266,7 @@ body.hasbk #gTitle{transform:translateX(118px)}
       </div>
       <div class="otab hum" data-t="spin"><div class="hum-st"><canvas id="humV" data-seq="assets/seq/oc-frames.jpg?v=217" width="1376" height="1032"></canvas></div></div>
       <div class="otab dbm ocm" data-t="feat">
-        <div class="ocm-card" id="ocmCard"></div><div class="ocm-bv" id="ocmBv"><video id="ocmBvV" src="assets/ocm/radar.mp4?v=1" poster="assets/ocm/radar.jpg?v=1" muted playsinline loop preload="auto"></video></div>
+        <div class="ocm-card" id="ocmCard"></div><div class="dbm-cap ocm-cap" id="ocmCap"></div><div class="ocm-bv" id="ocmBv"><video id="ocmBvV" src="assets/ocm/radar.mp4?v=1" poster="assets/ocm/radar.jpg?v=1" muted playsinline loop preload="auto"></video></div>
         <div class="ocm-phone" id="ocmPhone"><video id="ocmPv" playsinline loop preload="auto"></video><video id="ocmPv2" playsinline loop preload="auto"></video></div>
         <div class="ocm-fade"></div>
         <div class="dbm-col ocm-col"><h2 class="dbm-h" id="ocmH"></h2><div class="dbm-list" id="ocmList"></div></div>
@@ -4297,6 +4297,11 @@ input,textarea,[contenteditable="true"]{-webkit-user-select:text!important;user-
 .ocm .ocm-card img[data-im="ocm/zoom"]{right:auto;bottom:auto;object-fit:fill;object-position:50% 50%;padding:0}
 .ocm .ocm-card img[data-im="ocm/sensor"]{right:auto;bottom:auto;object-fit:contain;padding:0}
 .ocm .ocm-card img[data-im="ocm/sd"]{right:auto;bottom:auto;object-fit:fill!important;padding:0}
+.ocm-cap{width:200px;margin-left:0;z-index:5;flex-direction:column;gap:14px}
+.ocm-cap b{font-size:30px}
+.ocm-cap span{font-size:14px}
+.ocm-cap i{width:56px;height:1px}
+.ocm-cap em{margin-top:0}
 </style>`);
 { const add=box=>{ const secs=[...box.children].filter(c=>!c.hidden&&c.dataset&&c.dataset.t!=null);
     secs.forEach((c,i)=>{ const last=i===secs.length-1, skip=last||c.classList.contains('hum')||c.classList.contains('gal')&&false;
@@ -4575,6 +4580,7 @@ window.USMAP={w:1000,h:620,ut:[222.1, 266.2],c:[[72.8,371.6,9],[907.0,214.8,9],[
 
 /* Outdoor Camera Highlights: one list (left), the app video in a large centered phone, camera photos fading off the right edge */
 { const M=[ // [icon, label, headline, line, camera photo, app clip (oc/ph#) | null]
+   [['loop'],'24/7 Continuous Playback','Never Miss a Moment','Records around the clock, so you can scroll back to any moment.','ocm/sd',2,null,'<div><b>10 days</b><span>of continuous recording, stored locally on the device</span></div><i></i><div><b>30 days*</b><span>of activity clips saved to the cloud</span></div><em>*45 days with the Premium Video plan</em>'],
    [['square','red'],'Smart Deter','Stop Trouble Before It Starts','Lights and warning tones tell lurkers they’ve been seen the moment they step into your detection zone.','ocm/detect',4],
    [['hd'],'4K HDR Image Sensor','See Every Detail','A 4K sensor and HDR tuning keep faces and plates clear in bright sun and deep shade.','ocm/sensor',0],
    [['zoom'],'5.3X HD Zoom','Zoom Without the Blur','Zoom in up to 5.3X during live video and stay in sharp HD.','ocm/zoom',3],
@@ -4582,7 +4588,6 @@ window.USMAP={w:1000,h:620,ut:[222.1, 266.2],c:[[72.8,371.6,9],[907.0,214.8,9],[
    [['car'],'Vehicle Detection','A Shield Around Your Car','Get alerted the moment someone gets too close to your parked car.','och/c1',5],
    [['sun'],'Spotlight Tracking','Spot and Follow Lurkers','The spotlight locks on and follows anyone who shouldn’t be there.','ocm/spot',1,'spot'],
    [['expand'],'140° Lens','Everything in View','A 140° lens covers your yard from corner to corner.','och/c0',0],
-   [['loop'],'24/7 Continuous Playback','Never Miss a Moment','Records around the clock, so you can scroll back to any moment.','ocm/sd',2],
    [['mic'],'2-Way Talk','Speak Up From Anywhere','High-fidelity 2-way audio lets you talk to anyone on your property.','ocm/spk',6],
    [['wifi'],'Online, All the Time','Stay Connected','A dual-band Wi-Fi bridge gives up to 2X stronger signal than other wireless cameras.','ocm/stay',null],
    [['weather'],'Weather Resistant','Built to Last','An automotive-grade housing stands up to heat, cold, rain and snow, year after year.','ocm/rain',null,'bleed'],
@@ -4591,7 +4596,7 @@ window.USMAP={w:1000,h:620,ut:[222.1, 266.2],c:[[72.8,371.6,9],[907.0,214.8,9],[
   L.innerHTML=M.map(([ic,t],i)=>`<button class="${i?'':'on'}" data-ocm="${i}">${LSV(ic[0],26,ic[1]||'')}<span>${t}</span></button>`).join('');
   card.innerHTML=[...new Set(M.map(x=>x[4]))].map(k=>`<img src="assets/${k}.webp?v=3" alt="" data-im="${k}"${k==='ocm/rain'?' class="bleedim"':''}>`).join(''); cv=pv2;
   const live=()=>!!sec.closest('.page.on')&&sec.dataset.vis==='1';
-  const render=()=>{ const [,,h,line,im,clip,mode]=M[m]; sec.classList.toggle('nofade',im==='ocm/sd'||im==='ocm/spk'||im==='ocm/zoom'||im==='ocm/sensor'); if(sec.classList.contains('spotm')!==(mode==='spot')){ sec.classList.toggle('spotm',mode==='spot'); setTimeout(balance,20); } if(sec.classList.contains('bleed')!==(mode==='bleed')){ sec.classList.toggle('bleed',mode==='bleed'); setTimeout(balance,20); }
+  const render=()=>{ const [,,h,line,im,clip,mode,cp]=M[m]; { const c=$('#ocmCap'); if(cp) c.innerHTML=cp; c.classList.toggle('on',!!cp); } sec.classList.toggle('nofade',im==='ocm/sd'||im==='ocm/spk'||im==='ocm/zoom'||im==='ocm/sensor'); if(sec.classList.contains('spotm')!==(mode==='spot')){ sec.classList.toggle('spotm',mode==='spot'); setTimeout(balance,20); } if(sec.classList.contains('bleed')!==(mode==='bleed')){ sec.classList.toggle('bleed',mode==='bleed'); setTimeout(balance,20); }
     { const vm=mode==='vid', bv=$('#ocmBvV'); sec.classList.toggle('vidm',vm); if(vm&&live()){ bv.currentTime=0; bv.play().catch(()=>{}); } else bv.pause(); }
     $$('#ocmList button').forEach((b,i)=>b.classList.toggle('on',i===m));
     if(H.dataset.i!==String(m)){ H.classList.add('swap'); setTimeout(()=>{ H.innerHTML=`${h}<small>${line}</small>`; H.classList.remove('swap'); },H.dataset.i?140:0); H.dataset.i=m; }
@@ -4620,6 +4625,7 @@ window.USMAP={w:1000,h:620,ut:[222.1, 266.2],c:[[72.8,371.6,9],[907.0,214.8,9],[
     { const si=card.querySelector('img[data-im="ocm/spk"]'); if(si&&!port){ const ptop=parseFloat(ph.style.top)||372, hh2=Math.max(260,ptop-40), ww=hh2*684/1100; si.style.height=hh2.toFixed(1)+'px'; si.style.width=ww.toFixed(1)+'px'; si.style.top='24px'; si.style.left=(pl+w*.62-ww/2-cl).toFixed(1)+'px'; } }
     /* 5.3X zoom: lens close-up spans the phone's width, filling the space above it */
     { const si=card.querySelector('img[data-im="ocm/zoom"]'); if(si&&!port){ const ptop=parseFloat(ph.style.top)||372, hh2=Math.max(260,ptop-22), zw=Math.min(w,hh2*1500/827); si.style.height=(zw*827/1500).toFixed(1)+'px'; si.style.width=zw.toFixed(1)+'px'; si.style.top=(ptop-10-zw*827/1500).toFixed(1)+'px'; si.style.left=(pl+w/2-zw/2-cl).toFixed(1)+'px'; } }
+    { const c=$('#ocmCap'); if(c){ c.style.left=pl.toFixed(1)+'px'; c.style.top=Math.max(20,(parseFloat(ph.style.top)||372)-24-c.offsetHeight).toFixed(1)+'px'; } }
     /* microSD: chip centered over the phone */ { const si=card.querySelector('img[data-im="ocm/sd"]'); if(si&&!port){ const hh2=964*.7, ww=hh2*1096/1300; si.style.height=hh2.toFixed(1)+'px'; si.style.width=ww.toFixed(1)+'px'; si.style.top='19px'; si.style.left=(cx-.46*ww-cl).toFixed(1)+'px'; } }
     /* 4K sensor: exploded view at phone width; lens stack and sensor sit above the phone, speaker parts tuck behind it */
     { const si=card.querySelector('img[data-im="ocm/sensor"]'); if(si&&!port){ const ptop=parseFloat(ph.style.top)||372, hh2=Math.max(600,(ptop+40)/.66), sw=hh2*1600/1119; si.style.width=sw.toFixed(1)+'px'; si.style.height=hh2.toFixed(1)+'px'; si.style.top='6px'; si.style.left=(pl-cl).toFixed(1)+'px'; } } };
@@ -4631,4 +4637,96 @@ window.USMAP={w:1000,h:620,ut:[222.1, 266.2],c:[[72.8,371.6,9],[907.0,214.8,9],[
   render(); balance(); }
 
 barFor(cur);
+</script>
+<script>
+/* ===== Layout art board: editors drag, resize and retype images and text; saved live for everyone (db: layout/*) ===== */
+(function(){
+  if(!window.claude||!claude.use) return;
+  const css=document.createElement('style'); css.textContent=`
+#lyBtn{position:fixed;right:14px;top:14px;z-index:9000;height:40px;padding:0 16px 0 12px;border-radius:20px;border:1px solid rgba(255,255,255,.14);background:rgba(28,28,30,.82);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);color:#fff;font:500 14px/40px VivintSans,system-ui,sans-serif;display:none;align-items:center;gap:8px;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+#lyBtn svg{width:18px;height:18px}
+#lyBtn.show{display:flex}
+#lyBar{position:fixed;left:50%;top:14px;transform:translate(-50%,-90px);z-index:9001;display:flex;align-items:center;gap:6px;padding:6px;border-radius:26px;background:rgba(28,28,30,.9);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.14);box-shadow:0 12px 36px rgba(0,0,0,.55);transition:transform .45s cubic-bezier(.22,1,.36,1);font:500 14px VivintSans,system-ui,sans-serif;color:#fff}
+body.ly-on #lyBar{transform:translate(-50%,0)}
+body.ly-on #lyBtn{display:none}
+#lyBar .lyt{padding:0 12px;color:rgba(255,255,255,.7);white-space:nowrap}
+#lyBar .lyt b{color:#05E5AF;font-weight:500}
+#lyBar button{white-space:nowrap;height:40px;min-width:40px;padding:0 14px;border-radius:20px;border:0;background:rgba(255,255,255,.08);color:#fff;font:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px}
+#lyBar button:active{transform:scale(.96)}
+#lyBar button.go{background:#05E5AF;color:#000}
+#lyBar button:disabled{opacity:.3}
+#lyBar .lysel{display:none;align-items:center;gap:6px}
+body.ly-has #lyBar .lysel{display:flex}
+#lyBar .lypct{min-width:52px;text-align:center;font-variant-numeric:tabular-nums}
+#lyBar .lysep{width:1px;height:24px;background:rgba(255,255,255,.14);margin:0 4px}
+#lyBox{position:fixed;z-index:8999;pointer-events:none;border:2px solid #05E5AF;border-radius:6px;box-shadow:0 0 0 1px rgba(0,0,0,.5),0 0 24px rgba(5,229,175,.25);display:none}
+body.ly-has #lyBox{display:block}
+#lyBox i{position:absolute;width:26px;height:26px;border-radius:50%;background:#05E5AF;border:3px solid #000;right:-15px;bottom:-15px;pointer-events:auto;cursor:nwse-resize;touch-action:none}
+#lyToast{position:fixed;left:50%;top:72px;transform:translateX(-50%);z-index:9002;padding:8px 14px;border-radius:14px;background:rgba(28,28,30,.92);color:#fff;font:500 13px VivintSans,system-ui,sans-serif;opacity:0;transition:opacity .3s;pointer-events:none}
+#lyToast.on{opacity:1}
+body.ly-on [data-ly-txt]{outline:1px dashed rgba(5,229,175,.6);outline-offset:4px}
+body.ly-on [contenteditable=true]{outline:2px solid #05E5AF!important;cursor:text;-webkit-user-select:text!important;user-select:text!important}
+`; document.head.appendChild(css);
+  const ico='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16v4z"/><path d="M13.5 6.5l4 4"/></svg>';
+  const btn=document.createElement('button'); btn.id='lyBtn'; btn.innerHTML=ico+'Edit layout'; document.body.appendChild(btn);
+  const bar=document.createElement('div'); bar.id='lyBar'; bar.innerHTML=`<span class="lyt"><b>Editing</b> · Tap an image or text</span><span class="lysel"><span class="lysep"></span><button data-a="sm">−</button><span class="lypct">100%</span><button data-a="lg">+</button><button data-a="txt">Edit text</button><button data-a="rs">Reset</button></span><span class="lysep"></span><button data-a="undo" disabled>Undo</button><button data-a="done" class="go">Done</button>`; document.body.appendChild(bar);
+  const box=document.createElement('div'); box.id='lyBox'; box.innerHTML='<i></i>'; document.body.appendChild(box);
+  const toast=document.createElement('div'); toast.id='lyToast'; document.body.appendChild(toast);
+  const sty=document.createElement('style'); sty.id='lyStyles'; document.head.appendChild(sty);
+  let tt; const say=m=>{ toast.textContent=m; toast.classList.add('on'); clearTimeout(tt); tt=setTimeout(()=>toast.classList.remove('on'),1800); };
+
+  const L={}; /* id -> {sel,dx,dy,s,txt} */
+  let db=null, col=null, on=false, cur=null, curId=null, undo=[];
+  const stage=()=>document.getElementById('stage');
+  const k=()=>{ const s=stage(); return s? s.getBoundingClientRect().width/s.offsetWidth : 1; };
+  const hid=s=>{ let h=2166136261; for(let i=0;i<s.length;i++){ h^=s.charCodeAt(i); h=Math.imul(h,16777619); } return 'e'+(h>>>0).toString(36)+s.length.toString(36); };
+  const selOf=el=>{ const parts=[]; let n=el; while(n&&n!==document.body){ if(n.id&&!/^ly/.test(n.id)){ parts.unshift('#'+CSS.escape(n.id)); return parts.join(' > '); } const t=n.tagName.toLowerCase(); let i=1, p=n; while((p=p.previousElementSibling)) if(p.tagName===n.tagName) i++; parts.unshift(t+':nth-of-type('+i+')'); n=n.parentElement; } return 'body > '+parts.join(' > '); };
+  const TXT='h1,h2,h3,h4,h5,h6,p,small,li,blockquote,figcaption,label,.sub,.lede';
+  const leafText=el=>{ for(const c of el.children){ if(!/^(BR|B|I|EM|STRONG|SPAN|SMALL|SUP|SUB)$/.test(c.tagName)) return false; } return el.textContent.trim().length>0; };
+  const pick=(x,y)=>{ for(const el of document.elementsFromPoint(x,y)){ if(el.closest('#lyBar,#lyBtn,#lyBox,#lyToast')) return null; if(el.closest('button,a,[data-ocm],nav,.rail,input,select,textarea')) return null; const cs=getComputedStyle(el); if(+cs.opacity<.05||cs.visibility==='hidden') continue;
+      if(/^(IMG|VIDEO|CANVAS|PICTURE)$/.test(el.tagName)) return el; if(el.tagName==='svg'||el.closest('svg')) return el.closest('svg');
+      if(el.children.length===0&&el.textContent.trim().length>1&&el.closest(TXT)) return el; const t=el.closest(TXT); if(t&&leafText(t)) return t; if(el.children.length===0&&el.textContent.trim().length>1&&el.offsetWidth<900&&el.offsetHeight<300) return el; if(el.id==='stage') return null; }
+    return null; };
+  const write=()=>{ let out=''; for(const id in L){ const v=L[id]; if(!v||!v.sel) continue; const tr=(v.dx||v.dy)?`translate:${(+v.dx||0).toFixed(1)}px ${(+v.dy||0).toFixed(1)}px!important;`:''; const sc=(v.s&&v.s!==1)?`scale:${(+v.s).toFixed(3)}!important;`:''; if(tr||sc) out+=`${v.sel}{${tr}${sc}}\n`; } sty.textContent=out; applyTxt(); place(); };
+  let mo=null, busyTxt=false;
+  const applyTxt=()=>{ busyTxt=true; for(const id in L){ const v=L[id]; if(!v||typeof v.txt!=='string') continue; let el; try{ el=document.querySelector(v.sel); }catch(e){ continue; } if(el&&el.getAttribute('contenteditable')!=='true'&&el.innerText!==v.txt&&(!v.orig||el.innerText===v.orig)){ el.innerText=v.txt; } } busyTxt=false; };
+  const hasTxt=()=>Object.values(L).some(v=>v&&typeof v.txt==='string');
+  const place=()=>{ if(!cur||!on){ document.body.classList.remove('ly-has'); return; } const r=cur.getBoundingClientRect(); Object.assign(box.style,{left:(r.left-4)+'px',top:(r.top-4)+'px',width:(r.width+8)+'px',height:(r.height+8)+'px'}); document.body.classList.add('ly-has'); bar.querySelector('.lypct').textContent=Math.round(((L[curId]&&L[curId].s)||1)*100)+'%'; bar.querySelector('[data-a=txt]').style.display=(cur.children.length===0&&cur.textContent.trim())?'':'none'; };
+  const get=()=>L[curId]||(L[curId]={sel:selOf(cur),dx:0,dy:0,s:1});
+  const snap=()=>{ undo.push([curId,JSON.stringify(L[curId]||null)]); if(undo.length>60) undo.shift(); bar.querySelector('[data-a=undo]').disabled=false; };
+  const pend={}; const save=id=>{ clearTimeout(pend[id]); pend[id]=setTimeout(async()=>{ if(!col) return; const v=L[id]; try{ if(!v||(!(+v.dx)&&!(+v.dy)&&(!v.s||v.s===1)&&typeof v.txt!=='string')) await col.doc(id).delete(); else await col.doc(id).set({sel:v.sel,dx:+(+v.dx||0).toFixed(1),dy:+(+v.dy||0).toFixed(1),s:+(+(v.s||1)).toFixed(3),...(typeof v.txt==='string'?{txt:v.txt,orig:v.orig||''}:{}),at:Date.now()}); }catch(e){ say(e&&e.code==='permission_denied'?'You don’t have edit access':'Couldn’t save, try again'); } delete pend[id]; },350); };
+  const select=el=>{ endTxt(); cur=el; curId=el?hid(selOf(el)):null; place(); };
+  /* drag + resize */
+  let drag=null;
+  document.addEventListener('pointerdown',e=>{ if(!on) return; if(e.target.closest('#lyBar,#lyBtn')) return; if(e.target.closest('[contenteditable=true]')) return;
+    if(e.target===box.firstChild&&cur){ e.preventDefault(); e.stopPropagation(); const r=cur.getBoundingClientRect(), v=get(); snap(); drag={mode:'s',cx:r.left+r.width/2,cy:r.top+r.height/2,d0:Math.hypot(e.clientX-(r.left+r.width/2),e.clientY-(r.top+r.height/2)),s0:v.s||1,id:curId}; box.firstChild.setPointerCapture&&box.firstChild.setPointerCapture(e.pointerId); return; }
+    const el=pick(e.clientX,e.clientY); if(!el){ return; }
+    e.preventDefault(); e.stopPropagation(); if(el!==cur) select(el); const v=get(); snap(); drag={mode:'m',x:e.clientX,y:e.clientY,dx0:+v.dx||0,dy0:+v.dy||0,k:k(),id:curId,moved:false}; },true);
+  document.addEventListener('pointermove',e=>{ if(!drag) return; e.preventDefault(); const v=L[drag.id];
+    if(drag.mode==='m'){ const ddx=(e.clientX-drag.x)/drag.k, ddy=(e.clientY-drag.y)/drag.k; if(Math.abs(ddx)+Math.abs(ddy)>2) drag.moved=true; v.dx=drag.dx0+ddx; v.dy=drag.dy0+ddy; }
+    else { const d=Math.hypot(e.clientX-drag.cx,e.clientY-drag.cy); v.s=Math.min(5,Math.max(.15,drag.s0*d/Math.max(8,drag.d0))); }
+    write(); },{capture:true,passive:false});
+  const up=()=>{ if(!drag) return; const d=drag; drag=null; if(d.mode==='m'&&!d.moved){ undo.pop(); bar.querySelector('[data-a=undo]').disabled=!undo.length; return; } save(d.id); };
+  document.addEventListener('pointerup',up,true); document.addEventListener('pointercancel',up,true);
+  document.addEventListener('click',e=>{ if(!on) return; if(e.target.closest('#lyBar,#lyBtn,[contenteditable=true]')) return; if(pick(e.clientX,e.clientY)){ e.preventDefault(); e.stopPropagation(); } },true);
+  /* text editing */
+  let txtEl=null;
+  const endTxt=()=>{ if(!txtEl) return; const el=txtEl; txtEl=null; el.removeAttribute('contenteditable'); const id=hid(selOf(el)); const v=L[id]||(L[id]={sel:selOf(el),dx:0,dy:0,s:1}); const t=el.innerText.replace(/ /g,' '); if(v.txt!==t&&t!==el.__lyOrig){ v.txt=t; v.orig=el.__lyOrig; save(id); } else if(t===el.__lyOrig&&typeof v.txt==='string'){ delete v.txt; save(id); } };
+  bar.addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b) return; const a=b.dataset.a;
+    if(a==='done'){ setOn(false); return; }
+    if(a==='undo'){ const u=undo.pop(); if(u){ const [id,j]=u; const v=JSON.parse(j); if(v) L[id]=v; else delete L[id]; write(); save(id); } b.disabled=!undo.length; return; }
+    if(!cur) return; const v=get();
+    if(a==='sm'||a==='lg'){ snap(); v.s=Math.min(5,Math.max(.15,(v.s||1)*(a==='lg'?1.05:1/1.05))); write(); save(curId); }
+    if(a==='rs'){ snap(); const t=v.txt; L[curId]={sel:v.sel,dx:0,dy:0,s:1}; if(typeof t==='string'){ say('Reload to restore the original text'); } write(); save(curId); }
+    if(a==='txt'){ if(txtEl){ endTxt(); b.textContent='Edit text'; return; } txtEl=cur; cur.__lyOrig=cur.__lyOrig??cur.innerText; cur.setAttribute('contenteditable','true'); cur.focus(); try{ const r=document.createRange(); r.selectNodeContents(cur); const s=getSelection(); s.removeAllRanges(); s.addRange(r); }catch(_){} b.textContent='Save text'; } });
+  document.addEventListener('keydown',e=>{ if(!on||!cur||txtEl) return; const v=get(), st=e.shiftKey?10:1; const m={ArrowLeft:[-st,0],ArrowRight:[st,0],ArrowUp:[0,-st],ArrowDown:[0,st]}[e.key]; if(m){ e.preventDefault(); v.dx=(+v.dx||0)+m[0]; v.dy=(+v.dy||0)+m[1]; write(); save(curId); } if(e.key==='Escape') select(null); });
+  const setOn=v=>{ on=v; document.body.classList.toggle('ly-on',v); if(!v){ endTxt(); select(null); bar.querySelector('[data-a=txt]').textContent='Edit text'; } else say('Drag to move · green dot to resize'); };
+  btn.addEventListener('click',()=>setOn(true));
+  addEventListener('resize',()=>place()); addEventListener('scroll',()=>place(),true); setInterval(()=>{ if(on&&cur) place(); },400);
+  /* connect */
+  (async()=>{ try{ db=await claude.use('db'); }catch(e){ db=null; } if(!db) return; col=db.collection('layout');
+    col.onSnapshot(s=>{ const seen={}; s.docs.forEach(d=>{ if(!d.exists) return; seen[d.id]=1; if(drag&&drag.id===d.id) return; L[d.id]=Object.assign({},d.data()); }); for(const id in L) if(!seen[id]&&!(drag&&drag.id===id)&&!pend[id]) delete L[id]; write();
+      if(hasTxt()&&!mo){ let q=0; mo=new MutationObserver(()=>{ if(busyTxt||q) return; q=requestAnimationFrame(()=>{ q=0; applyTxt(); }); }); mo.observe(document.getElementById('stage')||document.body,{childList:true,subtree:true}); } },()=>{});
+    try{ const u=await claude.use('user'); if(u&&await u.canEdit()) btn.classList.add('show'); }catch(e){} })();
+})();
 </script>
