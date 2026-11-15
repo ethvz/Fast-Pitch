@@ -4272,6 +4272,12 @@ input,textarea,[contenteditable="true"]{-webkit-user-select:text!important;user-
 .ocm-card{position:absolute;z-index:1;top:0;height:964px;left:900px;width:600px;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 34%);mask-image:linear-gradient(90deg,transparent 0,#000 34%)}
 .ocm-card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 45%;opacity:0;transform:scale(1.03);transition:opacity .45s ease,transform .7s cubic-bezier(.22,1,.36,1)}
 .ocm-card img.on{opacity:1;transform:none}
+
+.ocm-phone{transition:width .5s cubic-bezier(.22,1,.36,1),height .5s cubic-bezier(.22,1,.36,1),top .5s cubic-bezier(.22,1,.36,1),left .5s cubic-bezier(.22,1,.36,1),opacity .4s ease,transform .5s cubic-bezier(.22,1,.36,1)}
+.ocm.solo .ocm-phone{opacity:0;transform:translateX(40px) scale(.96);pointer-events:none}
+.ocm-card{transition:left .5s cubic-bezier(.22,1,.36,1),width .5s cubic-bezier(.22,1,.36,1)}
+.ocm.solo .ocm-card{-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 10%);mask-image:linear-gradient(90deg,transparent 0,#000 10%)}
+.ocm.solo .ocm-card img{object-fit:contain;object-position:50% 50%;padding:60px 40px 80px 20px;box-sizing:border-box}
 </style>`);
 { const add=box=>{ const secs=[...box.children].filter(c=>!c.hidden&&c.dataset&&c.dataset.t!=null);
     secs.forEach((c,i)=>{ const last=i===secs.length-1, skip=last||c.classList.contains('hum')||c.classList.contains('gal')&&false;
@@ -4559,8 +4565,8 @@ window.USMAP={w:1000,h:620,ut:[222.1, 266.2],c:[[72.8,371.6,9],[907.0,214.8,9],[
    [['expand'],'140° Lens','Everything in View','A 140° lens covers your yard from corner to corner.','och/c0',0],
    [['loop'],'10-Day Recording','Never Miss a Moment','Up to 10 days of continuous recording, so you can go back to anything.','och/s0',2],
    [['mic'],'2-Way Talk','Speak Up From Anywhere','High-fidelity 2-way audio lets you talk to anyone on your property.','och/c1',6],
-   [['wifi'],'Online, All the Time','Stay Connected','A dual-band Wi-Fi bridge gives up to 2X stronger signal than other wireless cameras.','ocm/stay',0],
-   [['weather'],'Weather Resistant','Built to Last','An automotive-grade housing stands up to heat, cold, rain and snow, year after year.','ocm/built',0],
+   [['wifi'],'Online, All the Time','Stay Connected','A dual-band Wi-Fi bridge gives up to 2X stronger signal than other wireless cameras.','ocm/stay',null],
+   [['weather'],'Weather Resistant','Built to Last','An automotive-grade housing stands up to heat, cold, rain and snow, year after year.','ocm/built',null],
    [['sliders'],'Customize Everything','Make It Yours','Set detection zones, schedules and alerts exactly the way you want.','och/c0',7]];
   let m=0, cv=null; const L=$('#ocmList'), card=$('#ocmCard'), pv=$('#ocmPv'), pv2=$('#ocmPv2'), ph=$('#ocmPhone'), H=$('#ocmH'), sec=L.closest('.otab');
   L.innerHTML=M.map(([ic,t],i)=>`<button class="${i?'':'on'}" data-ocm="${i}">${LSV(ic[0],26,ic[1]||'')}<span>${t}</span></button>`).join('');
@@ -4570,6 +4576,8 @@ window.USMAP={w:1000,h:620,ut:[222.1, 266.2],c:[[72.8,371.6,9],[907.0,214.8,9],[
     $$('#ocmList button').forEach((b,i)=>b.classList.toggle('on',i===m));
     if(H.dataset.i!==String(m)){ H.classList.add('swap'); setTimeout(()=>{ H.innerHTML=`${h}<small>${line}</small>`; H.classList.remove('swap'); },H.dataset.i?140:0); H.dataset.i=m; }
     $$('#ocmCard img').forEach(x=>x.classList.toggle('on',x.dataset.im===im));
+    const solo=clip==null; if(sec.classList.contains('solo')!==solo){ sec.classList.toggle('solo',solo); setTimeout(balance,20); }
+    if(solo){ pv.pause(); pv2.pause(); return; }
     const port=clip===7; if(ph.classList.contains('port')!==port){ ph.classList.toggle('port',port); setTimeout(balance,20); setTimeout(balance,520); }
     const u=`assets/oc/ph${clip}.mp4?v=56`;
     if(cv.__u!==u){ const nx=cv===pv?pv2:pv, old=cv; nx.__u=u; nx.classList.remove('rdy','top'); nx.src=u; nx.currentTime=0;
@@ -4582,7 +4590,8 @@ window.USMAP={w:1000,h:620,ut:[222.1, 266.2],c:[[72.8,371.6,9],[907.0,214.8,9],[
     const port=ph.classList.contains('port'), cx=(br.left+br.width/2-sr.left)/k+70, w=port?556:920, hh=port?732:454; ph.style.left=(cx-w/2).toFixed(1)+'px';
     /* bottom of the phone lines up with the bottom of the menu */ const lb=L.lastElementChild&&L.lastElementChild.getBoundingClientRect(); if(lb&&lb.height){ const bot=(lb.bottom-sr.top)/k; ph.style.top=Math.max(20,bot-hh).toFixed(1)+'px'; }
     /* clip the recording's square corners to its own rounded phone frame */ const sc=w/(port?504:1152), ins=port?[6,10,23,9]:[3,5,7,4]; const cp=`inset(${ins.map(v=>(v*sc).toFixed(1)+'px').join(' ')} round ${(85*sc).toFixed(1)}px)`; ph.querySelectorAll('video').forEach(v=>{ v.style.clipPath=cp; v.style.webkitClipPath=cp; });
-    const right=(br.right-sr.left)/k, cl=cx-120; card.style.left=cl.toFixed(1)+'px'; card.style.width=Math.max(600,right-cl).toFixed(1)+'px'; };
+    const right=(br.right-sr.left)/k; let cl=cx-120;
+    if(sec.classList.contains('solo')){ const lr=L.getBoundingClientRect(); cl=(lr.right-sr.left)/k+30; } card.style.left=cl.toFixed(1)+'px'; card.style.width=Math.max(600,right-cl).toFixed(1)+'px'; };
   const _sw=show; show=function(p){ _sw.apply(this,arguments); if(p==='ocp'){ balance(); requestAnimationFrame(balance); setTimeout(balance,600); } };
   const again=()=>{ balance(); setTimeout(balance,250); setTimeout(balance,900); };
   window.addEventListener('resize',again); window.addEventListener('orientationchange',again); if(window.visualViewport) visualViewport.addEventListener('resize',again);
