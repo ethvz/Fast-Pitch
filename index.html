@@ -4294,7 +4294,7 @@ input,textarea,[contenteditable="true"]{-webkit-user-select:text!important;user-
 .ocm.spotm .ocm-card img[data-im="ocm/spot"]{right:auto;bottom:auto;object-fit:fill;object-position:0 0;padding:0}
 .ocm.nofade .ocm-card{-webkit-mask-image:none;mask-image:none}
 .ocm .ocm-card img[data-im="ocm/spk"]{right:auto;bottom:auto;object-fit:contain;object-position:50% 100%;padding:0}
-.ocm .ocm-card img[data-im="ocm/zoom"]{right:auto;bottom:auto;object-fit:cover;object-position:50% 50%;padding:0}
+.ocm .ocm-card img[data-im="ocm/zoom"]{right:auto;bottom:auto;object-fit:fill;object-position:50% 50%;padding:0}
 .ocm .ocm-card img[data-im="ocm/sensor"]{right:auto;bottom:auto;object-fit:contain;padding:0}
 </style>`);
 { const add=box=>{ const secs=[...box.children].filter(c=>!c.hidden&&c.dataset&&c.dataset.t!=null);
@@ -4588,7 +4588,7 @@ window.USMAP={w:1000,h:620,ut:[222.1, 266.2],c:[[72.8,371.6,9],[907.0,214.8,9],[
    [['sliders'],'Customize Everything','Make It Yours','Set detection zones, schedules and alerts exactly the way you want.','och/c0',7]];
   let m=0, cv=null; const L=$('#ocmList'), card=$('#ocmCard'), pv=$('#ocmPv'), pv2=$('#ocmPv2'), ph=$('#ocmPhone'), H=$('#ocmH'), sec=L.closest('.otab');
   L.innerHTML=M.map(([ic,t],i)=>`<button class="${i?'':'on'}" data-ocm="${i}">${LSV(ic[0],26,ic[1]||'')}<span>${t}</span></button>`).join('');
-  card.innerHTML=[...new Set(M.map(x=>x[4]))].map(k=>`<img src="assets/${k}.webp?v=2" alt="" data-im="${k}"${k==='ocm/rain'?' class="bleedim"':''}>`).join(''); cv=pv2;
+  card.innerHTML=[...new Set(M.map(x=>x[4]))].map(k=>`<img src="assets/${k}.webp?v=3" alt="" data-im="${k}"${k==='ocm/rain'?' class="bleedim"':''}>`).join(''); cv=pv2;
   const live=()=>!!sec.closest('.page.on')&&sec.dataset.vis==='1';
   const render=()=>{ const [,,h,line,im,clip,mode]=M[m]; sec.classList.toggle('nofade',im==='ocm/sd'||im==='ocm/spk'||im==='ocm/zoom'||im==='ocm/sensor'); if(sec.classList.contains('spotm')!==(mode==='spot')){ sec.classList.toggle('spotm',mode==='spot'); setTimeout(balance,20); } if(sec.classList.contains('bleed')!==(mode==='bleed')){ sec.classList.toggle('bleed',mode==='bleed'); setTimeout(balance,20); }
     { const vm=mode==='vid', bv=$('#ocmBvV'); sec.classList.toggle('vidm',vm); if(vm&&live()){ bv.currentTime=0; bv.play().catch(()=>{}); } else bv.pause(); }
@@ -4618,9 +4618,9 @@ window.USMAP={w:1000,h:620,ut:[222.1, 266.2],c:[[72.8,371.6,9],[907.0,214.8,9],[
     /* 2-way talk: whole camera fits between the top edge and the phone so the speaker grille is visible */
     { const si=card.querySelector('img[data-im="ocm/spk"]'); if(si&&!port){ const ptop=parseFloat(ph.style.top)||372, hh2=Math.max(260,ptop-40), ww=hh2*684/1100; si.style.height=hh2.toFixed(1)+'px'; si.style.width=ww.toFixed(1)+'px'; si.style.top='24px'; si.style.left=(pl+w*.62-ww/2-cl).toFixed(1)+'px'; } }
     /* 5.3X zoom: lens close-up spans the phone's width, filling the space above it */
-    { const si=card.querySelector('img[data-im="ocm/zoom"]'); if(si&&!port){ const ptop=parseFloat(ph.style.top)||372, hh2=Math.max(260,ptop-30); si.style.height=hh2.toFixed(1)+'px'; si.style.width=w.toFixed(1)+'px'; si.style.top=Math.max(0,ptop-12-hh2).toFixed(1)+'px'; si.style.left=(pl-cl).toFixed(1)+'px'; } }
+    { const si=card.querySelector('img[data-im="ocm/zoom"]'); if(si&&!port){ const ptop=parseFloat(ph.style.top)||372, hh2=Math.max(260,ptop-22), zw=Math.min(w,hh2*1500/827); si.style.height=(zw*827/1500).toFixed(1)+'px'; si.style.width=zw.toFixed(1)+'px'; si.style.top=(ptop-10-zw*827/1500).toFixed(1)+'px'; si.style.left=(pl+w/2-zw/2-cl).toFixed(1)+'px'; } }
     /* 4K sensor: exploded view at phone width; lens stack and sensor sit above the phone, speaker parts tuck behind it */
-    { const si=card.querySelector('img[data-im="ocm/sensor"]'); if(si&&!port){ const ptop=parseFloat(ph.style.top)||372, sw=Math.max(w,right0+40-pl), hh2=sw*1119/1600; si.style.width=sw.toFixed(1)+'px'; si.style.height=hh2.toFixed(1)+'px'; si.style.top=Math.max(0,ptop-6-.665*hh2).toFixed(1)+'px'; si.style.left=(pl-cl).toFixed(1)+'px'; } } };
+    { const si=card.querySelector('img[data-im="ocm/sensor"]'); if(si&&!port){ const ptop=parseFloat(ph.style.top)||372, sw=Math.max(w,right0-pl)*1.2, hh2=sw*1119/1600; si.style.width=sw.toFixed(1)+'px'; si.style.height=hh2.toFixed(1)+'px'; si.style.top=(ptop-4-.63*hh2).toFixed(1)+'px'; si.style.left=(pl-cl).toFixed(1)+'px'; } } };
   const _sw=show; show=function(p){ _sw.apply(this,arguments); if(p==='ocp'){ balance(); requestAnimationFrame(balance); setTimeout(balance,600); } };
   const again=()=>{ balance(); setTimeout(balance,250); setTimeout(balance,900); };
   window.addEventListener('resize',again); window.addEventListener('orientationchange',again); if(window.visualViewport) visualViewport.addEventListener('resize',again);
