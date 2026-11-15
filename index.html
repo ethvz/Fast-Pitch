@@ -4307,6 +4307,8 @@ input,textarea,[contenteditable="true"]{-webkit-user-select:text!important;user-
 .ocm-card img[data-im="ocm/sensor"]{translate:165.9px 104px;scale:1.62}
 .ocm-card img[data-im="och/c0"]{translate:64.8px -192.5px;scale:1.356}
 .ocm-card img[data-im="ocm/spk"]{translate:-104.1px 362.1px;scale:2.345}
+.dbm-card img[data-fv="whitering"],#dbmCard img[data-fv="whitering"]{translate:43.1px -42.5px}
+#dbmCard img[data-fv="sdz"]{translate:-50.8px -99.8px;scale:1.151}
 </style>`);
 { const add=box=>{ const secs=[...box.children].filter(c=>!c.hidden&&c.dataset&&c.dataset.t!=null);
     secs.forEach((c,i)=>{ const last=i===secs.length-1, skip=last||c.classList.contains('hum')||c.classList.contains('gal')&&false;
