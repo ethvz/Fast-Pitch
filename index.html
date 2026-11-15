@@ -2706,7 +2706,7 @@ body.hasbk #gTitle{transform:translateX(118px)}
 const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
 
 /* ---------- scale stage ---------- */
-let HW=1376; window.FPV='v364';
+let HW=1376; window.FPV='v365';
 function safeBox(){ let pr=document.getElementById('safeProbe'); if(!pr){ pr=document.createElement('div'); pr.id='safeProbe';
   pr.style.cssText='position:fixed;left:0;top:0;width:100vw;height:100vh;height:100dvh;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);box-sizing:border-box;visibility:hidden;pointer-events:none;z-index:-1'; document.documentElement.appendChild(pr); }
   const cs=getComputedStyle(pr), t=parseFloat(cs.paddingTop)||0, b=parseFloat(cs.paddingBottom)||0, l=parseFloat(cs.paddingLeft)||0, r=parseFloat(cs.paddingRight)||0;
@@ -2725,7 +2725,7 @@ function safeBox(){ let pr=document.getElementById('safeProbe'); if(!pr){ pr=doc
   return box; }
 function fit(){ const st=$('#stage'), sb=safeBox(), vw=sb.w, vh=sb.h; window.__fitSig=[innerWidth,innerHeight,screen.width,screen.height,Math.round(sb.w),Math.round(sb.h),Math.round(sb.y)].join(',');
   /* iPads in landscape (aspect 4:3 up to ~1.55): widen the stage so the screen fills edge to edge; phones and portrait keep the fixed 4:3 stage */
-  const tablet=vw>vh && Math.min(vw,vh)>=600;
+  const tablet=vw>vh && Math.min(vw,vh)>=500; /* 500 not 600: the iPhone Duo can hand the app a ~587pt-tall window */
   const W=tablet?Math.round(Math.min(1600,Math.max(1376,1032*vw/vh))):1376;
   st.style.width=W+'px'; { const S2=Math.min(.96,(W/2-102)/616.5); st.style.setProperty('--S2',S2.toFixed(4)); st.style.setProperty('--SX',(W/2-742.5*S2).toFixed(1)+'px'); } st.style.setProperty('--gx',((W-1376)/2)+'px'); st.style.setProperty('--W',W+'px'); HW=W; if(window.homeLayout) homeLayout();
   const sc=Math.min(vw/W,vh/1032), Z=window.LYZ||{z:1,x:0,y:0}; window.LYB={sc,cx:sb.x+vw/2,cy:sb.y+vh/2};
@@ -2741,7 +2741,7 @@ if(window.visualViewport) visualViewport.addEventListener('resize',fit);
   const refit=force=>{ if(force||meas()!==window.__fitSig){ fit(); window.dispatchEvent(new Event('resize')); } };
   const poke=()=>{ if(!window.__short) return; window.__short=0; window.__pokes=(window.__pokes|0)+1; const vm=document.querySelector('meta[name=viewport]'); if(!vm) return; const c=vm.content;
     vm.content=c.replace(/,?\s*viewport-fit=cover/,''); requestAnimationFrame(()=>requestAnimationFrame(()=>{ vm.content=c; window.scrollTo(0,0); setTimeout(()=>refit(true),60); setTimeout(()=>refit(true),400); })); };
-  const burst=()=>{ refit(true); setTimeout(poke,250); setTimeout(poke,1200); [120,350,800,1600,3000].forEach(d=>setTimeout(()=>refit(false),d)); };
+  const burst=()=>{ refit(true);  [120,350,800,1600,3000].forEach(d=>setTimeout(()=>refit(false),d)); };
   document.addEventListener('visibilitychange',()=>{ if(!document.hidden) burst(); });
   addEventListener('focus',burst); addEventListener('pageshow',burst); addEventListener('orientationchange',burst);
   setInterval(()=>{ if(!document.hidden) refit(false); },1000); }
