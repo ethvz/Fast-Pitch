@@ -2714,7 +2714,7 @@ function safeBox(){ let pr=document.getElementById('safeProbe'); if(!pr){ pr=doc
   /* status bar: keep content below it. The stage runs all the way to the bottom edge (under the thin home-indicator strip)
      so there is no black band; the footer's controls sit well above that strip. */
   return {x:l, y:t, w:Wd-l-r, h:H-t}; }
-function fit(){ const st=$('#stage'), sb=safeBox(), vw=sb.w, vh=sb.h;
+function fit(){ const st=$('#stage'), sb=safeBox(), vw=sb.w, vh=sb.h; window.__fitSig=[innerWidth,innerHeight,screen.width,screen.height,Math.round(sb.w),Math.round(sb.h),Math.round(sb.y)].join(',');
   /* iPads in landscape (aspect 4:3 up to ~1.55): widen the stage so the screen fills edge to edge; phones and portrait keep the fixed 4:3 stage */
   const tablet=vw>vh && Math.min(vw,vh)>=600;
   const W=tablet?Math.round(Math.min(1600,Math.max(1376,1032*vw/vh))):1376;
@@ -2723,6 +2723,14 @@ function fit(){ const st=$('#stage'), sb=safeBox(), vw=sb.w, vh=sb.h;
   st.style.left=(sb.x+vw/2+Z.x)+'px'; st.style.top=(sb.y+vh/2+Z.y)+'px'; st.style.transformOrigin='50% 50%'; st.style.transform=`translate(-50%,-50%) scale(${sc*Z.z})`; }
 addEventListener('resize',fit);addEventListener('orientationchange',()=>setTimeout(fit,250));addEventListener('pageshow',fit);setTimeout(fit,300);fit();
 if(window.visualViewport) visualViewport.addEventListener('resize',fit);
+/* iOS home-screen app: after the app switcher (or the home-indicator bar popping up) Safari can report a smaller screen for a moment
+   and never sends a resize back. Re-measure from scratch when the app comes back, and keep a cheap watch on the real size. */
+{ const meas=()=>{ const pr=document.getElementById('safeProbe'); if(pr) pr.remove(); const b=safeBox(); return [innerWidth,innerHeight,screen.width,screen.height,Math.round(b.w),Math.round(b.h),Math.round(b.y)].join(','); };
+  const refit=force=>{ if(force||meas()!==window.__fitSig){ fit(); window.dispatchEvent(new Event('resize')); } };
+  const burst=()=>{ refit(true); [120,350,800,1600,3000].forEach(d=>setTimeout(()=>refit(false),d)); };
+  document.addEventListener('visibilitychange',()=>{ if(!document.hidden) burst(); });
+  addEventListener('focus',burst); addEventListener('pageshow',burst); addEventListener('orientationchange',burst);
+  setInterval(()=>{ if(!document.hidden) refit(false); },1000); }
 /* launch: keep the stage hidden until the screen size has settled (Home Screen apps report safe areas a few frames late), then fade it in once, already in place */
 { const html=document.documentElement; html.classList.add('booting'); let last='', same=0; const t0=performance.now();
   const tick=()=>{ const b=safeBox(), k=[b.x,b.y,b.w,b.h].map(Math.round).join(); if(k===last) same++; else { same=0; last=k; fit(); }
