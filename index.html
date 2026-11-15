@@ -4296,6 +4296,7 @@ input,textarea,[contenteditable="true"]{-webkit-user-select:text!important;user-
 .ocm .ocm-card img[data-im="ocm/spk"]{right:auto;bottom:auto;object-fit:contain;object-position:50% 100%;padding:0}
 .ocm .ocm-card img[data-im="ocm/zoom"]{right:auto;bottom:auto;object-fit:fill;object-position:50% 50%;padding:0}
 .ocm .ocm-card img[data-im="ocm/sensor"]{right:auto;bottom:auto;object-fit:contain;padding:0}
+.ocm .ocm-card img[data-im="ocm/sd"]{right:auto;bottom:auto;object-fit:fill!important;padding:0}
 </style>`);
 { const add=box=>{ const secs=[...box.children].filter(c=>!c.hidden&&c.dataset&&c.dataset.t!=null);
     secs.forEach((c,i)=>{ const last=i===secs.length-1, skip=last||c.classList.contains('hum')||c.classList.contains('gal')&&false;
@@ -4619,8 +4620,9 @@ window.USMAP={w:1000,h:620,ut:[222.1, 266.2],c:[[72.8,371.6,9],[907.0,214.8,9],[
     { const si=card.querySelector('img[data-im="ocm/spk"]'); if(si&&!port){ const ptop=parseFloat(ph.style.top)||372, hh2=Math.max(260,ptop-40), ww=hh2*684/1100; si.style.height=hh2.toFixed(1)+'px'; si.style.width=ww.toFixed(1)+'px'; si.style.top='24px'; si.style.left=(pl+w*.62-ww/2-cl).toFixed(1)+'px'; } }
     /* 5.3X zoom: lens close-up spans the phone's width, filling the space above it */
     { const si=card.querySelector('img[data-im="ocm/zoom"]'); if(si&&!port){ const ptop=parseFloat(ph.style.top)||372, hh2=Math.max(260,ptop-22), zw=Math.min(w,hh2*1500/827); si.style.height=(zw*827/1500).toFixed(1)+'px'; si.style.width=zw.toFixed(1)+'px'; si.style.top=(ptop-10-zw*827/1500).toFixed(1)+'px'; si.style.left=(pl+w/2-zw/2-cl).toFixed(1)+'px'; } }
+    /* microSD: chip centered over the phone */ { const si=card.querySelector('img[data-im="ocm/sd"]'); if(si&&!port){ const hh2=964*.7, ww=hh2*1096/1300; si.style.height=hh2.toFixed(1)+'px'; si.style.width=ww.toFixed(1)+'px'; si.style.top='19px'; si.style.left=(cx-.46*ww-cl).toFixed(1)+'px'; } }
     /* 4K sensor: exploded view at phone width; lens stack and sensor sit above the phone, speaker parts tuck behind it */
-    { const si=card.querySelector('img[data-im="ocm/sensor"]'); if(si&&!port){ const ptop=parseFloat(ph.style.top)||372, sw=Math.max(w,right0-pl)*1.5, hh2=sw*1119/1600; si.style.width=sw.toFixed(1)+'px'; si.style.height=hh2.toFixed(1)+'px'; si.style.top=(ptop-4-.63*hh2).toFixed(1)+'px'; si.style.left=(pl-cl).toFixed(1)+'px'; } } };
+    { const si=card.querySelector('img[data-im="ocm/sensor"]'); if(si&&!port){ const ptop=parseFloat(ph.style.top)||372, hh2=Math.max(600,(ptop+40)/.66), sw=hh2*1600/1119; si.style.width=sw.toFixed(1)+'px'; si.style.height=hh2.toFixed(1)+'px'; si.style.top='6px'; si.style.left=(pl-cl).toFixed(1)+'px'; } } };
   const _sw=show; show=function(p){ _sw.apply(this,arguments); if(p==='ocp'){ balance(); requestAnimationFrame(balance); setTimeout(balance,600); } };
   const again=()=>{ balance(); setTimeout(balance,250); setTimeout(balance,900); };
   window.addEventListener('resize',again); window.addEventListener('orientationchange',again); if(window.visualViewport) visualViewport.addEventListener('resize',again);
