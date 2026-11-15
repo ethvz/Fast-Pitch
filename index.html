@@ -2710,7 +2710,12 @@ let HW=1376;
 function safeBox(){ let pr=document.getElementById('safeProbe'); if(!pr){ pr=document.createElement('div'); pr.id='safeProbe';
   pr.style.cssText='position:fixed;left:0;top:0;width:100vw;height:100vh;height:100dvh;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);box-sizing:border-box;visibility:hidden;pointer-events:none;z-index:-1'; document.documentElement.appendChild(pr); }
   const cs=getComputedStyle(pr), t=parseFloat(cs.paddingTop)||0, b=parseFloat(cs.paddingBottom)||0, l=parseFloat(cs.paddingLeft)||0, r=parseFloat(cs.paddingRight)||0;
-  const H=Math.max(innerHeight, pr.getBoundingClientRect().height||0, (window.visualViewport&&visualViewport.height)||0), Wd=innerWidth;
+  let fixH=0, H=Math.max(innerHeight, pr.getBoundingClientRect().height||0, (window.visualViewport&&visualViewport.height)||0); const Wd=innerWidth;
+  /* home-screen app on iPhone (incl. the foldable iPhone Duo): after the app switcher iOS can keep reporting a viewport that is short by the
+     home-indicator strip, permanently. A full-screen app is always the size of the screen, so trust the screen when the gap is that small. */
+  if(navigator.standalone||(window.matchMedia&&matchMedia('(display-mode: standalone)').matches)){ const sw=screen.width||0, sh=screen.height||0, scrH=Wd>H?Math.min(sw,sh):Math.max(sw,sh), scrW=Wd>H?Math.max(sw,sh):Math.min(sw,sh);
+    if(scrH>H&&scrH-H<=60&&Math.abs(scrW-Wd)<=60){ H=scrH; fixH=scrH; } }
+  { const bs=document.body&&document.body.style; if(bs){ const v=fixH?fixH+'px':''; if(bs.height!==v){ bs.height=v; bs.bottom=fixH?'auto':''; document.documentElement.style.height=v; } } }
   /* status bar: keep content below it. The stage runs all the way to the bottom edge (under the thin home-indicator strip)
      so there is no black band; the footer's controls sit well above that strip. */
   return {x:l, y:t, w:Wd-l-r, h:H-t}; }
