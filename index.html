@@ -4292,6 +4292,10 @@ input,textarea,[contenteditable="true"]{-webkit-user-select:text!important;user-
 .ocm:not(.solo):not(.bleed) .ocm-card img{top:2%;height:70%;object-fit:contain;object-position:62% 0%}
 .ocm.spotm .ocm-card{-webkit-mask-image:linear-gradient(180deg,transparent 0,rgba(0,0,0,.5) 50px,#000 150px);mask-image:linear-gradient(180deg,transparent 0,rgba(0,0,0,.5) 50px,#000 150px)}
 .ocm.spotm .ocm-card img[data-im="ocm/spot"]{right:auto;bottom:auto;object-fit:fill;object-position:0 0;padding:0}
+.ocm.nofade .ocm-card{-webkit-mask-image:none;mask-image:none}
+.ocm .ocm-card img[data-im="ocm/spk"]{right:auto;bottom:auto;object-fit:contain;object-position:50% 100%;padding:0}
+.ocm .ocm-card img[data-im="ocm/zoom"]{right:auto;bottom:auto;object-fit:cover;object-position:50% 50%;padding:0}
+.ocm .ocm-card img[data-im="ocm/sensor"]{right:auto;bottom:auto;object-fit:contain;padding:0}
 </style>`);
 { const add=box=>{ const secs=[...box.children].filter(c=>!c.hidden&&c.dataset&&c.dataset.t!=null);
     secs.forEach((c,i)=>{ const last=i===secs.length-1, skip=last||c.classList.contains('hum')||c.classList.contains('gal')&&false;
@@ -4571,14 +4575,14 @@ window.USMAP={w:1000,h:620,ut:[222.1, 266.2],c:[[72.8,371.6,9],[907.0,214.8,9],[
 /* Outdoor Camera Highlights: one list (left), the app video in a large centered phone, camera photos fading off the right edge */
 { const M=[ // [icon, label, headline, line, camera photo, app clip (oc/ph#) | null]
    [['square','red'],'Smart Deter','Stop Trouble Before It Starts','Lights and warning tones tell lurkers they’ve been seen the moment they step into your detection zone.','ocm/detect',4],
-   [['hd'],'4K HDR Image Sensor','See Every Detail','A 4K sensor and HDR tuning keep faces and plates clear in bright sun and deep shade.','och/c0',0],
-   [['zoom'],'5.3X HD Zoom','Zoom Without the Blur','Zoom in up to 5.3X during live video and stay in sharp HD.','och/s0',3],
+   [['hd'],'4K HDR Image Sensor','See Every Detail','A 4K sensor and HDR tuning keep faces and plates clear in bright sun and deep shade.','ocm/sensor',0],
+   [['zoom'],'5.3X HD Zoom','Zoom Without the Blur','Zoom in up to 5.3X during live video and stay in sharp HD.','ocm/zoom',3],
    [['chip'],'AI + RADAR','Smarter, Faster Detection','AI and RADAR run right on the camera, so alerts are quicker and only for real threats.','ocm/fast',null,'vid'],
    [['car'],'Vehicle Protection','A Shield Around Your Car','Get alerted the moment someone gets too close to your parked car.','och/c1',5],
    [['sun'],'Spotlight Tracking','Spot and Follow Lurkers','The spotlight locks on and follows anyone who shouldn’t be there.','ocm/spot',1,'spot'],
    [['expand'],'140° Lens','Everything in View','A 140° lens covers your yard from corner to corner.','och/c0',0],
-   [['loop'],'24/7 Continuous Playback','Never Miss a Moment','Records around the clock, so you can scroll back to any moment.','ocm/fast',2],
-   [['mic'],'2-Way Talk','Speak Up From Anywhere','High-fidelity 2-way audio lets you talk to anyone on your property.','och/c1',6],
+   [['loop'],'24/7 Continuous Playback','Never Miss a Moment','Records around the clock, so you can scroll back to any moment.','ocm/sd',2],
+   [['mic'],'2-Way Talk','Speak Up From Anywhere','High-fidelity 2-way audio lets you talk to anyone on your property.','ocm/spk',6],
    [['wifi'],'Online, All the Time','Stay Connected','A dual-band Wi-Fi bridge gives up to 2X stronger signal than other wireless cameras.','ocm/stay',null],
    [['weather'],'Weather Resistant','Built to Last','An automotive-grade housing stands up to heat, cold, rain and snow, year after year.','ocm/rain',null,'bleed'],
    [['sliders'],'Customize Everything','Make It Yours','Set detection zones, schedules and alerts exactly the way you want.','och/c0',7]];
@@ -4586,7 +4590,7 @@ window.USMAP={w:1000,h:620,ut:[222.1, 266.2],c:[[72.8,371.6,9],[907.0,214.8,9],[
   L.innerHTML=M.map(([ic,t],i)=>`<button class="${i?'':'on'}" data-ocm="${i}">${LSV(ic[0],26,ic[1]||'')}<span>${t}</span></button>`).join('');
   card.innerHTML=[...new Set(M.map(x=>x[4]))].map(k=>`<img src="assets/${k}.webp?v=2" alt="" data-im="${k}"${k==='ocm/rain'?' class="bleedim"':''}>`).join(''); cv=pv2;
   const live=()=>!!sec.closest('.page.on')&&sec.dataset.vis==='1';
-  const render=()=>{ const [,,h,line,im,clip,mode]=M[m]; if(sec.classList.contains('spotm')!==(mode==='spot')){ sec.classList.toggle('spotm',mode==='spot'); setTimeout(balance,20); } if(sec.classList.contains('bleed')!==(mode==='bleed')){ sec.classList.toggle('bleed',mode==='bleed'); setTimeout(balance,20); }
+  const render=()=>{ const [,,h,line,im,clip,mode]=M[m]; sec.classList.toggle('nofade',im==='ocm/sd'||im==='ocm/spk'||im==='ocm/zoom'||im==='ocm/sensor'); if(sec.classList.contains('spotm')!==(mode==='spot')){ sec.classList.toggle('spotm',mode==='spot'); setTimeout(balance,20); } if(sec.classList.contains('bleed')!==(mode==='bleed')){ sec.classList.toggle('bleed',mode==='bleed'); setTimeout(balance,20); }
     { const vm=mode==='vid', bv=$('#ocmBvV'); sec.classList.toggle('vidm',vm); if(vm&&live()){ bv.currentTime=0; bv.play().catch(()=>{}); } else bv.pause(); }
     $$('#ocmList button').forEach((b,i)=>b.classList.toggle('on',i===m));
     if(H.dataset.i!==String(m)){ H.classList.add('swap'); setTimeout(()=>{ H.innerHTML=`${h}<small>${line}</small>`; H.classList.remove('swap'); },H.dataset.i?140:0); H.dataset.i=m; }
@@ -4610,7 +4614,13 @@ window.USMAP={w:1000,h:620,ut:[222.1, 266.2],c:[[72.8,371.6,9],[907.0,214.8,9],[
     const right=(br.right-sr.left)/k; let cl=cx-120;
     if(sec.classList.contains('bleed')) cl=(br.left-sr.left)/k; else if(sec.classList.contains('solo')){ const lr=L.getBoundingClientRect(); cl=(lr.right-sr.left)/k+30; } if(sec.classList.contains('spotm')) cl=(br.left-sr.left)/k; card.style.left=cl.toFixed(1)+'px'; card.style.width=Math.max(600,right-cl).toFixed(1)+'px';
     /* spotlight photo: light bar = phone width, sitting just above the phone; the camera head runs off the top edge */
-    { const si=card.querySelector('img[data-im="ocm/spot"]'); if(si&&sec.classList.contains('spotm')&&!port){ const s2=w/952, ptop=parseFloat(ph.style.top)||372; si.style.width=(1028*s2).toFixed(1)+'px'; si.style.height=(1371*s2).toFixed(1)+'px'; si.style.left=(pl-37*s2-cl).toFixed(1)+'px'; si.style.top=(ptop-18-1342*s2).toFixed(1)+'px'; } } };
+    { const si=card.querySelector('img[data-im="ocm/spot"]'); if(si&&sec.classList.contains('spotm')&&!port){ const s2=w/952, ptop=parseFloat(ph.style.top)||372; si.style.width=(1028*s2).toFixed(1)+'px'; si.style.height=(1371*s2).toFixed(1)+'px'; si.style.left=(pl-37*s2-cl).toFixed(1)+'px'; si.style.top=(ptop-18-1342*s2).toFixed(1)+'px'; } }
+    /* 2-way talk: whole camera fits between the top edge and the phone so the speaker grille is visible */
+    { const si=card.querySelector('img[data-im="ocm/spk"]'); if(si&&!port){ const ptop=parseFloat(ph.style.top)||372, hh2=Math.max(260,ptop-40), ww=hh2*684/1100; si.style.height=hh2.toFixed(1)+'px'; si.style.width=ww.toFixed(1)+'px'; si.style.top='24px'; si.style.left=(pl+w*.62-ww/2-cl).toFixed(1)+'px'; } }
+    /* 5.3X zoom: lens close-up spans the phone's width, filling the space above it */
+    { const si=card.querySelector('img[data-im="ocm/zoom"]'); if(si&&!port){ const ptop=parseFloat(ph.style.top)||372, hh2=Math.max(260,ptop-30); si.style.height=hh2.toFixed(1)+'px'; si.style.width=w.toFixed(1)+'px'; si.style.top=Math.max(0,ptop-12-hh2).toFixed(1)+'px'; si.style.left=(pl-cl).toFixed(1)+'px'; } }
+    /* 4K sensor: exploded view at phone width; lens stack and sensor sit above the phone, speaker parts tuck behind it */
+    { const si=card.querySelector('img[data-im="ocm/sensor"]'); if(si&&!port){ const ptop=parseFloat(ph.style.top)||372, hh2=w*1119/1600; si.style.width=w.toFixed(1)+'px'; si.style.height=hh2.toFixed(1)+'px'; si.style.top=Math.max(0,ptop-6-.665*hh2).toFixed(1)+'px'; si.style.left=(pl-cl).toFixed(1)+'px'; } } };
   const _sw=show; show=function(p){ _sw.apply(this,arguments); if(p==='ocp'){ balance(); requestAnimationFrame(balance); setTimeout(balance,600); } };
   const again=()=>{ balance(); setTimeout(balance,250); setTimeout(balance,900); };
   window.addEventListener('resize',again); window.addEventListener('orientationchange',again); if(window.visualViewport) visualViewport.addEventListener('resize',again);
