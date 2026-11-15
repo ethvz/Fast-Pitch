@@ -4303,7 +4303,7 @@ input,textarea,[contenteditable="true"]{-webkit-user-select:text!important;user-
 .ocm-cap i{width:56px;height:1px}
 .ocm-cap em{margin-top:0}
 /* baked from the layout art board (Nov 14) */
-.ocm-card img[data-im="ocm/sd"]{translate:100.9px -98.1px;scale:.911}
+.ocm-card img[data-im="ocm/sd"]{translate:100.9px -98.1px;scale:.911;transform-origin:19% 50%}
 .ocm-card img[data-im="ocm/sensor"]{translate:165.9px 104px;scale:1.62}
 .ocm-card img[data-im="och/c0"]{translate:64.8px -192.5px;scale:1.356}
 .ocm-card img[data-im="ocm/spk"]{translate:-104.1px 362.1px;scale:2.345}
@@ -4601,7 +4601,7 @@ window.USMAP={w:1000,h:620,ut:[222.1, 266.2],c:[[72.8,371.6,9],[907.0,214.8,9],[
    [['sliders'],'Customize Everything','Make It Yours','Set detection zones, schedules and alerts exactly the way you want.','och/c0',7]];
   let m=0, cv=null; const L=$('#ocmList'), card=$('#ocmCard'), pv=$('#ocmPv'), pv2=$('#ocmPv2'), ph=$('#ocmPhone'), H=$('#ocmH'), sec=L.closest('.otab');
   L.innerHTML=M.map(([ic,t],i)=>`<button class="${i?'':'on'}" data-ocm="${i}">${LSV(ic[0],26,ic[1]||'')}<span>${t}</span></button>`).join('');
-  card.innerHTML=[...new Set(M.map(x=>x[4]))].map(k=>`<img src="assets/${k}.webp?v=3" alt="" data-im="${k}"${k==='ocm/rain'?' class="bleedim"':''}>`).join(''); cv=pv2;
+  card.innerHTML=[...new Set(M.map(x=>x[4]))].map(k=>`<img src="assets/${k}.webp?v=4" alt="" data-im="${k}"${k==='ocm/rain'?' class="bleedim"':''}>`).join(''); cv=pv2;
   const live=()=>!!sec.closest('.page.on')&&sec.dataset.vis==='1';
   const render=()=>{ const [,,h,line,im,clip,mode,cp]=M[m]; { const c=$('#ocmCap'); if(cp) c.innerHTML=cp; c.classList.toggle('on',!!cp); } sec.classList.toggle('nofade',im==='ocm/sd'||im==='ocm/spk'||im==='ocm/zoom'||im==='ocm/sensor'); if(sec.classList.contains('spotm')!==(mode==='spot')){ sec.classList.toggle('spotm',mode==='spot'); setTimeout(balance,20); } if(sec.classList.contains('bleed')!==(mode==='bleed')){ sec.classList.toggle('bleed',mode==='bleed'); setTimeout(balance,20); }
     { const vm=mode==='vid', bv=$('#ocmBvV'); sec.classList.toggle('vidm',vm); if(vm&&live()){ bv.currentTime=0; bv.play().catch(()=>{}); } else bv.pause(); }
@@ -4632,8 +4632,8 @@ window.USMAP={w:1000,h:620,ut:[222.1, 266.2],c:[[72.8,371.6,9],[907.0,214.8,9],[
     { const si=card.querySelector('img[data-im="ocm/spk"]'); if(si&&!port){ const ptop=parseFloat(ph.style.top)||372, hh2=Math.max(260,ptop-40), ww=hh2*684/1100; si.style.height=hh2.toFixed(1)+'px'; si.style.width=ww.toFixed(1)+'px'; si.style.top='24px'; si.style.left=(pl+w*.62-ww/2-cl).toFixed(1)+'px'; } }
     /* 5.3X zoom: lens close-up spans the phone's width, filling the space above it */
     { const si=card.querySelector('img[data-im="ocm/zoom"]'); if(si&&!port){ const ptop=parseFloat(ph.style.top)||372, hh2=Math.max(260,ptop-22), zw=Math.min(w,hh2*1500/827); si.style.height=(zw*827/1500).toFixed(1)+'px'; si.style.width=zw.toFixed(1)+'px'; si.style.top=(ptop-10-zw*827/1500).toFixed(1)+'px'; si.style.left=(pl+w/2-zw/2-cl).toFixed(1)+'px'; } }
-    { const c=$('#ocmCap'); if(c){ c.style.left=pl.toFixed(1)+'px'; c.style.top=Math.max(20,(parseFloat(ph.style.top)||372)-24-c.offsetHeight).toFixed(1)+'px'; } }
-    /* microSD: chip centered over the phone */ { const si=card.querySelector('img[data-im="ocm/sd"]'); if(si&&!port){ const hh2=964*.7, ww=hh2*1096/1300; si.style.height=hh2.toFixed(1)+'px'; si.style.width=ww.toFixed(1)+'px'; si.style.top='19px'; si.style.left=(cx-.46*ww-cl).toFixed(1)+'px'; } }
+    { const c=$('#ocmCap'); if(c){ c.style.left=(parseFloat(ph.style.left)||pl).toFixed(1)+'px'; c.style.top=Math.max(20,(parseFloat(ph.style.top)||372)-24-c.offsetHeight).toFixed(1)+'px'; } }
+    /* microSD: chip centered over the phone */ { const si=card.querySelector('img[data-im="ocm/sd"]'); if(si&&!port){ const hh2=964*.7, ww=hh2*2000/965; si.style.height=hh2.toFixed(1)+'px'; si.style.width=ww.toFixed(1)+'px'; si.style.top='19px'; si.style.left=(cx-.19*ww-cl).toFixed(1)+'px'; } }
     /* 4K sensor: exploded view at phone width; lens stack and sensor sit above the phone, speaker parts tuck behind it */
     { const si=card.querySelector('img[data-im="ocm/sensor"]'); if(si&&!port){ const ptop=parseFloat(ph.style.top)||372, hh2=Math.max(600,(ptop+40)/.66), sw=hh2*1600/1119; si.style.width=sw.toFixed(1)+'px'; si.style.height=hh2.toFixed(1)+'px'; si.style.top='6px'; si.style.left=(pl-cl).toFixed(1)+'px'; } } };
   const _sw=show; show=function(p){ _sw.apply(this,arguments); if(p==='ocp'){ balance(); requestAnimationFrame(balance); setTimeout(balance,600); } };
