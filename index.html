@@ -2706,19 +2706,20 @@ body.hasbk #gTitle{transform:translateX(118px)}
 const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
 
 /* ---------- scale stage ---------- */
-let HW=1376; window.FPV='v363';
+let HW=1376; window.FPV='v364';
 function safeBox(){ let pr=document.getElementById('safeProbe'); if(!pr){ pr=document.createElement('div'); pr.id='safeProbe';
   pr.style.cssText='position:fixed;left:0;top:0;width:100vw;height:100vh;height:100dvh;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);box-sizing:border-box;visibility:hidden;pointer-events:none;z-index:-1'; document.documentElement.appendChild(pr); }
   const cs=getComputedStyle(pr), t=parseFloat(cs.paddingTop)||0, b=parseFloat(cs.paddingBottom)||0, l=parseFloat(cs.paddingLeft)||0, r=parseFloat(cs.paddingRight)||0;
-  let fixH=0, H=Math.max(innerHeight, pr.getBoundingClientRect().height||0, (window.visualViewport&&visualViewport.height)||0); const Wd=innerWidth;
-  /* home-screen app: after the app switcher iOS (seen on the foldable iPhone Duo) can keep reporting a smaller viewport for the rest of the
-     session, so the app shrinks and never grows back. The app is full screen, so for this screen + orientation keep the largest size seen. */
-  let box={x:l, y:t, w:Wd-l-r, h:H-t};
+  let H=Math.max(innerHeight, pr.getBoundingClientRect().height||0, (window.visualViewport&&visualViewport.height)||0); const Wd=innerWidth;
+  /* home-screen app: after the app switcher iOS (seen on the foldable iPhone Duo) can drop the full-screen (viewport-fit=cover) window and
+     leave the app in a smaller window, cut off at the status-bar and home-indicator edges. Always lay out to the real window (never crop),
+     remember the largest window seen for this screen + orientation, and if we come back smaller ask iOS to re-apply the full-screen viewport. */
+  const box={x:l, y:t, w:Wd-l-r, h:H-t};
   if(navigator.standalone||(window.matchMedia&&matchMedia('(display-mode: standalone)').matches)){
     const B=window.__bestBox||(window.__bestBox={}), k=(screen.width||0)+'x'+(screen.height||0)+(Wd>H?'L':'P'), o=B[k];
-    if(!o||Wd*H>=o.W*o.H) B[k]={W:Wd,H,box}; else if(Wd>=o.W*.8&&H>=o.H*.7){ box=o.box; fixH=o.H; window.__fixW=o.W; } }
-  { const bs=document.body&&document.body.style; if(bs){ const v=fixH?fixH+'px':'', w=fixH?window.__fixW+'px':''; if(bs.height!==v||bs.width!==w){ bs.height=v; bs.width=w; bs.bottom=bs.right=fixH?'auto':''; document.documentElement.style.height=v; document.documentElement.style.width=w; } } }
-  window.__diag={iw:innerWidth,ih:innerHeight,vv:window.visualViewport?Math.round(visualViewport.width)+'x'+Math.round(visualViewport.height):'-',dvh:Math.round(pr.getBoundingClientRect().height),scr:screen.width+'x'+screen.height,ins:[t,r,b,l].map(Math.round).join('/'),sa:!!(navigator.standalone),fix:fixH?window.__fixW+'x'+fixH:'no'};
+    if(!o||Wd*H>=o.W*o.H) B[k]={W:Wd,H}; else if(Wd>=o.W*.8&&H>=o.H*.7) window.__short=1; }
+  { const bs=document.body&&document.body.style; if(bs&&bs.height){ bs.height=bs.width=bs.bottom=bs.right=''; document.documentElement.style.height=document.documentElement.style.width=''; } }
+  window.__diag={iw:innerWidth,ih:innerHeight,vv:window.visualViewport?Math.round(visualViewport.width)+'x'+Math.round(visualViewport.height):'-',dvh:Math.round(pr.getBoundingClientRect().height),scr:screen.width+'x'+screen.height,ins:[t,r,b,l].map(Math.round).join('/'),sa:!!(navigator.standalone),short:window.__short?'yes':'no',poke:window.__pokes|0};
   /* status bar: keep content below it. The stage runs all the way to the bottom edge (under the thin home-indicator strip)
      so there is no black band; the footer's controls sit well above that strip. */
   return box; }
@@ -2738,7 +2739,9 @@ if(window.visualViewport) visualViewport.addEventListener('resize',fit);
    and never sends a resize back. Re-measure from scratch when the app comes back, and keep a cheap watch on the real size. */
 { const meas=()=>{ const pr=document.getElementById('safeProbe'); if(pr) pr.remove(); const b=safeBox(); return [innerWidth,innerHeight,screen.width,screen.height,Math.round(b.w),Math.round(b.h),Math.round(b.y)].join(','); };
   const refit=force=>{ if(force||meas()!==window.__fitSig){ fit(); window.dispatchEvent(new Event('resize')); } };
-  const burst=()=>{ refit(true); [120,350,800,1600,3000].forEach(d=>setTimeout(()=>refit(false),d)); };
+  const poke=()=>{ if(!window.__short) return; window.__short=0; window.__pokes=(window.__pokes|0)+1; const vm=document.querySelector('meta[name=viewport]'); if(!vm) return; const c=vm.content;
+    vm.content=c.replace(/,?\s*viewport-fit=cover/,''); requestAnimationFrame(()=>requestAnimationFrame(()=>{ vm.content=c; window.scrollTo(0,0); setTimeout(()=>refit(true),60); setTimeout(()=>refit(true),400); })); };
+  const burst=()=>{ refit(true); setTimeout(poke,250); setTimeout(poke,1200); [120,350,800,1600,3000].forEach(d=>setTimeout(()=>refit(false),d)); };
   document.addEventListener('visibilitychange',()=>{ if(!document.hidden) burst(); });
   addEventListener('focus',burst); addEventListener('pageshow',burst); addEventListener('orientationchange',burst);
   setInterval(()=>{ if(!document.hidden) refit(false); },1000); }
