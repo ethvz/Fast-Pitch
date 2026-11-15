@@ -4269,8 +4269,8 @@ input,textarea,[contenteditable="true"]{-webkit-user-select:text!important;user-
 .ocm-phone.port{width:556px;height:732px;top:150px}
 .ocm-phone video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:transparent;opacity:0;transition:opacity .35s ease}
 .ocm-phone video.rdy{opacity:1}.ocm-phone video.top{z-index:2}
-.ocm-card{position:absolute;z-index:1;top:100px;height:740px;left:900px;width:600px;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 30%,#000 70%,transparent 100%);mask-image:linear-gradient(90deg,transparent 0,#000 30%,#000 70%,transparent 100%)}
-.ocm-card img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:62% 50%;opacity:0;transform:scale(1.03);transition:opacity .45s ease,transform .7s cubic-bezier(.22,1,.36,1)}
+.ocm-card{position:absolute;z-index:1;top:0;height:964px;left:900px;width:600px;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 34%);mask-image:linear-gradient(90deg,transparent 0,#000 34%)}
+.ocm-card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 45%;opacity:0;transform:scale(1.03);transition:opacity .45s ease,transform .7s cubic-bezier(.22,1,.36,1)}
 .ocm-card img.on{opacity:1;transform:none}
 </style>`);
 { const add=box=>{ const secs=[...box.children].filter(c=>!c.hidden&&c.dataset&&c.dataset.t!=null);
@@ -4579,8 +4579,10 @@ window.USMAP={w:1000,h:620,ut:[222.1, 266.2],c:[[72.8,371.6,9],[907.0,214.8,9],[
   document.addEventListener('click',e=>{ const b=e.target.closest('[data-ocm]'); if(!b) return; m=+b.dataset.ocm; render(); });
   /* phone centered on the screen; photos start just behind the phone and fade off the right edge of the screen */
   const balance=()=>{ const box=sec.parentElement, br=box.getBoundingClientRect(), sr=sec.getBoundingClientRect(); if(!sr.width) return; const k=sr.width/sec.offsetWidth;
-    const cx=(br.left+br.width/2-sr.left)/k+70, w=ph.classList.contains('port')?556:920; ph.style.left=(cx-w/2).toFixed(1)+'px';
-    const right=(br.right-sr.left)/k, cl=cx+w/2-380; card.style.left=cl.toFixed(1)+'px'; card.style.width=Math.max(700,right-cl).toFixed(1)+'px'; };
+    const port=ph.classList.contains('port'), cx=(br.left+br.width/2-sr.left)/k+70, w=port?556:920, hh=port?732:454; ph.style.left=(cx-w/2).toFixed(1)+'px';
+    /* bottom of the phone lines up with the bottom of the menu */ const lb=L.lastElementChild&&L.lastElementChild.getBoundingClientRect(); if(lb&&lb.height){ const bot=(lb.bottom-sr.top)/k; ph.style.top=Math.max(20,bot-hh).toFixed(1)+'px'; }
+    /* clip the recording's square corners to its own rounded phone frame */ const sc=w/(port?504:1152), ins=port?[6,10,23,9]:[3,5,7,4]; const cp=`inset(${ins.map(v=>(v*sc).toFixed(1)+'px').join(' ')} round ${(85*sc).toFixed(1)}px)`; ph.querySelectorAll('video').forEach(v=>{ v.style.clipPath=cp; v.style.webkitClipPath=cp; });
+    const right=(br.right-sr.left)/k, cl=cx-120; card.style.left=cl.toFixed(1)+'px'; card.style.width=Math.max(600,right-cl).toFixed(1)+'px'; };
   const _sw=show; show=function(p){ _sw.apply(this,arguments); if(p==='ocp'){ balance(); requestAnimationFrame(balance); setTimeout(balance,600); } };
   const again=()=>{ balance(); setTimeout(balance,250); setTimeout(balance,900); };
   window.addEventListener('resize',again); window.addEventListener('orientationchange',again); if(window.visualViewport) visualViewport.addEventListener('resize',again);
