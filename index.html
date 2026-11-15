@@ -1818,7 +1818,7 @@ body.pcoll #gTitle{opacity:0!important;transition:opacity .2s}
 .ae-evs .fl{display:flex;gap:8px;padding:0 16px 16px;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid #eee}
 .ae-evs .fl button{height:40px;padding:0 12px;border-radius:8px;box-shadow:inset 0 0 0 1px #ddd;font-size:12px;white-space:nowrap;display:flex;align-items:center;gap:6px;flex:none}
 .ae-evs .fl button.on{box-shadow:inset 0 0 0 1.5px #111}
-.ae-evs .ls{position:absolute;top:186px;left:0;right:0;bottom:0;overflow-y:auto;background:#f3f3f3;padding:0 16px 40px;scrollbar-width:none}
+.ae-evs .ls{position:absolute;top:186px;left:0;right:0;bottom:0;overflow-y:auto;overscroll-behavior:contain;background:#f3f3f3;padding:0 16px 40px;scrollbar-width:none}
 .ae-dh{font-size:17px;font-weight:500;margin:22px 8px 12px}
 .ae-evc{background:#fff;border-radius:16px;display:flex;justify-content:space-between;padding:14px 14px 14px 16px;margin-bottom:10px;min-height:110px}
 .ae-evc small{font-size:11px;color:#666;display:block}
@@ -1889,7 +1889,7 @@ body.pcoll #gTitle{opacity:0!important;transition:opacity .2s}
 .ae-menu .ml button:active{background:#f3f3f3}
 .ae-menu .ml .ex{color:#a00d1b;box-shadow:inset 0 0 0 1px #e8909a;margin-top:6px}
 .ae-menu .ver{position:absolute;left:0;right:0;bottom:56px;text-align:center;font-size:13px;color:#333}
-.ae-page{position:absolute;inset:0;z-index:76;background:#fff;transform:translateX(100%);transition:transform .45s cubic-bezier(.25,1,.35,1);overflow-y:auto;scrollbar-width:none}
+.ae-page{position:absolute;inset:0;z-index:76;background:#fff;transform:translateX(100%);transition:transform .45s cubic-bezier(.25,1,.35,1);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:none}
 .ae-page.on{transform:none}
 .ae-page .bk{position:absolute;left:18px;top:62px;width:46px;height:46px;border-radius:50%;display:grid;place-items:center;box-shadow:0 1px 6px rgba(0,0,0,.08)}
 .ae-page h2{margin:128px 24px 18px;font-size:22px;font-weight:500;display:flex;justify-content:space-between;align-items:baseline}
@@ -1907,7 +1907,7 @@ body.pcoll #gTitle{opacity:0!important;transition:opacity .2s}
 .appemu .ae-phone{position:absolute;left:calc(var(--gx,0px) + 760px);top:50%;width:420px;height:884px;margin-top:-442px;border-radius:68px;background:linear-gradient(145deg,#3a3a3c,#1c1c1e 40%,#2c2c2e);padding:12px;box-shadow:0 0 0 1.5px #48484a,0 40px 100px rgba(0,0,0,.7),inset 0 0 0 1px rgba(255,255,255,.08)}
 .appemu .ae-btn{position:absolute;width:4px;border-radius:2px;background:#2c2c2e}
 .appemu .ae-b1{left:-4px;top:170px;height:34px}.appemu .ae-b2{left:-4px;top:230px;height:64px}.appemu .ae-b3{right:-4px;top:250px;height:100px}
-.appemu .ae-screen{position:relative;width:100%;height:100%;border-radius:57px;background:#f3f3f3;overflow:hidden;color:#fff;font-family:-apple-system,'SF Pro Text',system-ui,sans-serif}
+.appemu .ae-screen{overscroll-behavior:contain;position:relative;width:100%;height:100%;border-radius:57px;background:#f3f3f3;overflow:hidden;color:#fff;font-family:-apple-system,'SF Pro Text',system-ui,sans-serif}
 .appemu .ae-island{position:absolute;left:50%;top:12px;width:122px;height:36px;margin-left:-61px;border-radius:18px;background:#000;z-index:5;box-shadow:0 0 0 1px #111}
 .appemu .ae-sb{position:absolute;left:0;right:0;top:0;height:58px;display:flex;align-items:center;justify-content:space-between;padding:4px 34px 0 46px;z-index:4;font-size:16px}
 .appemu .ae-sb span{display:flex;gap:6px;align-items:center}
@@ -4373,7 +4373,7 @@ $$('.hcat .ht[data-k=shp2]').forEach(t=>{ if(t.querySelector('img[src*="scr.webp
   document.addEventListener('click',e=>{ const b=e.target.closest('#homeX [data-go]'); if(!b||!HX.includes(cur)) return; e.stopPropagation(); goHX(b.dataset.go); },true);
   let sx=null,sy=null,blocked=false;
   const scroller=el=>{ for(;el&&el!==document.body;el=el.parentElement){ if(el.scrollWidth>el.clientWidth+4&&/(auto|scroll)/.test(getComputedStyle(el).overflowX)) return true; } return false; };
-  $('#screen').addEventListener('touchstart',e=>{ if(!HX.includes(cur)||e.touches.length!==1){ sx=null; return; } sx=e.touches[0].clientX; sy=e.touches[0].clientY; blocked=scroller(e.target); },{passive:true});
+  $('#screen').addEventListener('touchstart',e=>{ if(!HX.includes(cur)||e.touches.length!==1){ sx=null; return; } sx=e.touches[0].clientX; sy=e.touches[0].clientY; blocked=scroller(e.target)||!!(e.target.closest&&e.target.closest('.appemu')); },{passive:true});
   /* the page follows your finger, then finishes the slide (or springs back) */
   const z=()=>{ const st=$('#stage'); return (st.getBoundingClientRect().width/st.offsetWidth)||1; };
   let live=false;
@@ -4554,7 +4554,7 @@ $$('.lpage').forEach(box=>{ let t=0, touching=false, lastY=box.scrollTop, dir=1,
     let best=L.P[0], bd=1e9; L.P.forEach(v=>{ let d=Math.abs(v-y); if((v-y)*dir<0) d*=1.35; if(d<bd){ bd=d; best=v; } });
     if(Math.abs(best-y)>1) spring(best); };
   box.addEventListener('scroll',()=>{ const y=box.scrollTop; if(Math.abs(y-lastY)>1) dir=y>lastY?1:-1; lastY=y; if(raf) return; clearTimeout(t); t=setTimeout(settle,140); },{passive:true});
-  box.addEventListener('touchstart',e=>{ touching=true; stopAnim(); clearTimeout(t); if(e.touches.length>1||box.closest('.zm,.pcol')){ T=null; return; } const p=e.touches[0]; T={x:p.clientX,y:p.clientY,y0:box.scrollTop,t:performance.now(),ly:p.clientY,lt:performance.now()}; vel=0; },{passive:true});
+  box.addEventListener('touchstart',e=>{ touching=true; stopAnim(); clearTimeout(t); if(e.touches.length>1||box.closest('.zm,.pcol')||(e.target.closest&&e.target.closest('.appemu'))){ T=null; return; } const p=e.touches[0]; T={x:p.clientX,y:p.clientY,y0:box.scrollTop,t:performance.now(),ly:p.clientY,lt:performance.now()}; vel=0; },{passive:true});
   box.addEventListener('touchmove',e=>{ if(!T) return; const p=e.touches[0], now=performance.now(), dt=now-T.lt; if(dt>0){ vel=.6*vel+.4*((p.clientY-T.ly)/dt); } T.ly=p.clientY; T.lt=now; T.lx=p.clientX; },{passive:true});
   const end=e=>{ touching=false; clearTimeout(t); const S=T; T=null;
     if(S&&e.type==='touchend'&&e.touches.length===0){ const ch=e.changedTouches[0], dy=ch.clientY-S.y, dx=ch.clientX-S.x, dt=performance.now()-S.t;
