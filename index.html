@@ -2265,13 +2265,19 @@ body.hasbk #gTitle{transform:translateX(118px)}
         <div id="ocHeroHot"></div>
       </div>
       <div class="otab hum" data-t="spin"><div class="hum-st"><canvas id="humV" data-seq="assets/seq/oc-frames.jpg?v=217" width="1376" height="1032"></canvas></div></div>
-      <div class="otab" data-t="feat">
+      <div class="otab dbm ocm" data-t="feat">
+        <div class="ocm-card" id="ocmCard"></div>
+        <div class="ocm-phone" id="ocmPhone"><video id="ocmPv" playsinline loop preload="auto"></video><video id="ocmPv2" playsinline loop preload="auto"></video></div>
+        <div class="ocm-fade"></div>
+        <div class="dbm-col ocm-col"><h2 class="dbm-h" id="ocmH"></h2><div class="dbm-list" id="ocmList"></div></div>
+      </div>
+      <div class="otab" data-t="featold" hidden>
         <img class="full" id="ocFeatImg" src="assets/oc/f_detect.webp?v=176" alt="">
         <video class="ovid" id="ocFeatVid" muted playsinline loop hidden></video>
         <div id="ocFeatHot"></div>
         <div class="tip" id="ocTip"><span class="tx" data-tipx="1"><svg width="11" height="11" viewBox="0 0 12 12" stroke="#fff" stroke-width="1.6"><path d="M1 1l10 10M11 1L1 11"/></svg></span><div id="ocTipTx"></div></div>
       </div>
-      <div class="otab" data-t="phone">
+      <div class="otab" data-t="phoneold" hidden>
         <img class="full" id="ocPhoneImg" src="assets/oc/p0.webp?v=176" alt="">
         <video class="ovid" id="ocPhoneVid" playsinline style="border-radius:0"></video>
         <div id="ocPhoneHot"></div>
@@ -2460,7 +2466,7 @@ function barFor(p){
   if(p==='buyouts') r.innerHTML=`<button class="bbtn${big?' on':''}" id="amtBtn" style="width:96px"><svg width="24" height="34" viewBox="0 0 24 34" fill="none" stroke="#fff" stroke-width="2.4"><path d="M12 2v30M19 9c0-3-3-4.5-7-4.5S5 6.5 5 10s3.5 4.5 7 5.5 7.5 2 7.5 6-3.5 6-7.5 6S4 25.5 4 22"/></svg></button>`;
   /* packages: no pricing button */
   if(p==='monitoring') r.innerHTML=[0,1,2,3,4,5].map(i=>`<button class="bbtn${i===monTab?' on':''}" data-mon="${i}"><img src="assets/icons/mon${i}.png" alt=""></button>`).join('');
-  if(p==='ocp') r.innerHTML=(OC.mode==='p3'?['hero','feat','phone','cmp','specs','hist','act','with','faq']:['hero','feat','phone']).map(k=>k==='cube'?`<a class="bbtn" href="${VW}" target="_blank" rel="noopener" data-octab="cube"><img src="assets/oc/i_cube.png" alt="PreView"></a>`:`<button class="bbtn${k===OC.tab||(k==='play'&&OC.tab==='videos')?' on':''}" data-octab="${k}">${k==='hist'?HISTICO:`<img src="assets/oc/i_${k}.png" alt="">`}</button>`).join('');
+  if(p==='ocp') r.innerHTML=(OC.mode==='p3'?['hero','feat','cmp','specs','hist','act','with','faq']:['hero','feat']).map(k=>k==='cube'?`<a class="bbtn" href="${VW}" target="_blank" rel="noopener" data-octab="cube"><img src="assets/oc/i_cube.png" alt="PreView"></a>`:`<button class="bbtn${k===OC.tab||(k==='play'&&OC.tab==='videos')?' on':''}" data-octab="${k}">${k==='hist'?HISTICO:`<img src="assets/oc/i_${k}.png" alt="">`}</button>`).join('');
   if(p==='prod') r.innerHTML=prBar();
   if(p==='hub') r.innerHTML=[['hero','i_hero'],['modes',HBICO],['feat','i_specs'],['hist',HISTICO],['cmp','i_cmp'],['act','i_hero'],['with','i_hero'],['faq','i_hero']].map(([k,ic])=>k==='cube'?`<a class="bbtn" href="${VW}" target="_blank" rel="noopener"><img src="assets/oc/i_cube.png" alt="PreView"></a>`:`<button class="bbtn${k===HB.tab||(k==='play'&&HB.tab==='videos')?' on':''}" data-hbtab="${k}">${ic.startsWith('<')?ic:`<img src="assets/oc/${ic}.png" alt="">`}</button>`).join('');
   if(p==='dbcp') r.innerHTML=['hero','feat','cmp','specs','act','with','faq'].map(k=>k==='cube'?`<a class="bbtn" href="${VW}" target="_blank" rel="noopener"><img src="assets/oc/i_cube.png" alt="PreView"></a>`:`<button class="bbtn${k===DB.tab||(k==='play'&&DB.tab==='videos')?' on':''}" data-dbtab="${k}">${k==='feat'?DBICO:`<img src="assets/oc/i_${k}.png" alt="">`}</button>`).join('');
@@ -2673,7 +2679,7 @@ function histRender(){ const box=$('#ocHist'), foot=OC.hist!=='f', v=OC.hist, I=
   if(!foot&&same) {} }
 function ocRender(){
   const g2=OC.mode==='g2';
-  $$('#p-ocp .otab').forEach(t=>{t.hidden=t.dataset.t==='videos'||(g2&&!['hero','feat','phone'].includes(t.dataset.t));});
+  $$('#p-ocp .otab').forEach(t=>{t.hidden=t.dataset.t==='videos'||t.dataset.t==='featold'||t.dataset.t==='phoneold'||(g2&&!['hero','feat'].includes(t.dataset.t));});
   {
     let img, hot='';
     const SP=TOG('spot',366,732,322,['w/ Spotlight','data-hero="spot1"','bulb'],['w/o Spotlight','data-hero="spot0"'],OC.spot?0:1);
@@ -2716,7 +2722,7 @@ function ocRender(){
       if(!sec.__drag) stripSet(sec,OC.spec==='s'?1:0,false); }
     if(inH) histRender();
   }
-  if(cur==='ocp'){const want=OC.mode==='p3'?9:3;const bs=$$('#barRight [data-octab]');if(bs.length!==want)barFor('ocp');else bs.forEach(b=>b.classList.toggle('on',b.dataset.octab===OC.tab||(b.dataset.octab==='play'&&OC.tab==='videos')));}
+  if(cur==='ocp'){const want=OC.mode==='p3'?8:2;const bs=$$('#barRight [data-octab]');if(bs.length!==want)barFor('ocp');else bs.forEach(b=>b.classList.toggle('on',b.dataset.octab===OC.tab||(b.dataset.octab==='play'&&OC.tab==='videos')));}
 }
 function ocTab(k){ if(k==='cube') return; if(k==='play'){ if(OC.mode==='g2') return toast('Gen 2 videos'); k='videos'; }
   if(k==='cmp'){ OC.arlo=false; ocRender();  }
@@ -4252,6 +4258,20 @@ input,textarea,[contenteditable="true"]{-webkit-user-select:text!important;user-
 /* product pages: vertical section rail on the left */
 #stage.lnav #bar:not(.home) #barRight.pnav{right:auto!important;left:18px!important}
 #stage.lnav #p-prod .lpage>*,#stage.lnav #p-ocp .lpage>*,#stage.lnav #p-dbcp .lpage>*,#stage.lnav #p-hub .lpage>*,#stage.lnav #p-therm .lpage>*{--gx:var(--gxl,0px)}
+
+/* Outdoor Camera: Highlights + App merged (doorbell-style) */
+.ocm{background:#000;overflow:visible}
+.ocm .ocm-col{z-index:6;gap:22px}
+.ocm .dbm-list button{height:48px;font-size:18.5px}
+.ocm .dbm-h{min-height:160px}
+.ocm-fade{position:absolute;top:0;bottom:0;left:calc(-1*var(--gx,0px));width:calc(var(--gx,0px) + 560px);z-index:5;pointer-events:none;background:linear-gradient(90deg,#000 0,#000 62%,rgba(0,0,0,.85) 76%,rgba(0,0,0,0) 100%)}
+.ocm-phone{position:absolute;z-index:3;left:300px;top:262px;width:800px;height:398px;border-radius:58px;box-sizing:border-box;border:3px solid rgba(235,238,238,.9);background:#000;padding:11px 12px;box-shadow:0 30px 70px rgba(0,0,0,.7);transition:width .5s cubic-bezier(.22,1,.36,1),height .5s cubic-bezier(.22,1,.36,1),top .5s cubic-bezier(.22,1,.36,1),margin-left .5s cubic-bezier(.22,1,.36,1);will-change:transform}
+.ocm-phone.port{width:372px;height:748px;top:96px;border-radius:60px}
+.ocm-phone video{position:absolute;left:12px;top:11px;width:calc(100% - 24px);height:calc(100% - 22px);object-fit:cover;border-radius:46px;background:#000;opacity:0;transition:opacity .35s ease}
+.ocm-phone video.rdy{opacity:1}.ocm-phone video.top{z-index:2}
+.ocm-card{position:absolute;z-index:1;top:30px;height:900px;left:900px;width:600px;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 16%,#000 62%,transparent 100%);mask-image:linear-gradient(90deg,transparent 0,#000 16%,#000 62%,transparent 100%)}
+.ocm-card img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:40% 50%;opacity:0;transform:scale(1.03);transition:opacity .45s ease,transform .7s cubic-bezier(.22,1,.36,1)}
+.ocm-card img.on{opacity:1;transform:none}
 </style>`);
 { const add=box=>{ const secs=[...box.children].filter(c=>!c.hidden&&c.dataset&&c.dataset.t!=null);
     secs.forEach((c,i)=>{ const last=i===secs.length-1, skip=last||c.classList.contains('hum')||c.classList.contains('gal')&&false;
@@ -4526,6 +4546,47 @@ window.USMAP={w:1000,h:620,ut:[222.1, 266.2],c:[[72.8,371.6,9],[907.0,214.8,9],[
   const apply=p=>{ st.classList.toggle('lnav',PRODP.includes(p)); setVars(); requestAnimationFrame(setVars); setTimeout(setVars,300); $$('.page.on .fsp-pane,.page.on .hbpane').forEach(x=>x.__fit=null); };
   const _bfb=barFor; barFor=function(p){ _bfb.apply(this,arguments); apply(p); requestAnimationFrame(()=>window.dispatchEvent(new Event('resize'))); };
   window.addEventListener('resize',()=>{ setVars(); }); apply(cur); }
+
+
+/* Outdoor Camera Highlights: one list (left), the app video in a large centered phone, camera photos fading off the right edge */
+{ const M=[ // [icon, label, headline, line, camera photo, app clip (oc/ph#) | null]
+   [['square','red'],'Smart Deter','Stop Trouble Before It Starts','Lights and warning tones tell lurkers they’ve been seen the moment they step into your detection zone.','ocm/detect',4],
+   [['hd'],'4K HDR Video','See Every Detail','A 4K sensor and HDR tuning keep faces and plates clear in bright sun and deep shade.','och/c0',0],
+   [['zoom'],'5.3X HD Zoom','Zoom Without the Blur','Zoom in up to 5.3X during live video and stay in sharp HD.','och/s0',3],
+   [['chip'],'AI + RADAR','Smarter, Faster Detection','AI and RADAR run right on the camera, so alerts are quicker and only for real threats.','ocm/fast',1],
+   [['car'],'Vehicle Protection','A Shield Around Your Car','Get alerted the moment someone gets too close to your parked car.','och/c1',5],
+   [['sun'],'Spotlight Tracking','Spot and Follow Lurkers','The spotlight locks on and follows anyone who shouldn’t be there.','ocm/spot',1],
+   [['expand'],'140° Lens','Everything in View','A 140° lens covers your yard from corner to corner.','och/c0',0],
+   [['loop'],'10-Day Recording','Never Miss a Moment','Up to 10 days of continuous recording, so you can go back to anything.','och/s0',2],
+   [['mic'],'2-Way Talk','Speak Up From Anywhere','High-fidelity 2-way audio lets you talk to anyone on your property.','och/c1',6],
+   [['wifi'],'Online, All the Time','Stay Connected','A dual-band Wi-Fi bridge gives up to 2X stronger signal than other wireless cameras.','ocm/stay',0],
+   [['weather'],'Weather Resistant','Built to Last','An automotive-grade housing stands up to heat, cold, rain and snow, year after year.','ocm/built',0],
+   [['sliders'],'Customize Everything','Make It Yours','Set detection zones, schedules and alerts exactly the way you want.','och/c0',7]];
+  let m=0, cv=null; const L=$('#ocmList'), card=$('#ocmCard'), pv=$('#ocmPv'), pv2=$('#ocmPv2'), ph=$('#ocmPhone'), H=$('#ocmH'), sec=L.closest('.otab');
+  L.innerHTML=M.map(([ic,t],i)=>`<button class="${i?'':'on'}" data-ocm="${i}">${LSV(ic[0],26,ic[1]||'')}<span>${t}</span></button>`).join('');
+  card.innerHTML=[...new Set(M.map(x=>x[4]))].map(k=>`<img src="assets/${k}.webp?v=1" alt="" data-im="${k}">`).join(''); cv=pv2;
+  const live=()=>!!sec.closest('.page.on')&&sec.dataset.vis==='1';
+  const render=()=>{ const [,,h,line,im,clip]=M[m];
+    $$('#ocmList button').forEach((b,i)=>b.classList.toggle('on',i===m));
+    if(H.dataset.i!==String(m)){ H.classList.add('swap'); setTimeout(()=>{ H.innerHTML=`${h}<small>${line}</small>`; H.classList.remove('swap'); },H.dataset.i?140:0); H.dataset.i=m; }
+    $$('#ocmCard img').forEach(x=>x.classList.toggle('on',x.dataset.im===im));
+    const port=clip===7; if(ph.classList.contains('port')!==port){ ph.classList.toggle('port',port); setTimeout(balance,20); setTimeout(balance,520); }
+    const u=`assets/oc/ph${clip}.mp4?v=56`;
+    if(cv.__u!==u){ const nx=cv===pv?pv2:pv, old=cv; nx.__u=u; nx.classList.remove('rdy','top'); nx.src=u; nx.currentTime=0;
+      const go=()=>{ old.muted=true; nx.classList.add('rdy','top'); old.classList.remove('top'); setTimeout(()=>{ if(cv!==old){ old.classList.remove('rdy'); old.pause(); } },420); };
+      nx.addEventListener('playing',go,{once:true}); cv=nx; }
+    if(live()){ cv.muted=false; const pr=cv.play(); if(pr) pr.catch(()=>{ cv.muted=true; cv.play().catch(()=>{}); }); } };
+  document.addEventListener('click',e=>{ const b=e.target.closest('[data-ocm]'); if(!b) return; m=+b.dataset.ocm; render(); });
+  /* phone centered on the screen; photos start just behind the phone and fade off the right edge of the screen */
+  const balance=()=>{ const box=sec.parentElement, br=box.getBoundingClientRect(), sr=sec.getBoundingClientRect(); if(!sr.width) return; const k=sr.width/sec.offsetWidth;
+    const cx=(br.left+br.width/2-sr.left)/k, w=ph.classList.contains('port')?372:800; ph.style.left=(cx-w/2).toFixed(1)+'px';
+    const right=(br.right-sr.left)/k, cl=cx+w/2-150; card.style.left=cl.toFixed(1)+'px'; card.style.width=Math.max(420,right-cl).toFixed(1)+'px'; };
+  const _sw=show; show=function(p){ _sw.apply(this,arguments); if(p==='ocp'){ balance(); requestAnimationFrame(balance); setTimeout(balance,600); } };
+  const again=()=>{ balance(); setTimeout(balance,250); setTimeout(balance,900); };
+  window.addEventListener('resize',again); window.addEventListener('orientationchange',again); if(window.visualViewport) visualViewport.addEventListener('resize',again);
+  try{ new ResizeObserver(()=>balance()).observe(sec.parentElement); }catch(e){}
+  new MutationObserver(()=>{ if(live()) render(); else { pv.pause(); pv2.pause(); } }).observe(sec,{attributes:true,attributeFilter:['data-vis']});
+  render(); balance(); }
 
 barFor(cur);
 </script>
