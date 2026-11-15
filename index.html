@@ -2266,7 +2266,7 @@ body.hasbk #gTitle{transform:translateX(118px)}
       </div>
       <div class="otab hum" data-t="spin"><div class="hum-st"><canvas id="humV" data-seq="assets/seq/oc-frames.jpg?v=217" width="1376" height="1032"></canvas></div></div>
       <div class="otab dbm ocm" data-t="feat">
-        <div class="ocm-card" id="ocmCard"></div><div class="dbm-cap ocm-cap" id="ocmCap"></div><div class="ocm-bv" id="ocmBv"><video id="ocmBvV" src="assets/ocm/radar.mp4?v=1" poster="assets/ocm/radar.jpg?v=1" muted playsinline loop preload="auto"></video></div>
+        <div class="ocm-card" id="ocmCard"></div><video class="ocm-sv" id="ocmSv" src="assets/ocm/spotv.mp4?v=1" muted playsinline loop preload="auto"></video><div class="dbm-cap ocm-cap" id="ocmCap"></div><div class="ocm-bv" id="ocmBv"><video id="ocmBvV" src="assets/ocm/radar.mp4?v=1" poster="assets/ocm/radar.jpg?v=1" muted playsinline loop preload="auto"></video></div>
         <div class="ocm-phone" id="ocmPhone"><video id="ocmPv" playsinline loop preload="auto"></video><video id="ocmPv2" playsinline loop preload="auto"></video></div>
         <div class="ocm-fade"></div>
         <div class="dbm-col ocm-col"><h2 class="dbm-h" id="ocmH"></h2><div class="dbm-list" id="ocmList"></div></div>
@@ -4296,19 +4296,23 @@ input,textarea,[contenteditable="true"]{-webkit-user-select:text!important;user-
 .ocm .ocm-card img[data-im="ocm/spk"]{right:auto;bottom:auto;object-fit:contain;object-position:50% 100%;padding:0}
 .ocm .ocm-card img[data-im="ocm/zoom"]{right:auto;bottom:auto;object-fit:fill;object-position:50% 50%;padding:0}
 .ocm .ocm-card img[data-im="ocm/sensor"]{right:auto;bottom:auto;object-fit:contain;padding:0}
-.ocm .ocm-card img[data-im="ocm/sd"]{right:auto;bottom:auto;object-fit:fill!important;padding:0}
+.ocm .ocm-card img[data-im="ocm/sd2"]{right:auto;bottom:auto;object-fit:contain!important;object-position:0 50%!important;padding:0}
 .ocm-cap{width:200px;margin-left:0;z-index:5;flex-direction:column;gap:14px}
 .ocm-cap b{font-size:30px}
 .ocm-cap span{font-size:14px}
 .ocm-cap i{width:56px;height:1px}
 .ocm-cap em{margin-top:0}
 /* baked from the layout art board (Nov 14) */
-.ocm-card img[data-im="ocm/sd"]{translate:100.9px -98.1px;scale:.911;transform-origin:19% 50%}
+.ocm-card img[data-im="ocm/sd2"]{translate:100.9px -98.1px;scale:.911;transform-origin:19% 50%}
 .ocm-card img[data-im="ocm/sensor"]{translate:165.9px 104px;scale:1.62}
 .ocm-card img[data-im="och/c0"]{translate:64.8px -192.5px;scale:1.356}
 .ocm-card img[data-im="ocm/spk"]{translate:-104.1px 362.1px;scale:2.345}
 .dbm-card img[data-fv="whitering"],#dbmCard img[data-fv="whitering"]{translate:43.1px -42.5px}
 #dbmCard img[data-fv="sdz"]{translate:-50.8px -99.8px;scale:1.151}
+.ocm-sv{position:absolute;z-index:2;opacity:0;pointer-events:none;object-fit:fill;transition:opacity .45s ease}
+.ocm-sv.on{opacity:1}
+.ocm.vidm .ocm-sv{opacity:0!important}
+.ocm .ocm-card img[data-im="ocm/spotv"],.ocm .ocm-card img[data-im="ocm/fov"]{right:auto;bottom:auto;object-fit:fill!important;padding:0}
 </style>`);
 { const add=box=>{ const secs=[...box.children].filter(c=>!c.hidden&&c.dataset&&c.dataset.t!=null);
     secs.forEach((c,i)=>{ const last=i===secs.length-1, skip=last||c.classList.contains('hum')||c.classList.contains('gal')&&false;
@@ -4587,14 +4591,14 @@ window.USMAP={w:1000,h:620,ut:[222.1, 266.2],c:[[72.8,371.6,9],[907.0,214.8,9],[
 
 /* Outdoor Camera Highlights: one list (left), the app video in a large centered phone, camera photos fading off the right edge */
 { const M=[ // [icon, label, headline, line, camera photo, app clip (oc/ph#) | null]
-   [['loop'],'24/7 Continuous Playback','Never Miss a Moment','Records around the clock, so you can scroll back to any moment.','ocm/sd',2,null,'<div><b>10 days</b><span>of continuous recording, stored locally on the device</span></div><i></i><div><b>30 days*</b><span>of activity clips saved to the cloud</span></div><em>*45 days with the Premium Video plan</em>'],
+   [['loop'],'24/7 Continuous Playback','Never Miss a Moment','Records around the clock, so you can scroll back to any moment.','ocm/sd2',2,null,'<div><b>10 days</b><span>of continuous recording, stored locally on the device</span></div><i></i><div><b>30 days*</b><span>of activity clips saved to the cloud</span></div><em>*45 days with the Premium Video plan</em>'],
    [['square','red'],'Smart Deter','Stop Trouble Before It Starts','Lights and warning tones tell lurkers they’ve been seen the moment they step into your detection zone.','ocm/detect',4],
+   [['sun'],'Spotlight Tracking','Spot and Follow Lurkers','The spotlight locks on and follows anyone who shouldn’t be there.','ocm/spotv',1],
    [['hd'],'4K HDR Image Sensor','See Every Detail','A 4K sensor and HDR tuning keep faces and plates clear in bright sun and deep shade.','ocm/sensor',0],
    [['zoom'],'5.3X HD Zoom','Zoom Without the Blur','Zoom in up to 5.3X during live video and stay in sharp HD.','ocm/zoom',3],
    [['chip'],'AI + RADAR','Smarter, Faster Detection','AI and RADAR run right on the camera, so alerts are quicker and only for real threats.','ocm/fast',null,'vid'],
    [['car'],'Vehicle Detection','A Shield Around Your Car','Get alerted the moment someone gets too close to your parked car.','och/c1',5],
-   [['sun'],'Spotlight Tracking','Spot and Follow Lurkers','The spotlight locks on and follows anyone who shouldn’t be there.','ocm/spot',1,'spot'],
-   [['expand'],'140° Lens','Everything in View','A 140° lens covers your yard from corner to corner.','och/c0',0],
+   [['expand'],'140° Lens','Everything in View','A 140° lens covers your yard from corner to corner.','ocm/fov',0],
    [['mic'],'2-Way Talk','Speak Up From Anywhere','High-fidelity 2-way audio lets you talk to anyone on your property.','ocm/spk',6],
    [['wifi'],'Online, All the Time','Stay Connected','A dual-band Wi-Fi bridge gives up to 2X stronger signal than other wireless cameras.','ocm/stay',null],
    [['weather'],'Weather Resistant','Built to Last','An automotive-grade housing stands up to heat, cold, rain and snow, year after year.','ocm/rain',null,'bleed'],
@@ -4603,11 +4607,11 @@ window.USMAP={w:1000,h:620,ut:[222.1, 266.2],c:[[72.8,371.6,9],[907.0,214.8,9],[
   L.innerHTML=M.map(([ic,t],i)=>`<button class="${i?'':'on'}" data-ocm="${i}">${LSV(ic[0],26,ic[1]||'')}<span>${t}</span></button>`).join('');
   card.innerHTML=[...new Set(M.map(x=>x[4]))].map(k=>`<img src="assets/${k}.webp?v=4" alt="" data-im="${k}"${k==='ocm/rain'?' class="bleedim"':''}>`).join(''); cv=pv2;
   const live=()=>!!sec.closest('.page.on')&&sec.dataset.vis==='1';
-  const render=()=>{ const [,,h,line,im,clip,mode,cp]=M[m]; { const c=$('#ocmCap'); if(cp) c.innerHTML=cp; c.classList.toggle('on',!!cp); } sec.classList.toggle('nofade',im==='ocm/sd'||im==='ocm/spk'||im==='ocm/zoom'||im==='ocm/sensor'); if(sec.classList.contains('spotm')!==(mode==='spot')){ sec.classList.toggle('spotm',mode==='spot'); setTimeout(balance,20); } if(sec.classList.contains('bleed')!==(mode==='bleed')){ sec.classList.toggle('bleed',mode==='bleed'); setTimeout(balance,20); }
+  const render=()=>{ const [,,h,line,im,clip,mode,cp]=M[m]; { const c=$('#ocmCap'); if(cp) c.innerHTML=cp; c.classList.toggle('on',!!cp); } sec.classList.toggle('nofade',im==='ocm/sd2'||im==='ocm/spotv'||im==='ocm/fov'||im==='ocm/spk'||im==='ocm/zoom'||im==='ocm/sensor'); if(sec.classList.contains('spotm')!==(mode==='spot')){ sec.classList.toggle('spotm',mode==='spot'); setTimeout(balance,20); } if(sec.classList.contains('bleed')!==(mode==='bleed')){ sec.classList.toggle('bleed',mode==='bleed'); setTimeout(balance,20); }
     { const vm=mode==='vid', bv=$('#ocmBvV'); sec.classList.toggle('vidm',vm); if(vm&&live()){ bv.currentTime=0; bv.play().catch(()=>{}); } else bv.pause(); }
     $$('#ocmList button').forEach((b,i)=>b.classList.toggle('on',i===m));
     if(H.dataset.i!==String(m)){ H.classList.add('swap'); setTimeout(()=>{ H.innerHTML=`${h}<small>${line}</small>`; H.classList.remove('swap'); },H.dataset.i?140:0); H.dataset.i=m; }
-    $$('#ocmCard img').forEach(x=>x.classList.toggle('on',x.dataset.im===im));
+    $$('#ocmCard img').forEach(x=>x.classList.toggle('on',x.dataset.im===im)); { const sv=$('#ocmSv'), on=im==='ocm/spotv'; sv.classList.toggle('on',on); if(on&&live()){ sv.play().catch(()=>{}); if(!sv.__sync){ const tick=()=>{ if(!sv.classList.contains('on')){ sv.__sync=0; return; } const ref=[pv,pv2].find(v=>v.__u&&/ph1\.mp4/.test(v.__u)&&v.classList.contains('top'))||[pv,pv2].find(v=>v.__u&&/ph1\.mp4/.test(v.__u)); if(ref&&ref.readyState>1&&sv.readyState>1){ const d=ref.currentTime-sv.currentTime; if(Math.abs(d)>.08&&Math.abs(d)<sv.duration-.2) sv.currentTime=ref.currentTime; if(ref.paused!==sv.paused){ ref.paused?sv.pause():sv.play().catch(()=>{}); } } sv.__sync=requestAnimationFrame(tick); }; sv.__sync=requestAnimationFrame(tick); } } else sv.pause(); }
     const solo=clip==null; if(sec.classList.contains('solo')!==solo){ sec.classList.toggle('solo',solo); setTimeout(balance,20); }
     if(solo){ pv.pause(); pv2.pause(); return; }
     const port=clip===7; if(ph.classList.contains('port')!==port){ ph.classList.toggle('port',port); setTimeout(balance,20); setTimeout(balance,520); }
@@ -4633,7 +4637,9 @@ window.USMAP={w:1000,h:620,ut:[222.1, 266.2],c:[[72.8,371.6,9],[907.0,214.8,9],[
     /* 5.3X zoom: lens close-up spans the phone's width, filling the space above it */
     { const si=card.querySelector('img[data-im="ocm/zoom"]'); if(si&&!port){ const ptop=parseFloat(ph.style.top)||372, hh2=Math.max(260,ptop-22), zw=Math.min(w,hh2*1500/827); si.style.height=(zw*827/1500).toFixed(1)+'px'; si.style.width=zw.toFixed(1)+'px'; si.style.top=(ptop-10-zw*827/1500).toFixed(1)+'px'; si.style.left=(pl+w/2-zw/2-cl).toFixed(1)+'px'; } }
     { const c=$('#ocmCap'); if(c){ c.style.left=(parseFloat(ph.style.left)||pl).toFixed(1)+'px'; c.style.top=Math.max(20,(parseFloat(ph.style.top)||372)-24-c.offsetHeight).toFixed(1)+'px'; } }
-    /* microSD: chip centered over the phone */ { const si=card.querySelector('img[data-im="ocm/sd"]'); if(si&&!port){ const hh2=964*.7, ww=hh2*2000/965; si.style.height=hh2.toFixed(1)+'px'; si.style.width=ww.toFixed(1)+'px'; si.style.top='19px'; si.style.left=(cx-.19*ww-cl).toFixed(1)+'px'; } }
+    /* spotlight video: camera centered over the phone, light bar just above it */ { const sv=$('#ocmSv'), si=card.querySelector('img[data-im="ocm/spotv"]'); if(!port){ const ptop=parseFloat(ph.style.top)||372, pcx=(parseFloat(ph.style.left)||pl)+w/2, hv=Math.max(400,(ptop-18)/.68), wv=hv*16/9, t=ptop-8-.82*hv; const cardL=cl; [sv,si].forEach(x=>{ if(!x) return; x.style.width=wv.toFixed(1)+'px'; x.style.height=hv.toFixed(1)+'px'; x.style.top=t.toFixed(1)+'px'; x.style.left=((pcx-wv/2)-(x===sv?0:cardL)).toFixed(1)+'px'; }); } }
+    /* 140° lens: field-of-view render centered over the phone, camera head just above it */ { const si=card.querySelector('img[data-im="ocm/fov"]'); if(si&&!port){ const ptop=parseFloat(ph.style.top)||372, pcx=(parseFloat(ph.style.left)||pl)+w/2, hh2=Math.max(400,(ptop-10)/.506), ww=hh2*1600/1318; si.style.height=hh2.toFixed(1)+'px'; si.style.width=ww.toFixed(1)+'px'; si.style.top=(ptop-10-.506*hh2).toFixed(1)+'px'; si.style.left=(pcx-ww/2-cl).toFixed(1)+'px'; } }
+    /* microSD: chip centered over the phone */ { const si=card.querySelector('img[data-im="ocm/sd2"]'); if(si&&!port){ const hh2=964*.7, ww=hh2*2000/965; si.style.height=hh2.toFixed(1)+'px'; si.style.width=ww.toFixed(1)+'px'; si.style.top='19px'; si.style.left=(cx-.19*ww-cl).toFixed(1)+'px'; } }
     /* 4K sensor: exploded view at phone width; lens stack and sensor sit above the phone, speaker parts tuck behind it */
     { const si=card.querySelector('img[data-im="ocm/sensor"]'); if(si&&!port){ const ptop=parseFloat(ph.style.top)||372, hh2=Math.max(600,(ptop+40)/.66), sw=hh2*1600/1119; si.style.width=sw.toFixed(1)+'px'; si.style.height=hh2.toFixed(1)+'px'; si.style.top='6px'; si.style.left=(pl-cl).toFixed(1)+'px'; } } };
   const _sw=show; show=function(p){ _sw.apply(this,arguments); if(p==='ocp'){ balance(); requestAnimationFrame(balance); setTimeout(balance,600); } };
