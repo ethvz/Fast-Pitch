@@ -2715,8 +2715,8 @@ function fit(){ const st=$('#stage'), sb=safeBox(), vw=sb.w, vh=sb.h;
   const tablet=vw>vh && Math.min(vw,vh)>=600;
   const W=tablet?Math.round(Math.min(1600,Math.max(1376,1032*vw/vh))):1376;
   st.style.width=W+'px'; { const S2=Math.min(.96,(W/2-102)/616.5); st.style.setProperty('--S2',S2.toFixed(4)); st.style.setProperty('--SX',(W/2-742.5*S2).toFixed(1)+'px'); } st.style.setProperty('--gx',((W-1376)/2)+'px'); st.style.setProperty('--W',W+'px'); HW=W; if(window.homeLayout) homeLayout();
-  const sc=Math.min(vw/W,vh/1032);
-  st.style.left=(sb.x+vw/2)+'px'; st.style.top=(sb.y+vh/2)+'px'; st.style.transformOrigin='50% 50%'; st.style.transform=`translate(-50%,-50%) scale(${sc})`; }
+  const sc=Math.min(vw/W,vh/1032), Z=window.LYZ||{z:1,x:0,y:0}; window.LYB={sc,cx:sb.x+vw/2,cy:sb.y+vh/2};
+  st.style.left=(sb.x+vw/2+Z.x)+'px'; st.style.top=(sb.y+vh/2+Z.y)+'px'; st.style.transformOrigin='50% 50%'; st.style.transform=`translate(-50%,-50%) scale(${sc*Z.z})`; }
 addEventListener('resize',fit);addEventListener('orientationchange',()=>setTimeout(fit,250));addEventListener('pageshow',fit);setTimeout(fit,300);fit();
 if(window.visualViewport) visualViewport.addEventListener('resize',fit);
 /* launch: keep the stage hidden until the screen size has settled (Home Screen apps report safe areas a few frames late), then fade it in once, already in place */
@@ -5386,12 +5386,43 @@ body.ly-crop #lyBox{display:none!important}
 #lyCrop .creset{right:50%;margin-right:6px;background:rgba(44,44,46,.95);color:#fff}
 body.ly-crop #lyInsp{opacity:.98}
 #lyInsp .kfh{font-size:11.5px;color:rgba(235,235,245,.5);margin:-2px 0 4px}
+/* ---- art board on iPhone: top toolbar scrolls sideways, Format becomes a bottom sheet ---- */
+#lyInsp .kgrab{display:none}
+@media (max-width:600px){
+  .lyBar{font-size:13px}
+  #lyBar{left:8px;right:8px;top:calc(env(safe-area-inset-top,0px) + 8px);transform:translateY(-120px);overflow-x:auto;overscroll-behavior:contain;scrollbar-width:none;-webkit-overflow-scrolling:touch;border-radius:22px;padding:5px}
+  #lyBar::-webkit-scrollbar{display:none}
+  body.ly-on #lyBar{transform:none}
+  .lyBar .lyt{display:none}
+  .lyBar button{height:38px;min-width:38px;padding:0 12px;flex:none}
+  .lyBar .lyseg{flex:none}
+  .lyBar .lyseg button{height:34px;padding:0 11px}
+  #lyBtn{top:calc(env(safe-area-inset-top,0px) + 10px);right:10px}
+  #lyToast{top:calc(env(safe-area-inset-top,0px) + 62px);max-width:88vw;white-space:normal;text-align:center}
+  #lyInsp,#lyInsp.left{left:0!important;right:0!important;top:auto;bottom:0;width:auto;height:min(52vh,460px);border-radius:20px 20px 0 0;border-width:1px 0 0;transform:translateY(105%);padding-bottom:env(safe-area-inset-bottom,0px);transition:transform .4s cubic-bezier(.22,1,.36,1),height .35s cubic-bezier(.22,1,.36,1),opacity .25s}
+  body.ly-on.ly-has:not(.ly-noinsp) #lyInsp{transform:none}
+  #lyInsp.peek{height:96px}
+  #lyInsp.peek .kpane,#lyInsp.peek .kall{display:none}
+  #lyInsp .kgrab{display:block;width:100%;height:20px;border:0;background:none;position:relative;flex:none;cursor:pointer}
+  #lyInsp .kgrab:after{content:'';position:absolute;left:50%;top:7px;width:38px;height:5px;margin-left:-19px;border-radius:3px;background:rgba(255,255,255,.35)}
+  #lyInsp .ktop{padding-top:2px}
+  #lyInsp .kpane{-webkit-overflow-scrolling:touch}
+  #lyInsp input[type=range]::-webkit-slider-thumb{width:24px;height:24px}
+  #lyInsp .kn{width:58px}
+  #lyBox i{width:30px;height:30px}
+  #lyBox b{width:28px;height:28px;margin-left:-14px}
+  #lyCrop button{top:auto;bottom:calc(min(52vh,460px) + 14px)}
+  #lyModal .lyCard{padding:22px 20px 18px}
+  #lyModal .row{flex-wrap:wrap}
+  #lyModal button{flex:1}
+}
+@media (max-width:600px) and (orientation:portrait){ body.ly-on.ly-has:not(.ly-noinsp) #lyInsp.peek{transform:none} }
 body.ly-on [contenteditable=true]{outline:2px solid #05E5AF!important;cursor:text;-webkit-user-select:text!important;user-select:text!important}
 `; document.head.appendChild(st);
   const mk=(tag,id,html)=>{ const e=document.createElement(tag); e.id=id; if(html!=null) e.innerHTML=html; document.body.appendChild(e); return e; };
   const ico='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16v4z"/><path d="M13.5 6.5l4 4"/></svg>';
   const btn=mk('button','lyBtn',ico+'Edit layout');
-  const bar=mk('div','lyBar',`<span class="lyseg"><button data-m="c" class="on">Content</button><button data-m="s">Shapes</button></span><span class="lyt" data-hint></span><span class="lysel"><span class="lysep"></span><button data-a="crop">Crop</button><button data-a="txt">Edit text</button><button data-a="rs">Reset</button></span><span class="lysep"></span><button data-a="undo" disabled>Undo</button><button data-a="fmt" class="fmt on" title="Format"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4l6 6-8.5 8.5a3 3 0 01-4.2 0l-1.8-1.8a3 3 0 010-4.2z"/><path d="M5 19c-1 1-2 1.5-3 1.5"/></svg>Format</button><button data-a="discard" class="dis" hidden>Remove edits</button><button data-a="pub" class="pub" hidden>Publish ↑</button><button data-a="done" class="go">Done</button>`); bar.classList.add('lyBar');
+  const bar=mk('div','lyBar',`<span class="lyseg"><button data-m="c" class="on">Content</button><button data-m="s">Shapes</button></span><span class="lyt" data-hint></span><span class="lysel"><span class="lysep"></span><button data-a="crop">Crop</button><button data-a="txt">Edit text</button><button data-a="rs">Reset</button></span><span class="lysep"></span><button data-a="fit" class="lyfit" hidden>Fit</button><button data-a="undo" disabled>Undo</button><button data-a="fmt" class="fmt on" title="Format"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4l6 6-8.5 8.5a3 3 0 01-4.2 0l-1.8-1.8a3 3 0 010-4.2z"/><path d="M5 19c-1 1-2 1.5-3 1.5"/></svg>Format</button><button data-a="discard" class="dis" hidden>Remove edits</button><button data-a="pub" class="pub" hidden>Publish ↑</button><button data-a="done" class="go">Done</button>`); bar.classList.add('lyBar');
   const box=mk('div','lyBox','<b></b><i></i>');
   const toast=mk('div','lyToast');
   const modal=mk('div','lyModal','<div class="lyCard"><h3></h3><p></p><div class="row"><button data-x="no">Cancel</button><button data-x="yes" class="go">Publish</button></div></div>');
@@ -5473,7 +5504,7 @@ body.ly-on [contenteditable=true]{outline:2px solid #05E5AF!important;cursor:tex
       +SEC('pos','Position','',`<div class="kr k2"><label class="kf"><input type="number" data-pos="x"><em>X</em></label><label class="kf"><input type="number" data-pos="y"><em>Y</em></label></div>`)
       +SEC('rot','Rotate','',`<div class="kr krot"><div class="kdial" data-dial><i></i></div><label class="kf"><input type="number" data-k="r" min="-360" max="360" step="1"><em>Angle</em></label><div class="kflip"><button data-act="fh" title="Flip horizontally"><svg viewBox="0 0 20 20"><path d="M10 2v16M8 5L3 15h5zM12 5l5 10h-5z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg></button><button data-act="fv" title="Flip vertically"><svg viewBox="0 0 20 20"><path d="M2 10h16M5 8L15 3v5zM5 12l10 5v-5z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg></button></div></div>`)
       +`<div class="kbtns kfoot">${B('lock',v.lk?'Unlock':'Lock')}${B('reset','Reset All')}</div>`;
-    ins.innerHTML=`<div class="ktop"><div class="ktabs">${tabs.map(([k,l])=>`<button data-tab="${k}"${k===tab?' class="on"':''}>${l}</button>`).join('')}</div>
+    ins.innerHTML=`<button class="kgrab" data-kgrab aria-label="Collapse"></button><div class="ktop"><div class="ktabs">${tabs.map(([k,l])=>`<button data-tab="${k}"${k===tab?' class="on"':''}>${l}</button>`).join('')}</div>
       <label class="kall"><span>Apply to all like this</span><span class="ksw"><input type="checkbox" data-allk ${group?'checked':''}><i></i></span></label></div>
       <div class="kpane">${({style,image,text,arr})[tab==='arr'?'arr':tab]}</div>`;
     rKey=curId+'|'+tab+'|'+group; };
@@ -5518,7 +5549,7 @@ body.ly-on [contenteditable=true]{outline:2px solid #05E5AF!important;cursor:tex
     if(i.dataset.chk){ change(v=>{ v.rf=i.checked?(num(v.rf)||35):0; }); sync(); return; }
     if(i.hasAttribute('data-con')){ constrain=i.checked; return; }
     if(i.hasAttribute('data-allk')){ group=i.checked; curId=hid(keyOf(cur)); place(); say(group?'Changes now apply to every item like this one':'Changes now apply to this item only'); } });
-  ins.addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b||!cur) return;
+  ins.addEventListener('click',e=>{ const b=e.target.closest('button'); if(b&&b.hasAttribute('data-kgrab')){ ins.classList.toggle('peek'); return; } if(!b||!cur) return;
     if(b.dataset.tab){ tab=b.dataset.tab; render(); sync(); return; }
     if(b.dataset.tog){ const s=b.closest('.ks'); s.classList.toggle('open'); KOPEN[b.dataset.tog]=s.classList.contains('open')?1:0; return; }
     if(b.dataset.pre){ const p=(isImg(cur)?PRE_IMG:PRE_SHAPE)[+b.dataset.pre]; change(v=>Object.assign(v,p)); sync(); return; }
@@ -5566,7 +5597,7 @@ body.ly-on [contenteditable=true]{outline:2px solid #05E5AF!important;cursor:tex
   addEventListener('pointerup',()=>{ if(cdrag){ cdrag=null; save(curId); } },true);
   addEventListener('resize',cropPlace);
   const snap=()=>{ undo.push([curId,JSON.stringify(L[curId]||null)]); if(undo.length>80) undo.shift(); bar.querySelector('[data-a=undo]').disabled=false; };
-  const pend={}; const save=id=>{ clearTimeout(pend[id]); pend[id]=setTimeout(async()=>{ if(!col){ delete pend[id]; return; } const v=L[id]; try{ if(!v) await col.doc(id).delete(); else { const o={}; for(const k in v) if(v[k]!==undefined) o[k]=v[k]; o.at=Date.now(); await col.doc(id).set(o); } pubState(); }catch(e){ say(e&&e.code==='permission_denied'?'You don’t have edit access':'Couldn’t save, try again'); } delete pend[id]; },350); };
+  const pend={}; const save=id=>{ clearTimeout(pend[id]); pend[id]=setTimeout(async()=>{ if(!col){ delete pend[id]; return; } const v=L[id]; try{ if(!v) await col.doc(id).delete(); else { const o={}; for(const k in v) if(v[k]!==undefined) o[k]=v[k]; o.at=Date.now(); await col.doc(id).set(o); navMark(v.sel); } pubState(); }catch(e){ say(e&&e.code==='permission_denied'?'You don’t have edit access':'Couldn’t save, try again'); } delete pend[id]; },350); };
   const select=el=>{ if(typeof cropOff==='function'&&cropEl&&el!==cropEl) cropOff(); endTxt(); cur=el; group=false; curId=el?hid(selOf(el)):null; place(); };
   /* drag / resize / rotate */
   let drag=null;
@@ -5598,6 +5629,7 @@ body.ly-on [contenteditable=true]{outline:2px solid #05E5AF!important;cursor:tex
     if(a==='pub'){ publish(); return; }
     if(a==='discard'){ discard(); return; }
     if(a==='crop'){ cropEl?cropOff():cropOn(); return; }
+    if(a==='fit'){ zoomTo(1,0,0); return; }
     if(a==='fmt'){ const h=document.body.classList.toggle('ly-noinsp'); b.classList.toggle('on',!h); return; }
     if(a==='undo'){ const u=undo.pop(); if(u){ const [id,j]=u; const v=JSON.parse(j); if(v) L[id]=v; else delete L[id]; write(); save(id); } b.disabled=!undo.length; return; }
     if(!cur) return; const v=get();
@@ -5606,7 +5638,7 @@ body.ly-on [contenteditable=true]{outline:2px solid #05E5AF!important;cursor:tex
     if(a==='rs'){ snap(); const hadTxt=typeof v.txt==='string'||typeof v.html==='string'; L[curId]={sel:v.sel,dx:0,dy:0,s:1}; if(hadTxt) say('Reload to see the original text'); write(); save(curId); }
     if(a==='txt'){ if(txtEl){ endTxt(); return; } txtEl=cur; cur.__lyHtml=cur.children.length>0; cur.__lyOrig=cur.__lyOrig??cur.innerText; cur.__lyHorig=cur.__lyHorig??cur.innerHTML; cur.setAttribute('contenteditable','true'); cur.focus(); try{ const r=document.createRange(); r.selectNodeContents(cur); const s=getSelection(); s.removeAllRanges(); s.addRange(r); }catch(_){} b.textContent='Save text'; } });
   document.addEventListener('keydown',e=>{ if(!on||!cur||txtEl||/^(INPUT)$/.test((document.activeElement||{}).tagName||'')) return; const v=get(), s=e.shiftKey?10:1; const m={ArrowLeft:[-s,0],ArrowRight:[s,0],ArrowUp:[0,-s],ArrowDown:[0,s]}[e.key]; if(m){ e.preventDefault(); v.dx=num(v.dx)+m[0]; v.dy=num(v.dy)+m[1]; write(); save(curId); } if(e.key==='Escape'){ if(cropEl) cropOff(); else select(null); }; });
-  const setOn=v=>{ on=v; document.body.classList.toggle('ly-on',v); if(!v){ endTxt(); select(null); } else { setMode(mode); say('Drag to move · green dot resizes · white dot rotates'); } };
+  const setOn=v=>{ on=v; document.body.classList.toggle('ly-on',v); if(!v){ endTxt(); select(null); if(window.LYZ&&LYZ.z>1) zoomTo(1,0,0); } else { setMode(mode); say(innerWidth<600?'Tap to select · pinch with two fingers to zoom in':'Drag to move · green dot resizes · white dot rotates',3000); } };
   btn.addEventListener('click',()=>setOn(true));
   addEventListener('resize',()=>place()); addEventListener('scroll',()=>place(),true); setInterval(()=>{ if(on&&cur) place(); },400);
   /* publish: fire the Fast Pitch bake task (bakes the art board into the code, republishes, pushes to GitHub) */
@@ -5623,10 +5655,31 @@ body.ly-on [contenteditable=true]{outline:2px solid #05E5AF!important;cursor:tex
     ids.forEach(id=>{ clearTimeout(pend[id]); delete pend[id]; delete L[id]; }); undo=[]; bar.querySelector('[data-a=undo]').disabled=true; write();
     let bad=0; await Promise.all(ids.map(id=>col.doc(id).delete().catch(()=>{ bad++; }))); pubState();
     say(bad?'Couldn’t remove '+bad+' edit'+(bad>1?'s':'')+', try again':hadTxt?'Edits removed · reload to see the original text':'Edits removed',4000); };
+
+  /* phone: pinch with two fingers to zoom into the page while editing, drag two fingers to pan; "Fit" resets */
+  const zoomTo=(z,x,y)=>{ window.LYZ={z,x,y}; if(typeof fit==='function') fit(); bar.querySelector('[data-a=fit]').hidden=z<=1.01; if(cur) place(); if(typeof cropPlace==='function') cropPlace(); };
+  let pin=null; const mid=t=>({x:(t[0].clientX+t[1].clientX)/2,y:(t[0].clientY+t[1].clientY)/2}), dist=t=>Math.hypot(t[0].clientX-t[1].clientX,t[0].clientY-t[1].clientY);
+  addEventListener('touchstart',e=>{ if(!on||e.touches.length!==2||isUI(e.target)) return; const Z=window.LYZ||{z:1,x:0,y:0}; pin={d:dist(e.touches),m:mid(e.touches),z:Z.z,x:Z.x,y:Z.y}; drag=null; e.preventDefault(); },{passive:false,capture:true});
+  addEventListener('touchmove',e=>{ if(!pin||e.touches.length!==2) return; e.preventDefault(); const B=window.LYB; if(!B) return; const m=mid(e.touches), z=Math.max(1,Math.min(5,pin.z*dist(e.touches)/pin.d));
+    const qx=(pin.m.x-(B.cx+pin.x))/pin.z, qy=(pin.m.y-(B.cy+pin.y))/pin.z; let x=m.x-B.cx-qx*z, y=m.y-B.cy-qy*z; if(z<=1.01){ x=0; y=0; } zoomTo(z,x,y); },{passive:false,capture:true});
+  addEventListener('touchend',e=>{ if(pin&&e.touches.length<2) pin=null; },{capture:true});
+  /* remember where the last edit was, so reopening within 2 minutes jumps straight back there (editors only) */
+  let navT=null; const navMark=sel=>{ clearTimeout(navT); navT=setTimeout(()=>{ try{ if(!db) return; const el=sel&&document.querySelector(sel); const pg=el&&el.closest('[id^="p-"]'); const p=pg?pg.id.slice(2):'';
+      const on=pg?[...document.querySelectorAll('#barRight .on'),...pg.querySelectorAll('button.on,[data-ocm].on,[role=tab].on')].filter(b=>Object.keys(b.dataset).length).slice(0,10).map(b=>{ const k=Object.keys(b.dataset)[0], a='data-'+k.replace(/[A-Z]/g,m=>'-'+m.toLowerCase()); const host=b.closest('[id]'); return (host&&host!==b?'#'+host.id+' ':'')+b.tagName.toLowerCase()+'['+a+'="'+String(b.dataset[k]).replace(/"/g,'\\"')+'"]'; }):[];
+      db.collection('nav').doc('last').set({at:Date.now(),sel,p,pr:(p==='prod'&&typeof PR!=='undefined')?PR.id:'',on}).catch(()=>{}); }catch(e){} },600); };
+  const navResume=async()=>{ try{ const d=await db.collection('nav').doc('last').get(); const n=d&&d.exists&&d.data(); if(!n||!n.at||Date.now()-n.at>120000||!n.sel) return;
+      const wait=ms=>new Promise(r=>setTimeout(r,ms)); await wait(900);
+      if(n.p==='prod'&&n.pr&&typeof openPr==='function') openPr(n.pr); else if(n.p&&n.p!=='home'&&typeof go==='function') go(n.p);
+      await wait(800);
+      for(const s of n.on||[]){ const b=document.querySelector(s); if(b&&!b.classList.contains('on')){ b.click(); await wait(450); } }
+      const el=document.querySelector(n.sel); if(el){ el.scrollIntoView({block:'center',behavior:'smooth'}); await wait(500); const r=el.getBoundingClientRect(); const f=document.createElement('div');
+        f.style.cssText=`position:fixed;left:${r.left-6}px;top:${r.top-6}px;width:${r.width+12}px;height:${r.height+12}px;border:2px solid #05E5AF;border-radius:10px;box-shadow:0 0 0 4000px rgba(0,0,0,.25);z-index:8998;pointer-events:none;transition:opacity .6s`;
+        document.body.appendChild(f); setTimeout(()=>f.style.opacity='0',1600); setTimeout(()=>f.remove(),2300); }
+      say('Back to your last edit',2200); }catch(e){} };
   /* connect */
   (async()=>{ try{ db=await claude.use('db'); }catch(e){ db=null; } if(!db) return; col=db.collection('layout');
     col.onSnapshot(s=>{ if(s.metadata&&s.metadata.fromCache) return; const seen={}; DBIDS.clear(); s.docs.forEach(d=>{ if(!d.exists) return; seen[d.id]=1; DBIDS.add(d.id); if(drag&&drag.id===d.id) return; const o=Object.assign({},d.data()); delete o.at; L[d.id]=o; }); for(const id in L) if(!seen[id]&&!(drag&&drag.id===id)&&!pend[id]) delete L[id]; write(); pubState(); },()=>{});
-    try{ const u=await claude.use('user'); if(u&&await u.canEdit()){ btn.classList.add('show'); try{ mcp=await claude.use('mcp'); }catch(e){ mcp=null; } pubState(); } }catch(e){} })();
+    try{ const u=await claude.use('user'); if(u&&await u.canEdit()){ btn.classList.add('show'); navResume(); try{ mcp=await claude.use('mcp'); }catch(e){ mcp=null; } pubState(); } }catch(e){} })();
 })();
 </script>
 
