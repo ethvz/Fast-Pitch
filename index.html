@@ -4305,7 +4305,6 @@ input,textarea,[contenteditable="true"]{-webkit-user-select:text!important;user-
 /* baked from the layout art board (Nov 14) */
 .ocm-card img[data-im="ocm/sd2"]{translate:199.1px -115px;scale:1.499;transform-origin:19% 50%}
 .ocm-card img[data-im="ocm/detect"]{translate:44.2px -182.2px;scale:1.559}
-.ocm-card img[data-im="ocm/sensor"]{translate:165.9px 104px;scale:1.62}
 .ocm-card img[data-im="och/c0"]{translate:64.8px -192.5px;scale:1.356}
 .ocm-card img[data-im="ocm/spk"]{translate:0 362.1px;scale:2.345}
 .dbm-card img[data-fv="whitering"],#dbmCard img[data-fv="whitering"]{translate:43.1px -42.5px}
@@ -4746,7 +4745,7 @@ body.ly-on [contenteditable=true]{outline:2px solid #05E5AF!important;cursor:tex
   addEventListener('resize',()=>place()); addEventListener('scroll',()=>place(),true); setInterval(()=>{ if(on&&cur) place(); },400);
   /* connect */
   (async()=>{ try{ db=await claude.use('db'); }catch(e){ db=null; } if(!db) return; col=db.collection('layout');
-    col.onSnapshot(s=>{ const seen={}; s.docs.forEach(d=>{ if(!d.exists) return; seen[d.id]=1; if(drag&&drag.id===d.id) return; L[d.id]=Object.assign({},d.data()); }); for(const id in L) if(!seen[id]&&!(drag&&drag.id===id)&&!pend[id]) delete L[id]; write();
+    col.onSnapshot(s=>{ if(s.metadata&&s.metadata.fromCache) return; /* ignore stale cached layouts; wait for the live copy */ const seen={}; s.docs.forEach(d=>{ if(!d.exists) return; seen[d.id]=1; if(drag&&drag.id===d.id) return; L[d.id]=Object.assign({},d.data()); }); for(const id in L) if(!seen[id]&&!(drag&&drag.id===id)&&!pend[id]) delete L[id]; write();
       if(hasTxt()&&!mo){ let q=0; mo=new MutationObserver(()=>{ if(busyTxt||q) return; q=requestAnimationFrame(()=>{ q=0; applyTxt(); }); }); mo.observe(document.getElementById('stage')||document.body,{childList:true,subtree:true}); } },()=>{});
     try{ const u=await claude.use('user'); if(u&&await u.canEdit()) btn.classList.add('show'); }catch(e){} })();
 })();
