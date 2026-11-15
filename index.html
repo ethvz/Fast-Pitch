@@ -4714,6 +4714,7 @@ body.ly-on #lyBtn{display:none}
 .lyBar button:active{transform:scale(.96)}
 .lyBar button.go{background:#05E5AF;color:#000}
 .lyBar button.pub{background:rgba(5,229,175,.16);color:#05E5AF}
+.lyBar button.dis{background:rgba(255,69,58,.14);color:#ff6961}
 .lyBar button.on{background:#fff;color:#000}
 .lyBar button:disabled{opacity:.3}
 .lyBar .lyseg{display:flex;background:rgba(255,255,255,.08);border-radius:20px;padding:2px}
@@ -4746,18 +4747,19 @@ body.ly-has #lyBox{display:block}
 #lyModal .row{display:flex;gap:10px;justify-content:flex-end}
 #lyModal button{height:44px;padding:0 20px;border-radius:22px;border:0;font:500 15px VivintSans,system-ui,sans-serif;cursor:pointer;background:rgba(255,255,255,.1);color:#fff}
 #lyModal button.go{background:#05E5AF;color:#000}
+#lyModal button.go.warn{background:#ff453a;color:#fff}
 body.ly-on [contenteditable=true]{outline:2px solid #05E5AF!important;cursor:text;-webkit-user-select:text!important;user-select:text!important}
 `; document.head.appendChild(st);
   const mk=(tag,id,html)=>{ const e=document.createElement(tag); e.id=id; if(html!=null) e.innerHTML=html; document.body.appendChild(e); return e; };
   const ico='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16v4z"/><path d="M13.5 6.5l4 4"/></svg>';
   const btn=mk('button','lyBtn',ico+'Edit layout');
-  const bar=mk('div','lyBar',`<span class="lyseg"><button data-m="c" class="on">Content</button><button data-m="s">Shapes</button></span><span class="lyt" data-hint></span><span class="lysel"><span class="lysep"></span><button data-a="sm">−</button><span class="lynum" data-pct>100%</span><button data-a="lg">+</button><button data-a="rl" title="Rotate left">⟲</button><span class="lynum" data-deg>0°</span><button data-a="rr" title="Rotate right">⟳</button><button data-a="txt">Edit text</button><button data-a="rs">Reset</button></span><span class="lysep"></span><button data-a="undo" disabled>Undo</button><button data-a="pub" class="pub" hidden>Publish ↑</button><button data-a="done" class="go">Done</button>`); bar.classList.add('lyBar');
+  const bar=mk('div','lyBar',`<span class="lyseg"><button data-m="c" class="on">Content</button><button data-m="s">Shapes</button></span><span class="lyt" data-hint></span><span class="lysel"><span class="lysep"></span><button data-a="sm">−</button><span class="lynum" data-pct>100%</span><button data-a="lg">+</button><button data-a="rl" title="Rotate left">⟲</button><span class="lynum" data-deg>0°</span><button data-a="rr" title="Rotate right">⟳</button><button data-a="txt">Edit text</button><button data-a="rs">Reset</button></span><span class="lysep"></span><button data-a="undo" disabled>Undo</button><button data-a="discard" class="dis" hidden>Remove edits</button><button data-a="pub" class="pub" hidden>Publish ↑</button><button data-a="done" class="go">Done</button>`); bar.classList.add('lyBar');
   const shp=mk('div','lyShape',`<label>Fill <input type="color" data-k="bg"><button class="clr" data-clr="bg" title="Clear fill">✕</button></label><label>Text <input type="color" data-k="fg"><button class="clr" data-clr="fg" title="Clear text colour">✕</button></label><span class="lysep"></span><label>Corner <input type="range" min="0" max="120" data-k="rad"><span class="v" data-v="rad"></span></label><label>W <input type="range" min="8" max="1400" data-k="w"><span class="v" data-v="w"></span></label><label>H <input type="range" min="4" max="1000" data-k="h"><span class="v" data-v="h"></span></label><span class="lysep"></span><button class="all" data-a="all" title="Apply to every matching item">All like this</button>`); shp.classList.add('lyBar');
   const box=mk('div','lyBox','<b></b><i></i>');
   const toast=mk('div','lyToast');
   const modal=mk('div','lyModal','<div class="lyCard"><h3></h3><p></p><div class="row"><button data-x="no">Cancel</button><button data-x="yes" class="go">Publish</button></div></div>');
   let tt; const say=(m,ms)=>{ toast.textContent=m; toast.classList.add('on'); clearTimeout(tt); tt=setTimeout(()=>toast.classList.remove('on'),ms||2000); };
-  const ask=(h,p,yes)=>new Promise(res=>{ modal.querySelector('h3').textContent=h; modal.querySelector('p').textContent=p; modal.querySelector('[data-x=yes]').textContent=yes; modal.classList.add('on'); modal.onclick=e=>{ const b=e.target.closest('[data-x]'); if(!b&&e.target!==modal) return; modal.classList.remove('on'); res(!!b&&b.dataset.x==='yes'); }; });
+  const ask=(h,p,yes)=>new Promise(res=>{ modal.querySelector('h3').textContent=h; modal.querySelector('p').textContent=p; modal.querySelector('[data-x=yes]').textContent=yes; modal.querySelector('[data-x=yes]').classList.toggle('warn',yes==='Remove'); modal.classList.add('on'); modal.onclick=e=>{ const b=e.target.closest('[data-x]'); if(!b&&e.target!==modal) return; modal.classList.remove('on'); res(!!b&&b.dataset.x==='yes'); }; });
 
   let db=null, col=null, mcp=null, on=false, mode='c', cur=null, curId=null, group=false, undo=[];
   const stage=()=>document.getElementById('stage');
@@ -4823,6 +4825,7 @@ body.ly-on [contenteditable=true]{outline:2px solid #05E5AF!important;cursor:tex
     const a=b.dataset.a;
     if(a==='done'){ setOn(false); return; }
     if(a==='pub'){ publish(); return; }
+    if(a==='discard'){ discard(); return; }
     if(a==='undo'){ const u=undo.pop(); if(u){ const [id,j]=u; const v=JSON.parse(j); if(v) L[id]=v; else delete L[id]; write(); save(id); } b.disabled=!undo.length; return; }
     if(!cur) return; const v=get();
     if(a==='sm'||a==='lg'){ snap(); v.s=Math.min(5,Math.max(.15,(+v.s||1)*(a==='lg'?1.05:1/1.05))); write(); save(curId); }
@@ -4840,11 +4843,18 @@ body.ly-on [contenteditable=true]{outline:2px solid #05E5AF!important;cursor:tex
   addEventListener('resize',()=>place()); addEventListener('scroll',()=>place(),true); setInterval(()=>{ if(on&&cur) place(); },400);
   /* publish: fire the Fast Pitch bake task (bakes the art board into the code, republishes, pushes to GitHub) */
   const liveCount=()=>Object.keys(L).filter(id=>L[id]&&L[id].sel).length;
-  const pubState=()=>{ const b=bar.querySelector('[data-a=pub]'); b.hidden=!mcp; const n=liveCount(); b.disabled=!n; b.textContent=n?`Publish ${n} ↑`:'Published ✓'; };
+  const pubState=()=>{ const b=bar.querySelector('[data-a=pub]'), x=bar.querySelector('[data-a=discard]'); b.hidden=!mcp; const n=liveCount(); x.hidden=!n||!col; b.disabled=!n; b.textContent=n?`Publish ${n} ↑`:'Published ✓'; };
   const publish=async()=>{ const n=liveCount(); if(!n){ say('Nothing new to publish'); return; } if(Object.keys(pend).length){ say('Saving… try again in a second'); return; }
     if(!await ask('Publish to GitHub?',`Bakes your ${n} edit${n>1?'s':''} into the app and pushes it to GitHub, so every iPad, including offline ones, gets it. Takes about 3 to 5 minutes.`,'Publish')) return;
     try{ await mcp.callTool(FIRE.server,FIRE.tool,{trigger_id:FIRE.id,text:'Fired from the Edit layout Publish button with '+n+' edit(s) on the art board.'},{cache:false}); say('Publishing… a Claude session is baking your edits. Reload in about 5 minutes.',6000); }
     catch(e){ const c=e&&e.code; say(c==='not_granted'||c==='denied'?'Allow the Claude Code Remote connector for this page to publish':c==='server_not_connected'?'Connect Claude Code Remote in claude.ai to publish':'Couldn’t start publishing ('+(c||'error')+'). Ask Claude to “bake” instead.',6000); } };
+  /* remove edits: delete every unpublished art-board edit so the page goes back to the last published version */
+  const discard=async()=>{ const ids=Object.keys(L); const n=liveCount(); if(!n||!col){ say('No unpublished edits'); return; }
+    if(!await ask('Remove unpublished edits?',`Deletes your ${n} unpublished edit${n>1?'s':''} for everyone and puts the page back to the last published version. This can’t be undone.`,'Remove')) return;
+    endTxt(); select(null); const hadTxt=ids.some(id=>L[id]&&(typeof L[id].txt==='string'||typeof L[id].html==='string'));
+    ids.forEach(id=>{ clearTimeout(pend[id]); delete pend[id]; delete L[id]; }); undo=[]; bar.querySelector('[data-a=undo]').disabled=true; write();
+    let bad=0; await Promise.all(ids.map(id=>col.doc(id).delete().catch(()=>{ bad++; }))); pubState();
+    say(bad?'Couldn’t remove '+bad+' edit'+(bad>1?'s':'')+', try again':hadTxt?'Edits removed · reload to see the original text':'Edits removed',4000); };
   /* connect */
   (async()=>{ try{ db=await claude.use('db'); }catch(e){ db=null; } if(!db) return; col=db.collection('layout');
     col.onSnapshot(s=>{ if(s.metadata&&s.metadata.fromCache) return; const seen={}; s.docs.forEach(d=>{ if(!d.exists) return; seen[d.id]=1; if(drag&&drag.id===d.id) return; const o=Object.assign({},d.data()); delete o.at; L[d.id]=o; }); for(const id in L) if(!seen[id]&&!(drag&&drag.id===id)&&!pend[id]) delete L[id]; write(); pubState(); },()=>{});
