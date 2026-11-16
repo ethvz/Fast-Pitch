@@ -2709,7 +2709,7 @@ html.phn .lpage>.otab:not([data-t=hero]):not(.hum),html.phn .lpage>.psec:not([da
 const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
 
 /* ---------- scale stage ---------- */
-let HW=1376; window.FPV='v368'; if(Math.min(screen.width||0,screen.height||0)<500) document.documentElement.classList.add('phn');
+let HW=1376; window.FPV='v369'; if(Math.min(screen.width||0,screen.height||0)<500) document.documentElement.classList.add('phn');
 function safeBox(){ let pr=document.getElementById('safeProbe'); if(!pr){ pr=document.createElement('div'); pr.id='safeProbe';
   pr.style.cssText='position:fixed;left:0;top:0;width:100vw;height:100vh;height:100dvh;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);box-sizing:border-box;visibility:hidden;pointer-events:none;z-index:-1'; document.documentElement.appendChild(pr); }
   const cs=getComputedStyle(pr), t=parseFloat(cs.paddingTop)||0, b=parseFloat(cs.paddingBottom)||0, l=parseFloat(cs.paddingLeft)||0, r=parseFloat(cs.paddingRight)||0;
@@ -4885,6 +4885,9 @@ input,textarea,[contenteditable="true"]{-webkit-user-select:text!important;user-
 .ocm-card img[data-im="ocm/sd2"]{transform-origin:19% 50%}
 .ocm-sv{position:absolute;z-index:2;opacity:0;pointer-events:none;object-fit:fill;transition:opacity .45s ease}
 .ocm-sv.on{opacity:1}
+/* iPhone Safari drew this black-backed video over the feature list; screen blend makes its black see-through, and the list gets its own layer on top */
+.ocm-sv{mix-blend-mode:screen}
+.ocm .ocm-col{transform:translateZ(0)}
 .ocm.vidm .ocm-sv{opacity:0!important}
 .ocm .ocm-card img[data-im="ocm/spotv"],.ocm .ocm-card img[data-im="ocm/fov"]{right:auto;bottom:auto;object-fit:contain!important;object-position:50% 0!important;padding:0}
 </style>`);
