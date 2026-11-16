@@ -5003,7 +5003,7 @@ window.DBCH=(()=>{ const D={"secs": [["Standard chimes", 5], ["April Fools’", 
   const fitIn=()=>{ const w=el.clientWidth, hh=el.clientHeight; if(!w) return; const k=w/440; inn.style.transform=`scale(${k})`; inn.style.height=(hh/k)+'px'; };
   fitIn(); try{ new ResizeObserver(fitIn).observe(el); }catch(e){} 
   sc.addEventListener('scroll',()=>el.classList.toggle('scr',sc.scrollTop>40),{passive:true});
-  const aud=()=>{ if(!A){ A=new Audio('assets/db/chimes.m4a?v=1'); A.preload='auto'; A.playsInline=true; A.addEventListener('timeupdate',()=>{ if(pl>=0&&A.currentTime>=stopT) stop(); }); } return A; };
+  const aud=()=>{ if(!A){ A=new Audio('assets/db/chimes.mp3?v=1'); A.preload='auto'; A.playsInline=true; A.addEventListener('timeupdate',()=>{ if(pl>=0&&A.currentTime>=stopT) stop(); }); } return A; };
   const mark=()=>el.querySelectorAll('.dch-r').forEach(r=>r.classList.toggle('pl',+r.dataset.ci===pl));
   const stop=()=>{ if(A){ A.pause(); } pl=-1; clearTimeout(stop.t); mark(); };
   const play=i=>{ const a=aud(), [,,st,len]=D.items[i]; pl=i; stopT=st+len; mark(); const go=()=>{ try{ a.currentTime=st; }catch(e){} const p=a.play(); if(p) p.catch(()=>{}); clearTimeout(stop.t); stop.t=setTimeout(()=>{ if(pl===i) stop(); },(len+.6)*1000); };
