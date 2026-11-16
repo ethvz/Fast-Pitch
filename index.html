@@ -2741,7 +2741,7 @@ html.phn .lpage>.otab:not([data-t=hero]):not(.hum),html.phn .lpage>.psec:not([da
 const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
 
 /* ---------- scale stage ---------- */
-let HW=1376; window.FPV='v371'; if(Math.min(screen.width||0,screen.height||0)<500) document.documentElement.classList.add('phn');
+let HW=1376; window.FPV='v372'; if(Math.min(screen.width||0,screen.height||0)<500) document.documentElement.classList.add('phn');
 function safeBox(){ let pr=document.getElementById('safeProbe'); if(!pr){ pr=document.createElement('div'); pr.id='safeProbe';
   pr.style.cssText='position:fixed;left:0;top:0;width:100vw;height:100vh;height:100dvh;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);box-sizing:border-box;visibility:hidden;pointer-events:none;z-index:-1'; document.documentElement.appendChild(pr); }
   const cs=getComputedStyle(pr), t=parseFloat(cs.paddingTop)||0, b=parseFloat(cs.paddingBottom)||0, l=parseFloat(cs.paddingLeft)||0, r=parseFloat(cs.paddingRight)||0;
@@ -3501,6 +3501,9 @@ navify();
   /* scroll-scrubbed animation drawn from a JPEG frame sequence (one .bin file per animation) onto a canvas.
      Video seeking on iOS is unreliable; drawing still frames is instant and works the same online, offline and in the Home Screen app. */
   let frames=[], bmp=new Map(), pend=new Set(), shown=-1, wantF=0, loading=false, want=0, at=0, run=false;
+  /* memory: every decoded frame is ~5.7 MB. Phones (which crashed here) keep 6 half-size frames; everything is released once the section is off screen */
+  const PHN=document.documentElement.classList.contains('phn'), KEEP=PHN?6:28;
+  const purge=()=>{ bmp.forEach(x=>x.close&&x.close()); bmp.clear(); };
   const load=()=>{ if(loading) return; loading=true;
     fetch(cv.dataset.seq).then(r=>{ if(!r.ok) throw 0; return r.arrayBuffer(); }).then(buf=>{ const dv=new DataView(buf), n=dv.getUint32(0,true); let off=4+4*n;
       for(let i=0;i<n;i++){ const len=dv.getUint32(4+4*i,true); frames.push(new Blob([new Uint8Array(buf,off,len)],{type:'image/jpeg'})); off+=len; }
@@ -3509,15 +3512,15 @@ navify();
   const paint=()=>{ if(!frames.length) return; let best=-1; for(let d=0;d<frames.length;d++){ if(bmp.has(wantF-d)){ best=wantF-d; break; } if(bmp.has(wantF+d)){ best=wantF+d; break; } }
     if(best>=0&&best!==shown){ draw(bmp.get(best)); shown=best; } };
   const dec=i=>{ if(i<0||i>=frames.length||bmp.has(i)||pend.has(i)) return; pend.add(i);
-    createImageBitmap(frames[i]).then(b=>{ pend.delete(i); bmp.set(i,b);
-      if(bmp.size>28){ let far=-1,fd=-1; bmp.forEach((_,j)=>{ const d=Math.abs(j-wantF); if(d>fd){ fd=d; far=j; } }); if(far!==i){ const x=bmp.get(far); bmp.delete(far); x.close&&x.close(); } }
+    (PHN?createImageBitmap(frames[i],{resizeWidth:688,resizeHeight:516,resizeQuality:'medium'}).catch(()=>createImageBitmap(frames[i])):createImageBitmap(frames[i])).then(b=>{ pend.delete(i); bmp.set(i,b);
+      if(bmp.size>KEEP){ let far=-1,fd=-1; bmp.forEach((_,j)=>{ const d=Math.abs(j-wantF); if(d>fd){ fd=d; far=j; } }); if(far!==i){ const x=bmp.get(far); bmp.delete(far); x.close&&x.close(); } }
       paint(); }).catch(()=>pend.delete(i)); };
-  const need=()=>{ if(!frames.length) return; wantF=Math.round(at*(frames.length-1)); dec(wantF); const dir=want>=at?1:-1; for(let k=1;k<=6;k++) dec(wantF+dir*k); dec(wantF-dir); paint(); };
-  const fit=()=>{ const cw=Math.round(cv.offsetWidth)||1376; if(cv.width!==cw){ cv.width=cw; cv.height=1032; shown=-1; paint(); } };
+  const need=()=>{ if(!frames.length) return; wantF=Math.round(at*(frames.length-1)); dec(wantF); const dir=want>=at?1:-1; for(let k=1;k<=(PHN?3:6);k++) dec(wantF+dir*k); dec(wantF-dir); paint(); };
+  const fit=()=>{ const ow=Math.round(cv.offsetWidth)||1376, cw=PHN?Math.round(ow/2):ow, chh=PHN?516:1032; if(cv.width!==cw){ cv.width=cw; cv.height=chh; shown=-1; paint(); } };
   const target=()=>{ const H=box.clientHeight, t=sec.offsetTop, h=sec.offsetHeight; if(!h||!H) return want; const q=(box.scrollTop-(t-H))/h; return isFinite(q)?Math.max(0,Math.min(1,q)):want; };
   const loop=()=>{ want=target(); if(!isFinite(at)) at=want; at+=(want-at)*0.35; if(Math.abs(want-at)<0.0015) at=want; need();
     const b=box.getBoundingClientRect(), r=sec.getBoundingClientRect(); const vis=r.bottom>b.top-40&&r.top<b.bottom+40;
-    if(vis||Math.abs(want-at)>0.001) requestAnimationFrame(loop); else run=false; };
+    if(vis||Math.abs(want-at)>0.001) requestAnimationFrame(loop); else { run=false; purge(); } };
   const kick=()=>{ load(); fit(); if(run) return; run=true; requestAnimationFrame(loop); };
   box.addEventListener('scroll',kick,{passive:true}); ['touchstart','pointerdown'].forEach(ev=>box.addEventListener(ev,load,{passive:true}));
   window.addEventListener('resize',()=>{ fit(); });
