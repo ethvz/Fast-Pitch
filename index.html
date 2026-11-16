@@ -2317,6 +2317,11 @@ html.phn .lpage>.otab:not([data-t=hero]):not(.hum),html.phn .lpage>.psec:not([da
 .dch-r.pl span{color:#05E5AF;transition:color .2s}
 .dch-toast{position:absolute;left:50%;top:96px;transform:translate(-50%,-8px);background:rgba(60,60,62,.95);border-radius:18px;padding:9px 16px;font-size:15px;font-weight:600;opacity:0;transition:opacity .25s,transform .25s;z-index:4;pointer-events:none;white-space:nowrap}
 .dch-toast.on{opacity:1;transform:translate(-50%,0)}
+
+/* phones: WebKit paints every separately-layered element at its full, unscaled size x3 (the iPad page is only scaled down afterwards),
+   so each extra layer costs ~50 MB on an iPhone. Drop the optional layer triggers and blur effects there. */
+html.phn *,html.phn *::before,html.phn *::after{will-change:auto!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+html.phn .dbm-card,html.phn .ocm-col,html.phn .dbm-phone .dch{transform:none!important;-webkit-transform:none!important}
 </style>
 <div id="stage">
   <div id="screen">
@@ -2741,7 +2746,7 @@ html.phn .lpage>.otab:not([data-t=hero]):not(.hum),html.phn .lpage>.psec:not([da
 const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
 
 /* ---------- scale stage ---------- */
-let HW=1376; window.FPV='v372'; if(Math.min(screen.width||0,screen.height||0)<500) document.documentElement.classList.add('phn');
+let HW=1376; window.FPV='v373'; if(Math.min(screen.width||0,screen.height||0)<500) document.documentElement.classList.add('phn');
 function safeBox(){ let pr=document.getElementById('safeProbe'); if(!pr){ pr=document.createElement('div'); pr.id='safeProbe';
   pr.style.cssText='position:fixed;left:0;top:0;width:100vw;height:100vh;height:100dvh;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);box-sizing:border-box;visibility:hidden;pointer-events:none;z-index:-1'; document.documentElement.appendChild(pr); }
   const cs=getComputedStyle(pr), t=parseFloat(cs.paddingTop)||0, b=parseFloat(cs.paddingBottom)||0, l=parseFloat(cs.paddingLeft)||0, r=parseFloat(cs.paddingRight)||0;
@@ -2754,7 +2759,7 @@ function safeBox(){ let pr=document.getElementById('safeProbe'); if(!pr){ pr=doc
     const B=window.__bestBox||(window.__bestBox={}), k=(screen.width||0)+'x'+(screen.height||0)+(Wd>H?'L':'P'), o=B[k];
     if(!o||Wd*H>=o.W*o.H) B[k]={W:Wd,H}; else if(Wd>=o.W*.8&&H>=o.H*.7) window.__short=1; }
   { const bs=document.body&&document.body.style; if(bs&&bs.height){ bs.height=bs.width=bs.bottom=bs.right=''; document.documentElement.style.height=document.documentElement.style.width=''; } }
-  window.__diag={iw:innerWidth,ih:innerHeight,vv:window.visualViewport?Math.round(visualViewport.width)+'x'+Math.round(visualViewport.height):'-',dvh:Math.round(pr.getBoundingClientRect().height),scr:screen.width+'x'+screen.height,ins:[t,r,b,l].map(Math.round).join('/'),sa:!!(navigator.standalone),short:window.__short?'yes':'no',poke:window.__pokes|0};
+  window.__diag={iw:innerWidth,ih:innerHeight,vv:window.visualViewport?Math.round(visualViewport.width)+'x'+Math.round(visualViewport.height):'-',dvh:Math.round(pr.getBoundingClientRect().height),scr:screen.width+'x'+screen.height,ins:[t,r,b,l].map(Math.round).join('/'),sa:!!(navigator.standalone),crash:window.__lastCrash||'none',phn:document.documentElement.classList.contains('phn'),short:window.__short?'yes':'no',poke:window.__pokes|0};
   /* status bar: keep content below it. The stage runs all the way to the bottom edge (under the thin home-indicator strip)
      so there is no black band; the footer's controls sit well above that strip. */
   return box; }
@@ -2767,6 +2772,15 @@ function fit(){ const st=$('#stage'), sb=safeBox(), vw=sb.w, vh=sb.h; window.__f
   st.style.left=(sb.x+vw/2+Z.x)+'px'; st.style.top=(sb.y+vh/2+Z.y)+'px'; st.style.transformOrigin='50% 50%'; st.style.transform=`translate(-50%,-50%) scale(${sc*Z.z})`; }
 addEventListener('resize',fit);addEventListener('orientationchange',()=>setTimeout(fit,250));addEventListener('pageshow',fit);setTimeout(fit,300);fit();
 if(window.visualViewport) visualViewport.addEventListener('resize',fit);
+/* crash breadcrumbs: remember where the app was every second; if the last session ended without a clean exit, show where in the logo-tap readout */
+{ const K='fpCrumb'; let last=null; try{ last=JSON.parse(localStorage.getItem(K)||'null'); }catch(e){}
+  if(last&&!last.ok&&Date.now()-last.t<15*60e3) window.__lastCrash=last.w+' ('+Math.round((Date.now()-last.t)/1000)+'s ago)';
+  const where=()=>{ const pg=document.querySelector('.page.on'); let w=pg?pg.id.replace('p-',''):'?'; if(window.PR&&w==='prod') w+=':'+PR.id;
+    const lp=pg&&pg.querySelector('.lpage'); if(lp){ const kids=[...lp.children]; const i=kids.findIndex(k=>k.offsetTop+k.offsetHeight>lp.scrollTop+lp.clientHeight/2); const k=kids[i]; if(k) w+=' › '+(k.dataset.t||i); }
+    const on=document.querySelector('.page.on .dbm-list button.on, .page.on #ocmList button.on'); if(on) w+=' › '+on.textContent.trim(); return w; };
+  const save=ok=>{ try{ localStorage.setItem(K,JSON.stringify({t:Date.now(),w:where(),ok})); }catch(e){} };
+  setInterval(()=>{ if(!document.hidden) save(false); },1000);
+  addEventListener('pagehide',()=>save(true)); document.addEventListener('visibilitychange',()=>{ if(document.hidden) save(true); }); }
 { let n=0,tm,el=null; document.addEventListener('pointerdown',e=>{ if(!e.target.closest('#barlogo')) return; n++; clearTimeout(tm); tm=setTimeout(()=>n=0,900); if(n<5) return; n=0;
   if(el){ el.remove(); el=null; return; } el=document.createElement('div'); el.style.cssText='position:fixed;left:8px;top:8px;z-index:99999;background:rgba(0,0,0,.85);color:#05E5AF;font:12px/1.4 ui-monospace,Menlo,monospace;padding:8px 10px;border-radius:10px;pointer-events:none;white-space:pre';
   document.documentElement.appendChild(el); const up=()=>{ if(!el) return; const d=window.__diag||{}, st=document.querySelector('#stage'); el.textContent='build '+(window.FPV||'')+'\n'+Object.entries(d).map(([k,v])=>k+': '+v).join('\n')+'\nscale: '+((st.style.transform.match(/scale\(([\d.]+)/)||[])[1]||'')+'\nW: '+st.style.width; setTimeout(up,500); }; up(); },true); }
