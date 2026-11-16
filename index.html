@@ -2284,7 +2284,7 @@ body.hasbk #gTitle{transform:translateX(118px)}
 #prScroll .dwseg.spill.onlt .ind{background:rgba(58,58,60,.75)!important}
 #prScroll .dwseg.spill.onlt button:not(.on){color:rgba(255,255,255,.85)!important}
 /* phones: skip rendering (and decoding images / building layers for) sections that are off screen, so long product pages stay inside iPhone memory */
-html.phn .lpage>.otab,html.phn .lpage>.psec{content-visibility:auto}
+html.phn .lpage>.otab:not([data-t=hero]):not(.hum),html.phn .lpage>.psec:not([data-t=hero]):not(.hum){content-visibility:auto} /* not heroes: content-visibility clips paint to the box, which cut the full-bleed hero video at the rail */
 </style>
 <div id="stage">
   <div id="screen">
@@ -2709,7 +2709,7 @@ html.phn .lpage>.otab,html.phn .lpage>.psec{content-visibility:auto}
 const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
 
 /* ---------- scale stage ---------- */
-let HW=1376; window.FPV='v367'; if(Math.min(screen.width||0,screen.height||0)<500) document.documentElement.classList.add('phn');
+let HW=1376; window.FPV='v368'; if(Math.min(screen.width||0,screen.height||0)<500) document.documentElement.classList.add('phn');
 function safeBox(){ let pr=document.getElementById('safeProbe'); if(!pr){ pr=document.createElement('div'); pr.id='safeProbe';
   pr.style.cssText='position:fixed;left:0;top:0;width:100vw;height:100vh;height:100dvh;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);box-sizing:border-box;visibility:hidden;pointer-events:none;z-index:-1'; document.documentElement.appendChild(pr); }
   const cs=getComputedStyle(pr), t=parseFloat(cs.paddingTop)||0, b=parseFloat(cs.paddingBottom)||0, l=parseFloat(cs.paddingLeft)||0, r=parseFloat(cs.paddingRight)||0;
