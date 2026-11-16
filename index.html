@@ -2558,7 +2558,7 @@ html.phn .lpage>.otab:not([data-t=hero]):not(.hum),html.phn .lpage>.psec:not([da
       </div>
       <div class="otab hum" data-t="spin"><div class="hum-st"><canvas id="humV" data-seq="assets/seq/oc-frames.jpg?v=217" width="1376" height="1032"></canvas></div></div>
       <div class="otab dbm ocm" data-t="feat">
-        <div class="ocm-card" id="ocmCard"></div><video class="ocm-sv" id="ocmSv" src="assets/ocm/spotv2.mp4" muted playsinline loop preload="auto"></video><div class="dbm-cap ocm-cap" id="ocmCap"></div><div class="ocm-bv" id="ocmBv"><video id="ocmBvV" src="assets/ocm/radar.mp4?v=1" poster="assets/ocm/radar.jpg?v=1" muted playsinline loop preload="auto"></video></div>
+        <div class="ocm-card" id="ocmCard"></div><div class="ocm-svw" id="ocmSvw"><video class="ocm-sv" id="ocmSv" src="assets/ocm/spotv2.mp4" muted playsinline loop preload="auto"></video></div><div class="dbm-cap ocm-cap" id="ocmCap"></div><div class="ocm-bv" id="ocmBv"><video id="ocmBvV" src="assets/ocm/radar.mp4?v=1" poster="assets/ocm/radar.jpg?v=1" muted playsinline loop preload="auto"></video></div>
         <div class="ocm-phone" id="ocmPhone"><video id="ocmPv" playsinline loop preload="auto"></video><video id="ocmPv2" playsinline loop preload="auto"></video></div>
         <div class="ocm-fade"></div>
         <div class="dbm-col ocm-col"><h2 class="dbm-h" id="ocmH"></h2><div class="dbm-list" id="ocmList"></div></div>
@@ -2709,7 +2709,7 @@ html.phn .lpage>.otab:not([data-t=hero]):not(.hum),html.phn .lpage>.psec:not([da
 const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
 
 /* ---------- scale stage ---------- */
-let HW=1376; window.FPV='v369'; if(Math.min(screen.width||0,screen.height||0)<500) document.documentElement.classList.add('phn');
+let HW=1376; window.FPV='v370'; if(Math.min(screen.width||0,screen.height||0)<500) document.documentElement.classList.add('phn');
 function safeBox(){ let pr=document.getElementById('safeProbe'); if(!pr){ pr=document.createElement('div'); pr.id='safeProbe';
   pr.style.cssText='position:fixed;left:0;top:0;width:100vw;height:100vh;height:100dvh;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);box-sizing:border-box;visibility:hidden;pointer-events:none;z-index:-1'; document.documentElement.appendChild(pr); }
   const cs=getComputedStyle(pr), t=parseFloat(cs.paddingTop)||0, b=parseFloat(cs.paddingBottom)||0, l=parseFloat(cs.paddingLeft)||0, r=parseFloat(cs.paddingRight)||0;
@@ -4887,6 +4887,8 @@ input,textarea,[contenteditable="true"]{-webkit-user-select:text!important;user-
 .ocm-sv.on{opacity:1}
 /* iPhone Safari drew this black-backed video over the feature list; screen blend makes its black see-through, and the list gets its own layer on top */
 .ocm-sv{mix-blend-mode:screen}
+/* the spotlight video's box is huge and black; iPhone Safari painted it over the feature list. Clip it to the area right of the list. */
+.ocm-svw{position:absolute;top:0;bottom:0;right:calc(-1*var(--gx,0px));left:0;overflow:hidden;z-index:2;pointer-events:none;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 70px);mask-image:linear-gradient(90deg,transparent 0,#000 70px)}
 .ocm .ocm-col{transform:translateZ(0)}
 .ocm.vidm .ocm-sv{opacity:0!important}
 .ocm .ocm-card img[data-im="ocm/spotv"],.ocm .ocm-card img[data-im="ocm/fov"]{right:auto;bottom:auto;object-fit:contain!important;object-position:50% 0!important;padding:0}
@@ -5214,7 +5216,7 @@ window.USMAP={w:1000,h:620,ut:[222.1, 266.2],c:[[72.8,371.6,9],[907.0,214.8,9],[
     /* 5.3X zoom: lens close-up spans the phone's width, filling the space above it */
     { const si=card.querySelector('img[data-im="ocm/zoom"]'); if(si&&!port){ const ptop=parseFloat(ph.style.top)||372, hh2=Math.max(260,ptop-22), zw=Math.min(w,hh2*1500/827); si.style.height=(zw*827/1500).toFixed(1)+'px'; si.style.width=zw.toFixed(1)+'px'; si.style.top=(ptop-10-zw*827/1500).toFixed(1)+'px'; si.style.left=(pl+w/2-zw/2-cl).toFixed(1)+'px'; } }
     { const c=$('#ocmCap'); if(c){ c.style.left=(parseFloat(ph.style.left)||pl).toFixed(1)+'px'; c.style.top=Math.max(20,(parseFloat(ph.style.top)||372)-24-c.offsetHeight).toFixed(1)+'px'; } }
-    /* spotlight video: camera centered over the phone, light bar just above it */ { const sv=$('#ocmSv'), si=card.querySelector('img[data-im="ocm/spotv"]'); if(!port){ const ptop=parseFloat(ph.style.top)||372, pcx=(parseFloat(ph.style.left)||pl)+w/2, hv=Math.max(760,1.9*(ptop-18)/.68), wv=hv*16/9, t=ptop-8-.82*hv; const cardL=cl; [sv,si].forEach(x=>{ if(!x) return; x.style.width=wv.toFixed(1)+'px'; x.style.height=hv.toFixed(1)+'px'; x.style.top=t.toFixed(1)+'px'; x.style.left=((pcx-wv/2)-(x===sv?0:cardL)).toFixed(1)+'px'; }); } }
+    /* spotlight video: camera centered over the phone, light bar just above it */ { const sv=$('#ocmSv'), si=card.querySelector('img[data-im="ocm/spotv"]'); if(!port){ const ptop=parseFloat(ph.style.top)||372, pcx=(parseFloat(ph.style.left)||pl)+w/2, hv=Math.max(760,1.9*(ptop-18)/.68), wv=hv*16/9, t=ptop-8-.82*hv; const cardL=cl, svw=$('#ocmSvw'), col=sec.querySelector('.ocm-col'), svL=col?Math.round(col.offsetLeft+col.offsetWidth-4):0; svw.style.left=svL+'px'; [sv,si].forEach(x=>{ if(!x) return; x.style.width=wv.toFixed(1)+'px'; x.style.height=hv.toFixed(1)+'px'; x.style.top=t.toFixed(1)+'px'; x.style.left=((pcx-wv/2)-(x===sv?svL:cardL)).toFixed(1)+'px'; }); } else { svw.style.left='0px'; } }
     /* 140° lens: field-of-view render centered over the phone, camera head just above it */ { const si=card.querySelector('img[data-im="ocm/fov"]'); if(si&&!port){ const ptop=parseFloat(ph.style.top)||372, pcx=(parseFloat(ph.style.left)||pl)+w/2, hh2=Math.max(540,1.35*(ptop-10)/.506), ww=hh2*1600/1318; si.style.height=hh2.toFixed(1)+'px'; si.style.width=ww.toFixed(1)+'px'; si.style.top=(ptop-10-.506*hh2).toFixed(1)+'px'; si.style.left=(pcx-ww/2-cl).toFixed(1)+'px'; } }
     /* microSD: chip centered over the phone */ { const si=card.querySelector('img[data-im="ocm/sd2"]'); if(si&&!port){ const hh2=964*.7, ww=hh2*2000/965; si.style.height=hh2.toFixed(1)+'px'; si.style.width=ww.toFixed(1)+'px'; si.style.top='19px'; si.style.left=(cx-.19*ww-cl).toFixed(1)+'px'; } }
     /* 4K sensor: exploded view at phone width; lens stack and sensor sit above the phone, speaker parts tuck behind it */
