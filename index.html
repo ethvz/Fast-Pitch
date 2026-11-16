@@ -1138,7 +1138,8 @@ img[src*="nw/securityorg"]{filter:brightness(0) invert(1)}
 .lpage{left:calc(-1*var(--gx))!important;right:auto!important;width:var(--W)!important}
 .lpage>*{width:1376px;margin-left:var(--gx)!important}
 .page:has(>.lpage),#p-install,#p-history{overflow:visible!important}
-.lpage>[data-t=hero],.lpage>.hum{overflow:visible!important;clip-path:inset(0 calc(-1*var(--gx)));-webkit-clip-path:inset(0 calc(-1*var(--gx)))}
+/* fixed overhang, not var(--gx): iOS Safari kept clipping with a stale --gx after the left rail shifted content, leaving a black bar on the left */
+.lpage>[data-t=hero],.lpage>.hum{overflow:visible!important;clip-path:inset(0 -640px);-webkit-clip-path:inset(0 -640px)}
 /* full-screen photos and videos run edge to edge */
 .lh-media,.lh-scrim,.ochx,.dbh-vid,.hbh-vid,.ich-vid,.hum-st canvas,#p-history>.bg,#p-history>.sc{left:calc(-1*var(--gx))!important;width:var(--W)!important}
 .lh-ph{width:100%!important}
@@ -2708,7 +2709,7 @@ html.phn .lpage>.otab,html.phn .lpage>.psec{content-visibility:auto}
 const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
 
 /* ---------- scale stage ---------- */
-let HW=1376; window.FPV='v366'; if(Math.min(screen.width||0,screen.height||0)<500) document.documentElement.classList.add('phn');
+let HW=1376; window.FPV='v367'; if(Math.min(screen.width||0,screen.height||0)<500) document.documentElement.classList.add('phn');
 function safeBox(){ let pr=document.getElementById('safeProbe'); if(!pr){ pr=document.createElement('div'); pr.id='safeProbe';
   pr.style.cssText='position:fixed;left:0;top:0;width:100vw;height:100vh;height:100dvh;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);box-sizing:border-box;visibility:hidden;pointer-events:none;z-index:-1'; document.documentElement.appendChild(pr); }
   const cs=getComputedStyle(pr), t=parseFloat(cs.paddingTop)||0, b=parseFloat(cs.paddingBottom)||0, l=parseFloat(cs.paddingLeft)||0, r=parseFloat(cs.paddingRight)||0;
