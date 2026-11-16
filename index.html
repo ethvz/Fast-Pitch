@@ -2285,6 +2285,38 @@ body.hasbk #gTitle{transform:translateX(118px)}
 #prScroll .dwseg.spill.onlt button:not(.on){color:rgba(255,255,255,.85)!important}
 /* phones: skip rendering (and decoding images / building layers for) sections that are off screen, so long product pages stay inside iPhone memory */
 html.phn .lpage>.otab:not([data-t=hero]):not(.hum),html.phn .lpage>.psec:not([data-t=hero]):not(.hum){content-visibility:auto} /* not heroes: content-visibility clips paint to the box, which cut the full-bleed hero video at the rail */
+
+/* Doorbell Highlights → Holiday Chimes: a working copy of the Vivint app's doorbell chime picker inside the phone */
+.dbm-phone .dch{position:absolute;left:12px;top:11px;width:calc(100% - 24px);height:calc(100% - 22px);border-radius:48px;overflow:hidden;background:#000;opacity:0;pointer-events:none;transition:opacity .35s ease;z-index:4;-webkit-transform:translateZ(0)}
+.dbm-phone.chm .dch{opacity:1;pointer-events:auto}
+.dbm-phone.chm video{opacity:0!important}
+.dch-in{position:absolute;left:0;top:0;width:440px;transform-origin:0 0;color:#fff;font-family:inherit;-webkit-font-smoothing:antialiased}
+.dch-sb{position:absolute;left:0;right:0;top:0;height:54px;z-index:3;display:flex;align-items:center;justify-content:space-between;padding:6px 34px 0 46px;font-size:17px;font-weight:600;letter-spacing:-.2px}
+.dch-sb i{position:absolute;left:50%;top:11px;width:124px;height:36px;margin-left:-62px;border-radius:18px;background:#000}
+.dch-sb span:last-child{display:flex;gap:6px;align-items:center}
+.dch-sheet{position:absolute;left:0;right:0;top:62px;bottom:0;background:#1a191b;border-radius:38px 38px 0 0;overflow:hidden}
+.dch-hd{position:absolute;left:0;right:0;top:0;height:76px;z-index:2;display:flex;align-items:center;justify-content:space-between;padding:0 20px;transition:background .25s}
+.dch.scr .dch-hd{background:#000}
+.dch-hd b{height:42px;padding:0 16px;border-radius:21px;background:#333234;display:flex;align-items:center;font-size:17px;font-weight:500;cursor:pointer;transition:transform .15s,background .2s}
+.dch-hd b:active{transform:scale(.94);background:#444345}
+.dch-hd b+b{font-weight:600}
+.dch-sc{position:absolute;inset:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:83px 24px 60px;touch-action:pan-y}
+.dch-sc::-webkit-scrollbar{display:none}
+.dch-sc h3{margin:0 0 22px;font-size:22px;line-height:28px;font-weight:600;letter-spacing:-.2px}
+.dch-sc img{display:block;width:100%;height:auto;margin:0 0 25px;border-radius:10px}
+.dch-sc p{margin:0 0 34px;font-size:14px;line-height:18px;color:#f1f0f2}
+.dch-sc h4{margin:0;padding:6px 0 18px;font-size:32px;line-height:38px;font-weight:600;letter-spacing:-.4px}
+.dch-sc h5{margin:0;padding:34px 0 12px;font-size:20px;line-height:26px;font-weight:600}
+.dch-r{display:flex;align-items:center;height:56px;border-bottom:1px solid #333235;font-size:15px;font-weight:600;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.dch-r em{font-style:normal;font-size:19px;width:26px;margin-right:6px;line-height:1}
+.dch-r span{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dch-r u{width:22px;height:22px;border-radius:50%;border:1.6px solid #fff;margin-right:2px;position:relative;flex:none;transition:transform .2s}
+.dch-r u:after{content:'';position:absolute;inset:4px;border-radius:50%;background:#fff;transform:scale(0);transition:transform .22s cubic-bezier(.3,1.6,.5,1)}
+.dch-r.on u:after{transform:scale(1)}
+.dch-r:active span{opacity:.6}
+.dch-r.pl span{color:#05E5AF;transition:color .2s}
+.dch-toast{position:absolute;left:50%;top:96px;transform:translate(-50%,-8px);background:rgba(60,60,62,.95);border-radius:18px;padding:9px 16px;font-size:15px;font-weight:600;opacity:0;transition:opacity .25s,transform .25s;z-index:4;pointer-events:none;white-space:nowrap}
+.dch-toast.on{opacity:1;transform:translate(-50%,0)}
 </style>
 <div id="stage">
   <div id="screen">
@@ -2607,7 +2639,7 @@ html.phn .lpage>.otab:not([data-t=hero]):not(.hum),html.phn .lpage>.psec:not([da
         <div class="dbm-col"><h2 class="dbm-h" id="dbmH"></h2>
         <div class="dbm-list" id="dbmList"></div></div>
         <div class="dbm-card" id="dbmCard"></div>
-        <div class="dbm-phone" id="dbmPhone"><video id="dbmPv" playsinline loop preload="auto"></video><video id="dbmPv2" playsinline loop preload="auto"></video></div>
+        <div class="dbm-phone" id="dbmPhone"><video id="dbmPv" playsinline loop preload="auto"></video><video id="dbmPv2" playsinline loop preload="auto"></video><div class="dch" id="dbChime"></div></div>
         <div class="dbm-cap" id="dbmCap"></div>
         <div class="dbm-hub" id="dbmHub"><video id="dbmHv" playsinline loop preload="auto"></video></div>
       </div>
@@ -2709,7 +2741,7 @@ html.phn .lpage>.otab:not([data-t=hero]):not(.hum),html.phn .lpage>.psec:not([da
 const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
 
 /* ---------- scale stage ---------- */
-let HW=1376; window.FPV='v370'; if(Math.min(screen.width||0,screen.height||0)<500) document.documentElement.classList.add('phn');
+let HW=1376; window.FPV='v371'; if(Math.min(screen.width||0,screen.height||0)<500) document.documentElement.classList.add('phn');
 function safeBox(){ let pr=document.getElementById('safeProbe'); if(!pr){ pr=document.createElement('div'); pr.id='safeProbe';
   pr.style.cssText='position:fixed;left:0;top:0;width:100vw;height:100vh;height:100dvh;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);box-sizing:border-box;visibility:hidden;pointer-events:none;z-index:-1'; document.documentElement.appendChild(pr); }
   const cs=getComputedStyle(pr), t=parseFloat(cs.paddingTop)||0, b=parseFloat(cs.paddingBottom)||0, l=parseFloat(cs.paddingLeft)||0, r=parseFloat(cs.paddingRight)||0;
@@ -4402,7 +4434,7 @@ $$('.hcat .ht[data-k=shp2]').forEach(t=>{ if(t.querySelector('img[src*="scr.webp
   document.addEventListener('click',e=>{ const b=e.target.closest('#homeX [data-go]'); if(!b||!HX.includes(cur)) return; e.stopPropagation(); goHX(b.dataset.go); },true);
   let sx=null,sy=null,blocked=false;
   const scroller=el=>{ for(;el&&el!==document.body;el=el.parentElement){ if(el.scrollWidth>el.clientWidth+4&&/(auto|scroll)/.test(getComputedStyle(el).overflowX)) return true; } return false; };
-  $('#screen').addEventListener('touchstart',e=>{ if(!HX.includes(cur)||e.touches.length!==1){ sx=null; return; } sx=e.touches[0].clientX; sy=e.touches[0].clientY; blocked=scroller(e.target)||!!(e.target.closest&&e.target.closest('.appemu')); },{passive:true});
+  $('#screen').addEventListener('touchstart',e=>{ if(!HX.includes(cur)||e.touches.length!==1){ sx=null; return; } sx=e.touches[0].clientX; sy=e.touches[0].clientY; blocked=scroller(e.target)||!!(e.target.closest&&e.target.closest('.appemu,.dch')); },{passive:true});
   /* the page follows your finger, then finishes the slide (or springs back) */
   const z=()=>{ const st=$('#stage'); return (st.getBoundingClientRect().width/st.offsetWidth)||1; };
   let live=false;
@@ -4583,7 +4615,7 @@ $$('.lpage').forEach(box=>{ let t=0, touching=false, lastY=box.scrollTop, dir=1,
     let best=L.P[0], bd=1e9; L.P.forEach(v=>{ let d=Math.abs(v-y); if((v-y)*dir<0) d*=1.35; if(d<bd){ bd=d; best=v; } });
     if(Math.abs(best-y)>1) spring(best); };
   box.addEventListener('scroll',()=>{ const y=box.scrollTop; if(Math.abs(y-lastY)>1) dir=y>lastY?1:-1; lastY=y; if(raf) return; clearTimeout(t); t=setTimeout(settle,140); },{passive:true});
-  box.addEventListener('touchstart',e=>{ touching=true; stopAnim(); clearTimeout(t); if(e.touches.length>1||box.closest('.zm,.pcol')||(e.target.closest&&e.target.closest('.appemu'))){ T=null; return; } const p=e.touches[0]; T={x:p.clientX,y:p.clientY,y0:box.scrollTop,t:performance.now(),ly:p.clientY,lt:performance.now()}; vel=0; },{passive:true});
+  box.addEventListener('touchstart',e=>{ touching=true; stopAnim(); clearTimeout(t); if(e.touches.length>1||box.closest('.zm,.pcol')||(e.target.closest&&e.target.closest('.appemu,.dch'))){ T=null; return; } const p=e.touches[0]; T={x:p.clientX,y:p.clientY,y0:box.scrollTop,t:performance.now(),ly:p.clientY,lt:performance.now()}; vel=0; },{passive:true});
   box.addEventListener('touchmove',e=>{ if(!T) return; const p=e.touches[0], now=performance.now(), dt=now-T.lt; if(dt>0){ vel=.6*vel+.4*((p.clientY-T.ly)/dt); } T.ly=p.clientY; T.lt=now; T.lx=p.clientX; },{passive:true});
   const end=e=>{ touching=false; clearTimeout(t); const S=T; T=null;
     if(S&&e.type==='touchend'&&e.touches.length===0){ const ch=e.changedTouches[0], dy=ch.clientY-S.y, dx=ch.clientX-S.x, dt=performance.now()-S.t;
@@ -4606,7 +4638,7 @@ $$('.lpage').forEach(box=>{ let t=0, touching=false, lastY=box.scrollTop, dir=1,
   const curIdx=(a,items,sec)=>{ if(a==='data-feat') return OC.feat|0; if(a==='data-ph') return OC.phone|0; if(a==='data-prsub'){ const st=PR.st&&PR.st[sec.dataset.t]; return st?st.sub|0:0; }
     return items.findIndex(x=>x.classList.contains('on')||x.classList.contains('act')); };
   const TABSEL=TABS.map(a=>'['+a+']').join(',');
-  const SKIP='button,a,input,select,textarea,label,video,.strip,.gal,.pnav,#barRight,.hot,.tx,.xa,[data-tip],[data-tipx],[data-prtip],[data-whistle],[data-hero],[data-xw],[data-fs],[data-gi],[data-hb3],[data-hcmp],[data-smk],[data-specspot],[data-hist],'+TABSEL;
+  const SKIP='button,a,input,select,textarea,label,video,.dch,.strip,.gal,.pnav,#barRight,.hot,.tx,.xa,[data-tip],[data-tipx],[data-prtip],[data-whistle],[data-hero],[data-xw],[data-fs],[data-gi],[data-hb3],[data-hcmp],[data-smk],[data-specspot],[data-hist],'+TABSEL;
   document.addEventListener('click',e=>{ const t=e.target; if(!t.closest||t.closest(SKIP)) return;
     if(!t.closest('#ocScroll,#dbScroll,#hbScroll,#thScroll,#prScroll')) return;
     const sec=t.closest('.otab,.psec'); if(!sec) return;
@@ -4957,10 +4989,35 @@ input,textarea,[contenteditable="true"]{-webkit-user-select:text!important;user-
   window.addEventListener('resize',()=>setTimeout(()=>$$('.page.on .lpage').forEach(run),200)); }
 
 /* Doorbell: Highlights + App merged into one section — list on the left, product close-up + live app view on the right */
+LI.music='<path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>';
+
+/* Holiday Chimes phone screen (Doorbell → Highlights). One audio file holds all 40 chimes back to back; DCH.items = [name, emoji, start s, length s] */
+window.DBCH=(()=>{ const D={"secs": [["Standard chimes", 5], ["April Fools’", 7], ["Independence Day", 4], ["Halloween", 6], ["Thanksgiving", 3], ["Winter holidays", 8], ["Valentine’s Day", 7]], "items": [["Traditional", "", 0, 4.27], ["Elevator", "", 4.77, 2.4], ["Modern", "", 7.67, 3.9], ["Bells", "", 12.07, 2.85], ["Melody", "", 15.42, 6.8], ["Toot! Toot!", "💨", 22.72, 2.26], ["Bike Horn", "🚲", 25.48, 2.49], ["Toilet Flush", "🚽", 28.47, 4.19], ["Wilhelm Scream", "😱", 33.16, 1.21], ["AHOOOOGA!", "🚘", 34.87, 1.42], ["Rubber Chicken", "🐔", 36.79, 1.74], ["Boing-O-Matic", "➿", 39.03, 1.45], ["USA National Anthem", "🇺🇸", 40.98, 6.45], ["Canada National Anthem", "🇨🇦", 47.93, 6.74], ["Fireworks", "🎆", 55.17, 4.66], ["Fireworks 2", "💥", 60.33, 2.54], ["Spooky Laugh", "👻", 63.37, 4.01], ["Witch's Laugh", "🧙‍♀️", 67.88, 5.0], ["Howl at the Moon", "🐺", 73.38, 6.96], ["Scary Organ", "⚰️", 80.84, 4.91], ["Creepy Bells", "🔔", 86.25, 6.43], ["Trick or Treat!", "🎃", 93.18, 2.56], ["Turkey Gobble", "🦃", 96.24, 1.04], ["Dinner Bell", "🔔", 97.78, 1.45], ["Tea Kettle Whistle", "💨", 99.73, 5.64], ["Deck the Halls", "🎄", 105.87, 5.12], ["Dreidel! Dreidel! Dreidel!", "🕎", 111.49, 4.88], ["Ho! Ho! Ho!", "🎅", 116.87, 3.58], ["Jingle Bells", "🔔", 120.95, 3.91], ["Winter Wonderland", "⛄", 125.36, 4.61], ["A Merry Christmas", "🌟", 130.47, 6.09], ["Sugar Plum Fairy", "🍭", 137.06, 6.04], ["Joy to the World", "🌎", 143.6, 4.19], ["Falling in Love", "😍", 148.29, 6.05], ["Love is in the air", "🏹", 154.84, 6.11], ["You’re whaley awesome!", "🐳", 161.45, 5.11], ["You’re the beary best", "🧸", 167.06, 5.91], ["You rose to the top", "🌹", 173.47, 5.91], ["From our hearts to yours", "💞", 179.88, 5.52], ["You’re a gem", "💎", 185.9, 5.13]]}, el=$('#dbChime'); if(!el) return null; let A=null, sel=0, stopT=0, pl=-1;
+  const sig='<svg width="19" height="12" viewBox="0 0 19 12" fill="#fff"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5.5" width="3" height="6.5" rx="1"/><rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg>';
+  const wifi='<svg width="17" height="12" viewBox="0 0 17 12" fill="#fff"><path d="M8.5 2.3c2.6 0 5 1 6.8 2.7l1.2-1.3C14.4 1.7 11.6.5 8.5.5S2.6 1.7.5 3.7L1.7 5C3.5 3.3 5.9 2.3 8.5 2.3zm0 3.6c1.6 0 3.1.6 4.2 1.6L14 6.2C12.5 4.9 10.6 4.1 8.5 4.1s-4 .8-5.5 2.1l1.3 1.3c1.1-1 2.6-1.6 4.2-1.6zm0 3.6c-.7 0-1.4.3-1.9.7l1.9 1.9 1.9-1.9c-.5-.4-1.2-.7-1.9-.7z"/></svg>';
+  const bat='<svg width="27" height="13" viewBox="0 0 27 13"><rect x=".5" y=".5" width="23" height="12" rx="3.5" fill="none" stroke="rgba(255,255,255,.4)"/><rect x="2" y="2" width="20" height="9" rx="2" fill="#fff"/><path d="M25 4.5v4c.8-.3 1.3-1.1 1.3-2s-.5-1.7-1.3-2z" fill="rgba(255,255,255,.4)"/></svg>';
+  let h='', k=0;
+  D.secs.forEach(([t,n],si)=>{ h+=si?`<h5>${t}</h5>`:`<h4>${t}</h4>`; for(let j=0;j<n;j++,k++){ const [nm,e]=D.items[k]; h+=`<div class="dch-r${k===0?' on':''}" data-ci="${k}">${e?`<em>${e}</em>`:''}<span>${nm}</span><u></u></div>`; } });
+  el.innerHTML=`<div class="dch-in"><div class="dch-sb"><span>9:41</span><i></i><span>${sig}${wifi}${bat}</span></div><div class="dch-sheet"><div class="dch-sc"><h3>Choose a chime to play when your doorbell is rung</h3><img src="assets/db/chimeart.webp?v=2" alt=""><p>This sound will play from the doorbell as well as any chime devices enabled in your home.</p>${h}</div><div class="dch-hd"><b data-cx="0">Cancel</b><b data-cx="1">Save</b></div><div class="dch-toast">Chime saved</div></div></div>`;
+  const inn=el.querySelector('.dch-in'), sc=el.querySelector('.dch-sc'), toast=el.querySelector('.dch-toast');
+  const fitIn=()=>{ const w=el.clientWidth, hh=el.clientHeight; if(!w) return; const k=w/440; inn.style.transform=`scale(${k})`; inn.style.height=(hh/k)+'px'; };
+  fitIn(); try{ new ResizeObserver(fitIn).observe(el); }catch(e){} 
+  sc.addEventListener('scroll',()=>el.classList.toggle('scr',sc.scrollTop>40),{passive:true});
+  const aud=()=>{ if(!A){ A=new Audio('assets/db/chimes.m4a?v=1'); A.preload='auto'; A.playsInline=true; A.addEventListener('timeupdate',()=>{ if(pl>=0&&A.currentTime>=stopT) stop(); }); } return A; };
+  const mark=()=>el.querySelectorAll('.dch-r').forEach(r=>r.classList.toggle('pl',+r.dataset.ci===pl));
+  const stop=()=>{ if(A){ A.pause(); } pl=-1; clearTimeout(stop.t); mark(); };
+  const play=i=>{ const a=aud(), [,,st,len]=D.items[i]; pl=i; stopT=st+len; mark(); const go=()=>{ try{ a.currentTime=st; }catch(e){} const p=a.play(); if(p) p.catch(()=>{}); clearTimeout(stop.t); stop.t=setTimeout(()=>{ if(pl===i) stop(); },(len+.6)*1000); };
+    if(a.readyState>=1) go(); else { a.addEventListener('loadedmetadata',go,{once:true}); a.load(); } };
+  let saved=0;
+  el.addEventListener('click',e=>{ const r=e.target.closest('.dch-r'); if(r){ e.stopPropagation(); sel=+r.dataset.ci; el.querySelectorAll('.dch-r').forEach(x=>x.classList.toggle('on',x===r)); play(sel); return; }
+    const b=e.target.closest('[data-cx]'); if(b){ e.stopPropagation(); stop(); if(b.dataset.cx==='1'){ saved=sel; toast.textContent=D.items[sel][0]+' saved'; } else { sel=saved; el.querySelectorAll('.dch-r').forEach(x=>x.classList.toggle('on',+x.dataset.ci===sel)); toast.textContent='Changes discarded'; } toast.classList.add('on'); clearTimeout(toast.t); toast.t=setTimeout(()=>toast.classList.remove('on'),1400); } });
+  return {stop, warm:()=>{ aud(); }}; })();
+
 { const M=[ // [icon, label, headline, line, product image idx (fv), app clip (ph) | 'hub']
    [['hd'],'HDR Video','The Best Porch Protection','Crisp 1080p HDR keeps faces and packages clear in bright sun and deep shade.','lens',0],
    [['expand'],'180° View','See Every Angle','A 180° view of your porch, so nothing slips out of frame.','scanz','1fov3'],
    [['mic'],'2-Way Talk','Hear and Speak Clearly','Talk to visitors from anywhere, with clear audio both ways.','speaker',5],
+   [['music'],'Holiday Chimes','A Chime for Every Season','Pick from 40 chimes in the Vivint app, from classic ding-dongs to Halloween howls and holiday carols.','speaker','chimes'],
    [['ring','red'],'Smart Deter','Stop Trouble Before It Starts','A red light ring and warning tones tell lurkers they’ve been seen.','redring',3],
    [['box'],'Package Detect','Know When It Arrives','Get an alert the moment a package lands on your porch.','blue34',2],
    [['loop'],'24/7 Continuous Playback','Never Miss a Moment','Every second is recorded, so you can always go back and check.','sdz',1,'<div><b>10 days</b><span>of continuous recording, stored locally on the device</span></div><i></i><div><b>30 days*</b><span>of activity clips saved to the cloud</span></div><em>*45 days with the Premium Video plan</em>'],
@@ -4979,7 +5036,7 @@ input,textarea,[contenteditable="true"]{-webkit-user-select:text!important;user-
     $$('#dbmList button').forEach((b,i)=>b.classList.toggle('on',i===m));
     if(H.dataset.i!==String(m)){ H.classList.add('swap'); setTimeout(()=>{ H.innerHTML=`${h}<small>${line}</small>`; H.classList.remove('swap'); },H.dataset.i?140:0); H.dataset.i=m; }
     $$('#dbmCard img').forEach(im=>im.classList.toggle('on',fv==null?im.dataset.fv==='d':im.dataset.fv===String(fv)));
-    const hub=clip==='hub', none=clip==null;
+    const chm=clip==='chimes', hub=clip==='hub', none=clip==null||chm; ph.classList.toggle('chm',chm); if(!chm&&window.DBCH) DBCH.stop();
     ph.classList.toggle('off',hub); hb.classList.toggle('on',hub); const solo=fv==='solo'; card.classList.toggle('off',hub||solo); ph.classList.toggle('big',solo); ph.classList.toggle('still',none);
     const u=(hub||none)?null:`assets/db/ph${clip}.mp4${V}`;
     /* two video layers: the new clip loads underneath and fades in over the old one, so the screen never goes blank */
@@ -5010,7 +5067,7 @@ input,textarea,[contenteditable="true"]{-webkit-user-select:text!important;user-
   if(window.visualViewport) visualViewport.addEventListener('resize',again);
   try{ new ResizeObserver(()=>balance()).observe(sec.parentElement); }catch(e){}
   /* tap-anywhere advances through the list */
-  new MutationObserver(()=>{ if(live()) render(); else { pv.pause(); hv.pause(); } }).observe($('#dbmList').closest('.otab'),{attributes:true,attributeFilter:['data-vis']});
+  new MutationObserver(()=>{ if(live()) render(); else { pv.pause(); hv.pause(); if(window.DBCH) DBCH.stop(); } }).observe($('#dbmList').closest('.otab'),{attributes:true,attributeFilter:['data-vis']});
   render(); }
 
 /* Auto-fade hard crop edges: any product/photo image whose picture runs into the edge of its frame (and isn't a full-screen
