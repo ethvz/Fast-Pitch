@@ -4844,6 +4844,7 @@ document.head.insertAdjacentHTML('beforeend',`<style>
 .dws-t p{margin-top:24px;font-size:23px;line-height:1.42;color:rgba(20,20,20,.78)}
 
 .psec .lvmask{z-index:5}.psec .lvt{z-index:6;transform:translateZ(0)}
+.psec .lvl{z-index:6} /* list sits above its black mask (it was hidden under it) */
 #prScroll>.psec.dwhero{overflow:visible!important}.strip.wide{left:calc(-1*var(--gx));width:calc(2*var(--W));height:1032px}.strip.wide>.dws{width:var(--W);height:1032px}.strip.wide>.dws img{width:100%;height:100%}.strip.wide>.dws::after{content:'';position:absolute;left:0;right:0;bottom:0;height:13%;background:linear-gradient(0deg,rgba(0,0,0,.6),rgba(0,0,0,0));pointer-events:none}.strip.wide .dws-t{margin-left:var(--gx)}
 /* no highlighting, copying, callouts or image dragging anywhere */
 *,*::before,*::after{-webkit-user-select:none!important;user-select:none!important;-webkit-touch-callout:none!important}
