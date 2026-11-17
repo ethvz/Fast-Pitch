@@ -2324,6 +2324,11 @@ html.phn *,html.phn *::before,html.phn *::after{will-change:auto!important;-webk
 html.phn .dbm-card,html.phn .ocm-col,html.phn .dbm-phone .dch{transform:none!important;-webkit-transform:none!important}
 .icm.solo .ocm-card img{object-fit:cover!important;object-position:40% 50%!important;padding:0!important}
 .icm.solo .ocm-card{-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 30%)!important;mask-image:linear-gradient(90deg,transparent 0,#000 30%)!important}
+/* Indoor Camera Highlights: title + list sit high instead of centered; transparent product renders sit right of the phone */
+.icm .ocm-col{justify-content:flex-start;padding-top:96px}
+.icm .ocm-card img.rnd{inset:auto;object-fit:contain!important;object-position:50% 100%;padding:0;box-sizing:border-box}
+.icm .ocm-card img.rnd.pt{object-position:20% 50%}
+.icm .ocm-card:has(img.rnd.on){-webkit-mask-image:none;mask-image:none}
 </style>
 <div id="stage">
   <div id="screen">
@@ -2748,7 +2753,7 @@ html.phn .dbm-card,html.phn .ocm-col,html.phn .dbm-phone .dch{transform:none!imp
 const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
 
 /* ---------- scale stage ---------- */
-let HW=1376; window.FPV='v374'; if(Math.min(screen.width||0,screen.height||0)<500) document.documentElement.classList.add('phn');
+let HW=1376; window.FPV='v375'; if(Math.min(screen.width||0,screen.height||0)<500) document.documentElement.classList.add('phn');
 function safeBox(){ let pr=document.getElementById('safeProbe'); if(!pr){ pr=document.createElement('div'); pr.id='safeProbe';
   pr.style.cssText='position:fixed;left:0;top:0;width:100vw;height:100vh;height:100dvh;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);box-sizing:border-box;visibility:hidden;pointer-events:none;z-index:-1'; document.documentElement.appendChild(pr); }
   const cs=getComputedStyle(pr), t=parseFloat(cs.paddingTop)||0, b=parseFloat(cs.paddingBottom)||0, l=parseFloat(cs.paddingLeft)||0, r=parseFloat(cs.paddingRight)||0;
@@ -3276,7 +3281,7 @@ document.addEventListener('click',e=>{ if(Date.now()-swiped<350){e.stopPropagati
   if(d.hcmp){OC.hcmp=OC.hcmp===+d.hcmp?0:+d.hcmp;return ocRender();}
   if(d.ocmode){OC.mode=d.ocmode;OC.tip=false;ocRender();jump($('#ocScroll'),'feat');setTimeout(ocSpy,400);return;}
   if(d.whistle){whistle.currentTime=0;whistle.play().catch(()=>{});return;}
-  if(d.home){closeMenu();closeModals(); if(cur==='home') return flipTo('all'); stack=['home']; show('home'); return flipTo('all');}
+  if(d.home){closeMenu();closeModals(); if(cur==='home') return flipTo('all'); stack=['home']; show('home'); return; } /* back to the category page the product was opened from (hcat is kept while away) */
   if(d.go) return go(d.go);
   if(d.toast) return toast(d.toast);
   if(d.pb!==undefined) return pb(d.pb);
@@ -4382,7 +4387,7 @@ IP.tools='<path d="M14.5 6.5a4 4 0 0 0-5 5L4 17l3 3 5.5-5.5a4 4 0 0 0 5-5l-2.5 2
       P.classList.add('pcol','pcol-go'); P.style.transform='scale(.2)'; P.style.opacity='0'; P.style.clipPath=P.style.webkitClipPath='inset(0 round 220px)';
       if(hm){ hm.classList.add('pbg-go'); hm.style.opacity='1'; }
       setTimeout(()=>{ try{closeMenu();closeModals();}catch(e){} stack=['home']; if(hm) hm.style.animation='none'; show('home'); if(hm){ hm.classList.add('hxno'); hm.classList.remove('pbg','pbg-go'); hm.style.opacity=''; hm.style.transform='none'; hm.style.animation=''; }
-        try{flipTo('all');}catch(e){}
+        /* stays on the category page the product was opened from */
         if(hm){ const fin=()=>{ try{ hm.getAnimations({subtree:true}).forEach(a=>a.finish()); $$('#lpT,#gTitle,#bar').forEach(x=>x.getAnimations({subtree:true}).forEach(a=>a.finish())); }catch(e){} };
           fin(); requestAnimationFrame(()=>{ fin(); requestAnimationFrame(()=>{ fin(); hm.style.transform=''; }); }); }
         P.classList.remove('pcol','pcol-go'); P.style.transform=''; P.style.opacity=''; P.style.clipPath=P.style.webkitClipPath=''; P.style.transformOrigin=''; },320); }
@@ -5249,13 +5254,13 @@ window.USMAP={w:1000,h:620,ut:[222.1, 266.2],c:[[72.8,371.6,9],[907.0,214.8,9],[
 
 /* Indoor Camera Highlights: features + app clips in one list, the same layout as Outdoor Camera Highlights (list left, app video in a phone, camera photo behind it) */
 window.ICM=(()=>{ const M=[ // [icon, label, headline, line, photo (assets/…), app clip (p/icph#) | null, caption]
-   [['hd'],'1080p HDR Camera','See Clearly','Crisp 1080p HDR video keeps every room clear, day or night.','icm/f0',0],
+   [['hd'],'1080p HDR Camera','See Clearly','Crisp 1080p HDR video keeps every room clear, day or night.','icm/front',0],
    [['sd'],'High Speed Memory','Don’t Miss Anything','A high-speed microSD card with 128-bit encryption keeps every moment stored securely.','icm/f1',1,'<div><b>10 days</b><span>of continuous recording</span></div><i></i><div><b>30 days</b><span>of smart event clips</span></div>'],
    [['expand'],'150° Lens','Get the Big Picture','A 150° lens sees the whole room from a single corner.','icm/f2',0],
-   [['touch'],'One Touch Call Out','Instant Connection','One press of the button on the camera calls your phone, so anyone at home can reach you.','icm/f3',2],
-   [['speaker'],'HD Speaker & Microphone','Speak Up','Clear 2-way audio lets you check in and talk with whoever’s home.','icm/f4',2],
-   [['flame'],'Smoke & CO Listener','Listening for Danger','Hears your smoke and CO alarms and alerts your phone the moment they sound.','icm/f5',null,'<em>*Customer must enroll to gain access to this feature</em>'],
-   [['sliders'],'Customize Everything','Make It Yours','Set detection zones, notifications and recording for every room.','icm/f0',3]];
+   [['touch'],'One Touch Call Out','Instant Connection','One press of the button on the camera calls your phone, so anyone at home can reach you.','icm/top',2],
+   [['speaker'],'HD Speaker & Microphone','Speak Up','Clear 2-way audio lets you check in and talk with whoever’s home.','icm/spk',2],
+   [['flame'],'Smoke & CO Listener','Listening for Danger','Hears your smoke and CO alarms and alerts your phone the moment they sound.','icm/life',null,'<em>*Customer must enroll to gain access to this feature</em>'],
+   [['sliders'],'Customize Everything','Make It Yours','Set detection zones, notifications and recording for every room.','icm/a5',3]];
   let m=0, cv=null, S=null;
   const q=id=>document.getElementById(id);
   const live=()=>S&&S.sec.isConnected&&!!S.sec.closest('.page.on')&&S.sec.dataset.vis==='1';
@@ -5277,9 +5282,12 @@ window.ICM=(()=>{ const M=[ // [icon, label, headline, line, photo (assets/…),
   const balance=()=>{ if(!S) return; const {sec,L,card,ph,cap}=S, box=sec.parentElement, br=box.getBoundingClientRect(), sr=sec.getBoundingClientRect(); if(!sr.width) return; const k=sr.width/sec.offsetWidth;
     const port=ph.classList.contains('port'), w=port?556:920, hh=port?732:454, lr=(L.getBoundingClientRect().right-sr.left)/k, right0=(br.right-sr.left)/k, cx0=(br.left+br.width/2-sr.left)/k+70;
     let pl=port?cx0-w/2+40:Math.min(Math.max(cx0-w/2,lr+28),right0-w-10); ph.style.left=pl.toFixed(1)+'px';
-    const lb=L.lastElementChild&&L.lastElementChild.getBoundingClientRect(); if(lb&&lb.height){ const bot=(lb.bottom-sr.top)/k; ph.style.top=Math.max(20,bot-hh).toFixed(1)+'px'; }
+    const lb=L.lastElementChild&&L.lastElementChild.getBoundingClientRect(); /* list sits high, so the phone sits low and the camera render gets the space above it */ const ptop=port?150:Math.max(300,964-hh-60); ph.style.top=ptop+'px';
     const sc=w/(port?504:1152), ins=port?[6,10,23,9]:[3,5,7,4], cp=`inset(${ins.map(v=>(v*sc).toFixed(1)+'px').join(' ')} round ${(85*sc).toFixed(1)}px)`; ph.querySelectorAll('video').forEach(v=>{ v.style.clipPath=cp; v.style.webkitClipPath=cp; });
     let cl=pl+w/2-120; if(sec.classList.contains('solo')) cl=lr+30; card.style.left=cl.toFixed(1)+'px'; card.style.width=Math.max(600,right0-cl).toFixed(1)+'px';
+    /* product renders: centered over the phone with the base tucked behind its top edge (upright phone: beside it) */
+    card.querySelectorAll('img.rnd').forEach(im=>{ let x,y,bw,bh; if(port){ x=pl+w-70; y=110; bw=Math.min(560,right0-x-10); bh=720; } else { bh=ptop+70-24; bw=w*.72; x=pl+w/2-bw/2; y=24; }
+      Object.assign(im.style,{left:(x-cl).toFixed(1)+'px',top:y+'px',width:bw.toFixed(1)+'px',height:bh.toFixed(1)+'px',right:'auto',bottom:'auto'}); im.classList.toggle('pt',port); });
     if(sec.classList.contains('solo')){ const lft=(L.getBoundingClientRect().left-sr.left)/k+18; cap.style.left=lft.toFixed(1)+'px'; cap.style.top=(lb?((lb.bottom-sr.top)/k+26):800).toFixed(1)+'px'; }
     else { cap.style.left=pl.toFixed(1)+'px'; cap.style.top=Math.max(20,(parseFloat(ph.style.top)||372)-24-cap.offsetHeight).toFixed(1)+'px'; } };
   document.addEventListener('click',e=>{ const b=e.target.closest('[data-icm]'); if(!b||!S) return; m=+b.dataset.icm; render(); });
@@ -5288,7 +5296,7 @@ window.ICM=(()=>{ const M=[ // [icon, label, headline, line, photo (assets/…),
   const mount=()=>{ const sec=document.querySelector('#prScroll .icm'); if(!sec){ S=null; return; } m=0;
     S={sec,L:q('icmList'),card:q('icmCard'),pv:q('icmPv'),pv2:q('icmPv2'),ph:q('icmPhone'),H:q('icmH'),cap:q('icmCap')}; cv=S.pv2;
     S.L.innerHTML=M.map(([ic,t],i)=>`<button class="${i?'':'on'}" data-icm="${i}">${LSV(ic[0],26,ic[1]||'')}<span>${t.replace('&','&amp;')}</span></button>`).join('');
-    S.card.innerHTML=[...new Set(M.map(x=>x[4]))].map(k=>`<img src="assets/${k}.webp?v=1" alt="" data-im="${k}">`).join('');
+    S.card.innerHTML=[...new Set(M.map(x=>x[4]))].map(k=>`<img src="assets/${k}.webp?v=2" alt="" data-im="${k}"${/icm\/(front|top|spk|a5)/.test(k)?' class="rnd"':''}>`).join('');
     new MutationObserver(()=>render()).observe(sec,{attributes:true,attributeFilter:['data-vis']});
     try{ new ResizeObserver(()=>balance()).observe(sec.parentElement); }catch(e){}
     render(); again(); };
