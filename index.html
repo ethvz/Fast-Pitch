@@ -2753,7 +2753,7 @@ html.phn .dbm-card,html.phn .ocm-col,html.phn .dbm-phone .dch{transform:none!imp
 const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
 
 /* ---------- scale stage ---------- */
-let HW=1376; window.FPV='v376'; if(Math.min(screen.width||0,screen.height||0)<500) document.documentElement.classList.add('phn');
+let HW=1376; window.FPV='v377'; if(Math.min(screen.width||0,screen.height||0)<500) document.documentElement.classList.add('phn');
 function safeBox(){ let pr=document.getElementById('safeProbe'); if(!pr){ pr=document.createElement('div'); pr.id='safeProbe';
   pr.style.cssText='position:fixed;left:0;top:0;width:100vw;height:100vh;height:100dvh;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);box-sizing:border-box;visibility:hidden;pointer-events:none;z-index:-1'; document.documentElement.appendChild(pr); }
   const cs=getComputedStyle(pr), t=parseFloat(cs.paddingTop)||0, b=parseFloat(cs.paddingBottom)||0, l=parseFloat(cs.paddingLeft)||0, r=parseFloat(cs.paddingRight)||0;
@@ -5301,7 +5301,7 @@ window.ICM=(()=>{ const M=[ // [icon, label, headline, line, photo (assets/…),
     try{ new ResizeObserver(()=>balance()).observe(sec.parentElement); }catch(e){}
     render(); again(); };
   return {mount, stop:()=>{ if(S){ S.pv.pause(); S.pv2.pause(); } }}; })();
-{ const _pb=prBuild; prBuild=function(){ const r=_pb.apply(this,arguments); try{ ICM.mount(); }catch(e){ console.error(e); } return r; }; }
+{ const _pb=prBuild; prBuild=function(){ document.body.dataset.prod=PR.id; const r=_pb.apply(this,arguments); try{ ICM.mount(); }catch(e){ console.error(e); } return r; }; }
 
 /* Outdoor Camera Highlights: one list (left), the app video in a large centered phone, camera photos fading off the right edge */
 { const M=[ // [icon, label, headline, line, camera photo, app clip (oc/ph#) | null]
@@ -5365,7 +5365,7 @@ window.ICM=(()=>{ const M=[ // [icon, label, headline, line, photo (assets/…),
 
 barFor(cur);
 </script>
-<script id="lyBakedData" type="application/json">{"eq1g5vvx":{"sel":"#ocmCard > img[data-im=\"ocm/sd2\"]","dx":199.1,"dy":-115,"s":1.499},"eaewaoh10":{"sel":"#ocmCard > img[data-im=\"ocm/detect\"]","dx":44.2,"dy":-182.2,"s":1.559},"e1ovhlr8w":{"sel":"#ocmCard > img[data-im=\"och/c0\"]","dx":64.8,"dy":-192.5,"s":1.356},"e4vlu4gx":{"sel":"#ocmCard > img[data-im=\"ocm/spk\"]","dx":0,"dy":362.1,"s":2.345},"enlyvhvz":{"sel":"#dbmCard > img[data-fv=\"whitering\"]","dx":43.1,"dy":-42.5,"s":1},"e3xjaqvt":{"sel":"#dbmCard > img[data-fv=\"sdz\"]","dx":-50.8,"dy":-99.8,"s":1.151},"e11x4q9fx":{"dx":345.81816136436026,"dy":240.5454403181118,"fdt":38,"im":1,"s":1.3757279058463554,"sel":"#icmCard > img[data-im=\"icm/fov\"]"},"e1feh4ybx":{"dx":-66.54545060954565,"dy":242.72725837088376,"fdb":100,"im":1,"s":1.7286526627686638,"sel":"#icmCard > img[data-im=\"icm/top\"]"},"e1w2cwh7z":{"dx":-66.54545060954564,"dy":81.8181769789496,"fdt":49,"im":1,"s":1.6466656834012088,"sel":"#icmCard > img[data-im=\"icm/front\"]"},"eirvyu8x":{"dx":0,"dy":0,"fdt":68,"im":1,"s":1.8329804258698696,"sel":"#icmCard > img[data-im=\"icm/spk\"]"},"eknej491h":{"dx":-2.181818052771989,"dy":-56.72726937207171,"s":1,"sel":"#prScroll > div:nth-of-type(1) > video:nth-of-type(1)"},"enpog09w":{"dx":364.9090693261151,"dy":152.7272636940392,"fdb":18,"fdl":18,"fdr":89,"fdt":18,"im":1,"s":1.7551253979977566,"sel":"#icmCard > img[data-im=\"icm/sd\"]"}}</script>
+<script id="lyBakedData" type="application/json">{"eq1g5vvx":{"sel":"#ocmCard > img[data-im=\"ocm/sd2\"]","dx":199.1,"dy":-115,"s":1.499},"eaewaoh10":{"sel":"#ocmCard > img[data-im=\"ocm/detect\"]","dx":44.2,"dy":-182.2,"s":1.559},"e1ovhlr8w":{"sel":"#ocmCard > img[data-im=\"och/c0\"]","dx":64.8,"dy":-192.5,"s":1.356},"e4vlu4gx":{"sel":"#ocmCard > img[data-im=\"ocm/spk\"]","dx":0,"dy":362.1,"s":2.345},"enlyvhvz":{"sel":"#dbmCard > img[data-fv=\"whitering\"]","dx":43.1,"dy":-42.5,"s":1},"e3xjaqvt":{"sel":"#dbmCard > img[data-fv=\"sdz\"]","dx":-50.8,"dy":-99.8,"s":1.151},"e11x4q9fx":{"dx":345.81816136436026,"dy":240.5454403181118,"fdt":38,"im":1,"s":1.3757279058463554,"sel":"#icmCard > img[data-im=\"icm/fov\"]"},"e1feh4ybx":{"dx":-66.54545060954565,"dy":242.72725837088376,"fdb":100,"im":1,"s":1.7286526627686638,"sel":"#icmCard > img[data-im=\"icm/top\"]"},"e1w2cwh7z":{"dx":-66.54545060954564,"dy":81.8181769789496,"fdt":49,"im":1,"s":1.6466656834012088,"sel":"#icmCard > img[data-im=\"icm/front\"]"},"eirvyu8x":{"dx":0,"dy":0,"fdt":68,"im":1,"s":1.8329804258698696,"sel":"#icmCard > img[data-im=\"icm/spk\"]"},"eknej491h":{"dx":-2.181818052771989,"dy":-56.72726937207171,"s":1,"sel":"body[data-prod=\"icp\"] #prScroll > div:nth-of-type(1) > video:nth-of-type(1)"},"enpog09w":{"dx":364.9090693261151,"dy":152.7272636940392,"fdb":18,"fdl":18,"fdr":89,"fdt":18,"im":1,"s":1.7551253979977566,"sel":"#icmCard > img[data-im=\"icm/sd\"]"}}</script>
 <script>
 /* ===== Layout art board =====
    Baked layout (lyBakedData) is applied on every load, here and on GitHub.
@@ -5602,7 +5602,9 @@ body.ly-on [contenteditable=true]{outline:2px solid #05E5AF!important;cursor:tex
   const stage=()=>document.getElementById('stage');
   const kf=()=>{ const s=stage(); return s? s.getBoundingClientRect().width/s.offsetWidth : 1; };
   const hid=s=>{ let h=2166136261; for(let i=0;i<s.length;i++){ h^=s.charCodeAt(i); h=Math.imul(h,16777619); } return 'e'+(h>>>0).toString(36)+s.length.toString(36); };
-  const selOf=el=>{ { const a=el.dataset&&(el.dataset.im?['data-im',el.dataset.im]:el.dataset.fv?['data-fv',el.dataset.fv]:null); const pid=el.parentElement&&el.parentElement.id; if(a&&pid) return '#'+CSS.escape(pid)+' > '+el.tagName.toLowerCase()+'['+a[0]+'="'+a[1]+'"]'; }
+  /* product pages share one container (#prScroll), so an edit made there is tagged with the product it was made on; otherwise it would move the same spot on every product */
+  const selOf=el=>{ const r=selOf0(el); return (el.closest&&el.closest('#prScroll')&&window.PR&&PR.id)?`body[data-prod="${PR.id}"] ${r}`:r; };
+  const selOf0=el=>{ { const a=el.dataset&&(el.dataset.im?['data-im',el.dataset.im]:el.dataset.fv?['data-fv',el.dataset.fv]:null); const pid=el.parentElement&&el.parentElement.id; if(a&&pid) return '#'+CSS.escape(pid)+' > '+el.tagName.toLowerCase()+'['+a[0]+'="'+a[1]+'"]'; }
     const parts=[]; let n=el; while(n&&n!==document.body){ if(n.id&&!/^ly/.test(n.id)){ parts.unshift('#'+CSS.escape(n.id)); return parts.join(' > '); } const t=n.tagName.toLowerCase(); let i=1, p=n; while((p=p.previousElementSibling)) if(p.tagName===n.tagName) i++; parts.unshift(t+':nth-of-type('+i+')'); n=n.parentElement; } return 'body > '+parts.join(' > '); };
   const STATE=/^(on|active|sel|selected|swap|rdy|top|in|show|open|cur|vis|hover)$/;
   const groupSel=el=>{ const p=el.parentElement; if(!p) return selOf(el); const cls=[...el.classList].filter(c=>!STATE.test(c)&&!/^ly/.test(c)).map(c=>'.'+CSS.escape(c)).join(''); return selOf(p)+' > '+el.tagName.toLowerCase()+cls; };
