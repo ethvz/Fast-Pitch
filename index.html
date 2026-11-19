@@ -2329,13 +2329,6 @@ html.phn .dbm-card,html.phn .ocm-col,html.phn .dbm-phone .dch{transform:none!imp
 .icm .ocm-card img.rnd{inset:auto;object-fit:contain!important;object-position:50% 100%;padding:0;box-sizing:border-box}
 .icm .ocm-card img.rnd.pt{object-position:20% 50%}
 .icm .ocm-card:has(img.rnd.on){-webkit-mask-image:none;mask-image:none}
-/* stand-in seal for Newsweek Best Customer Service 2027 (swap for the official badge when we have it) */
-.aw-badge,.aw-badge *{text-decoration:none!important}
-.aw-badge{width:118px;height:158px;border-radius:14px;background:linear-gradient(160deg,#16243d,#0b1322);border:2px solid #c9a34e;box-shadow:inset 0 0 0 4px #0b1322,inset 0 0 0 5px rgba(201,163,78,.5);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:#fff;text-align:center;font-family:inherit}
-.aw-badge small{font-size:11px;font-weight:700;letter-spacing:.4px;background:#d9252b;color:#fff;padding:2px 8px;border-radius:3px;margin-bottom:4px}
-.aw-badge b{font-size:40px;line-height:1;font-weight:700;color:#e8c56a}
-.aw-badge em{font-style:normal;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.6px;color:#e8c56a;margin-bottom:6px}
-.aw-badge span{font-size:10.5px;line-height:1.25;color:#cfd6e4}
 </style>
 <div id="stage">
   <div id="screen">
@@ -2760,7 +2753,7 @@ html.phn .dbm-card,html.phn .ocm-col,html.phn .dbm-phone .dch{transform:none!imp
 const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
 
 /* ---------- scale stage ---------- */
-let HW=1376; window.FPV='v378'; if(Math.min(screen.width||0,screen.height||0)<500) document.documentElement.classList.add('phn');
+let HW=1376; window.FPV='v379'; if(Math.min(screen.width||0,screen.height||0)<500) document.documentElement.classList.add('phn');
 function safeBox(){ let pr=document.getElementById('safeProbe'); if(!pr){ pr=document.createElement('div'); pr.id='safeProbe';
   pr.style.cssText='position:fixed;left:0;top:0;width:100vw;height:100vh;height:100dvh;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);box-sizing:border-box;visibility:hidden;pointer-events:none;z-index:-1'; document.documentElement.appendChild(pr); }
   const cs=getComputedStyle(pr), t=parseFloat(cs.paddingTop)||0, b=parseFloat(cs.paddingBottom)||0, l=parseFloat(cs.paddingLeft)||0, r=parseFloat(cs.paddingRight)||0;
@@ -3809,7 +3802,7 @@ const THI=k=>`assets/th/${k}.webp?v=93`;
 
 /* ===== Awards + newsroom (vivint.com/company/newsroom) ===== */
 { const EX='<svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11L11 3M4.5 3H11v6.5"/></svg>';
-  const AW=[['@cs27','Newsweek · 2027','Best Home Security Customer Service','Ranked #1 in home security in Newsweek and Statista’s America’s Best Customer Service 2027, based on surveys of 200,000+ consumers.','https://rankings.newsweek.com/americas-best-customer-service-2027'],
+  const AW=[['cs27','Newsweek · 2027','Best Home Security Customer Service','Ranked #1 in home security in Newsweek and Statista’s America’s Best Customer Service 2027, based on surveys of 200,000+ consumers.','https://rankings.newsweek.com/americas-best-customer-service-2027'],
    ['cnet','CNET · 2026','Best Expandable Smart Security System','CNET named Vivint the best expandable smart security system in its 2026 list of best home security systems.','https://www.cnet.com/home/security/best-home-security-system/'],
    ['forbes','Forbes · 2026','Best Home Security Systems 2026','Forbes recognized Vivint as the best home security system for front door security.','https://www.forbes.com/home-improvement/home-security/best-home-security-companies/'],
    ['pcmag','PCMag · 2026','Editors’ Choice','“Vivint HomeProtect Pro Review: The Best Pro-Level Smart Home Security System.”','https://www.pcmag.com/reviews/vivint-smart-home'],
@@ -3828,7 +3821,7 @@ const THI=k=>`assets/th/${k}.webp?v=93`;
    [null,'Famadillo · August 10, 2026','Vivint Smart Thermostats for Easier Home Comfort','https://famadillo.com/vivint-thermostats-make-smart-home-temperature-control-almost-too-easy/']];
   const A=(u,c,h)=>`<a class="${c}" href="${u}" target="_blank" rel="noopener">${h}</a>`;
   $('#p-awards').innerHTML=`<div class="scroll"><div class="aw-h pv"><div class="eb">Recognition</div><h1>Award winning.<br>Year after year.</h1></div>
-   <div class="aw-grid">${AW.map((a,i)=>`<div class="aw-c pv d${Math.min(6,1+(i>>1))}">${A(a[4],'aw-b',`${a[0]==='@cs27'?'<span class="aw-badge"><small>Newsweek</small><b>#1</b><em>Home Security</em><span>America’s Best<br>Customer Service<br>2027</span></span>':`<img src="assets/nw/${a[0]}.webp?v=98" alt="">`}<i>${EX}</i>`)}<div><div class="yr">${a[1]}</div><h3>${a[2]}</h3><p>${a[3]}</p></div></div>`).join('')}</div>
+   <div class="aw-grid">${AW.map((a,i)=>`<div class="aw-c pv d${Math.min(6,1+(i>>1))}">${A(a[4],'aw-b',`<img src="assets/nw/${a[0]}.webp?v=98" alt=""><i>${EX}</i>`)}<div><div class="yr">${a[1]}</div><h3>${a[2]}</h3><p>${a[3]}</p></div></div>`).join('')}</div>
    <div class="aw-h" style="padding-top:70px"><h2>Press releases</h2></div>${PR.map(r=>A(r[2],'aw-row',`<span class="dt">${r[0]}</span><b>${r[1]}</b><span class="go">${EX}</span>`)).join('')}
    <div class="aw-h" style="padding-top:58px"><h2>In the news</h2></div>${NW.map(r=>A(r[3],'aw-row',`<span class="nl">${r[0]?`<img src="assets/nw/${r[0]}.webp?v=98" alt="">`:'<b style="color:#fff;font-size:14px">Famadillo</b>'}</span><b>${r[2]}<br><span style="font-size:15px;color:#8e8e93;font-weight:400">${r[1]}</span></b><span class="go">${EX}</span>`)).join('')}</div>`; }
 
