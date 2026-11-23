@@ -2329,12 +2329,25 @@ html.phn .dbm-card,html.phn .ocm-col,html.phn .dbm-phone .dch{transform:none!imp
 .icm .ocm-card img.rnd{inset:auto;object-fit:contain!important;object-position:50% 100%;padding:0;box-sizing:border-box}
 .icm .ocm-card img.rnd.pt{object-position:20% 50%}
 .icm .ocm-card:has(img.rnd.on){-webkit-mask-image:none;mask-image:none}
+/* Home: Grid | 3D Home pill; the 3D home tour runs in its own page (assets/tour) inside a frame, loaded on first use */
+#hmode{position:absolute;left:50%;top:28px;transform:translateX(-50%);z-index:40;display:flex;padding:4px;border-radius:24px;background:rgba(40,40,44,.72);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.1);box-shadow:0 8px 24px rgba(0,0,0,.35)}
+#hmode button{position:relative;z-index:1;height:36px;min-width:96px;padding:0 16px;border:0;background:none;color:rgba(255,255,255,.7);font:600 14px/1 inherit;font-family:inherit;border-radius:18px;cursor:pointer;transition:color .3s}
+#hmode button.on{color:#000}
+#hmode i{position:absolute;top:4px;bottom:4px;left:4px;width:calc(50% - 4px);border-radius:18px;background:#fff;transition:transform .45s cubic-bezier(.3,1.3,.5,1)}
+#hmode.d3 i{transform:translateX(100%)}
+#tour3d{position:absolute;left:0;right:0;top:0;bottom:76px;z-index:30;opacity:0;pointer-events:none;transition:opacity .5s ease;background:#0b0f0f;border-radius:0 0 28px 28px;overflow:hidden}
+#tour3d iframe{width:100%;height:100%;border:0;display:block}
+#p-home.d3 #tour3d{opacity:1;pointer-events:auto}
+#p-home.d3 #homeTrack{opacity:0;pointer-events:none;transition:opacity .4s}
+#p-home #homeTrack{transition:opacity .4s}
+body.hd3 #gTitle{opacity:0!important}
 </style>
 <div id="stage">
   <div id="screen">
 
     <!-- HOME -->
     <section class="page" id="p-home">
+      <div id="hmode" role="group" aria-label="Home view"><i></i><button data-hm="grid" class="on">Grid</button><button data-hm="3d">3D Home</button></div><div id="tour3d"></div>
       <div id="homeTrack"><div id="homeAll" class="hpane"><div id="allTiles"></div>
       <div class="amb"></div>
       </div>
@@ -2753,7 +2766,7 @@ html.phn .dbm-card,html.phn .ocm-col,html.phn .dbm-phone .dch{transform:none!imp
 const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
 
 /* ---------- scale stage ---------- */
-let HW=1376; window.FPV='v379'; if(Math.min(screen.width||0,screen.height||0)<500) document.documentElement.classList.add('phn');
+let HW=1376; window.FPV='v380'; if(Math.min(screen.width||0,screen.height||0)<500) document.documentElement.classList.add('phn');
 function safeBox(){ let pr=document.getElementById('safeProbe'); if(!pr){ pr=document.createElement('div'); pr.id='safeProbe';
   pr.style.cssText='position:fixed;left:0;top:0;width:100vw;height:100vh;height:100dvh;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);box-sizing:border-box;visibility:hidden;pointer-events:none;z-index:-1'; document.documentElement.appendChild(pr); }
   const cs=getComputedStyle(pr), t=parseFloat(cs.paddingTop)||0, b=parseFloat(cs.paddingBottom)||0, l=parseFloat(cs.paddingLeft)||0, r=parseFloat(cs.paddingRight)||0;
@@ -5253,6 +5266,23 @@ window.USMAP={w:1000,h:620,ut:[222.1, 266.2],c:[[72.8,371.6,9],[907.0,214.8,9],[
   const _bfb=barFor; barFor=function(p){ _bfb.apply(this,arguments); apply(p); requestAnimationFrame(()=>window.dispatchEvent(new Event('resize'))); };
   window.addEventListener('resize',()=>{ setVars(); }); apply(cur); }
 
+
+/* Home view toggle: Grid | 3D Home */
+{ const pg=$('#p-home'), pill=$('#hmode'), box=$('#tour3d');
+  const set=m=>{ const d3=m==='3d'; pg.classList.toggle('d3',d3); pill.classList.toggle('d3',d3); document.body.classList.toggle('hd3',d3);
+    pill.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.hm===m));
+    if(d3&&!box.firstChild){ const f=document.createElement('iframe'); f.src='assets/tour/index.html?v=1'; f.title='3D home tour'; f.setAttribute('allow','fullscreen'); box.appendChild(f); } };
+  pill.addEventListener('click',e=>{ const b=e.target.closest('[data-hm]'); if(b){ e.stopPropagation(); set(b.dataset.hm); } });
+  window.HOMEVIEW=set;
+  /* run the 3D scene only while it is on screen (3D view picked and the home page showing) */
+  const ctl=()=>{ const f=box.firstChild; if(!f||!f.contentWindow) return; const on=pg.classList.contains('d3')&&pg.classList.contains('on')&&!document.hidden; f.contentWindow.postMessage({fpTourCtl:on?'resume':'pause'},'*'); };
+  new MutationObserver(ctl).observe(pg,{attributes:true,attributeFilter:['class']}); document.addEventListener('visibilitychange',ctl);
+  /* the tour's "See full product" opens the matching Fast Pitch page */
+  const MAP={dbcp:['go','dbcp'],ocp:['go','ocp'],ocspot:['go','ocp'],hub:['go','hub'],therm:['go','therm'],lock:['pr','lock'],window:['pr','window'],icp:['pr','icp'],motion:['pr','motion'],water:['pr','water'],smokeco:['pr','smokeco']};
+  addEventListener('message',e=>{ const d=e.data; if(!d||d.fpTour!=='open'||!MAP[d.k]) return; const [t,id]=MAP[d.k];
+    const el=document.createElement('button'); el.dataset[t==='go'?'go':'pr']=id; el.style.display='none'; document.body.appendChild(el); el.click(); el.remove(); });
+  /* picking a category tab goes back to the grid */
+  const _ft=flipTo; flipTo=function(c){ if(pg.classList.contains('d3')) set('grid'); return _ft.apply(this,arguments); }; }
 
 /* Indoor Camera Highlights: features + app clips in one list, the same layout as Outdoor Camera Highlights (list left, app video in a phone, camera photo behind it) */
 window.ICM=(()=>{ const M=[ // [icon, label, headline, line, photo (assets/…), app clip (p/icph#) | null, caption]
