@@ -55,13 +55,17 @@ button:focus-visible{outline:2px solid var(--mint);outline-offset:3px}
 /* bottom rail */
 #rail{position:fixed;left:0;right:0;bottom:0;z-index:6;padding-bottom:calc(env(safe-area-inset-bottom,0px) + 16px);
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;justify-content:center;pointer-events:none}
-#railIn{display:flex;gap:6px;padding:6px;border-radius:22px;max-width:100%;overflow-x:auto;scrollbar-width:none;pointer-events:auto;-webkit-overflow-scrolling:touch;touch-action:pan-x}
+#railIn{display:flex;gap:4px;padding:6px 8px;border-radius:22px;max-width:min(100%,1120px);overflow-x:auto;overflow-y:hidden;scrollbar-width:none;pointer-events:auto;-webkit-overflow-scrolling:touch;touch-action:pan-x;
+  scroll-snap-type:x proximity;scroll-padding:0 24px;overscroll-behavior-x:contain;
+  -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 22px,#000 calc(100% - 22px),transparent 100%);mask-image:linear-gradient(90deg,transparent 0,#000 22px,#000 calc(100% - 22px),transparent 100%)}
 #railIn::-webkit-scrollbar{display:none}
-.chip{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:5px;width:86px;height:84px;padding:6px 4px 8px;border-radius:16px;transition:background .25s}
-.chip img{height:40px;width:56px;object-fit:contain;filter:drop-shadow(0 3px 6px rgba(0,0,0,.45))}
-.chip span{font-size:11px;font-weight:600;line-height:1.15;text-align:center;color:var(--muted);text-wrap:balance}
+.chip{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:7px;width:90px;height:94px;padding:9px 4px 6px;border-radius:16px;transition:background .25s,opacity .3s;scroll-snap-align:center}
+.chip .im{height:46px;width:100%;display:flex;align-items:center;justify-content:center;flex:0 0 46px}
+.chip img{height:46px;width:auto;max-width:78px;object-fit:contain;filter:drop-shadow(0 3px 6px rgba(0,0,0,.45))}
+.chip span{display:block;width:100%;font-size:11px;font-weight:600;line-height:1.2;text-align:center;color:var(--muted);text-wrap:balance;align-self:flex-start}
 .chip[aria-current="true"]{background:var(--glass-2);box-shadow:inset 0 0 0 1.5px var(--mint)}
 .chip[aria-current="true"] span{color:var(--fg)}
+.chip[hidden]{display:none}
 
 /* detail card */
 #card{position:fixed;z-index:7;right:max(18px,env(safe-area-inset-right,0px));top:calc(env(safe-area-inset-top,0px) + 86px);
@@ -108,7 +112,9 @@ body.focus #brand{display:none}
   .c-media{height:96px}
   .c-media img{max-height:80px}
   .c-name{font-size:21px;margin-bottom:8px}
-  .chip{width:74px;height:76px}
+  .chip{width:80px;height:88px}
+  .chip img{height:40px}
+  .chip .im{height:40px;flex-basis:40px}
   #hint{bottom:calc(env(safe-area-inset-bottom,0px) + 110px)}
   body.focus #hint{display:none}
   #seg button{padding:0 14px}
@@ -175,7 +181,7 @@ import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 /* textures, decals and the sky come in one bundle (pack.jpg) so Fast Pitch stays under its file limit */
-const __PK = await (async()=>{ try{ const r=await fetch('pack.jpg?v=4'); const tot=+r.headers.get('content-length')||9e6, rd=r.body.getReader(), parts=[]; let got=0;
+const __PK = await (async()=>{ try{ const r=await fetch('pack.jpg?v=5'); const tot=+r.headers.get('content-length')||9e6, rd=r.body.getReader(), parts=[]; let got=0;
   for(;;){ const {done,value}=await rd.read(); if(done) break; parts.push(value); got+=value.length; const b=document.getElementById('loadBar'); if(b) b.style.setProperty('--p', Math.min(92,Math.round(92*got/tot))+'%'); }
   const u8=new Uint8Array(got); let o=0; for(const p of parts){ u8.set(p,o); o+=p.length; } const buf=u8.buffer; const n=new DataView(buf).getUint32(0,true);
   const idx=JSON.parse(new TextDecoder().decode(new Uint8Array(buf,4,n))), base=4+n, m={};
@@ -189,23 +195,43 @@ const HUB = await (async()=>{ try{ if(!__PK['mdl/hub.bin']) return null; const b
 const FEATS = {"dbcp": [["Smart Deter™", "AI quickly identifies any packages delivered to your doorstep and can automatically toggle on Smart Deter to proactively protect your packages."], ["180° Field of View", "See your full porch with the widest field of view so you can clearly see your deliveries on your doorstep."], ["Pre-Roll Recording", "Captures the 8–10 seconds leading up to the event, giving full context of what happened before, not just during."]], "lock": [["Up to 50 Unique Codes", "Grant access and always know who is coming and going with up to 50 unique access codes that could be shared with friends, family, and others."], ["Control from Anywhere", "Control your lock remotely with the Vivint app, no matter where you are."], ["Battery Powered", "Even during a power outage, the lock stays online, powered by four AA batteries with quick, easy access for hassle-free replacement."]], "ocp": [["Smart Deter™", "AI filters out false alerts, detects real threats, then proactively deters them with lights and sounds to stop crimes before they happen."], ["Improved 4K Sensor", "A 4K image sensor with 5.3x HD zoom and proprietary picture tuning optimizes for clarity in all light conditions, especially at night."], ["Weather Anything", "IP65 weather-resistant and built to last for years of reliable performance with an automotive grade camera housing."]], "ocspot": [["Intelligent Person Tracking", "The industry’s only spotlight that tracks lurkers as they move."], ["Up to 1800-lumens", "A powerful spotlight floods the area with bright light so you can see clearly and deter unwanted visitors."], ["Controllable Lighting Zones", "Customize your coverage by toggling lighting zones on or off, so light hits the areas that matter."]], "therm": [["Dynamic Temperature Control", "Smart temperature control automatically adjusts to your preferred settings."], ["Easy-to-Use Display", "Touch-display illuminates on approach to show target and current temperatures (requires C-wire)."], ["Side Button Control", "A simple, single button control to change thermostat settings."]], "icp": [["150° HD Field of View", "A 150 degree field of view with an HD lens means your indoor camera captures a wide, crystal clear picture of any room."], ["Privacy Mode", "Privacy mode disables all video and audio recording so you stay in control of your privacy, while keeping your camera ready to switch back on the moment you need it."], ["Full Motion Hinge Base", "A full motion hinge and base system gives you the flexibility to mount and angle your indoor camera exactly where you need it, so you always get the perfect view of any room."]], "window": [["Versatile Installation", "Vivint Door and Window Sensors can also be used on cabinets and safes, so you can minimize the risk of children accessing harmful substances, and maximize the protection of valuables in your home."], ["24/7 monitoring", "Whether you’re at home or away, if a door sensor is tripped or window alarm sounds, you will be connected to a smart home security specialist who can help."], ["Audible Panel Alerts", "Customizable audible alerts let you know the moment a door or window opens, giving you real-time awareness of activity throughout your home without ever having to check a screen."]], "motion": [["Pet Sensitivity", "The built-in pet sensitivity toggle can help lead to fewer false alerts in pet-friendly homes."], ["Long Battery Life", "Long battery life means your motion sensors keep watching over your home without interruption, so a dead battery never leaves a room unprotected."], ["24/7 monitoring", "24/7 professional monitoring means someone is always ready to respond the moment your motion sensor triggers while your system is armed, giving you peace of mind around the clock."]], "smokeco": [["Smoke & CO Detection", "Get peace of mind and double the safety with a smoke and CO detector that protects against both fire and carbon monoxide."], ["System Integration", "When your Smoke & CO Combo Detector triggers, your system responds automatically by shutting off the HVAC to slow the spread of flames and unlocking doors so your family can get out fast and first responders can get in."], ["24/7 monitoring", "24/7 professional monitoring means the moment your smoke or CO detector triggers, a response is already in motion so your family and home are never left to face an emergency alone."]], "water": [["Freeze Detection", "The built-in low temperature sensor detects freezing conditions before they become a problem, giving you a heads up in time to prevent frozen pipes and the damage they can cause."], ["Instant Alerts", "Instant alerts through the Smart Hub Pro 2, a direct phone call, and the Vivint app mean you are notified the moment water is detected, so you can act fast before a small leak turns into a costly problem."], ["Small Design", "Designed to fit in tight places and to go unnoticed to help protect your home from leaks."]]};
 FEATS.hub = [["Always-Ready Command Center","Control, monitor, and get help from one place."],["Security Sensor Alerts","Audible notifications for opened doors and windows."],["Always Connected","Cellular and battery backup."]];
 const PRODUCTS = [
-  {k:'dbcp',   name:'Doorbell Camera Pro',   where:'Front door',          img:'dbcp',      side:'r', interior:false, nudge:[24,-6]},
-  {k:'lock',   name:'Smart Lock',            where:'Front door',          img:'lock',      side:'l', interior:false, nudge:[-24,6]},
-  {k:'ocp',    name:'Outdoor Camera Pro 3',  where:'Side tower',        img:'ocp',       side:'r', interior:false},
-  {k:'ocspot', name:'Spotlight Pro',         where:'Garage',     img:'ocspot',    side:'r', interior:false},
-  {k:'hub',    name:'Smart Hub Pro 2',       where:'Great room',            img:'shp2_home', side:'r', interior:true},
-  {k:'window', name:'Door & Window Sensor',  where:'Front window',  img:'window',    side:'r', interior:true},
-  {k:'therm',  name:'Smart Thermostat',      where:'Great room',          img:'therm',     side:'l', interior:true},
-  {k:'icp',    name:'Indoor Camera Pro',     where:'Kitchen shelf',       img:'icp',       side:'l', interior:true},
-  {k:'motion', name:'Motion Sensor',         where:'Kitchen',             img:'motion',    side:'l', interior:true},
-  {k:'water',  name:'Water Sensor',          where:'Under the kitchen sink', img:'water',  side:'r', interior:true},
-  {k:'smokeco',name:'Smoke & CO Detector',   where:'Great room',             img:'smokeco',   side:'r', interior:true},
+  {k:'ysign',  name:'Yard Sign',             where:'Front lawn',            img:'ysign',     side:'r'},
+  {k:'ocspot', name:'Spotlight Pro',         where:'Garage',                img:'ocspot',    side:'r'},
+  {k:'garage', name:'Garage Door Controller',where:'Inside the garage',     img:'garage',    side:'r'},
+  {k:'lock',   name:'Smart Lock',            where:'Front door',            img:'lock',      side:'l'},
+  {k:'dbcp',   name:'Doorbell Camera Pro',   where:'Front door',            img:'dbcp',      side:'r'},
+  {k:'hub',    name:'Smart Hub Pro 2',       where:'Great room',            img:'shp2_home', side:'r'},
+  {k:'chime',  name:'Chime Extender',        where:'Great room outlet',     img:'chime',     side:'r'},
+  {k:'motion', name:'Motion Sensor',         where:'Great room corner',     img:'motion',    side:'r'},
+  {k:'smokeco',name:'Smoke & CO Detector',   where:'Great room',            img:'smokeco',   side:'r'},
+  {k:'water',  name:'Water Sensor',          where:'Under the kitchen sink',img:'water',     side:'r'},
+  {k:'fob',    name:'Key Fob',               where:'Kitchen island',        img:'fob',       side:'l'},
+  {k:'pendant',name:'Emergency Pendant',     where:'Coffee table',          img:'pendant',   side:'l'},
+  {k:'icp',    name:'Indoor Camera Pro',     where:'Kitchen shelf',         img:'icp',       side:'l'},
+  {k:'fire',   name:'Firefighter',           where:'Next to the smoke alarm',img:'fire',     side:'l'},
+  {k:'keypad', name:'Keypad',                where:'Side entry',            img:'keypad',    side:'l'},
+  {k:'therm',  name:'Smart Thermostat',      where:'Great room',            img:'therm',     side:'l'},
+  {k:'window', name:'Door & Window Sensor',  where:'Great room window',     img:'window',    side:'l'},
+  {k:'glass',  name:'Glass Break Sensor',    where:'Great room',            img:'glass',     side:'l'},
+  {k:'plug',   name:'Smart Plug',            where:'Dining room outlet',    img:'plug',      side:'l'},
+  {k:'ocp',    name:'Outdoor Camera Pro 3',  where:'Side tower',            img:'ocp',       side:'r'},
 ];
+/* which products each Fast Pitch home tab shows (matches the grid categories) */
+const CATS = {cams:['hub','ocp','ocspot','dbcp','icp'], smart:['hub','lock','garage','therm','plug'],
+  sensors:['hub','keypad','motion','glass','window','water','smokeco','fire','pendant','fob','chime']};
+FEATS.glass = [["Whole-Room Protection","One sensor listens for breaking glass across the entire room."],["Layers of Protection","Cameras deter outside first; glass break backs them up inside."],["Alarm the Moment Glass Breaks","24/7 monitoring responds, with two-way talk through the hub."]];
+FEATS.fire = [["Monitors Your Existing Alarms","Listens for the smoke alarms you already have and reports them to Vivint."],["Help Is Sent","Our monitoring team calls, then dispatches help if you can’t answer."],["Every Door Unlocks","A fire alarm unlocks the smart locks for a clear way out and in."]];
+FEATS.pendant = [["Help Is One Press Away","Call for help from anywhere in the house."],["Responders Get In Fast","A press can unlock the front door, so there’s no broken door."],["Family Is Notified","Check on loved ones from anywhere with the Vivint app."]];
+FEATS.fob = [["Your Whole Home on Your Keychain","One press arms the system, locks every door, closes the garage and sets the thermostat."],["Arm or Disarm Without the Panel","Great for kids and guests."],["Panic Button","Alerts monitoring with one press."]];
+FEATS.chime = [["Hub Alerts in Every Room","Carries alarms, chimes and entry delay through the house."],["Know When Doors Open","Hear when kids come and go, upstairs and down."],["Plug In Anywhere","No wiring: it plugs into any outlet."]];
+FEATS.keypad = [["Control Where You Need It","Arm and disarm from any room with backlit, one-touch buttons."],["Arming Locks Every Door","One habit, whole home secure."],["Right by the Entry","Arm Away closes the garage on your way out."]];
+FEATS.plug = [["Power When You Need It","And not when you don’t."],["Lamps on a Schedule","If the alarm trips, lights turn on. It looks like someone’s home."],["One-Tap Routines","Arriving turns the lamp on; bedtime turns everything off."]];
+FEATS.garage = [["Never Forget to Close the Garage","Check it, close it and get alerts from anywhere."],["Auto-Close Every Night","Bedtime locks the doors and closes the garage."],["Open or Closed at a Glance","Right in the Vivint app."]];
+FEATS.ysign = [["Deter Before They Try","A Vivint sign tells would-be intruders the home is protected."],["Professionally Monitored","24/7 monitoring backs every sensor and camera."],["Matching Window Decals","Cover every side of the home."]];
+
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 
-{ const ORDER = ['ocspot','window','lock','dbcp','hub','motion','smokeco','water','icp','therm','ocp'];
-  PRODUCTS.sort((a,b)=>ORDER.indexOf(a.k)-ORDER.indexOf(b.k)); }
 
 /* ------------------------------------------------------------------ renderer */
 const canvas = document.getElementById('scene');
@@ -288,7 +314,7 @@ function slab(x1,x2,y1,y2,z1,z2,m,parent,shadow=true){
   worldUV(g, (x1+x2)/2,(y1+y2)/2,(z1+z2)/2);
   const mesh = new THREE.Mesh(g, m);
   mesh.position.set((x1+x2)/2,(y1+y2)/2,(z1+z2)/2);
-  mesh.castShadow = shadow; mesh.receiveShadow = true;
+  mesh.castShadow = shadow; mesh.receiveShadow = true; mesh.userData.box = true;
   (parent||scene).add(mesh); return mesh;
 }
 const rbox = (w,h,d,r,m) => { const x = new THREE.Mesh(new RoundedBoxGeometry(w,h,d,6,Math.min(r,w/2-1e-4,h/2-1e-4,d/2-1e-4)), m); x.castShadow = x.receiveShadow = true; return x; };
@@ -329,22 +355,55 @@ const FL = 0.15;           // finished floor
 const EH = 6.3;            // eave / ceiling height of the two-storey volume
 // lawn, then a soft black vignette so the diorama melts into the night
 { const g = new THREE.PlaneGeometry(46, 46); g.rotateX(-Math.PI/2); worldUV(g);
-  const ground = new THREE.Mesh(g, M.grass); ground.position.set(0,-.005,2); ground.receiveShadow = true; scene.add(ground);
+  const ground = new THREE.Mesh(g, M.grass); ground.userData.plane = true; ground.position.set(0,-.005,2); ground.receiveShadow = true; scene.add(ground);
   const c = document.createElement('canvas'); c.width = c.height = 512; const x = c.getContext('2d');
   const gr = x.createRadialGradient(256,256,70,256,256,256); gr.addColorStop(0,'rgba(3,4,4,0)'); gr.addColorStop(.3,'rgba(3,4,4,.2)'); gr.addColorStop(.5,'rgba(3,4,4,.78)'); gr.addColorStop(.64,'rgba(3,4,4,1)'); gr.addColorStop(1,'rgba(3,4,4,1)');
   x.fillStyle = gr; x.fillRect(0,0,512,512);
   const vg = new THREE.Mesh(new THREE.PlaneGeometry(47,47), new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(c), transparent:true, depthWrite:false}));
   vg.rotation.x = -Math.PI/2; vg.position.set(0,.06,2); vg.scale.set(1,1,1); vg.renderOrder = 2; scene.add(vg); }
-slab(-10.2,-5.2,0,.04,4,14.5,M.conc);                 // driveway
-slab(-1.95,-0.85,0,.04,4,14.5,M.conc);                // front walk
-slab(-2.25,-0.55,0,.11,4,5.6,M.conc);                 // front step
-slab(-10.4,10.2,0,FL-.02,-6.2,4.2,M.plinth);          // foundation
-slab(-5,-2.25,0,.06,4.2,5.6,M.mulch); slab(-.55,1.6,0,.06,4.2,5.6,M.mulch);   // planting beds
+/* hardscape: driveway with saw-cut joints, a stepping-paver walk, a stoop, steel-edged beds and a gravel strip
+   along the foundation. Soft "grass-shadow" strips sit along every edge so lawn never meets concrete with a hard line. */
+const edgeTex = (() => { const c = document.createElement('canvas'); c.width = 64; c.height = 64; const x = c.getContext('2d');
+  const g = x.createLinearGradient(0,0,0,64); g.addColorStop(0,'rgba(22,26,14,.78)'); g.addColorStop(.45,'rgba(26,30,16,.35)'); g.addColorStop(1,'rgba(30,34,18,0)');
+  x.fillStyle = g; x.fillRect(0,0,64,64); const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t; })();
+const edgeM = new THREE.MeshBasicMaterial({map:edgeTex, transparent:true, depthWrite:false, polygonOffset:true, polygonOffsetFactor:-1, polygonOffsetUnits:-4});
+/* a soft strip on the lawn: from (x1,z1) to (x2,z2), fading away from the hard edge toward `side` (+1 / -1 across the line) */
+function edge(x1,z1,x2,z2,w=.32,side=1){
+  const len = Math.hypot(x2-x1,z2-z1), m = new THREE.Mesh(new THREE.PlaneGeometry(len,w), edgeM);
+  m.rotation.x = -Math.PI/2; m.rotation.z = Math.atan2(-(z2-z1), x2-x1) + (side<0 ? Math.PI : 0);
+  const nx = -(z2-z1)/len, nz = (x2-x1)/len; m.position.set((x1+x2)/2 + nx*side*w/2, .012, (z1+z2)/2 + nz*side*w/2);
+  m.renderOrder = 1; scene.add(m); return m; }
+const concDark = mat(0x3f4140, {r:.95});
+slab(-10.2,-5.2,0,.045,4.2,13.5,M.conc);                                   // driveway
+for(const z of [6.7,9.2,11.7]) slab(-10.2,-5.2,.045,.047,z-.008,z+.008,concDark,null,false);
+slab(-7.71,-7.69,.045,.047,4.2,13.5,concDark,null,false);
+edge(-10.2,4.2,-10.2,13.5,.36,-1); edge(-5.2,4.2,-5.2,13.5,.36,1); edge(-10.2,13.5,-5.2,13.5,.3,-1);
+slab(-2.35,-0.45,0,.13,4.0,5.25,M.conc); slab(-2.35,-0.45,0,.075,5.25,5.65,M.conc);   // stoop + step
+for(let i=0, z=6.05; z<13.2; i++, z+=.95){ const x0 = -1.95 + (i%2 ? .06 : -.06);                      // stepping pavers
+  slab(x0,x0+1.1,0,.05,z,z+.62,M.conc); edge(x0,z,x0+1.1,z,.22,-1); edge(x0,z+.62,x0+1.1,z+.62,.22,1); edge(x0,z,x0,z+.62,.2,-1); edge(x0+1.1,z,x0+1.1,z+.62,.2,1); }
+slab(-10.4,10.2,0,FL-.02,-6.2,4.2,M.plinth);                               // foundation
+const steel = phys(0x23201d, {r:.6, m:.6});
+const bed = (x1,x2,z1,z2) => { slab(x1,x2,0,.055,z1,z2,M.mulch,null,false);
+  slab(x1,x2,0,.07,z2-.012,z2,steel,null,false); slab(x1-.012,x1,0,.07,z1,z2,steel,null,false); slab(x2,x2+.012,0,.07,z1,z2,steel,null,false);
+  edge(x1,z2,x2,z2,.3,1); edge(x1,z1,x1,z2,.25,-1); edge(x2,z1,x2,z2,.25,1); };
+bed(-5,-2.4,4.2,5.7); bed(-.4,1.4,4.2,5.4);
+// pea-gravel strip along the great room and tower
+{ const gravel = mat(0x8b8780, {r:1, x:{normalMap:TX.concN, normalScale:new THREE.Vector2(3,3), map:TX.conc}});
+  slab(1.4,11.7,0,.04,4.2,4.75,gravel,null,false); edge(1.4,4.75,11.7,4.75,.3,1);
+  slab(11.5,12.05,0,.04,-6.2,4.75,gravel,null,false); edge(12.05,-6.2,12.05,4.75,.3,1); }
+// subtle variation in the lawn (worn and lush patches) so it doesn't read as one flat colour
+{ const c = document.createElement('canvas'); c.width = c.height = 256; const x = c.getContext('2d');
+  for(let i=0;i<90;i++){ const r = 8+rnd()*34, px = rnd()*256, py = rnd()*256, g = x.createRadialGradient(px,py,0,px,py,r), lush = rnd()<.5;
+    g.addColorStop(0, lush ? 'rgba(8,22,6,.32)' : 'rgba(70,62,30,.22)'); g.addColorStop(1,'rgba(0,0,0,0)'); x.fillStyle = g; x.fillRect(px-r,py-r,2*r,2*r); }
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace;
+  const v = new THREE.Mesh(new THREE.PlaneGeometry(36,30), new THREE.MeshBasicMaterial({map:t, transparent:true, depthWrite:false}));
+  v.rotation.x = -Math.PI/2; v.position.set(0,.004,4); v.renderOrder = 1; scene.add(v); }
 
 /* ------------------------------------------------------------------ walls with openings */
 /* A wall along X (fixed z=at) or along Z (fixed x=at). Openings {a,b,lo,hi,kind:'window'|'door'|'none', lit} */
-function wall({axis, at, from, to, h, y0=FL, t=0.2, open=[], m=M.siding, inner=null}){
+function wall({axis, at, from, to, h, y0=FL, t=0.2, open=[], m=M.siding, faces=null}){
   const grp = new THREE.Group(); scene.add(grp);
+  if(faces){ const arr = Array(6).fill(faces.side||faces.neg); const i0 = axis==='x' ? 4 : 0; arr[i0] = faces.pos; arr[i0+1] = faces.neg; m = arr; }
   const seg = (a,b,lo,hi,mm=m,th=t,off=0) => axis==='x'
     ? slab(a,b,y0+lo,y0+hi,at-th/2+off,at+th/2+off,mm,grp)
     : slab(at-th/2+off,at+th/2+off,y0+lo,y0+hi,a,b,mm,grp);
@@ -377,12 +436,19 @@ const GH = 3.05;
 wall({axis:'x', at:3.9, from:-10.2, to:-5.2, h:GH, y0:.04, open:[{a:-9.55,b:-5.85,lo:0,hi:2.45,kind:'none'}]});
 wall({axis:'z', at:-10.1, from:-6, to:3.8, h:GH, y0:.04, open:[{a:-3,b:-1.2,lo:1.1,hi:2.2,kind:'window'}]});
 wall({axis:'x', at:-5.9, from:-10.2, to:-5.2, h:GH, y0:.04});
+const GDM = {door:phys(0x3a3d40,{r:.5,m:.3}), groove:phys(0x1c1e20,{r:.42,m:.35})};   // garage door fades when a garage product is open
 { const gd = new THREE.Group(); scene.add(gd);
-  slab(-9.55,-5.85,.04,2.49,3.86,3.92,M.garage,gd);
-  for(let i=1;i<5;i++) slab(-9.55,-5.85,.04+i*.49-.012,.04+i*.49+.012,3.92,3.935,M.trim,gd);
+  slab(-9.55,-5.85,.04,2.49,3.86,3.92,GDM.door,gd);
+  for(let i=1;i<5;i++) slab(-9.55,-5.85,.04+i*.49-.012,.04+i*.49+.012,3.92,3.935,GDM.groove,gd);
+  // garage interior: slab, entry door to the house, opener on the ceiling
+  slab(-10,-5.2,.04,.06,-5.8,3.8,mat(0x8f8e8a,{r:.9,x:{map:TX.conc,normalMap:TX.concN}}));
+  slab(-5.24,-5.2,.06,2.1,1.0,1.92,M.door); slab(-5.26,-5.2,.06,2.16,.94,1.0,M.trim); slab(-5.26,-5.2,.06,2.16,1.92,1.98,M.trim); slab(-5.26,-5.2,2.1,2.16,.94,1.98,M.trim);
+  slab(-7.95,-7.45,2.62,2.82,-1.2,-.6,mat(0xe9e8e4,{r:.6}));                // opener motor
+  slab(-7.73,-7.67,2.82,2.86,-.6,3.7,M.blackM);                            // rail
+  { const l = new THREE.PointLight(0xfff0dc, 3, 6, 2); l.position.set(-7.7,2.5,-.9); scene.add(l); }
   slab(-9.62,-5.78,2.49,2.57,3.8,4.02,M.trim,gd); slab(-9.62,-9.55,.04,2.57,3.8,4.02,M.trim,gd); slab(-5.85,-5.78,.04,2.57,3.8,4.02,M.trim,gd);
   // shed roof sloping away from the main house
-  const r = new THREE.Mesh(new THREE.BoxGeometry(5.9,.2,11), M.roof); worldUV(r.geometry);
+  const r = new THREE.Mesh(new THREE.BoxGeometry(5.9,.2,11), M.roof); worldUV(r.geometry); r.userData.box = true;
   r.position.set(-7.75,3.45,-1); r.rotation.z = .11; r.castShadow = r.receiveShadow = true; scene.add(r);
   slab(-10.75,-10.6,2.9,3.25,-6.5,4.5,M.fascia); }
 
@@ -400,21 +466,40 @@ slab(-5,1.4,EH+FL-.02,EH+FL+.2,-5.8,3.8,M.ceil);   // lid
   slab(-1.9,-0.9,FL,FL+2.35,3.84,3.9,M.door,d);
   slab(-1.72,-1.62,FL+.35,FL+2.05,3.9,3.905,M.glassLit,d);
   slab(-1.98,-1.9,FL,FL+2.43,3.78,4.04,M.trim,d); slab(-0.9,-0.82,FL,FL+2.43,3.78,4.04,M.trim,d); slab(-1.98,-0.82,FL+2.35,FL+2.43,3.78,4.04,M.trim,d);
-  const pull = slab(-1.08,-1.05,FL+.7,FL+1.6,3.92,3.96,M.steel,d); }
+  // passage lever below the smart lock (matte black, like the Kwikset set)
+  const rose = cyl(.032,.012,M.blackM,32); rose.rotation.x = Math.PI/2; rose.position.set(-1.12,FL+.92,3.906); d.add(rose);
+  const neck = cyl(.009,.05,M.blackM,16); neck.rotation.x = Math.PI/2; neck.position.set(-1.12,FL+.92,3.935); d.add(neck);
+  const lever = new THREE.Mesh(new RoundedBoxGeometry(.12,.02,.016,3,.006), M.blackM); lever.position.set(-1.17,FL+.92,3.958); lever.castShadow = true; d.add(lever); }
 /* entry canopy with downlights */
 slab(-4.9,1.6,3.08,3.24,4.0,5.45,M.fascia);
 slab(-4.9,1.6,3.0,3.08,4.0,5.42,mat(0x6b4a33,{r:.6,x:{map:TX.floor,color:0x9a7656}}));   // wood soffit
 
 /* Great room: x 1.6..10, z -6..4, double height, cut open at the front (z = 4) */
 const shared = wall({axis:'z', at:1.5, from:-6, to:4, h:EH, m:M.paint});   // shared with the main volume; painted room side
-wall({axis:'x', at:-5.9, from:1.4, to:10.1, h:EH, m:M.paint, open:[
+wall({axis:'x', at:-5.9, from:1.4, to:10.1, h:EH, faces:{pos:M.paint, neg:M.siding, side:M.paint}, open:[
   {a:2.5,b:3.2,lo:4.9,hi:5.6,kind:'window'},{a:3.8,b:4.5,lo:4.9,hi:5.6,kind:'window'},{a:5.1,b:5.8,lo:4.9,hi:5.6,kind:'window'},{a:6.4,b:7.1,lo:4.9,hi:5.6,kind:'window'}]});
-const rightW = wall({axis:'z', at:9.9, from:-6, to:4, h:EH, m:M.paint});
+const rightW = wall({axis:'z', at:9.9, from:-6, to:4, h:EH, faces:{pos:M.siding, neg:M.paint, side:M.paint}, open:[
+  {a:-1.15,b:-0.2,lo:0,hi:2.3,kind:'none'},          // side entry to the mudroom
+  {a:1.45,b:3.35,lo:.85,hi:2.45,kind:'sash'}]});
+/* side entry door (half-glass) and the single-hung window the Door & Window Sensor is on */
+{ slab(9.84,9.88,FL,FL+2.3,-1.15,-0.2,M.door); slab(9.835,9.84,FL+1.2,FL+2.05,-1.0,-0.35,M.glassDark);
+  slab(9.76,9.8,FL,FL+2.38,-1.21,-1.15,M.trim); slab(9.76,9.8,FL,FL+2.38,-0.2,-0.14,M.trim); slab(9.76,9.8,FL+2.3,FL+2.38,-1.21,-0.14,M.trim);
+  const k = cyl(.03,.012,M.blackM,24); k.rotation.z = Math.PI/2; k.position.set(9.83,FL+.95,-1.02); scene.add(k);
+  const kl = new THREE.Mesh(new RoundedBoxGeometry(.016,.02,.11,3,.006), M.blackM); kl.position.set(9.81,FL+.95,-.98); scene.add(kl);
+  // window: frame, two sashes, glass, interior stool (sill)
+  const a=1.45, b=3.35, lo=FL+.85, hi=FL+2.45, fw=.06;
+  slab(9.77,10.03,lo,hi,a,a+fw,M.trim); slab(9.77,10.03,lo,hi,b-fw,b,M.trim); slab(9.77,10.03,hi-fw,hi,a,b,M.trim); slab(9.77,10.03,lo,lo+.055,a,b,M.trim);
+  const mid = (lo+hi)/2 + .03, sw = .055;
+  const sash = (x, y0, y1) => { slab(x-.025,x+.025,y0,y0+sw,a+fw,b-fw,M.trim); slab(x-.025,x+.025,y1-sw,y1,a+fw,b-fw,M.trim);
+    slab(x-.025,x+.025,y0,y1,a+fw,a+fw+sw,M.trim); slab(x-.025,x+.025,y0,y1,b-fw-sw,b-fw,M.trim);
+    slab(x-.004,x+.004,y0+sw,y1-sw,a+fw+sw,b-fw-sw,M.glassDark); };
+  sash(9.86, lo+.055, mid+.02); sash(9.93, mid-.02, hi-fw);
+  slab(9.6,9.835,lo+.035,lo+.055,a-.08,b+.08,M.cab);             // interior stool the magnet sits on
+  slab(9.66,9.8,lo-.12,lo+.035,a-.04,b+.04,M.paint); }
 slab(1.6,9.8,FL-.02,FL,-5.8,4,M.floor);                    // floor
 slab(1.4,10,EH+FL,EH+FL+.22,-6,4,M.ceil);                  // ceiling slab (its cut edge shows at the front)
 slab(1.4,10,FL-.12,FL-.02,3.9,4,M.cut);                   // floor section edge
 // exterior faces of the great room (seen from the side / back)
-slab(1.4,10.1,FL,EH+FL,-6.02,-6,M.siding); slab(10.0,10.02,FL,EH+FL,-6,4,M.siding);
 
 /* Side tower in dark board-and-batten: x 10..11.5 */
 slab(10.0,11.5,0,7.2,-6.2,1.0,M.batten);
@@ -424,7 +509,7 @@ slab(9.95,11.6,7.2,7.35,-6.3,1.1,M.fascia);
 { const ridgeY = EH+FL+2.0, z0 = -6.6, z1 = 4.6, zr = -1, eY = EH+FL+.22;
   const pitch = Math.atan2(ridgeY-eY, zr-z0);
   const mk = (zA, zB, sgn) => { const len = Math.hypot(zB-zA, ridgeY-eY)+.1;
-    const r = new THREE.Mesh(new THREE.BoxGeometry(16.2,.18,len), M.roof); worldUV(r.geometry);
+    const r = new THREE.Mesh(new THREE.BoxGeometry(16.2,.18,len), M.roof); worldUV(r.geometry); r.userData.box = true;
     r.position.set(2.4, (eY+ridgeY)/2+.06, (zA+zB)/2); r.rotation.x = sgn*pitch; r.castShadow = r.receiveShadow = true; scene.add(r); return r; };
   mk(z0, zr, -1); mk(zr, z1, 1);
   // gable ends (siding triangles) and fascia
@@ -488,9 +573,15 @@ slab(1.63,1.68,FL+1.18,FL+2.0,0.62,2.08,phys(0x070809,{r:.12,x:{clearcoat:1}}),t
   const t=new THREE.CanvasTexture(c); t.colorSpace=THREE.SRGBColorSpace;
   slab(3.1,7.5,FL+2.9,FL+4.4,-5.8,-5.76,mat(0x1a1a1a,{r:.6}),null,false);
   const art=new THREE.Mesh(new THREE.PlaneGeometry(4.3,1.4), mat(0xffffff,{r:.9,x:{map:t}})); art.position.set(5.3,FL+3.65,-5.755); scene.add(art); }
-{ const lamp=new THREE.Group(); lamp.position.set(2.35,FL,2.6); scene.add(lamp);
+{ const lamp=new THREE.Group(); lamp.position.set(9.4,FL,3.45); scene.add(lamp);
   const pole=cyl(.012,1.55,M.blackM,8); pole.position.y=.78; lamp.add(pole); const base=cyl(.14,.025,M.blackM,24); base.position.y=.012; lamp.add(base);
   const shade=new THREE.Mesh(new THREE.CylinderGeometry(.17,.21,.28,32,1,true), phys(0xf2e8d8,{r:.8,x:{side:THREE.DoubleSide,emissive:0xffcf98,emissiveIntensity:.9,transmission:0}})); shade.position.y=1.55; lamp.add(shade); }
+// outlets (Chime Extender and Smart Plug are plugged in here) and the home's existing smoke alarm
+const plate = (x,y,z,ry) => { const p = new THREE.Mesh(new RoundedBoxGeometry(.075,.118,.008,2,.004), M.cab); p.position.set(x,y,z); p.rotation.y = ry; scene.add(p); return p; };
+plate(1.604,FL+.32,-2.6,Math.PI/2); plate(9.796,FL+.32,3.62,-Math.PI/2);
+{ const sa = new THREE.Group(); sa.position.set(9.79,FL+4.1,-3.35); sa.rotation.y = -Math.PI/2; scene.add(sa);
+  const b = cyl(.075,.035,M.cab,40); b.rotation.x = Math.PI/2; b.position.z = .018; sa.add(b);
+  const d = new THREE.Mesh(new THREE.SphereGeometry(.05,32,12,0,Math.PI*2,0,Math.PI/2), M.cab); d.rotation.x = Math.PI/2; d.position.z = .035; d.scale.y = .35; sa.add(d); }
 // rug
 slab(2.6,6.5,FL,FL+.012,.05,3.1,M.rug,null,false);
 
@@ -525,19 +616,20 @@ for(const x of [-4.4,-2.1,0.4]){ const d = cyl(.05,.01,M.bulb,16); d.position.se
 
 /* ------------------------------------------------------------------ stock models (glTF, CC0 / CC-BY) */
 const gltf = new GLTFLoader(loadMgr); gltf.setMeshoptDecoder(MeshoptDecoder);
-const MODEL_P = [];
+const MODEL_P = [], GLB = {};
+const glb = name => GLB[name] || (GLB[name] = new Promise((res, rej) => gltf.load(PK('mdl/'+name+'.glb'), res, undefined, rej)));
 function model(name, {pos, rotY=0, scale=1, fit=null, shadow=true, tweak=null}){
   const grp = new THREE.Group(); grp.position.copy(pos); grp.rotation.y = rotY; scene.add(grp);
   let done; MODEL_P.push(new Promise(r => { done = r; setTimeout(r, 25000); }));
-  gltf.load(PK('mdl/'+name+'.glb'), g => {
-    const o = g.scene; o.scale.setScalar(scale);
+  glb(name).then(g => {
+    const o = g.scene.clone(true); o.scale.setScalar(scale);
     o.traverse(m => { if(m.isMesh){ m.castShadow = shadow; m.receiveShadow = true; if(m.material && m.material.map) m.material.map.anisotropy = Math.min(8,maxAniso); } });
     const b = new THREE.Box3().setFromObject(o);
     if(fit){ const sz = b.getSize(new THREE.Vector3()); const k = fit.w ? fit.w/Math.max(sz.x,sz.z) : fit.h/sz.y; o.scale.multiplyScalar(k); b.setFromObject(o); }
     const c = b.getCenter(new THREE.Vector3()); o.position.set(-c.x, -b.min.y, -c.z);
     grp.add(o); try{ tweak && tweak(o, grp); }catch(e){}
     done();
-  }, undefined, () => done());
+  }).catch(() => done());
   return grp;
 }
 // living
@@ -548,7 +640,7 @@ model('mid_century_lounge_chair', {pos:V(3.15,FL,3.25), rotY:Math.PI*.78});
 model('throw_pillows_01', {pos:V(5.05,FL+.43,.85), rotY:-Math.PI/2, fit:{w:.55}, shadow:false});
 model('potted_plant_02', {pos:V(2.15,FL,3.35), fit:{h:.95}});
 model('potted_plant_04', {pos:V(6.55,FL+.94,-2.95), fit:{h:.42}});
-model('potted_plant_01', {pos:V(9.35,FL,3.4), fit:{h:1.35}});
+model('potted_plant_01', {pos:V(2.2,FL,-0.75), fit:{h:1.35}});
 // dining
 model('round_wooden_table_01', {pos:V(8.1,FL,1.85), fit:{w:1.15}});
 for(const [dx,dz,r] of [[0,-.78,0],[.78,0,-Math.PI/2],[0,.78,Math.PI],[-.78,0,Math.PI/2]])
@@ -557,14 +649,95 @@ for(const [dx,dz,r] of [[0,-.78,0],[.78,0,-Math.PI/2],[0,.78,Math.PI],[-.78,0,Ma
 for(const [x,z] of [[4.6,-3.0],[6.1,-3.0],[8.1,1.85]]){
   model('modern_ceiling_lamp_01', {pos:V(x,2.05,z), fit:{h:.42}, shadow:false, tweak:o=>o.traverse(m=>{ if(m.isMesh && /glass|shade|bulb|white/i.test(m.material.name||'')){ m.material.emissive = new THREE.Color(0xffd7a4); m.material.emissiveIntensity = 1.6; } })});
   const cord = cyl(.006, EH+FL-2.45, M.blackM, 6); cord.position.set(x, (EH+FL+2.45)/2, z); cord.castShadow = false; scene.add(cord); }
-// landscaping: fern clusters in the front beds
-for(const [x,z,r] of [[-4.2,4.9,.3],[-2.9,4.95,2.1],[.5,4.9,1.2],[10.75,2.0,.6]])
-  model('fern_02', {pos:V(x,.05,z), rotY:r, fit:{w:1.5}, shadow:false});
-// car on the drive (paint set to graphite, badges hidden)
-model('car', {pos:V(-7.5,0,7.3), rotY:-.78, tweak:o=>o.traverse(m=>{ if(!m.isMesh) return; const mn = (m.material&&m.material.name)||'';
-  if(/License|Emblem/i.test(m.name+' '+mn)) m.visible = false;
-  if(m.material && m.material.transmission > 0){ const q = m.material; q.transmission = 0; q.color.set(0x0b0e11); q.transparent = true; q.opacity = .82; q.roughness = .04; q.metalness = .3; q.needsUpdate = true; }
-  if(/^Paint/.test(mn)){ const q = m.material; q.color.set(0x4b5056); q.iridescence = 0; q.metalness = .7; q.roughness = .28; q.clearcoat = 1; q.clearcoatRoughness = .03; q.map = null; q.needsUpdate = true; } })});
+// landscaping: ferns and ornamental grass in the beds, tufts softening the lawn edges
+for(const [x,z,r] of [[-4.2,4.95,.3],[-3.0,5.05,2.1],[.5,4.85,1.2]]) model('fern_02', {pos:V(x,.055,z), rotY:r, fit:{w:1.3}, shadow:false});
+for(const [x,z,r,w] of [[-4.75,5.35,0,.9],[-2.65,4.55,1.4,.8],[1.05,5.05,2.2,.8],[-.15,4.55,.6,.7],[11.75,3.9,1,.8],[11.75,1.8,2.5,.9],[11.75,-.6,4,.8],
+                        [-10.45,6,0,.8],[-10.45,9.5,2,.7],[-4.95,8.2,1,.6],[-4.95,11.6,3,.7],[-1.2,12.6,2,.5],[2.8,4.95,1.2,.8],[5.6,4.95,3.3,.8],[8.4,4.95,.4,.8]])
+  model('grass_tuft', {pos:V(x,.02,z), rotY:r, fit:{w:w}, shadow:false});
+// an economy car parked straight on the drive, nose to the garage
+model('car2', {pos:V(-7.7,.045,6.4), rotY:-Math.PI/2, fit:{w:2.69}});
+
+/* ------------------------------------------------------------------ baked lighting
+   Every large diffuse surface (walls, floors, roof, lawn, hardscape, cabinets) gets a second UV set packed into one
+   lightmap atlas. The atlas is rendered offline in Blender Cycles (direct + bounced light, soft shadows from the
+   furniture and car), then those surfaces draw as albedo x lightmap, so they cost almost nothing on the iPad. */
+const BAKE_MATS = new Set([M.siding, M.batten, M.paint, M.ceil, M.cut, M.roof, M.plinth, M.conc, M.grass, M.mulch, M.floor, M.cab, M.quartz, M.oak, M.rug]);
+function bakeTargets(){
+  const out = [];
+  scene.traverse(o => { if(!o.isMesh || !(o.userData.box || o.userData.plane)) return;
+    const ms = Array.isArray(o.material) ? o.material : [o.material];
+    const p = o.geometry.parameters, area = o.userData.plane ? 1e9 : Math.max(p.width*p.height, p.width*p.depth, p.height*p.depth);
+    const ok = m => BAKE_MATS.has(m) || (area > .5 && m.color && !m.transparent && !(m.emissiveIntensity > 0 && m.emissive && m.emissive.getHex()) && m.metalness <= .2 && !m.clearcoat && m.type!=='MeshBasicMaterial' && !Object.values(GDM).includes(m));
+    if(ms.every(ok)) out.push(o); });
+  return out;
+}
+/* lightmap UVs: one rectangle per box face, sized by its real dimensions, shelf-packed into a square atlas */
+/* faces nobody can ever see (inside the closed main volume, pressed against another solid) get no atlas space */
+const SEALED = [new THREE.Box3(V(-5.05,FL+.01,-5.75), V(1.35,EH+FL-.03,3.75))];
+function faceHidden(o, f, solids){
+  const p = o.geometry.parameters, n = [[1,0,0],[-1,0,0],[0,1,0],[0,-1,0],[0,0,1],[0,0,-1]][f];
+  const half = [p.width/2, p.height/2, p.depth/2], ax = n.findIndex(v=>v), t = [0,1,2].filter(i=>i!==ax);
+  const nn = new THREE.Vector3(...n).transformDirection(o.matrixWorld);
+  // hidden only if the centre and all four corners (pulled in 10%) sit inside sealed space or another solid
+  for(const [s1,s2] of [[0,0],[.9,.9],[-.9,.9],[.9,-.9],[-.9,-.9]]){
+    const c = [0,0,0]; c[ax] = n[ax]*half[ax]; c[t[0]] = s1*half[t[0]]; c[t[1]] = s2*half[t[1]];
+    const w = new THREE.Vector3(...c).applyMatrix4(o.matrixWorld).addScaledVector(nn, .02);
+    if(SEALED.some(b => b.containsPoint(w))) continue;
+    if(solids.some(s => s.o!==o && s.b.containsPoint(w))) continue;
+    return false;
+  }
+  return true;
+}
+/* lightmap UVs: one rectangle per box face, sized by its real dimensions, shelf-packed into a square atlas */
+/* faces nobody can ever see (inside the closed main volume, pressed against another solid) get no atlas space */
+/* lightmap UVs: one rectangle per visible box face, sized by its real dimensions, shelf-packed (tallest first) into a square atlas */
+function packUV2(meshes, size){
+  scene.updateMatrixWorld(true);
+  const solids = []; scene.traverse(o => { if(o.isMesh && o.userData.box && !o.rotation.x && !o.rotation.z && !o.material.transparent){ const b = new THREE.Box3().setFromObject(o); b.expandByScalar(-.004); solids.push({o,b}); } });
+  const faces = [];
+  for(const o of meshes){
+    const p = o.geometry.parameters;
+    if(o.userData.plane){ faces.push({o, f:0, u:p.width*.3, v:p.height*.3}); continue; }
+    const dims = [[p.depth,p.height],[p.depth,p.height],[p.width,p.depth],[p.width,p.depth],[p.width,p.height],[p.width,p.height]];
+    for(let f=0; f<6; f++){ const skip = (f===3 && o.position.y < 1.0) || faceHidden(o, f, solids);
+      faces.push({o, f, u:skip?0:dims[f][0], v:skip?0:dims[f][1]}); }
+  }
+  const pad = 2;
+  const order = faces.map((q,i)=>i).filter(i=>faces[i].u&&faces[i].v).sort((a,b)=>Math.min(faces[b].u,faces[b].v)-Math.min(faces[a].u,faces[a].v));
+  const tryPack = dens => { let x = pad, y = pad, rowH = 0; const R = [];
+    for(const i of order){ const q = faces[i];
+      let w = Math.max(2, Math.ceil(q.u*dens)), h = Math.max(2, Math.ceil(q.v*dens)), rot = false;
+      if(w < h){ [w,h] = [h,w]; rot = true; }                  // lay every rect landscape so rows stay tight
+      if(x + w + pad > size){ x = pad; y += rowH + 2*pad; rowH = 0; }
+      if(y + h + pad > size) return null;
+      R[i] = [x, y, w, h, rot]; x += w + 2*pad; rowH = Math.max(rowH, h); }
+    return R; };
+  let lo = 2, hi = 300, best = null;
+  for(let it=0; it<24; it++){ const mid = (lo+hi)/2, r = tryPack(mid); if(r){ best = r; lo = mid; } else hi = mid; }
+  const uv1 = new Map();
+  faces.forEach((q,i) => { const g = q.o.geometry; if(!uv1.has(g)) uv1.set(g, new Float32Array(g.attributes.position.count*2).fill(1/size));
+    const a = uv1.get(g), base = q.f*4, r = best[i]; if(!r) return;
+    const [x,y,w,h,rot] = r, corners = [[0,1],[1,1],[0,0],[1,0]];   // BoxGeometry / PlaneGeometry vertex order per face
+    for(let k=0;k<4;k++){ let [cu,cv] = corners[k]; if(rot) [cu,cv] = [cv,1-cu];
+      a[2*(base+k)] = (x + cu*w)/size; a[2*(base+k)+1] = 1 - (y + (1-cv)*h)/size; } });
+  for(const [g,a] of uv1) g.setAttribute('uv1', new THREE.BufferAttribute(a, 2));
+  return lo;
+}
+const BAKE = { size:2048, meshes:null, density:0 };
+BAKE.meshes = bakeTargets(); BAKE.density = packUV2(BAKE.meshes, BAKE.size);
+/* when the baked atlas ships in the bundle, swap those surfaces to albedo x lightmap */
+if(__PK['bake/lm.webp'] && !/nobake|bakeexport/.test(location.search)){
+  const lm = texLoader.load(PK('bake/lm.webp')); lm.channel = 1; lm.colorSpace = THREE.SRGBColorSpace; lm.flipY = false;
+  const LMK = await fetch(PK('bake/lm.json')).then(r=>r.json()).then(j=>j.k).catch(()=>2.5);
+  const K = LMK * Math.PI, swap = new Map();
+  const conv = m => { if(swap.has(m)) return swap.get(m);
+    const n = new THREE.MeshBasicMaterial({color:m.color.clone(), map:m.map||null, lightMap:lm, lightMapIntensity:K});
+    if(m===M.floor || m===M.quartz || m===M.cab){ n.envMap = scene.environment; n.combine = THREE.MixOperation; n.reflectivity = m===M.floor ? .07 : .1; }
+    swap.set(m,n); return n; };
+  for(const o of BAKE.meshes){ o.material = Array.isArray(o.material) ? o.material.map(conv) : conv(o.material); o.castShadow = false; o.receiveShadow = false; }
+  window.__baked = true;
+  moon.castShadow = false;              // the bake already carries the moon's shadows
+}
 
 /* ------------------------------------------------------------------ product models (local +z = facing out of the mount) */
 const PM = {
@@ -713,10 +886,7 @@ const MODELS = {
     add(g, new THREE.Mesh(new THREE.PlaneGeometry(.1513,.0915), (()=>{ const t = HUB ? hubTex('hubscr') : DEC.hub; return new THREE.MeshStandardMaterial({map:t, emissiveMap:t, emissive:0xffffff, emissiveIntensity:.75, color:0x222222, roughness:.15, polygonOffset:true, polygonOffsetFactor:-2, polygonOffsetUnits:-2}); })()),-.0032,.01555,.02262);
     add(g, faceZ(cyl(.0013,.0004,PM.lens,24)),0,.0705,.0228);   // camera pinhole above the screen
     return g; },
-  therm(){ const g=G();                                 // Smart Thermostat: white face with soft glowing set point
-    add(g, rslab(.1,.1,.024,.022,.009,PM.white),0,0,.012);
-    add(g, decal(DEC.therm,.074,.074,{r:.4, x:{emissiveMap:DEC.therm, emissive:0xffffff, emissiveIntensity:.25}}),0,0,.0242);
-    return g; },
+  therm(){ return photoBody('therm',.085,.024,.014); },
   icp(){ const g=G();                                   // Indoor Camera Pro: round base, loop arm, square glossy head (origin at base)
     add(g, cyl(.043,.01,PM.blackM,64),0,.005,0);
     const rim = add(g, torus(.043,.005,PM.blackM),0,.005,0); rim.rotation.x = Math.PI/2;
@@ -728,35 +898,48 @@ const MODELS = {
     for(const x of [-.028,.028]) add(g, faceZ(cyl(.0014,.001,PM.dot,16)),x,.148,.0302);
     add(g, decal(DEC.logo,.022,.0055),0,.089,.0303);
     return g; },
-  window(){ const g=G();                                // Door & Window Sensor: magnet and sensor, both pill shaped
-    add(g, rslab(.034,.112,.019,.017,.006,PM.whiteM),0,0,.0095);
-    add(g, rslab(.02,.068,.016,.01,.005,PM.whiteM),.036,-.008,.008);
+  window(){ const g=G();                                // Door & Window Sensor: sensor on the sash's bottom rail, magnet on the sill edge right below it
+    add(g, rslab(.078,.028,.016,.007,.004,PM.whiteM),0,0,.008);
+    add(g, rslab(.01,.003,.0008,.0012,.0003,mat(0xb9bdbf,{r:.5})),.03,.008,.0162);
+    add(g, rslab(.05,.012,.014,.004,.003,PM.whiteM),.004,-.0215,.007);
     return g; },
-  motion(){ const g=G();                                // Motion Sensor: pillow body, fresnel lens window
-    add(g, rslab(.085,.095,.045,.02,.013,PM.whiteM),0,0,.0225);
-    add(g, rslab(.066,.05,.006,.011,.003,PM.frost),0,.014,.044);
-    add(g, decal(DEC.logo,.03,.0075,{color:0xd4d6d5, r:.7, op:.8}),0,-.03,.0452);
+  motion(){ return photoBody('motion',.072,.042,.016); },
+  smokeco(){ const g=G();                               // Smoke & CO Detector: round body, real photo on the face
+    const b = add(g, cyl(.066,.034,PM.whiteM,64),0,0,.017); b.rotation.x = Math.PI/2;
+    add(g, photoFace('smokeco',.134,.134),0,0,.0345);
     return g; },
-  smokeco(){ const g=G();                               // Smoke & CO Detector: domed puck, radial fins, printed ring text
-    const prof = [[0,0],[.064,0],[.066,.004],[.066,.02],[.062,.028],[.05,.034],[.03,.037],[.0001,.038]].map(([r,h])=>new THREE.Vector2(r,h));
-    const lg = new THREE.LatheGeometry(prof, 96);
-    const p = lg.attributes.position, uv = new Float32Array(p.count*2);
-    for(let i=0;i<p.count;i++){ uv[2*i] = p.getX(i)/.132+.5; uv[2*i+1] = -p.getZ(i)/.132+.5; }
-    lg.setAttribute('uv', new THREE.BufferAttribute(uv,2));
-    const body = add(g, new THREE.Mesh(lg, PM.whiteM)); body.rotation.x = Math.PI/2;
-    const txt = add(g, new THREE.Mesh(lg, new THREE.MeshStandardMaterial({map:DEC.smoke, transparent:true, depthWrite:false, roughness:.6, polygonOffset:true, polygonOffsetFactor:-2, polygonOffsetUnits:-2}))); txt.rotation.x = Math.PI/2;
-    for(let i=0;i<8;i++){ const a=i*Math.PI/4+Math.PI/8; const f = add(g, rbox(.03,.006,.007,.0025,PM.whiteM),Math.cos(a)*.036,Math.sin(a)*.036,.0365); f.rotation.z = a; }
-    add(g, torus(.021,.0022,PM.whiteM),0,0,.0372);
-    add(g, dome(.019,.006,PM.whiteM),0,0,.037);
-    for(const x of [-.024,-.012]) add(g, rslab(.01,.007,.003,.002,.001,mat(0x6d7172,{r:.4})),x,.046,.0315);
-    add(g, new THREE.Mesh(new THREE.SphereGeometry(.0022,18,12),PM.green),0,-.052,.03);
-    return g; },
-  water(){ const g=G();                                 // Water Sensor: soft square puck with probes (origin at base, +y up)
-    add(g, rbox(.075,.022,.075,.0105,PM.whiteM),0,.012,0);
-    const l = add(g, decal(DEC.logo,.028,.007,{color:0xd6d8d7, r:.7, op:.8}),0,.0231,.012); l.rotation.x = -Math.PI/2;
-    for(const [x,z] of [[-.027,-.027],[.027,-.027],[-.027,.027],[.027,.027]]) add(g, new THREE.Mesh(new THREE.SphereGeometry(.004,18,12),PM.silver),x,.0015,z);
+  water(){ return photoFlat('water',.072,.022,.012); },
+  /* products photographed from the front: a rounded body with the real product photo as its face */
+  chime(){ return photoBody('chime',.06,.035,.009); },
+  fire(){ return photoBody('fire',.055,.028,.01); },
+  garage(){ return photoBody('garage',.12,.034,.022); },
+  glass(){ return photoBody('glass',.055,.02,.012); },
+  keypad(){ return photoBody('keypad',.075,.02,.01); },
+  plug(){ return photoBody('plug',.045,.03,.008); },
+  fob(){ return photoFlat('fob',.035,.012,.012); },
+  pendant(){ return photoFlat('pendant',.035,.014,.012); },
+  ysign(){ const g=G();                                 // yard sign: double-sided round sign on a wire stake (origin at the ground)
+    const t = photoTex('ysign'), face = new THREE.MeshStandardMaterial({map:t, transparent:true, alphaTest:.5, roughness:.45, side:THREE.DoubleSide});
+    const disc = add(g, cyl(.224,.004,mat(0xe8780f,{r:.5}),64),0,.7,0); disc.rotation.x = Math.PI/2;
+    for(const z of [.0025,-.0025]){ const f = add(g, new THREE.Mesh(new THREE.PlaneGeometry(.45,.45), face),0,.7,z); if(z<0) f.rotation.y = Math.PI; }
+    for(const x of [-.12,.12]) add(g, cyl(.0035,.72,mat(0x6d7174,{r:.4,m:.8}),8),x,.36,-.006);
+    add(g, cyl(.003,.24,mat(0x6d7174,{r:.4,m:.8}),8),0,.3,-.006).rotation.z = Math.PI/2;
     return g; },
 };
+const PHT = {};
+function photoTex(k){ if(PHT[k]) return PHT[k]; const t = texLoader.load(PK('ph/'+k+'.webp')); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = Math.min(8, maxAniso); return PHT[k] = t; }
+const PH_ASPECT = {therm:1, motion:512/455, water:1, smokeco:1, chime:374/199, fire:165/98, fob:512/266, garage:253/254, glass:512/337, keypad:512/273, pendant:512/288, plug:260/148};
+function photoFace(k, w, h){ return new THREE.Mesh(new THREE.PlaneGeometry(w,h), new THREE.MeshPhysicalMaterial({map:photoTex(k), transparent:true, alphaTest:.04, roughness:.42, clearcoat:.35, clearcoatRoughness:.3, polygonOffset:true, polygonOffsetFactor:-2, polygonOffsetUnits:-2})); }
+/* wall-mounted: back on the wall at z=0, face toward +z */
+function photoBody(k, w, d, r){ const g=G(), h = w*PH_ASPECT[k];
+  add(g, rbox(w*.97,h*.97,d,r,PM.whiteM),0,0,d/2);
+  add(g, photoFace(k,w,h),0,0,d+.0004);
+  return g; }
+/* lying flat on a table: origin at the base, face toward +y (photo's top edge points to -z) */
+function photoFlat(k, w, d, r){ const g=G(), h = w*PH_ASPECT[k];
+  add(g, rbox(w*.97,d,h*.97,r,k==='fob'?mat(0x3a3d40,{r:.5}):PM.whiteM),0,d/2,0);
+  const f = add(g, photoFace(k,w,h),0,d+.0004,0); f.rotation.x = -Math.PI/2;
+  return g; }
 /* soft fill light that follows the camera to the focused product, like a photographer's key light */
 const prodLight = new THREE.SpotLight(0xffffff, 0, 3.2, .42, .85, 1.2);
 scene.add(prodLight, prodLight.target);
@@ -766,17 +949,26 @@ scene.add(prodLight, prodLight.target);
 
 /* ------------------------------------------------------------------ product placement */
 const PLACE = {
-  ocspot:{pos:V(-9.35,2.72,4.02),  view:V(0,0,1),            d:1.1},
-  window:{pos:V(-2.85,FL+2.38,4.06), view:V(0,0,1),          d:.66},
-  lock:  {pos:V(-1.12,FL+1.05,3.915), view:V(0,0,1),         d:.72},
-  dbcp:  {pos:V(-0.58,FL+1.3,4.02),  view:V(0,0,1),          d:.72},
-  hub:   {pos:V(1.62,FL+1.5,-1.25),  view:V(1,0,0),          d:1.1},
-  motion:{pos:V(1.72,FL+2.75,-5.68), view:V(.62,-.32,.62),   d:.72},
-  smokeco:{pos:V(4.0,FL+5.3,-5.79),  view:V(0,0,1),          d:.8},
+  ysign: {pos:V(4.3,0,8.2),          view:V(.25,0,1),  stand:true, s:1, d:1.5},
+  ocspot:{pos:V(-9.35,2.72,4.02),    view:V(0,0,1),            d:1.1},
+  garage:{pos:V(-9.99,1.75,1.6),     view:V(1,0,0),  xray:true, d:.85},
+  lock:  {pos:V(-1.12,FL+1.18,3.915),view:V(0,0,1),            d:.72},
+  dbcp:  {pos:V(-0.58,FL+1.3,4.02),  view:V(0,0,1),            d:.72},
+  hub:   {pos:V(1.62,FL+1.5,-1.25),  view:V(1,0,0),            d:1.1},
+  chime: {pos:V(1.62,FL+.32,-2.6),   view:V(1,0,0),            d:.7},
+  motion:{pos:V(1.72,FL+2.75,-5.68), view:V(.62,-.32,.62),     d:.72},
+  smokeco:{pos:V(4.0,FL+5.3,-5.79),  view:V(0,0,1),            d:.8},
   water: {pos:V(5.15,FL+.012,-5.02), view:V(.05,.78,.62), flat:true, d:.62},
+  fob:   {pos:V(4.35,FL+.945,-2.75), view:V(.15,.8,.6),  flat:true, d:.55},
+  pendant:{pos:V(3.55,FL+.392,1.15), view:V(.4,.8,.5),   flat:true, d:.55},
   icp:   {pos:V(9.52,FL+1.05,-2.55), view:V(-1,0,.45), stand:true, d:.72},
-  therm: {pos:V(9.79,FL+1.5,0.55),   view:V(-1,0,0),         d:.66},
-  ocp:   {pos:V(10.75,3.6,1.02),     view:V(.25,0,1),        d:.95},
+  fire:  {pos:V(9.79,FL+4.1,-2.98),  view:V(-1,0,0),            d:.75},
+  keypad:{pos:V(9.79,FL+1.35,.12),   view:V(-1,0,0),            d:.7},
+  therm: {pos:V(9.79,FL+1.5,0.75),   view:V(-1,0,0),            d:.66},
+  window:{pos:V(9.835,FL+.937,2.95),  view:V(-1,0,0),  s:1.15,   d:.5},
+  glass: {pos:V(9.79,FL+2.75,2.4),   view:V(-1,0,0),            d:.7},
+  plug:  {pos:V(9.79,FL+.32,3.62),   view:V(-1,0,0),            d:.65},
+  ocp:   {pos:V(10.75,3.6,1.02),     view:V(.25,0,1),           d:.95},
 };
 /* boxes the hotspot rings can hide behind (solid parts of the house) */
 const OCC = [
@@ -793,7 +985,7 @@ const raycaster = new THREE.Raycaster();
 const hitMeshes = [];
 for(const p of PRODUCTS){
   const pl = PLACE[p.k]; Object.assign(p, pl); p.view.normalize();
-  const g = MODELS[p.k](); g.scale.setScalar(S);
+  const g = MODELS[p.k](); g.scale.setScalar(p.s ?? S);
   g.position.copy(p.pos);
   if(p.flat || p.stand) g.rotation.y = Math.atan2(p.view.x, p.view.z);
   else g.lookAt(p.pos.clone().add(p.view));
@@ -816,7 +1008,8 @@ controls.touches = {ONE: THREE.TOUCH.ROTATE, TWO: THREE.TOUCH.DOLLY_PAN};
 
 /* one diorama view: front-right three-quarter, like an architectural cutaway */
 const HOME = {target:V(0.0,2.3,1.2), r:27.5, phi:1.36, theta:.17, lim:{minD:11, maxD:40, minP:.72, maxP:1.5, minA:-.95, maxA:1.05}};
-const state = { focus:null, fly:null, idleAt:performance.now() };
+const state = { focus:null, fly:null, idleAt:performance.now(), cat:'all' };
+const shown = p => state.cat==='all' || CATS[state.cat].includes(p.k);
 
 function applyLimits(l){
   controls.minDistance=l.minD; controls.maxDistance=l.maxD;
@@ -870,21 +1063,22 @@ for(const p of PRODUCTS){
   spotsEl.appendChild(b); p.el = b;
   const c = document.createElement('button');
   c.className = 'chip'; c.dataset.k = p.k; c.setAttribute('aria-current','false');
-  c.innerHTML = `<img src="../cat/${p.img}.webp?v=176" alt=""><span>${p.name}</span>`;
+  c.innerHTML = `<div class="im"><img src="${PK('chip/'+p.img+'.webp')}" alt=""></div><span>${p.name}</span>`;
   c.addEventListener('click', () => focus(p));
   railIn.appendChild(c); p.chip = c;
 }
 function setHint(t){ hint.textContent = t; hint.classList.remove('gone'); clearTimeout(setHint.t); setHint.t = setTimeout(()=>hint.classList.add('gone'), 4200); }
 function fillCard(p){ document.body.dataset.fk=p.k;
-  $('#cImg').src = `../cat/${p.img}.webp?v=176`; $('#cImg').alt = p.name;
+  $('#cImg').src = PK('chip/'+p.img+'.webp'); $('#cImg').alt = p.name;
   $('#cWhere').textContent = p.where; $('#cName').textContent = p.name;
   $('#cFeats').innerHTML = p.feats.map(([t,b])=>`<div class="feat"><b>${t}</b><p>${b}</p></div>`).join('');
-  const i = PRODUCTS.indexOf(p); $('#cCount').textContent = `${i+1} of ${PRODUCTS.length}`;
-  $('#nextName').textContent = PRODUCTS[(i+1)%PRODUCTS.length].name;
+  const L = vis(), i = L.indexOf(p); $('#cCount').textContent = `${i+1} of ${L.length}`;
+  $('#nextName').textContent = L[(i+1)%L.length].name;
   card.querySelector('.c-body').scrollTop = 0;
 }
 function focus(p){
-  if(state.focus===p && !state.fly) return;
+  if(state.focus===p){ overview(); return; }         // tapping the open product again goes back to the whole home
+  if(!shown(p)) return;
   state.focus = p; document.body.classList.add('focus');
   PRODUCTS.forEach(q => q.chip.setAttribute('aria-current', String(q===p)));
   p.chip.scrollIntoView({behavior: reduceMotion?'auto':'smooth', inline:'center', block:'nearest'});
@@ -903,7 +1097,17 @@ function overview(fresh){
   flyTo(pose, {lim:HOME.lim, dur:1.3, done:()=>{ state.idleAt=performance.now(); }});
 }
 $('#back').addEventListener('click', () => overview());
-const step = d => { const i = state.focus ? PRODUCTS.indexOf(state.focus) : -1; focus(PRODUCTS[(i+d+PRODUCTS.length)%PRODUCTS.length]); };
+const vis = () => PRODUCTS.filter(shown);
+const step = d => { const L = vis(); if(!L.length) return; const i = state.focus ? L.indexOf(state.focus) : -1; const n = L[(i+d+L.length)%L.length]; if(n!==state.focus) focus(n); };
+/* Fast Pitch's bottom tabs (All / Sensors / Smart Home / Cameras) decide which products the house shows */
+function setCat(c){
+  state.cat = CATS[c] ? c : 'all';
+  for(const p of PRODUCTS){ const on = shown(p); p.model.visible = on; p.chip.hidden = !on; if(!on) p.el.hidden = true; }
+  if(state.focus && !shown(state.focus)) overview();
+  if(state.focus) fillCard(state.focus);
+  railIn.scrollTo({left:0, behavior: reduceMotion?'auto':'smooth'});
+}
+addEventListener('message', e => { const d = e.data; if(d && d.fpTourCtl==='cat') setCat(d.cat); });
 $('#next').addEventListener('click', () => step(1));
 $('#prev').addEventListener('click', () => step(-1));
 addEventListener('keydown', e => {
@@ -920,7 +1124,7 @@ canvas.addEventListener('pointerup', e => {
   if(moved>8 || dt>350 || state.fly) return;
   const r = canvas.getBoundingClientRect();
   raycaster.setFromCamera({x:(e.clientX-r.left)/r.width*2-1, y:-(e.clientY-r.top)/r.height*2+1}, camera);
-  const hits = raycaster.intersectObjects(hitMeshes, false);
+  const hits = raycaster.intersectObjects(hitMeshes.filter(h=>shown(h.userData.p)), false);
   if(hits.length) focus(hits[0].object.userData.p);
 });
 controls.addEventListener('start', () => { state.idleAt = performance.now(); controls.autoRotate = false; });
@@ -928,12 +1132,12 @@ controls.addEventListener('start', () => { state.idleAt = performance.now(); con
 /* ------------------------------------------------------------------ per-frame hotspots */
 const ray = new THREE.Ray(), tmp = new THREE.Vector3(), hitP = new THREE.Vector3();
 function updateSpots(){
-  const W = innerWidth, Hh = innerHeight, cam = camera.position, shown = [];
+  const W = innerWidth, Hh = innerHeight, cam = camera.position, onScr = [];
   for(const p of PRODUCTS){
-    let show = !state.fly && p!==state.focus;
-    if(show && tmp.subVectors(cam, p.center).dot(p.view) < .02) show = false;
+    let show = !state.fly && p!==state.focus && shown(p);
+    if(show && !p.xray && tmp.subVectors(cam, p.center).dot(p.view) < .02) show = false;
     if(show && state.focus && p.center.distanceTo(state.focus.center) > 4.5) show = false;
-    if(show){
+    if(show && !p.xray){
       ray.origin.copy(cam); ray.direction.copy(p.anchor).sub(cam).normalize();
       const d = cam.distanceTo(p.anchor);
       for(const b of OCC){ if(b.containsPoint(p.anchor)) continue; if(ray.intersectBox(b, hitP) && hitP.distanceTo(cam) < d-.05){ show=false; break; } }
@@ -941,13 +1145,13 @@ function updateSpots(){
     let x=0,y=0;
     if(show){ tmp.copy(p.anchor).project(camera); if(tmp.z>1||tmp.z<-1) show=false; x=(tmp.x+1)/2*W; y=(1-tmp.y)/2*Hh; if(x<-40||x>W+40||y<-40||y>Hh+40) show=false; }
     if(p.el.hidden === show) p.el.hidden = !show;
-    if(show){ p.el.style.transform = `translate3d(${x.toFixed(1)}px,${y.toFixed(1)}px,0)`; p.el.classList.toggle('mini', !!state.focus); shown.push({p,x,y}); }
+    if(show){ p.el.style.transform = `translate3d(${x.toFixed(1)}px,${y.toFixed(1)}px,0)`; p.el.classList.toggle('mini', !!state.focus); onScr.push({p,x,y}); }
   }
   /* labels: place each on its preferred side, flip if it would collide, drop it if both sides collide */
   if(state.focus || state.fly) return;
-  const rects = shown.map(s => [s.x-20, s.y-20, s.x+20, s.y+20]);
+  const rects = onScr.map(s => [s.x-20, s.y-20, s.x+20, s.y+20]);
   const hit = r => rects.some(q => r[0]<q[2] && r[2]>q[0] && r[1]<q[3] && r[3]>q[1]);
-  for(const s of shown.sort((a,b)=>a.y-b.y)){
+  for(const s of onScr.sort((a,b)=>a.y-b.y)){
     const w = s.p.lblW || (s.p.lblW = s.p.el.querySelector('.lbl').offsetWidth || 150);
     const R = [s.x+24, s.y-15, s.x+24+w, s.y+15], L = [s.x-24-w, s.y-15, s.x-24, s.y+15];
     const pref = s.p.side==='l' ? [L,'l',R,'r'] : [R,'r',L,'l'];
@@ -987,6 +1191,9 @@ function frame(now){
     controls.update();
   }
   updateViewOffset(dt); updateSpots();
+  { const want = state.focus && state.focus.k==='garage' ? .1 : 1; const m = GDM.door;
+    if(Math.abs(m.opacity-want) > .004){ const o = m.opacity + (want-m.opacity)*Math.min(1,dt*5);
+      for(const q of [GDM.door, GDM.groove]){ q.opacity = o; const tr = o < .995; if(q.transparent!==tr){ q.transparent = tr; q.depthWrite = !tr; q.needsUpdate = true; } } } }
   { const fp = state.focus, want = fp ? 2.2 : 0;
     prodLight.intensity += (want - prodLight.intensity) * Math.min(1, dt*3);
     if(fp){ prodLight.position.copy(camera.position).add(new THREE.Vector3(0,.3,0)); prodLight.target.position.copy(fp.center); prodLight.target.updateMatrixWorld(); } }
@@ -1001,10 +1208,26 @@ function frame(now){
 addEventListener('message',e=>{ const d=e.data; if(!d||!d.fpTourCtl) return; if(d.fpTourCtl==='pause') window.__paused=true; else if(window.__resume) window.__resume(); else window.__paused=false; });
 requestAnimationFrame(t => { last=t; frame(t); });
 window.__booted = true; clearTimeout(window.__failT);
+if(window.parent!==window) parent.postMessage({fpTour:'ready'},'*');
 Promise.all([assetsReady, ...MODEL_P]).then(() => setTimeout(() => { $('#loading').classList.add('done'); overview(true); setTimeout(()=>setHint('Drag to look around · Pinch to zoom · Tap a ring'), 1400); }, 120));
 
+/* offline lighting bake: export the static house (no products, no overlays) plus its lights for Blender */
+if(/bakeexport/.test(location.search)) Promise.all([assetsReady, ...MODEL_P]).then(async () => {
+  const { GLTFExporter } = await import('three/addons/exporters/GLTFExporter.js');
+  const hide = [];
+  scene.traverse(o => { if(o.isMesh && (o.material.type==='MeshBasicMaterial' || (o.material.transparent && o.material.opacity < .9 && !o.material.map))) hide.push(o); });
+  for(const p of PRODUCTS) hide.push(p.model); for(const h of hitMeshes) hide.push(h);
+  hide.forEach(o => { o.userData._v = o.visible; o.visible = false; });
+  const lights = []; scene.updateMatrixWorld(true);
+  scene.traverse(o => { if(!o.isLight || !o.visible || o===prodLight) return; const L = {type:o.type, color:o.color.toArray(), intensity:o.intensity, pos:o.getWorldPosition(new THREE.Vector3()).toArray()};
+    if(o.isHemisphereLight) L.ground = o.groundColor.toArray(); if(o.distance!==undefined) L.distance = o.distance; if(o.isSpotLight){ L.angle = o.angle; L.penumbra = o.penumbra; }
+    if(o.target){ o.target.updateMatrixWorld(); L.target = o.target.getWorldPosition(new THREE.Vector3()).toArray(); } lights.push(L); });
+  new GLTFExporter().parse(scene, glb => { const u = new Uint8Array(glb); let s = ''; for(let i=0;i<u.length;i+=0x8000) s += String.fromCharCode.apply(null, u.subarray(i,i+0x8000));
+      window.__export = {b64:btoa(s), lights, size:BAKE.size, density:BAKE.density}; hide.forEach(o => o.visible = o.userData._v); },
+    e => { window.__export = {error:String(e)}; }, {binary:true, onlyVisible:true, maxTextureSize:1024});
+});
 // test hooks for review
 window.__tour = { focus:k=>focus(byKey[k]), overview, state, camera, controls, scene, THREE };
 </script>
-<p id="credits" style="position:fixed;left:12px;bottom:4px;margin:0;font-size:9px;color:rgba(255,255,255,.28);z-index:1;pointer-events:none">Sofa: Wayfair · Car: Darmstadt Graphics Group (CC BY 4.0) · Furniture &amp; textures: Poly Haven (CC0)</p>
+<p id="credits" style="position:fixed;left:12px;bottom:4px;margin:0;font-size:9px;color:rgba(255,255,255,.28);z-index:1;pointer-events:none">Sofa: Wayfair (CC BY 4.0) · Car: “Compact ’07” by Daniel Zhabotinsky (CC BY 4.0) · Furniture &amp; textures: Poly Haven (CC0)</p>
 </body></html>

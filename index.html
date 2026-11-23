@@ -2766,7 +2766,7 @@ body.hd3 #gTitle{opacity:0!important}
 const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
 
 /* ---------- scale stage ---------- */
-let HW=1376; window.FPV='v383'; if(Math.min(screen.width||0,screen.height||0)<500) document.documentElement.classList.add('phn');
+let HW=1376; window.FPV='v384'; if(Math.min(screen.width||0,screen.height||0)<500) document.documentElement.classList.add('phn');
 function safeBox(){ let pr=document.getElementById('safeProbe'); if(!pr){ pr=document.createElement('div'); pr.id='safeProbe';
   pr.style.cssText='position:fixed;left:0;top:0;width:100vw;height:100vh;height:100dvh;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);box-sizing:border-box;visibility:hidden;pointer-events:none;z-index:-1'; document.documentElement.appendChild(pr); }
   const cs=getComputedStyle(pr), t=parseFloat(cs.paddingTop)||0, b=parseFloat(cs.paddingBottom)||0, l=parseFloat(cs.paddingLeft)||0, r=parseFloat(cs.paddingRight)||0;
@@ -5271,18 +5271,22 @@ window.USMAP={w:1000,h:620,ut:[222.1, 266.2],c:[[72.8,371.6,9],[907.0,214.8,9],[
 { const pg=$('#p-home'), pill=$('#hmode'), box=$('#tour3d');
   const set=m=>{ const d3=m==='3d'; pg.classList.toggle('d3',d3); pill.classList.toggle('d3',d3); document.body.classList.toggle('hd3',d3);
     pill.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.hm===m));
-    if(d3&&!box.firstChild){ const f=document.createElement('iframe'); f.src='assets/tour/index.html?v=4'; f.title='3D home tour'; f.setAttribute('allow','fullscreen'); box.appendChild(f); } };
+    if(d3&&!box.firstChild){ const f=document.createElement('iframe'); f.src='assets/tour/index.html?v=5'; f.title='3D home tour'; f.setAttribute('allow','fullscreen'); box.appendChild(f); } };
   pill.addEventListener('click',e=>{ const b=e.target.closest('[data-hm]'); if(b){ e.stopPropagation(); set(b.dataset.hm); } });
   window.HOMEVIEW=set;
   /* run the 3D scene only while it is on screen (3D view picked and the home page showing) */
   const ctl=()=>{ const f=box.firstChild; if(!f||!f.contentWindow) return; const on=pg.classList.contains('d3')&&pg.classList.contains('on')&&!document.hidden; f.contentWindow.postMessage({fpTourCtl:on?'resume':'pause'},'*'); };
   new MutationObserver(ctl).observe(pg,{attributes:true,attributeFilter:['class']}); document.addEventListener('visibilitychange',ctl);
   /* the tour's "See full product" opens the matching Fast Pitch page */
-  const MAP={dbcp:['go','dbcp'],ocp:['go','ocp'],ocspot:['go','ocp'],hub:['go','hub'],therm:['go','therm'],lock:['pr','lock'],window:['pr','window'],icp:['pr','icp'],motion:['pr','motion'],water:['pr','water'],smokeco:['pr','smokeco']};
+  const MAP={dbcp:['go','dbcp'],ocp:['go','ocp'],ocspot:['go','ocp'],hub:['go','hub'],therm:['go','therm'],lock:['pr','lock'],window:['pr','window'],icp:['pr','icp'],motion:['pr','motion'],water:['pr','water'],smokeco:['pr','smokeco'],
+    glass:['pr','glass'],fire:['pr','fire'],pendant:['pr','pendant'],fob:['pr','fob'],chime:['pr','chime'],keypad:['pr','keypad'],plug:['pr','plug'],garage:['pr','garage']};
   addEventListener('message',e=>{ const d=e.data; if(!d||d.fpTour!=='open'||!MAP[d.k]) return; const [t,id]=MAP[d.k];
     const el=document.createElement('button'); el.dataset[t==='go'?'go':'pr']=id; el.style.display='none'; document.body.appendChild(el); el.click(); el.remove(); });
-  /* picking a category tab goes back to the grid */
-  const _ft=flipTo; flipTo=function(c){ if(pg.classList.contains('d3')) set('grid'); return _ft.apply(this,arguments); }; }
+  /* the All / Sensors / Smart Home / Cameras tabs also filter the 3D house (it stays in 3D) */
+  const sendCat=()=>{ const f=box.firstChild; if(f&&f.contentWindow) f.contentWindow.postMessage({fpTourCtl:'cat',cat:hcat},'*'); };
+  const _ft=flipTo; flipTo=function(c){ const r=_ft.apply(this,arguments); sendCat(); return r; };
+  const _sh=setHcat; setHcat=function(){ const r=_sh.apply(this,arguments); sendCat(); return r; };
+  addEventListener('message',e=>{ if(e.data&&e.data.fpTour==='ready') sendCat(); }); }
 
 /* Indoor Camera Highlights: features + app clips in one list, the same layout as Outdoor Camera Highlights (list left, app video in a phone, camera photo behind it) */
 window.ICM=(()=>{ const M=[ // [icon, label, headline, line, photo (assets/…), app clip (p/icph#) | null, caption]
