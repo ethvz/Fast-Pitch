@@ -171,7 +171,7 @@ import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.j
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { RGBELoader } from 'three/addons/loaders/RGBELoader.js';
 /* textures, decals and the sky come in one bundle (pack.jpg) so Fast Pitch stays under its file limit */
-const __PK = await (async()=>{ try{ const buf=await (await fetch('pack.jpg?v=2')).arrayBuffer(); const n=new DataView(buf).getUint32(0,true);
+const __PK = await (async()=>{ try{ const buf=await (await fetch('pack.jpg?v=3')).arrayBuffer(); const n=new DataView(buf).getUint32(0,true);
   const idx=JSON.parse(new TextDecoder().decode(new Uint8Array(buf,4,n))), base=4+n, m={};
   for(const k in idx){ const [o,l,t]=idx[k]; m[k]=URL.createObjectURL(new Blob([new Uint8Array(buf,base+o,l)],{type:t})); } return m; }catch(e){ return {}; } })();
 const PK = p => __PK[p] || p;
@@ -515,12 +515,13 @@ function dec(name, rep, linear){
   if(rep){ t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(rep[0], rep[1]); }
   return t;
 }
-const hubRim = new THREE.MeshPhysicalMaterial({color:0xf1f1ef, roughness:.3, metalness:.15, clearcoat:.5, clearcoatRoughness:.2});
-const hubGlass = new THREE.MeshPhysicalMaterial({color:0x030304, roughness:.22, clearcoat:.5, clearcoatRoughness:.12, envMapIntensity:.22});
+const hubRim = new THREE.MeshPhysicalMaterial({color:0xe9eae8, roughness:.42, clearcoat:.25, clearcoatRoughness:.35, sheen:.3, sheenRoughness:.6, sheenColor:0xffffff});
+const hubTex = (n) => { const t = texLoader.load(PK('dec/'+n+'.jpg')); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = Math.min(16, maxAniso); return t; };
+const hubGlass = new THREE.MeshPhysicalMaterial({color:0x020203, roughness:.12, clearcoat:.7, clearcoatRoughness:.04, envMapIntensity:.22, ior:1.52, specularIntensity:.8});
 const hubDot = new THREE.MeshStandardMaterial({color:0x060607, roughness:.3, envMapIntensity:.3});
 const DEC = { logo:dec('logo'), kwik:dec('kwikset'), keys:dec('keys'), keyway:dec('keyway'), therm:dec('therm'), hub:dec('hubui'), smoke:dec('smoke'), fresnel:dec('fresnel') };
 const grilleMat = (color, rep) => new THREE.MeshPhysicalMaterial({color, roughness:.6, map:dec('grille',rep), bumpMap:dec('grille',rep,true), bumpScale:1.5});
-const __hf = new THREE.MeshStandardMaterial({color:0x0f1011, roughness:.95, envMapIntensity:.12, bumpMap:dec('grille',[70,10],true), bumpScale:1.2});
+const __hfT = hubTex('hubfab'); const __hf = new THREE.MeshStandardMaterial({map:__hfT, roughness:.95, envMapIntensity:.1});
 PM.frost = new THREE.MeshPhysicalMaterial({color:0xf0f1ef, roughness:.3, map:DEC.fresnel, clearcoat:.5, clearcoatRoughness:.25, sheen:.5, sheenColor:0xffffff});
 const add = (g, m, x=0,y=0,z=0) => { m.position.set(x,y,z); g.add(m); return m; };
 const faceZ = m => { m.rotation.x = Math.PI/2; return m; };
@@ -624,13 +625,17 @@ const MODELS = {
         geo.setAttribute('position', new THREE.BufferAttribute(pos,3));
         geo.setAttribute('normal', new THREE.BufferAttribute(new Int8Array(HUB.buf, p.n, p.nv*3),3,true));
         geo.setIndex(new THREE.BufferAttribute(p.i32 ? new Uint32Array(HUB.buf, p.i, p.ni) : new Uint16Array(HUB.buf, p.i, p.ni),1));
-        if(p.g===3){ const nz = new Float32Array(p.nv*3); for(let i=0;i<p.nv;i++) nz[3*i+2]=1; geo.setAttribute('normal', new THREE.BufferAttribute(nz,3)); const uv = new Float32Array(p.nv*2); for(let i=0;i<p.nv;i++){ uv[2*i]=pos[3*i]/.228+.5; uv[2*i+1]=pos[3*i+1]/.031; } geo.setAttribute('uv', new THREE.BufferAttribute(uv,2)); }
+        if(p.g===3){ const nz = new Float32Array(p.nv*3); for(let i=0;i<p.nv;i++) nz[3*i+2]=1; geo.setAttribute('normal', new THREE.BufferAttribute(nz,3)); const uv = new Float32Array(p.nv*2); for(let i=0;i<p.nv;i++){ uv[2*i]=(pos[3*i]+.1117)/.2234; uv[2*i+1]=(pos[3*i+1]+.0769)/.0307; } geo.setAttribute('uv', new THREE.BufferAttribute(uv,2)); }
         const m = new THREE.Mesh(geo, M[p.g]); m.castShadow = true; m.userData.hg = p.g; g.add(m);
       }
     }
-    if(HUB) add(g, rslab(.2232,.1229,.0011,.009,.0003,hubGlass),0,.01525,.02205).userData.noRS = true;   // cover glass (clean slab; CAD sheet had mixed winding)
+    if(HUB){                                           // cover glass: rounded top corners (r12mm), square where it meets the speaker fabric
+      const w=.2232/2, top=.0766, bot=-.0463, r=.012, sh=new THREE.Shape();
+      sh.moveTo(-w,bot); sh.lineTo(w,bot); sh.lineTo(w,top-r); sh.absarc(w-r,top-r,r,0,Math.PI/2,false); sh.lineTo(-w+r,top); sh.absarc(-w+r,top-r,r,Math.PI/2,Math.PI,false); sh.lineTo(-w,bot);
+      const gg=new THREE.ExtrudeGeometry(sh,{depth:.0008,bevelEnabled:true,bevelThickness:.00015,bevelSize:.00015,bevelSegments:3,curveSegments:24});
+      add(g, new THREE.Mesh(gg,hubGlass),0,0,.02165).userData.noRS = true; }
     // live home screen under the glass (the home key on the fabric comes from the CAD)
-    add(g, new THREE.Mesh(new THREE.PlaneGeometry(.154,.094), new THREE.MeshStandardMaterial({map:DEC.hub, emissiveMap:DEC.hub, emissive:0xffffff, emissiveIntensity:.6, roughness:.2, polygonOffset:true, polygonOffsetFactor:-2, polygonOffsetUnits:-2})),-.0036,.0162,.0229);
+    add(g, new THREE.Mesh(new THREE.PlaneGeometry(.1513,.0915), (()=>{ const t = HUB ? hubTex('hubscr') : DEC.hub; return new THREE.MeshStandardMaterial({map:t, emissiveMap:t, emissive:0xffffff, emissiveIntensity:.75, color:0x222222, roughness:.15, polygonOffset:true, polygonOffsetFactor:-2, polygonOffsetUnits:-2}); })()),-.0032,.01555,.02262);
     add(g, faceZ(cyl(.0013,.0004,PM.lens,24)),0,.0705,.0228);   // camera pinhole above the screen
     return g; },
   therm(){ const g=G();                                 // Smart Thermostat: white face with soft glowing set point
