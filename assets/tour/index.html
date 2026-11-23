@@ -171,10 +171,13 @@ import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.j
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { RGBELoader } from 'three/addons/loaders/RGBELoader.js';
 /* textures, decals and the sky come in one bundle (pack.jpg) so Fast Pitch stays under its file limit */
-const __PK = await (async()=>{ try{ const buf=await (await fetch('pack.jpg?v=1')).arrayBuffer(); const n=new DataView(buf).getUint32(0,true);
+const __PK = await (async()=>{ try{ const buf=await (await fetch('pack.jpg?v=2')).arrayBuffer(); const n=new DataView(buf).getUint32(0,true);
   const idx=JSON.parse(new TextDecoder().decode(new Uint8Array(buf,4,n))), base=4+n, m={};
   for(const k in idx){ const [o,l,t]=idx[k]; m[k]=URL.createObjectURL(new Blob([new Uint8Array(buf,base+o,l)],{type:t})); } return m; }catch(e){ return {}; } })();
 const PK = p => __PK[p] || p;
+/* Smart Hub Pro 2 mesh (quantised, from CAD): header json + int16 positions, int8 normals, indices */
+const HUB = await (async()=>{ try{ if(!__PK['mdl/hub.bin']) return null; const buf=await (await fetch(__PK['mdl/hub.bin'])).arrayBuffer(); const n=new DataView(buf).getUint32(0,true);
+  const h=JSON.parse(new TextDecoder().decode(new Uint8Array(buf,4,n))), b=buf.slice(4+n); return {s:h.s, parts:h.parts, buf:b}; }catch(e){ return null; } })();
 
 /* ------------------------------------------------------------------ data */
 const FEATS = {"dbcp": [["Smart Deter™", "AI quickly identifies any packages delivered to your doorstep and can automatically toggle on Smart Deter to proactively protect your packages."], ["180° Field of View", "See your full porch with the widest field of view so you can clearly see your deliveries on your doorstep."], ["Pre-Roll Recording", "Captures the 8–10 seconds leading up to the event, giving full context of what happened before, not just during."]], "lock": [["Up to 50 Unique Codes", "Grant access and always know who is coming and going with up to 50 unique access codes that could be shared with friends, family, and others."], ["Control from Anywhere", "Control your lock remotely with the Vivint app, no matter where you are."], ["Battery Powered", "Even during a power outage, the lock stays online, powered by four AA batteries with quick, easy access for hassle-free replacement."]], "ocp": [["Smart Deter™", "AI filters out false alerts, detects real threats, then proactively deters them with lights and sounds to stop crimes before they happen."], ["Improved 4K Sensor", "A 4K image sensor with 5.3x HD zoom and proprietary picture tuning optimizes for clarity in all light conditions, especially at night."], ["Weather Anything", "IP65 weather-resistant and built to last for years of reliable performance with an automotive grade camera housing."]], "ocspot": [["Intelligent Person Tracking", "The industry’s only spotlight that tracks lurkers as they move."], ["Up to 1800-lumens", "A powerful spotlight floods the area with bright light so you can see clearly and deter unwanted visitors."], ["Controllable Lighting Zones", "Customize your coverage by toggling lighting zones on or off, so light hits the areas that matter."]], "therm": [["Dynamic Temperature Control", "Smart temperature control automatically adjusts to your preferred settings."], ["Easy-to-Use Display", "Touch-display illuminates on approach to show target and current temperatures (requires C-wire)."], ["Side Button Control", "A simple, single button control to change thermostat settings."]], "icp": [["150° HD Field of View", "A 150 degree field of view with an HD lens means your indoor camera captures a wide, crystal clear picture of any room."], ["Privacy Mode", "Privacy mode disables all video and audio recording so you stay in control of your privacy, while keeping your camera ready to switch back on the moment you need it."], ["Full Motion Hinge Base", "A full motion hinge and base system gives you the flexibility to mount and angle your indoor camera exactly where you need it, so you always get the perfect view of any room."]], "window": [["Versatile Installation", "Vivint Door and Window Sensors can also be used on cabinets and safes, so you can minimize the risk of children accessing harmful substances, and maximize the protection of valuables in your home."], ["24/7 monitoring", "Whether you’re at home or away, if a door sensor is tripped or window alarm sounds, you will be connected to a smart home security specialist who can help."], ["Audible Panel Alerts", "Customizable audible alerts let you know the moment a door or window opens, giving you real-time awareness of activity throughout your home without ever having to check a screen."]], "motion": [["Pet Sensitivity", "The built-in pet sensitivity toggle can help lead to fewer false alerts in pet-friendly homes."], ["Long Battery Life", "Long battery life means your motion sensors keep watching over your home without interruption, so a dead battery never leaves a room unprotected."], ["24/7 monitoring", "24/7 professional monitoring means someone is always ready to respond the moment your motion sensor triggers while your system is armed, giving you peace of mind around the clock."]], "smokeco": [["Smoke & CO Detection", "Get peace of mind and double the safety with a smoke and CO detector that protects against both fire and carbon monoxide."], ["System Integration", "When your Smoke & CO Combo Detector triggers, your system responds automatically by shutting off the HVAC to slow the spread of flames and unlocking doors so your family can get out fast and first responders can get in."], ["24/7 monitoring", "24/7 professional monitoring means the moment your smoke or CO detector triggers, a response is already in motion so your family and home are never left to face an emergency alone."]], "water": [["Freeze Detection", "The built-in low temperature sensor detects freezing conditions before they become a problem, giving you a heads up in time to prevent frozen pipes and the damage they can cause."], ["Instant Alerts", "Instant alerts through the Smart Hub Pro 2, a direct phone call, and the Vivint app mean you are notified the moment water is detected, so you can act fast before a small leak turns into a costly problem."], ["Small Design", "Designed to fit in tight places and to go unnoticed to help protect your home from leaks."]]};
@@ -512,8 +515,12 @@ function dec(name, rep, linear){
   if(rep){ t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(rep[0], rep[1]); }
   return t;
 }
+const hubRim = new THREE.MeshPhysicalMaterial({color:0xf1f1ef, roughness:.3, metalness:.15, clearcoat:.5, clearcoatRoughness:.2});
+const hubGlass = new THREE.MeshPhysicalMaterial({color:0x030304, roughness:.22, clearcoat:.5, clearcoatRoughness:.12, envMapIntensity:.22});
+const hubDot = new THREE.MeshStandardMaterial({color:0x060607, roughness:.3, envMapIntensity:.3});
 const DEC = { logo:dec('logo'), kwik:dec('kwikset'), keys:dec('keys'), keyway:dec('keyway'), therm:dec('therm'), hub:dec('hubui'), smoke:dec('smoke'), fresnel:dec('fresnel') };
 const grilleMat = (color, rep) => new THREE.MeshPhysicalMaterial({color, roughness:.6, map:dec('grille',rep), bumpMap:dec('grille',rep,true), bumpScale:1.5});
+const __hf = new THREE.MeshStandardMaterial({color:0x0f1011, roughness:.95, envMapIntensity:.12, bumpMap:dec('grille',[70,10],true), bumpScale:1.2});
 PM.frost = new THREE.MeshPhysicalMaterial({color:0xf0f1ef, roughness:.3, map:DEC.fresnel, clearcoat:.5, clearcoatRoughness:.25, sheen:.5, sheenColor:0xffffff});
 const add = (g, m, x=0,y=0,z=0) => { m.position.set(x,y,z); g.add(m); return m; };
 const faceZ = m => { m.rotation.x = Math.PI/2; return m; };
@@ -603,13 +610,28 @@ const MODELS = {
     add(g, rslab(.064,.07,.06,.012,.008,grilleMat(0xe9e9e7,[62,62])),0,.045,.06);
     const h = camHead(.8, PM.white); add(g, h,0,.115,.075); h.rotation.x = .12;
     return g; },
-  hub(){ const g=G();                                   // Smart Hub Pro 2: aluminium rim, black glass, live home screen, speaker strip
-    add(g, rslab(.16,.09,.02,.006,.004,PM.satin),0,0,.01);
-    add(g, rslab(.25,.17,.022,.014,.006,PM.silver),0,0,.031);
-    add(g, rslab(.244,.164,.003,.012,.0012,PM.gloss),0,0,.0435);
-    add(g, new THREE.Mesh(new THREE.PlaneGeometry(.204,.1275), new THREE.MeshStandardMaterial({map:DEC.hub, emissiveMap:DEC.hub, emissive:0xffffff, emissiveIntensity:.6, roughness:.2})),0,.017,.0452);
-    add(g, rslab(.2,.026,.0008,.004,.0002,grilleMat(0x2c2f31,[80,80])),0,-.061,.0452);
-    add(g, decal(DEC.logo,.026,.0065,{color:0x9aa0a0}),0,-.061,.0462);
+  hub(){ const g=G();                                   // Smart Hub Pro 2: built from the engineering CAD (STEP → exterior shell only)
+    if(!HUB){                                          // offline fallback: procedural stand-in
+      add(g, rslab(.228,.158,.022,.014,.006,PM.white),0,0,.011);
+      add(g, rslab(.222,.152,.002,.012,.001,PM.gloss),0,0,.0225);
+      add(g, rslab(.222,.031,.0008,.004,.0002,grilleMat(0x2c2f31,[80,80])),0,-.061,.0235);
+    } else {
+      const M = [hubRim, hubGlass, PM.satin, __hf, hubDot]; M.forEach(m=>m.side=THREE.DoubleSide);
+      for(const p of HUB.parts){
+        const geo = new THREE.BufferGeometry();
+        const P = new Int16Array(HUB.buf, p.p, p.nv*3), pos = new Float32Array(p.nv*3);
+        for(let i=0;i<pos.length;i++) pos[i] = P[i]*HUB.s;
+        geo.setAttribute('position', new THREE.BufferAttribute(pos,3));
+        geo.setAttribute('normal', new THREE.BufferAttribute(new Int8Array(HUB.buf, p.n, p.nv*3),3,true));
+        geo.setIndex(new THREE.BufferAttribute(p.i32 ? new Uint32Array(HUB.buf, p.i, p.ni) : new Uint16Array(HUB.buf, p.i, p.ni),1));
+        if(p.g===3){ const nz = new Float32Array(p.nv*3); for(let i=0;i<p.nv;i++) nz[3*i+2]=1; geo.setAttribute('normal', new THREE.BufferAttribute(nz,3)); const uv = new Float32Array(p.nv*2); for(let i=0;i<p.nv;i++){ uv[2*i]=pos[3*i]/.228+.5; uv[2*i+1]=pos[3*i+1]/.031; } geo.setAttribute('uv', new THREE.BufferAttribute(uv,2)); }
+        const m = new THREE.Mesh(geo, M[p.g]); m.castShadow = true; m.userData.hg = p.g; g.add(m);
+      }
+    }
+    if(HUB) add(g, rslab(.2232,.1229,.0011,.009,.0003,hubGlass),0,.01525,.02205).userData.noRS = true;   // cover glass (clean slab; CAD sheet had mixed winding)
+    // live home screen under the glass (the home key on the fabric comes from the CAD)
+    add(g, new THREE.Mesh(new THREE.PlaneGeometry(.154,.094), new THREE.MeshStandardMaterial({map:DEC.hub, emissiveMap:DEC.hub, emissive:0xffffff, emissiveIntensity:.6, roughness:.2, polygonOffset:true, polygonOffsetFactor:-2, polygonOffsetUnits:-2})),-.0036,.0162,.0229);
+    add(g, faceZ(cyl(.0013,.0004,PM.lens,24)),0,.0705,.0228);   // camera pinhole above the screen
     return g; },
   therm(){ const g=G();                                 // Smart Thermostat: white face with soft glowing set point
     add(g, rslab(.1,.1,.024,.022,.009,PM.white),0,0,.012);
@@ -684,7 +706,7 @@ for(const p of PRODUCTS){
   if(p.flat) g.rotation.y = Math.atan2(p.view.x, p.view.z);
   else if(p.stand) g.rotation.y = Math.atan2(p.view.x, p.view.z);
   else g.lookAt(p.pos.clone().add(p.view));
-  g.traverse(o=>{ if(o.isMesh){ o.castShadow=false; o.receiveShadow=true; } });
+  g.traverse(o=>{ if(o.isMesh){ o.castShadow=false; o.receiveShadow=!o.userData.noRS; } });
   scene.add(g); g.updateMatrixWorld(true);
   p.model = g;
   p.center = new THREE.Box3().setFromObject(g).getCenter(new THREE.Vector3());
