@@ -179,7 +179,7 @@ import * as THREE from 'three';
 /* three.js r165 + the addons the tour uses, bundled locally so the tour works offline */
 import { OrbitControls, RoundedBoxGeometry, RoomEnvironment, GLTFLoader, MeshoptDecoder } from 'three';
 /* textures, decals and the sky come in one bundle (pack.jpg) so Fast Pitch stays under its file limit */
-const __PK = await (async()=>{ try{ const r=await fetch('pack.jpg?v=8'); const tot=+r.headers.get('content-length')||9e6, rd=r.body.getReader(), parts=[]; let got=0;
+const __PK = await (async()=>{ try{ const r=await fetch('pack.jpg?v=9'); const tot=+r.headers.get('content-length')||9e6, rd=r.body.getReader(), parts=[]; let got=0;
   for(;;){ const {done,value}=await rd.read(); if(done) break; parts.push(value); got+=value.length; const b=document.getElementById('loadBar'); if(b) b.style.setProperty('--p', Math.min(92,Math.round(92*got/tot))+'%'); }
   const u8=new Uint8Array(got); let o=0; for(const p of parts){ u8.set(p,o); o+=p.length; } const buf=u8.buffer; const n=new DataView(buf).getUint32(0,true);
   const idx=JSON.parse(new TextDecoder().decode(new Uint8Array(buf,4,n))), base=4+n, m={};
@@ -931,13 +931,12 @@ const MODELS = {
     const t = photoTex('ysign'), face = new THREE.MeshStandardMaterial({map:t, transparent:true, alphaTest:.5, roughness:.45, side:THREE.DoubleSide});
     const disc = add(g, cyl(.224,.004,mat(0xe8780f,{r:.5}),64),0,.7,0); disc.rotation.x = Math.PI/2;
     for(const z of [.0025,-.0025]){ const f = add(g, new THREE.Mesh(new THREE.PlaneGeometry(.45,.45), face),0,.7,z); if(z<0) f.rotation.y = Math.PI; }
-    for(const x of [-.12,.12]) add(g, cyl(.0035,.72,mat(0x6d7174,{r:.4,m:.8}),8),x,.36,-.006);
-    add(g, cyl(.003,.24,mat(0x6d7174,{r:.4,m:.8}),8),0,.3,-.006).rotation.z = Math.PI/2;
+    add(g, cyl(.0075,.72,mat(0x5f6366,{r:.35,m:.85}),20),0,.36,-.0115);           // single centre stake
     return g; },
 };
 const PHT = {};
 function photoTex(k){ if(PHT[k]) return PHT[k]; const t = texLoader.load(PK('ph/'+k+'.webp')); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = Math.min(8, maxAniso); return PHT[k] = t; }
-const PH_ASPECT = {lock:512/330, therm:1, motion:512/455, water:1, smokeco:1, chime:374/199, fire:165/98, fob:512/266, garage:253/254, glass:512/337, keypad:512/273, pendant:512/288, plug:260/148};
+const PH_ASPECT = new Proxy({}, {get:(_,k)=>(PHS[k] && PHS[k].aspect) || 1});
 function photoFace(k, w, h){ return new THREE.Mesh(new THREE.PlaneGeometry(w,h), new THREE.MeshPhysicalMaterial({map:photoTex(k), transparent:true, alphaTest:.04, roughness:.42, clearcoat:.35, clearcoatRoughness:.3, polygonOffset:true, polygonOffsetFactor:-2, polygonOffsetUnits:-2})); }
 /* photoSolid: the product's real outline (traced from its photo) extruded to its true thickness with rounded edges.
    The photo sits on a flat front face that matches the outline exactly; the photo also drives a bump map so keys,
@@ -953,11 +952,11 @@ function photoSolid(k, w, d, flat=false){
   const b = Math.min(d*.32, Math.min(w,h)*.09, .006, S && S.holes && S.holes.length ? .0025 : 1);
   const uvg = { generateTopUV(g,v,a,bb,c){ const f=i=>new THREE.Vector2(v[i*3]/w+.5, v[i*3+1]/h+.5); return [f(a),f(bb),f(c)]; },
                 generateSideWallUV(){ return [new THREE.Vector2(0,0),new THREE.Vector2(1,0),new THREE.Vector2(1,1),new THREE.Vector2(0,1)]; } };
-  const geo = new THREE.ExtrudeGeometry(shape, {depth:Math.max(.001,d-2*b), bevelEnabled:true, bevelThickness:b, bevelSize:b*.85, bevelOffset:-b*.85, bevelSegments:5, curveSegments:24, UVGenerator:uvg});
+  const geo = new THREE.ExtrudeGeometry(shape, {depth:Math.max(.001,d-2*b), bevelEnabled:true, bevelThickness:b, bevelSize:b*.85, bevelOffset:-b*.85, bevelSegments:8, curveSegments:24, UVGenerator:uvg});
   geo.translate(0,0,b); geo.computeVertexNormals();
   if(flat) geo.rotateX(-Math.PI/2);
   const t = photoTex(k);
-  const face = new THREE.MeshPhysicalMaterial({map:t, bumpMap:t, bumpScale:1.2, roughness:.42, clearcoat:.35, clearcoatRoughness:.28});
+  const face = new THREE.MeshPhysicalMaterial({map:t, bumpMap:t, bumpScale:.35, roughness:.42, clearcoat:.35, clearcoatRoughness:.28});
   const side = new THREE.MeshPhysicalMaterial({color:new THREE.Color(S ? S.edge : '#dddddd'), roughness:.45, clearcoat:.35, clearcoatRoughness:.3});
   const m = new THREE.Mesh(geo, [face, side]); m.castShadow = m.receiveShadow = true;
   const g = G(); g.add(m); return g; }

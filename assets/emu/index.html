@@ -318,6 +318,58 @@ body.one #scr{box-shadow:none;border-radius:0}body.one #hint{display:none}
 #scr.set #st{opacity:1;pointer-events:auto;transform:none}
 #scr.set #dk{opacity:0;pointer-events:none;transform:scale(.985)}
 
+/* ---- from the Smart Hub page: garage, deter on, status view, person detected, alarm ---- */
+#hm .hdl{position:absolute;left:0;top:250px;width:30px;height:200px;z-index:3;display:flex;align-items:center}
+#hm .hdl i{width:6px;height:96px;border-radius:3px;background:rgba(255,255,255,.85);margin-left:5px}
+.dt.on .bn{background:#ff3b30;color:#fff}
+#sv{background:#000}
+#sv .card{position:absolute;left:70px;top:50px;width:1140px;height:640px;border-radius:22px;overflow:hidden;background:linear-gradient(120deg,#0b0b0b 0%,#0e0f0e 55%,#0f1a15 100%);box-shadow:inset 0 0 0 1px rgba(255,255,255,.05)}
+#sv .glow{position:absolute;right:-160px;bottom:-200px;width:620px;height:620px;border-radius:50%;background:radial-gradient(circle,rgba(16,120,84,.55),rgba(16,120,84,0) 65%);transition:background .6s}
+#sv.arm .glow{background:radial-gradient(circle,rgba(200,80,20,.55),rgba(200,80,20,0) 65%)}
+#sv .svl{position:absolute;left:0;width:560px;top:0;bottom:0;text-align:center}
+#sv .wx{position:absolute;left:0;right:0;top:118px;display:flex;justify-content:center;align-items:baseline;gap:14px}
+#sv .wx svg{align-self:center}
+#sv .wx b{font-weight:400;font-size:66px}
+#sv .wx small{font-size:32px;color:#9a9a9a}
+#sv .tm2{position:absolute;left:0;right:0;top:222px;font-size:188px;font-weight:400;letter-spacing:-.03em;line-height:1}
+#sv .dt2{position:absolute;left:0;right:0;top:450px;font-size:54px}
+#sv .chip{position:absolute;left:0;right:0;top:548px;display:flex;justify-content:center;align-items:center;gap:14px;font-size:30px;color:#e6e6e6}
+#sv .fc{position:absolute;left:630px;right:70px;top:84px}
+#sv .fr{display:flex;align-items:center;height:118px;border-bottom:1.5px solid rgba(255,255,255,.14);font-size:38px}
+#sv .fr:last-child{border-bottom:0}
+#sv .fr .dn{width:170px}
+#sv .fr svg{margin-right:46px}
+#sv .fr .hi{font-size:44px;width:100px}
+#sv .fr .lo{font-size:26px;color:#9a9a9a;align-self:flex-end;margin-bottom:38px}
+#pd{background:#000}
+#pd .vid{position:absolute;left:0;top:0;width:795px;height:750px;overflow:hidden;background:#000}
+#pd video{width:100%;height:100%;object-fit:cover;display:block}
+#pd .rc{position:absolute;left:795px;right:0;top:0;bottom:0;text-align:center}
+#pd .d1{margin-top:158px;font-size:34px}
+#pd .t1{font-size:88px;line-height:1.15;margin-top:8px}
+#pd .d2{font-size:42px;margin-top:6px}
+#pd .bt{display:flex;justify-content:center;gap:34px;margin-top:62px}
+#pd .rb{font-size:26px;gap:14px}
+#pd .rb .c{width:104px;height:104px}
+#pd .rb.talk.on .c{background:var(--mint);color:#111;box-shadow:0 0 0 10px rgba(63,224,180,.18)}
+#pd .edge{position:absolute;left:0;top:0;width:44px;height:750px;display:flex;align-items:center}
+#pd .edge i{width:6px;height:96px;border-radius:3px;background:rgba(255,255,255,.85);margin-left:6px}
+#alm{background:linear-gradient(120deg,#ff1d12 0%,#e50a0a 40%,#c40303 75%,#a80000 100%)}
+#alm .lt2{position:absolute;left:0;width:750px;top:0;bottom:0;text-align:center}
+#alm .lt2 b{display:block;margin-top:160px;font-size:48px;font-weight:500}
+#alm .lt2 p{margin:30px 0 0;font-size:35px;line-height:1.45;color:#ffe9e7}
+#alm .dots{display:flex;justify-content:center;gap:42px;margin-top:84px}
+#alm .dots i{width:34px;height:34px;border-radius:50%;box-shadow:inset 0 0 0 2.5px #fff;transition:background .15s,transform .2s}
+#alm .dots i.on{background:#fff;transform:scale(1.08)}
+#alm.ok .dots i{background:#fff;animation:okp .5s ease}
+@keyframes okp{50%{transform:scale(1.3)}}
+#alm .lt2 small{position:absolute;left:0;right:0;bottom:40px;font-size:22px;color:rgba(255,255,255,.55)}
+#alm .kp{position:absolute;left:739px;top:61px;width:470px;display:grid;grid-template-columns:repeat(3,148px);grid-auto-rows:148px;gap:13px}
+#alm .k{border-radius:50%;background:rgba(255,255,255,.16);font-size:58px;display:flex;align-items:center;justify-content:center;transition:background .12s,transform .12s}
+#alm .k:active{background:rgba(255,255,255,.42);transform:scale(.95)}
+#alm .w{font-size:31px;display:flex;align-items:center;justify-content:center;border-radius:50%}
+#alm .w:active{background:rgba(255,255,255,.12)}
+
 </style>
 <script type="importmap">{"imports":{"three":"../tour/three.bundle.js"}}</script>
 </head><body>
@@ -397,9 +449,9 @@ const IC = {
 const UI = (() => {
 const scr = document.getElementById('scr');
 const $ = (q, r=scr) => r.querySelector(q), $$ = (q, r=scr) => [...r.querySelectorAll(q)];
-const IMG = { db:'img/db_live.webp', fy:'img/fy_live.webp', bd:'img/bd.jpg' };
+const IMG = { db:'img/db_live.webp', fy:'img/fy_live.webp', bd:'img/bd.jpg', pd:'img/ev_person.webp' };
 const S = {
-  arm:'dis', locks:{front:true, side:false}, tab:'home',
+  arm:'dis', locks:{front:true, side:false}, garage:'closed', alarm:false, tab:'home',
   th:{sp:68, cur:70, hum:33, mode:'cool', fan:'auto', zone:'Hallway'},
   lights:{drive:{on:true,b:80}, porch:{on:false,b:60}, living:{on:true,b:45}, kitchen:{on:false,b:100}, office:{on:false,b:70}, patio:{on:true,b:100}},
   silent:false, noEntry:false,
@@ -411,12 +463,20 @@ const S = {
   sched:{Wake:{h:6,m:0,ap:'AM',c:78,ht:70}, Leave:{h:8,m:0,ap:'AM',c:81,ht:66}, Arrive:{h:5,m:30,ap:'PM',c:78,ht:70}, Sleep:{h:10,m:0,ap:'PM',c:80,ht:66}},
   open:null,
 };
+const ICX = {
+  garage:(s=42)=>`<svg width="${s}" height="${s}" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><path d="M5 34V15L20 6l15 9v19"/><path d="M10 34V19h20v15M10 24h20M10 29h20"/></svg>`,
+  garageO:(s=42)=>`<svg width="${s}" height="${s}" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><path d="M5 34V15L20 6l15 9v19"/><path d="M10 34V19h20v15M10 23h20"/></svg>`,
+  sun:(s=46)=>`<svg width="${s}" height="${s}" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="24" cy="24" r="8"/><path d="M24 6v5M24 37v5M6 24h5M37 24h5M11.3 11.3l3.5 3.5M33.2 33.2l3.5 3.5M11.3 36.7l3.5-3.5M33.2 14.8l3.5-3.5"/></svg>`,
+  psun:(s=46)=>`<svg width="${s}" height="${s}" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="29" cy="18" r="6.5"/><path d="M29 5v3.5M40.5 18H44M37.3 9.7l2.5-2.5M37.3 26.3l2.5 2.5M18.3 9.7l2.5 2.5"/><path d="M12 40h18a7 7 0 0 0 0-14 9.5 9.5 0 0 0-17.6 3A5.6 5.6 0 0 0 12 40Z" fill="#000"/></svg>`,
+  rain:(s=46)=>`<svg width="${s}" height="${s}" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M14 30h20a8 8 0 0 0 0-16 11 11 0 0 0-20.6 3.2A6.5 6.5 0 0 0 14 30Z"/><path d="M17 35l-2 5M24 35l-2 5M31 35l-2 5"/></svg>`,
+  storm:(s=46)=>`<svg width="${s}" height="${s}" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M14 30h20a8 8 0 0 0 0-16 11 11 0 0 0-20.6 3.2A6.5 6.5 0 0 0 14 30Z"/><path d="M24 32l-4 6h6l-3 6M16 34l-2 4M33 34l-2 4"/></svg>`,
+};
 const ARM = { dis:{t:'Disarmed', act:'Disarm', ic:IC.shDis, sub:''}, away:{t:'Armed Away', act:'Arm Away', ic:IC.shAway, sub:'Use when no one is home'}, stay:{t:'Armed Stay', act:'Arm Stay', ic:IC.shStay, sub:'Use when someone is home'} };
 
 /* ---------- clock ---------- */
-const clock = (light) => { const d = new Date(); let h = d.getHours(), m = d.getMinutes(), ap = h>=12?'pm':'am'; h = h%12||12; return `${h}:${String(m).padStart(2,'0')} ${light?ap.toUpperCase():ap}`; };
+const clock = (light) => { const d = new Date(); let h = d.getHours(), m = d.getMinutes(), ap = h>=12?'pm':'am'; h = h%12||12; if(light==='S') return `${h}:${String(m).padStart(2,'0')}`; return `${h}:${String(m).padStart(2,'0')} ${light?ap.toUpperCase():ap}`; };
 const greet = () => { const h = new Date().getHours(); return h<12?'Good morning':h<18?'Good afternoon':'Good evening'; };
-function tick(){ $$('[data-clock]').forEach(e => e.textContent = clock(e.dataset.clock==='L')); const g=$('#gm'); if(g) g.textContent = greet()+', your home is'; }
+function tick(){ $$('[data-clock]').forEach(e => e.textContent = clock(e.dataset.clock==='S'?'S':e.dataset.clock==='L')); const g=$('#gm'); if(g) g.textContent = greet()+', your home is'; }
 
 /* ---------- toast ---------- */
 let tT; function toast(msg){ const t=$('#toast'); t.textContent=msg; t.classList.add('on'); clearTimeout(tT); tT=setTimeout(()=>t.classList.remove('on'),1800); }
@@ -427,7 +487,7 @@ const lockTile = (k, name, x, y) => `<div class="tl" style="left:${x}px;top:${y}
 function darkHTML(){ return `
 <div id="dk" class="L">
   <div class="bg g"></div><div class="bg o"></div>
-  <div class="tabv on L" id="hm" data-tab="home"><div class="strip">
+  <div class="tabv on L" id="hm" data-tab="home"><button class="hdl" data-act="sv" aria-label="Status view"><i></i></button><div class="strip">
     <div class="sec">
       <div class="fill g"></div><div class="fill o"></div>
       <button class="sos tap" data-act="sos">${IC.sos(36)}SOS</button>
@@ -435,7 +495,7 @@ function darkHTML(){ return `
       <button class="stt" data-act="arm" id="stt"></button>
       <button class="chev tap" data-act="arm">${IC.chevD(46,3)}</button>
     </div>
-    ${lockTile('front','Front door',658,38)}${lockTile('side','Side door',658,356)}
+    ${lockTile('front','Front door',658,38)}<div class="tl" style="left:658px;top:356px"><div class="t1">Garage</div><div class="t2" id="gT">Closed</div><button class="lk tap" data-act="garage" id="gB"><span class="spin"></span><span class="ico">${ICX.garage(44)}</span></button></div>
     ${camTile('db','Doorbell','2m ago',976,38)}${camTile('fy','Front yard','30m ago',976,356)}
     ${camTile('bd','Back door','1m ago',1294,38)}
     <button class="tl th cur tap" data-act="tab" data-tab="therm" style="left:1612px;top:38px"><div class="t1">Hallway</div><div class="t2" style="color:#f4f4f4;top:66px">Currently</div><div class="big" id="thH">${S.th.cur-5}</div></button>
@@ -522,18 +582,37 @@ function darkHTML(){ return `
   <div class="ov" id="ev">
     <button class="bk tap" data-act="close">${IC.chevL(26,2.4)}Back</button>
     <h3>All events</h3>
-    <div class="ls">${[['db','Package detected','Doorbell · 2m ago','Package'],['bd','Person detected','Back door · 1m ago','Person'],['fy','Motion','Front yard · 30m ago','Motion'],['db','Doorbell rang','Doorbell · 1h ago','Ring'],['bd','Animal detected','Back door · 2h ago','Animal'],['fy','Vehicle detected','Front yard · 3h ago','Vehicle'],['db','Person detected','Doorbell · 4h ago','Person']].map(([k,t,s,g])=>`<button class="evr tap" data-act="live" data-cam="${k}" style="width:100%;text-align:left"><span class="th" style="background-image:url(${IMG[k]})"></span><span><b>${t}</b><small>${s}</small></span><span class="tg">${g}</span></button>`).join('')}</div>
+    <div class="ls">${[['db','Package detected','Doorbell · 2m ago','Package'],['pd','Person detected','Doorbell · just now','Person'],['bd','Person detected','Back door · 1m ago','Person'],['fy','Motion','Front yard · 30m ago','Motion'],['db','Doorbell rang','Doorbell · 1h ago','Ring'],['bd','Animal detected','Back door · 2h ago','Animal'],['fy','Vehicle detected','Front yard · 3h ago','Vehicle'],['db','Person detected','Doorbell · 4h ago','Person']].map(([k,t,s,g])=>`<button class="evr tap" data-act="live" data-cam="${k}" style="width:100%;text-align:left"><span class="th" style="background-image:url(${IMG[k]})"></span><span><b>${t}</b><small>${s}</small></span><span class="tg">${g}</span></button>`).join('')}</div>
+  </div>
+  <div class="ov" id="sv">
+    <div class="card"><div class="glow"></div>
+      <div class="svl"><div class="wx">${ICX.psun(50)}<b>65°</b><small>55°</small></div><div class="tm2" data-clock="S"></div><div class="dt2" id="svD"></div><div class="chip" id="svC"></div></div>
+      <div class="fc" id="svF"></div>
+    </div>
+  </div>
+  <div class="ov" id="pd">
+    <div class="vid"><video id="pdV" muted playsinline loop preload="none" poster="img/ev_person.webp"></video></div>
+    <div class="rc"><div class="d1" id="pdD"></div><div class="t1" data-clock="S"></div><div class="d2">Person detected</div>
+      <div class="bt"><button class="rb tap" data-act="pdlock"><span class="c" id="pdLk"></span><span id="pdLkT"></span></button><button class="rb tap" data-act="pdmute"><span class="c" id="pdMu"></span><span id="pdMuT"></span></button><button class="rb talk tap" data-act="pdtalk"><span class="c">${IC.mic(40)}</span><span>Talk</span></button></div></div>
+    <button class="edge" data-act="close"><i></i></button>
+  </div>
+  <div class="ov" id="alm">
+    <div class="lt2"><b id="almT">Alarm in progress</b><p id="almS">Enter PIN to silence alarm.<br>The front door was opened.</p><div class="dots" id="almD"><i></i><i></i><i></i><i></i></div><small>Demo mode · any 4 digits</small></div>
+    <div class="kp">${[1,2,3,4,5,6,7,8,9].map(n=>`<button class="k" data-pin="${n}">${n}</button>`).join('')}<button class="w" data-pin="del">Delete</button><button class="k" data-pin="0">0</button><button class="w" data-pin="clr">Clear</button></div>
   </div>
   <div id="pop"><b id="popT"></b><div class="pi" id="popI"></div><small id="popS"></small></div>
 </div>`; }
 
+function led(){ const c = S.alarm ? '#ff2a1f' : S.arm!=='dis' ? '#ff6a1a' : '#05E5AF'; window.dispatchEvent(new CustomEvent('hubled',{detail:{c, on:S.t.downcast, pulse:!!S.alarm}})); }
 function renderArm(){
   const a = S.arm, armed = a!=='dis';
+  $$('[data-deter]').forEach(d=>{ d.classList.toggle('on',armed); d.lastChild.textContent = armed?'Deter on':'Deter off'; });
+  const c=$('#svC'); if(c) c.innerHTML = `${ARM[a].ic(40)}<span>${ARM[a].t}</span>`; $('#sv')&&$('#sv').classList.toggle('arm',armed); led();
   $('#dk').classList.toggle('arm', armed); $('#arm').classList.toggle('arm', armed);
   $('#stt').innerHTML = `${ARM[a].ic(58)}<span>${ARM[a].t}</span>`;
   $('#apl').innerHTML = ['dis','away','stay'].map((k,i)=>{ const cur = k===a; return `<button class="ap tap${cur?' cur '+(k==='dis'?'g':'o'):''}" data-act="setarm" data-arm="${k}" style="top:${149+i*163}px">${ARM[k].ic(54)}<span class="tx"><b>${cur?ARM[k].t:ARM[k].act}</b>${cur||!ARM[k].sub?'':`<small>${ARM[k].sub}</small>`}</span></button>`; }).join('');
 }
-function renderLocks(){ for(const k of ['front','side']){ const on=S.locks[k]; const b=$(`[data-lk=${k}]`); b.classList.toggle('on',on); b.querySelector('.ico').innerHTML = on?IC.lockC(42):IC.lockO(42); $(`[data-lkt=${k}]`).textContent = on?'Locked':'Unlocked'; } }
+function renderLocks(){ for(const k of ['front']){ const on=S.locks[k]; const b=$(`[data-lk=${k}]`); b.classList.toggle('on',on); b.querySelector('.ico').innerHTML = on?IC.lockC(42):IC.lockO(42); $(`[data-lkt=${k}]`).textContent = on?'Locked':'Unlocked'; } }
 const MODES = ['cool','heat','auto','off'];
 function renderTherm(bump){
   const t = S.th, el = $('#tm');
@@ -554,7 +633,7 @@ function renderNav(){ $$('#nvD .it.n').forEach(b=>b.classList.toggle('on',b.data
 function setTab(t){ S.tab=t; $$('#dk .tabv').forEach(v=>v.classList.toggle('on',v.dataset.tab===t)); renderNav(); closePop();
   const sc=$('#nvD .sc'); if(sc && t!=='home') {} if(t==='home') $('#hm').scrollTo({left:0,behavior:'smooth'}); }
 function openOv(id){ $$('#dk .ov').forEach(o=>o.classList.toggle('on',o.id===id)); S.open=id; closePop(); }
-function closeOv(){ $$('#dk .ov').forEach(o=>o.classList.remove('on')); S.open=null; }
+function closeOv(){ $$('#dk .ov').forEach(o=>o.classList.remove('on')); S.open=null; const v=$('#pdV'); if(v) v.pause(); }
 
 let cdT=null;
 function setArm(k){
@@ -581,9 +660,31 @@ function closePop(){ const p=$('#pop'); if(p) p.classList.remove('on'); }
 function localRect(el){ let x=0,y=0,n=el; while(n && n!==scr){ x+=n.offsetLeft - (n.parentElement && n.parentElement!==scr ? 0:0); y+=n.offsetTop; n=n.offsetParent; } // offsetParent chain; subtract scroll
   let s=el.parentElement; while(s && s!==scr){ x-=s.scrollLeft||0; y-=s.scrollTop||0; s=s.parentElement; } return {x,y,w:el.offsetWidth,h:el.offsetHeight}; }
 
+/* status view (always-on display) */
+function dayStr(long){ const d=new Date(); return d.toLocaleDateString('en-US', long?{weekday:'long',month:'short',day:'numeric'}:{weekday:'short',month:'short',day:'numeric'}); }
+function renderSV(){ $('#svD').textContent = dayStr(false); const W=['Sun','Mon','Tues','Wed','Thurs','Fri','Sat'], t=new Date().getDay();
+  const fc=[[ICX.psun(46),67,55],[ICX.sun(46),72,62],[ICX.rain(46),60,59],[ICX.storm(46),62,57]];
+  $('#svF').innerHTML = fc.map(([ic,h,l],i)=>`<div class="fr"><span class="dn">${W[(t+1+i)%7]}</span>${ic}<span class="hi">${h}°</span><span class="lo">${l}°</span></div>`).join(''); }
+let pdOnce=false, pdT=null;
+function openSV(){ renderSV(); openOv('sv'); clearTimeout(pdT); if(!pdOnce){ pdT=setTimeout(()=>{ if(S.open==='sv'){ pdOnce=true; openPD(); } },7000); } }
+function openPD(){ $('#pdD').textContent = dayStr(true); PD.mute=true; renderPD(); openOv('pd'); const v=$('#pdV'); if(!v.src) v.src='img/ev_person.mp4'; v.currentTime=0; v.play().catch(()=>{}); }
+const PD={mute:true};
+function renderPD(){ $('#pdLk').innerHTML = S.locks.front?IC.lockC(40):IC.lockO(40); $('#pdLkT').textContent = S.locks.front?'Unlock door':'Lock door'; $('#pdLk').parentElement.classList.toggle('on',S.locks.front);
+  $('#pdMu').innerHTML = PD.mute?IC.spkX(40):IC.spk(40); $('#pdMuT').textContent = PD.mute?'Unmute':'Mute'; }
+/* idle → status view, like the real Hub */
+let idleT=null; function poke(){ clearTimeout(idleT); idleT=setTimeout(()=>{ if(!S.open && !scr.classList.contains('set') && !S.alarm) openSV(); },45000); }
+/* alarm in progress: PIN pad */
+let pin='';
+function alarm(msg){ S.alarm=true; pin=''; renderPin(); $('#almS').innerHTML = 'Enter PIN to silence alarm.<br>'+msg; scr.classList.remove('set'); openOv('alm'); led(); }
+function renderPin(){ $$('#almD i').forEach((d,i)=>d.classList.toggle('on',i<pin.length)); }
+function pinKey(k){ if(k==='del') pin=pin.slice(0,-1); else if(k==='clr') pin=''; else if(pin.length<4) pin+=k; renderPin();
+  if(pin.length===4){ $('#alm').classList.add('ok'); setTimeout(()=>{ $('#alm').classList.remove('ok'); S.alarm=false; S.arm='dis'; renderArm(); closeOv(); setTab('home'); toast('Alarm canceled · System disarmed'); },700); } }
+function doorOpened(){ if(S.arm!=='dis' && !S.locks.front){ toast('Front door opened'); setTimeout(()=>alarm('The front door was opened.'),1300); } }
+
 /* SOS hold */
 let holdT=null;
-function sosFire(k){ const c={police:['#29a3f0','Police alarm activated',IC.police(90)],emer:['#ea4b3c','Emergency alarm activated',IC.cross(80)],fire:['#f8c51c','Fire alarm activated',IC.fire(84)]}[k]; const r=$('#sosRing'); r.style.background=c[0]; r.style.setProperty('--pc',c[0]+'aa'); r.innerHTML=c[2]; $('#sosT').textContent=c[1]; $('#sos').classList.add('fired'); }
+function sosFire(k){ return alarm({police:'Police have been requested.',emer:'Emergency services have been requested.',fire:'The fire department has been requested.'}[k]);
+   const c={police:['#29a3f0','Police alarm activated',IC.police(90)],emer:['#ea4b3c','Emergency alarm activated',IC.cross(80)],fire:['#f8c51c','Fire alarm activated',IC.fire(84)]}[k]; const r=$('#sosRing'); r.style.background=c[0]; r.style.setProperty('--pc',c[0]+'aa'); r.innerHTML=c[2]; $('#sosT').textContent=c[1]; $('#sos').classList.add('fired'); }
 
 /* ================= LIGHT WORLD: settings ================= */
 const SIDE = [['devices','Devices',IC.sDev],['users','Users',IC.sUsr],['security','Security',IC.sSec],['general','General',IC.sGen],['support','Support',IC.sSup],['developer','Developer',IC.sDvp]];
@@ -674,7 +775,7 @@ function onClick(e){
   const t=e.target;
   if(S.tsd) return;
   // toggles, sliders, segments, dropdowns inside settings
-  const tg=t.closest('[data-tg]'); if(tg){ const k=tg.dataset.tg; S.t[k]=!S.t[k]; $$(`[data-tg=${k}]`).forEach(x=>x.classList.toggle('on',S.t[k])); return; }
+  const tg=t.closest('[data-tg]'); if(tg){ const k=tg.dataset.tg; S.t[k]=!S.t[k]; $$(`[data-tg=${k}]`).forEach(x=>x.classList.toggle('on',S.t[k])); if(k==='downcast') led(); if(k==='statusv'&&S.t.statusv) toast('Status view on'); return; }
   const ltg=t.closest('[data-ltg]'); if(ltg){ const k=ltg.dataset.ltg; S.lights[k].on=!S.lights[k].on; ltg.classList.toggle('on',S.lights[k].on); renderLights(); return; }
   const lktg=t.closest('[data-lktg]'); if(lktg){ const k=lktg.dataset.lktg; S.locks[k]=!S.locks[k]; lktg.classList.toggle('on',S.locks[k]); $$(`[data-lkv=${k}]`).forEach(x=>x.textContent=S.locks[k]?'Locked':'Unlocked'); renderLocks(); return; }
   const sv=t.closest('[data-seg] button'); if(sv){ const seg=sv.parentElement, k=seg.dataset.seg; S.seg[k]=sv.dataset.sv; $$('button',seg).forEach(b=>b.classList.toggle('on',b===sv)); return; }
@@ -687,6 +788,8 @@ function onClick(e){
     const row=$(`[data-sch=${k}]`); row.querySelector('.cf').textContent=`Cool ${s.c}°`; row.querySelector('.hf').textContent=`Heat ${s.ht}°`; return; }
   const ch=t.closest('[data-chime]'); if(ch){ S.chime=ch.dataset.chime; $$('[data-chime]').forEach(r=>r.querySelector('.v').innerHTML=S.chime===r.dataset.chime?IC.check(28):''); $$('[data-chv]').forEach(x=>x.textContent=S.chime); return; }
   const gon=t.closest('[data-go]'); if(gon){ const id=gon.dataset.go; if(dyn(id)) push(id); return; }
+  const pk=t.closest('[data-pin]'); if(pk){ pinKey(pk.dataset.pin); return; }
+  if(S.open==='sv'){ closeOv(); clearTimeout(pdT); return; }
   const pp=t.closest('[data-pop]'); if(pp){ openPop(pp.dataset.pop, pp); return; }
   if(!t.closest('#pop')) closePop();
   const a=t.closest('[data-act]'); if(!a) return;
@@ -706,10 +809,15 @@ function onClick(e){
     case 'sos': $('#sos').classList.remove('fired'); openOv('sos'); break;
     case 'sosx': $('#sos').classList.remove('fired'); closeOv(); toast('Alarm canceled'); break;
     case 'close': closeOv(); break;
-    case 'lock': { const k=a.dataset.lk; if(a.classList.contains('busy')) break; a.classList.add('busy'); setTimeout(()=>{ a.classList.remove('busy'); S.locks[k]=!S.locks[k]; renderLocks(); },700); break; }
-    case 'live': openLive(a.dataset.cam); break;
+    case 'lock': { const k=a.dataset.lk; if(a.classList.contains('busy')) break; a.classList.add('busy'); setTimeout(()=>{ a.classList.remove('busy'); S.locks[k]=!S.locks[k]; renderLocks(); if(k==='front') doorOpened(); },700); break; }
+    case 'garage': { if(a.classList.contains('busy')) break; const open=S.garage==='open'; a.classList.add('busy'); $('#gT').textContent=open?'Closing…':'Opening…'; setTimeout(()=>{ a.classList.remove('busy'); S.garage=open?'closed':'open'; $('#gT').textContent=open?'Closed':'Open'; a.querySelector('.ico').innerHTML=open?ICX.garage(44):ICX.garageO(44); a.classList.toggle('on',!open); },1600); break; }
+    case 'sv': openSV(); break;
+    case 'pdlock': S.locks.front=!S.locks.front; renderLocks(); renderPD(); toast(S.locks.front?'Front door locked':'Front door unlocked'); doorOpened(); break;
+    case 'pdmute': PD.mute=!PD.mute; renderPD(); break;
+    case 'pdtalk': a.classList.toggle('on'); break;
+    case 'live': if(a.dataset.cam==='pd') openPD(); else openLive(a.dataset.cam); break;
     case 'events': openOv('ev'); break;
-    case 'rail': { const r=a.dataset.r; if(r==='lock'){ S.locks.front=!S.locks.front; renderLocks(); toast(S.locks.front?'Front door locked':'Front door unlocked'); } if(r==='mute') LV.mute=!LV.mute; if(r==='talk') LV.talk=!LV.talk; if(r==='light') LV.light=!LV.light; renderRail(); break; }
+    case 'rail': { const r=a.dataset.r; if(r==='lock'){ S.locks.front=!S.locks.front; renderLocks(); toast(S.locks.front?'Front door locked':'Front door unlocked'); doorOpened(); } if(r==='mute') LV.mute=!LV.mute; if(r==='talk') LV.talk=!LV.talk; if(r==='light') LV.light=!LV.light; renderRail(); break; }
     case 'camset': enterSettings('devices'); push('cams'); setTimeout(()=>push('dbset'),60); break;
     case 'tup': if(S.th.mode!=='off'&&S.th.sp<90){ S.th.sp++; renderTherm(1); } break;
     case 'tdn': if(S.th.mode!=='off'&&S.th.sp>50){ S.th.sp--; renderTherm(-1); } break;
@@ -752,17 +860,18 @@ function build(){
   ['#hm','#cm .sc','#nvD .sc','#ev .ls'].forEach(q=>$(q).classList.add('hsc'));
   renderArm(); renderLocks(); renderTherm(); renderLights(); renderNav(); tick(); setInterval(tick, 10000);
   scr.addEventListener('click', onClick);
-  scr.addEventListener('pointerdown', onDown);
+  scr.addEventListener('pointerdown', onDown); scr.addEventListener('pointerdown', poke); poke(); renderSV(); setTimeout(led,50);
   window.addEventListener('pointermove', onMove);
   window.addEventListener('pointerup', onUp); window.addEventListener('pointercancel', onUp);
   // tap outside arm menu pills closes it
   $('#arm').addEventListener('click', e=>{ if(e.target.id==='arm'||e.target.classList.contains('bgx')) closeOv(); });
+  { let hx=null; $('#hm').addEventListener('pointerdown',e=>{ const p=UI.loc(e); hx=p&&p.x<60?p.x:null; }); $('#hm').addEventListener('pointerup',e=>{ const p=UI.loc(e); if(hx!=null&&p&&p.x-hx>90) openSV(); hx=null; }); }
   // swipe-from-left-edge closes live view
   let sx=null; $('#live').addEventListener('pointerdown',e=>{ const p=UI.loc(e); sx=p&&p.x<120?p.x:null; });
   $('#live').addEventListener('pointerup',e=>{ const p=UI.loc(e); if(sx!=null&&p&&p.x-sx>120) closeOv(); sx=null; });
   document.addEventListener('touchstart',()=>{}, {passive:true});
 }
-return { build, S, loc:(e)=>({x:e.offsetX,y:e.offsetY}) };
+return { build, S, led, loc:(e)=>({x:e.offsetX,y:e.offsetY}) };
 })();
 </script>
 <script type="module">
@@ -824,6 +933,17 @@ const buf = await (await fetch('hubmdl.jpg')).arrayBuffer();
   const g = new THREE.Mesh(new THREE.ExtrudeGeometry(sh,{depth:.0008,bevelEnabled:true,bevelThickness:.00015,bevelSize:.00015,bevelSegments:3,curveSegments:24}), M[1]); g.position.z=.02165; hub.add(g); }
 /* black display under the live UI (shows through only at grazing angles) */
 { const s = new THREE.Mesh(new THREE.PlaneGeometry(SW, H*K), new THREE.MeshBasicMaterial({ color:0x000000 })); s.position.copy(SC).z -= .0001; hub.add(s); }
+/* downcast status light: the strip along the bottom edge and the glow it throws on the wall below */
+const HB = new THREE.Box3().setFromObject(hub);
+const ledM = new THREE.MeshBasicMaterial({ color:0x05E5AF, toneMapped:false });
+const ledBar = new THREE.Mesh(new THREE.CapsuleGeometry(.0011, .05, 4, 12), ledM); ledBar.rotation.z = Math.PI/2; ledBar.position.set(0, HB.min.y+.0016, HB.max.z-.006); hub.add(ledBar);
+const glowC = document.createElement('canvas'); glowC.width = 256; glowC.height = 128;
+{ const x = glowC.getContext('2d'), g = x.createRadialGradient(128,0,0,128,0,128); g.addColorStop(0,'rgba(255,255,255,1)'); g.addColorStop(.35,'rgba(255,255,255,.35)'); g.addColorStop(1,'rgba(255,255,255,0)'); x.fillStyle = g; x.fillRect(0,0,256,128); }
+const glowM = new THREE.MeshBasicMaterial({ map:new THREE.CanvasTexture(glowC), color:0x05E5AF, transparent:true, blending:THREE.AdditiveBlending, depthWrite:false, opacity:.75, toneMapped:false });
+const glow = new THREE.Mesh(new THREE.PlaneGeometry(.16,.07), glowM); glow.position.set(0, HB.min.y-.035, HB.min.z+.002); hub.add(glow);
+let ledPulse = false, ledOn = true;
+addEventListener('hubled', e => { const d = e.detail; ledM.color.set(d.c); glowM.color.set(d.c); ledOn = d.on; ledPulse = d.pulse; ledBar.visible = glow.visible = ledOn; dirty = 2; });
+setTimeout(()=>UI.led(),0);
 /* soft contact shadow */
 { const c=document.createElement('canvas'); c.width=c.height=128; const x=c.getContext('2d'), g=x.createRadialGradient(64,64,0,64,64,64); g.addColorStop(0,'rgba(0,0,0,.55)'); g.addColorStop(1,'rgba(0,0,0,0)'); x.fillStyle=g; x.fillRect(0,0,128,128);
   const sh=new THREE.Mesh(new THREE.PlaneGeometry(.3,.09), new THREE.MeshBasicMaterial({ map:new THREE.CanvasTexture(c), transparent:true, depthWrite:false })); sh.rotation.x=-Math.PI/2; sh.position.set(0,-.088,0); hub.add(sh); }
@@ -878,6 +998,7 @@ function loop(){
   if(!run) return; requestAnimationFrame(loop);
   if(tw){ const k = Math.min(1, (performance.now()-tw.t0)/tw.ms), e = ease(k); tmp.set(tw.a.r+(tw.b.r-tw.a.r)*e, tw.a.p+(tw.b.p-tw.a.p)*e, tw.a.t+(tw.b.t-tw.a.t)*e); cam.position.setFromSpherical(tmp).add(ctl.target); cam.lookAt(ctl.target); if(k>=1) tw=null; dirty=2; }
   if(ctl.update()) dirty = 2;
+  if(ledPulse && ledOn){ const k = .55+.45*Math.sin(performance.now()/180); glowM.opacity = .35+.55*k; ledM.color.setScalar(1).multiply(glowM.color).multiplyScalar(.6+.4*k); dirty = 1; } else glowM.opacity = .75;
   if(!dirty) return; dirty--;
   renderer.render(scene, cam); cssCam.copy(cam); cssCam.position.multiplyScalar(F); cssCam.near=cam.near*F; cssCam.far=cam.far*F; cssCam.updateProjectionMatrix(); cssCam.updateMatrixWorld(); css.render(cssScene, cssCam);
   const s = tmp.setFromVector3(cam.position.clone().sub(ctl.target));
