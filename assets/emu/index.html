@@ -113,7 +113,7 @@ body.one #scr{box-shadow:none;border-radius:0}body.one #hint{display:none}
 .cc .n1{position:absolute;left:20px;top:405px;font-size:29px}
 .cc .n2{position:absolute;left:20px;top:446px;font-size:25px;color:#a9a9a9}
 .cc .cl{position:absolute;right:20px;top:420px}
-.dt{position:absolute;left:24px;top:22px;height:76px;padding:0 28px 0 8px;border-radius:38px;background:rgba(40,40,40,.62);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);display:flex;align-items:center;gap:14px;font-size:30px}
+.dt{position:absolute;left:24px;top:22px;height:76px;padding:0 28px 0 8px;border-radius:38px;background:rgba(40,40,40,.86);display:flex;align-items:center;gap:14px;font-size:30px}
 .dt .bn{width:60px;height:60px;border-radius:50%;background:#fff;color:#111;display:flex;align-items:center;justify-content:center;transition:background .3s,color .3s}
 .dt.on .bn{background:var(--mint)}
 
@@ -445,7 +445,7 @@ body.one #scr{box-shadow:none;border-radius:0}body.one #hint{display:none}
 #alm.toarm .kp{top:58px}
 #alm.toarm .k{background:rgba(255,255,255,.2)}
 /* corner settings button */
-#cog{position:absolute;left:1214px;top:20px;width:48px;height:48px;border-radius:50%;background:rgba(70,70,70,.72);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);z-index:8;display:flex;align-items:center;justify-content:center;color:#fff;transition:opacity .3s,background .3s}
+#cog{position:absolute;left:1214px;top:20px;width:48px;height:48px;border-radius:50%;background:rgba(62,62,62,.92);z-index:8;display:flex;align-items:center;justify-content:center;color:#fff;transition:opacity .3s,background .3s}
 #cog span{position:absolute;display:flex;transition:opacity .25s,transform .35s var(--ease)}
 #cog .x{opacity:0;transform:rotate(-90deg)}
 #dk.cm #cog .g,#dk.sh #cog .g,#dk.ed #cog .g{opacity:0;transform:rotate(90deg)}
@@ -455,9 +455,9 @@ body.one #scr{box-shadow:none;border-radius:0}body.one #hint{display:none}
 #dk[data-tab]:not([data-tab=home]) #cog{opacity:0;pointer-events:none}
 #dk.sh #cog{opacity:0;pointer-events:none}
 /* blurred home behind the menus */
-#hm,#nvD{transition:filter .4s,opacity .4s}
-#dk.cm #hm,#dk.sh #hm{filter:blur(22px) brightness(.7);opacity:.85}
-#dk.cm #nvD,#dk.sh #nvD{filter:blur(16px);opacity:.4}
+#hm,#nvD{transition:opacity .4s}
+#dk.cm #hm,#dk.sh #hm{opacity:.28}
+#dk.cm #nvD,#dk.sh #nvD{opacity:.2}
 #cmn,#shd{position:absolute;inset:0;z-index:7;pointer-events:none}
 #cmn .cmd,#shd .cmd{position:absolute;inset:0}
 #dk.cm #cmn,#dk.sh #shd{pointer-events:auto}
