@@ -8,12 +8,14 @@ html,body{margin:0;height:100%;background:#000;overflow:hidden;overscroll-behavi
 #gl{position:absolute;inset:0;width:100%;height:100%;touch-action:none;cursor:grab;outline:none}
 #gl:active{cursor:grabbing}
 #css{position:absolute;inset:0;pointer-events:none}
-#vig{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 72% 70% at 50% 50%,rgba(0,0,0,0) 45%,rgba(0,0,0,.55) 78%,rgba(0,0,0,.92) 100%)}
+#vig{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 80% 78% at 50% 50%,rgba(0,0,0,0) 55%,rgba(0,0,0,.28) 85%,rgba(0,0,0,.5) 100%)}
+#hint{display:none!important}
+#dim{position:absolute;inset:0;pointer-events:none;opacity:0}
 #css>div,#css>div>div{pointer-events:none}
 #scr{pointer-events:auto}
 #glare{position:absolute;inset:0;pointer-events:none;z-index:200;mix-blend-mode:screen;opacity:.0;transition:opacity .4s}
-body.modes #mode,body.modes #hint,body.modes #front{opacity:0!important;pointer-events:none!important}
-#mode{transition:opacity .4s;position:fixed;left:50%;top:196px;transform:translateX(-50%);display:flex;padding:4px;border-radius:22px;background:rgba(28,28,28,.92);box-shadow:0 8px 30px rgba(0,0,0,.45),inset 0 0 0 1px rgba(255,255,255,.06);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);z-index:5}
+body:not(.modes) #mode{opacity:0!important;pointer-events:none!important}
+#mode{transition:opacity .4s;position:fixed;left:50%;top:196px;transform:translate(-50%,0);display:flex;padding:4px;border-radius:22px;background:rgba(28,28,28,.92);box-shadow:0 8px 30px rgba(0,0,0,.45),inset 0 0 0 1px rgba(255,255,255,.06);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);z-index:5}
 #mode .ind{position:absolute;top:4px;bottom:4px;left:4px;width:calc(50% - 4px);border-radius:18px;background:rgba(5,229,175,.16);transition:transform .45s cubic-bezier(.22,.8,.24,1)}
 #mode[data-m=table] .ind{transform:translateX(100%)}
 #mode button{position:relative;flex:1;display:flex;align-items:center;justify-content:center;gap:7px;height:34px;padding:0 16px;min-width:146px;border:0;background:none;color:rgba(255,255,255,.72);font:500 14px -apple-system,system-ui,sans-serif;cursor:pointer;transition:color .3s;white-space:nowrap}
@@ -408,10 +410,10 @@ body.one #scr{box-shadow:none;border-radius:0}body.one #hint{display:none}
 </style>
 <script type="importmap">{"imports":{"three":"../tour/three.bundle.js"}}</script>
 </head><body>
-<div id="stage"><canvas id="gl"></canvas><div id="vig"></div><div id="css"></div></div>
+<div id="stage"><canvas id="gl"></canvas><div id="vig"></div><div id="dim"></div><div id="css"></div></div>
 <div id="mode" data-m="wall"><i class="ind"></i><button data-m="wall" class="on"><svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2.5" y="3" width="11" height="8" rx="1.5"/><path d="M1 1v14"/></svg>Wall mounted</button><button data-m="table"><svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M4 2.5h8l1.5 8h-11z"/><path d="M8 10.5V14M4.5 14h7"/></svg>Tabletop</button></div>
 <div id="hint"><span><i></i>Tap the screen to use it</span><span><i></i>Drag around it to turn it</span></div>
-<button id="front"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#05E5AF" stroke-width="2" stroke-linecap="round"><path d="M2.5 8a5.5 5.5 0 1 0 1.7-4"/><path d="M2 2v3.3h3.3"/></svg>Face front</button>
+<button id="front" title="Reset view"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#05E5AF" stroke-width="2" stroke-linecap="round"><path d="M2.5 8a5.5 5.5 0 1 0 1.7-4"/><path d="M2 2v3.3h3.3"/></svg>Reset view</button>
 <div id="load"><i></i></div>
 <div id="scrHost"><div id="scr"></div></div>
 <script>/* hand-drawn icon set matching the Smart Hub UI */
@@ -955,19 +957,18 @@ function flat(one){ document.body.classList.add('flat'); if(one) document.body.c
 if(renderer){
 renderer.setPixelRatio(Math.min(devicePixelRatio, 2)); renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 renderer.outputColorSpace = THREE.SRGBColorSpace;
-renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.05;
+renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.0;
 const scene = new THREE.Scene();
 const pm = new THREE.PMREMGenerator(renderer);
 scene.environment = pm.fromScene(new RoomEnvironment(), .04).texture;
-scene.environmentIntensity = .9;
+scene.environmentIntensity = .75;
 const cam = new THREE.PerspectiveCamera(28, 1, .01, 10);
-scene.background = new THREE.Color(0x020203);
-/* studio lighting: a raking key from the upper right (it is what sculpts the foam pyramids), a soft fill from the left */
-const key = new THREE.DirectionalLight(0xfff4ea, 1.15); key.position.set(1.1, .9, 1.5); scene.add(key, key.target);
-key.castShadow = true; key.shadow.mapSize.set(2048,2048); Object.assign(key.shadow.camera, {left:-.7,right:.7,top:.7,bottom:-.7,near:.5,far:4}); key.shadow.bias = -.0004; key.shadow.normalBias = .002; key.shadow.radius = 6;
-const fill = new THREE.DirectionalLight(0xdfe8ff, .18); fill.position.set(-1.2, .3, 1.2); scene.add(fill);
-scene.add(new THREE.HemisphereLight(0xffffff, 0x2a2018, .08));
-
+scene.background = new THREE.Color(0x2a2520);
+/* living-room light: soft window key from the upper left (casts the Hub's shadow on the wall), cool fill from the right, warm bounce */
+const key = new THREE.DirectionalLight(0xfff0dc, 1.7); key.position.set(-1.3, 1.5, 1.7); scene.add(key, key.target);
+key.castShadow = true; key.shadow.mapSize.set(2048,2048); Object.assign(key.shadow.camera, {left:-1.1,right:1.1,top:1,bottom:-1.6,near:.5,far:5}); key.shadow.bias = -.0004; key.shadow.normalBias = .003; key.shadow.radius = 7;
+const fill = new THREE.DirectionalLight(0xdfe9ff, .35); fill.position.set(1.6, .3, 1.2); scene.add(fill);
+scene.add(new THREE.HemisphereLight(0xfff3e2, 0x6b5a48, .6));
 /* ---- the Smart Hub Pro 2, from the engineering STEP (exterior shell) ---- */
 const hub = new THREE.Group(); scene.add(hub);
 const tl = new THREE.TextureLoader();
@@ -1006,27 +1007,64 @@ const buf = await (await fetch('hubmdl.jpg')).arrayBuffer();
 const HB = new THREE.Box3().setFromObject(hub);
 const ledM = new THREE.MeshBasicMaterial({ color:0x05E5AF, toneMapped:false, side:THREE.DoubleSide });
 const ledBar = new THREE.Mesh(LEDG || new THREE.BoxGeometry(.044,.002,.004), ledM); if(!LEDG) ledBar.position.set(0, HB.min.y, .012); hub.add(ledBar);
-const down = new THREE.SpotLight(0x05E5AF, 1.1, 1.6, .7, 1, 1.5); down.position.set(0, HB.min.y-.003, .011);
+const down = new THREE.SpotLight(0x05E5AF, 2.4, 1.0, .62, .85, 1.6); down.position.set(0, HB.min.y-.003, .011);
 down.target.position.set(0, HB.min.y-.8, .02); hub.add(down, down.target);
-const near = new THREE.PointLight(0x05E5AF, .045, .22, 1.5); near.position.set(0, HB.min.y-.012, .006); hub.add(near);
+const near = new THREE.PointLight(0x05E5AF, .06, .18, 1.5); near.position.set(0, HB.min.y-.012, .006); hub.add(near);
 let ledPulse = false, ledOn = true; const LEDC = new THREE.Color(0x05E5AF);
 addEventListener('hubled', e => { const d = e.detail; LEDC.set(d.c); ledM.color.copy(LEDC); down.color.copy(LEDC); near.color.copy(LEDC); ledOn = d.on; ledPulse = d.pulse;
   ledBar.visible = down.visible = near.visible = ledOn; if(!ledOn) {} dirty = 2; });
 setTimeout(()=>UI.led(),0);
 
-/* ---- a small acoustic booth; the Hub hangs on its back wall (or sits on a pedestal in front of it) ---- */
-const WZ = -.19, PZ = WZ + .27;                                              // foam tips plane; pedestal centre
-const ROOM = { x:.68, y0:-.72, y1:.6, z:.95, zb:WZ-.034 };
-/* the Hub lives in a rig whose origin is its bottom-back edge (the tabletop stand's hinge) */
+/* ---- living room: cream plaster wall near an outside corner, the dining room blurred around it, a console table below ---- */
+const CX = .165, Y0 = -1.4, TT = -.55, TILT = THREE.MathUtils.degToRad(30);
 const rig = new THREE.Group(); scene.add(rig); scene.remove(hub); rig.add(hub); hub.position.set(0, -HB.min.y, -HB.min.z);
-const TILT = THREE.MathUtils.degToRad(30), TT = -.072;                      // lean on the stand (from Vivint's side render); table-top height
-const tableG = new THREE.Group(); scene.add(tableG); tableG.position.z = PZ;
-{ const black = new THREE.MeshStandardMaterial({ color:0x0b0b0c, roughness:.85, metalness:0, envMapIntensity:.22 });
-  const H = TT-ROOM.y0, R = .23;
-  const body = new THREE.Mesh(new THREE.CylinderGeometry(R, R, H-.02, 96, 1), black); body.position.y = ROOM.y0 + (H-.02)/2;
-  const top = new THREE.Mesh(new THREE.CylinderGeometry(R, R, .02, 96, 1), black); top.position.y = TT-.01;
-  const lip = new THREE.Mesh(new THREE.TorusGeometry(R-.002, .004, 12, 96), black); lip.rotation.x = Math.PI/2; lip.position.y = TT-.004;
-  for(const m of [body, top, lip]){ m.castShadow = m.receiveShadow = true; tableG.add(m); } }
+const HUBC = new THREE.Vector3((HB.min.x+HB.max.x)/2, (HB.min.y+HB.max.y)/2 - HB.min.y, (HB.min.z+HB.max.z)/2 - HB.min.z);  // hub centre in rig space
+{ /* plaster: a few octaves of value noise for a hand-troweled finish */
+  const N = 512, c = document.createElement('canvas'); c.width = c.height = N; const x = c.getContext('2d'), im = x.createImageData(N,N);
+  const R = (i,j,s) => { const h = Math.sin(i*127.1 + j*311.7 + s*74.7)*43758.5453; return h - Math.floor(h); };
+  const vn = (u,v,f,s) => { const X = u*f, Y = v*f, i = Math.floor(X), j = Math.floor(Y), fx = X-i, fy = Y-j, sx = fx*fx*(3-2*fx), sy = fy*fy*(3-2*fy), w = k => ((k%f)+f)%f;
+    const a = R(w(i),w(j),s), b = R(w(i+1),w(j),s), c2 = R(w(i),w(j+1),s), d = R(w(i+1),w(j+1),s); return a + (b-a)*sx + (c2-a)*sy + (a-b-c2+d)*sx*sy; };
+  for(let y=0;y<N;y++) for(let q=0;q<N;q++){ const u=q/N, v=y/N; const n = .45*vn(u,v,4,1)+.27*vn(u,v,9,2)+.16*vn(u,v,23,3)+.12*vn(u,v,71,4); const g = Math.max(0,Math.min(255, 128 + (n-.5)*170 + (Math.random()-.5)*16)); const o=(y*N+q)*4; im.data[o]=im.data[o+1]=im.data[o+2]=g; im.data[o+3]=255; }
+  x.putImageData(im,0,0);
+  const c2 = document.createElement('canvas'); c2.width = c2.height = N; const x2 = c2.getContext('2d'), im2 = x2.createImageData(N,N);
+  for(let o=0;o<im.data.length;o+=4){ const g = 236 + (im.data[o]-128)*.16; im2.data[o]=g; im2.data[o+1]=g-3; im2.data[o+2]=g-8; im2.data[o+3]=255; } x2.putImageData(im2,0,0);
+  const bump = new THREE.CanvasTexture(c); bump.wrapS = bump.wrapT = THREE.RepeatWrapping; bump.repeat.set(3,3);
+  const mott = new THREE.CanvasTexture(c2); mott.wrapS = mott.wrapT = THREE.RepeatWrapping; mott.repeat.set(1.2,1.2); mott.colorSpace = THREE.SRGBColorSpace;
+  const wallM = new THREE.MeshStandardMaterial({ color:0xf1e8d8, map:mott, bumpMap:bump, bumpScale:1.6, roughness:.93, envMapIntensity:.35 });
+  // the shade map pulls the mottling toward cream (a grey map would grey the wall): tint via onBeforeCompile-free trick — blend in the colour
+  wallM.color.setHex(0xf3e9d7); mott.offset.set(.13,.27);
+  const wall = new THREE.Mesh(new THREE.PlaneGeometry(3.2, 3.2), wallM); wall.position.set(CX-1.6, Y0+1.6, 0); wall.receiveShadow = true; scene.add(wall);
+  const ret = new THREE.Mesh(new THREE.PlaneGeometry(1.8, 3.2), wallM); ret.rotation.y = Math.PI/2; ret.position.set(CX, Y0+1.6, -.9); ret.receiveShadow = true; scene.add(ret);
+  const bead = new THREE.Mesh(new THREE.CylinderGeometry(.0045,.0045,3.2,16), wallM); bead.position.set(CX-.0045, Y0+1.6, -.0045); scene.add(bead);
+  const paint = new THREE.MeshStandardMaterial({ color:0xf6f3ec, roughness:.45 });
+  const base1 = new THREE.Mesh(new THREE.BoxGeometry(3.2,.095,.014), paint); base1.position.set(CX-1.6, Y0+.0475, .007); scene.add(base1);
+  /* the dining room around the corner, out of focus */
+  const dt = tl.load('img/dining.webp'); dt.colorSpace = THREE.SRGBColorSpace;
+  const din = new THREE.Mesh(new THREE.PlaneGeometry(3.0, 2.9), new THREE.MeshBasicMaterial({ map:dt, color:0xe2dcd2 })); din.position.set(CX+1.1, Y0+1.35, -2.4); scene.add(din);
+  const glowL = new THREE.PointLight(0xfff1dc, .6, 3, 1.5); glowL.position.set(CX+.6, .4, -1.2); scene.add(glowL);
+  /* oak floor */
+  const wc = document.createElement('canvas'); wc.width = 1024; wc.height = 1024; const w = wc.getContext('2d');
+  for(let r=0;r<8;r++){ const y = r*128, base = 168 + (r*37%5)*9; let xx = -((r*389)%640);
+    while(xx < 1024){ const L = 420 + ((xx*7+r*131)%260); const tone = base + ((xx+r*53)%23) - 11;
+      w.fillStyle = `rgb(${tone},${tone*.8|0},${tone*.58|0})`; w.fillRect(xx,y,L,128);
+      for(let g=0; g<26; g++){ const gy = y + 4 + Math.random()*120; w.strokeStyle = `rgba(90,55,25,${.05+Math.random()*.08})`; w.lineWidth = .6+Math.random()*1.6; w.beginPath(); w.moveTo(xx,gy); w.bezierCurveTo(xx+L*.3,gy+Math.random()*6-3,xx+L*.7,gy+Math.random()*6-3,xx+L,gy+Math.random()*4-2); w.stroke(); }
+      w.fillStyle = 'rgba(40,25,10,.5)'; w.fillRect(xx,y,2,128); xx += L; }
+    w.fillStyle = 'rgba(40,25,10,.55)'; w.fillRect(0,y,1024,2); }
+  const wt = new THREE.CanvasTexture(wc); wt.colorSpace = THREE.SRGBColorSpace; wt.wrapS = wt.wrapT = THREE.RepeatWrapping; wt.repeat.set(3,2.4); wt.anisotropy = 8;
+  const floor = new THREE.Mesh(new THREE.PlaneGeometry(6, 5), new THREE.MeshStandardMaterial({ map:wt, roughness:.55, envMapIntensity:.3 })); floor.rotation.x = -Math.PI/2; floor.position.set(0, Y0, 0); floor.receiveShadow = true; scene.add(floor);
+  /* console table: oak top and shelf on slim matte-black legs */
+  const oakT = wt.clone(); oakT.repeat.set(1.4,.5); oakT.needsUpdate = true;
+  const oak = new THREE.MeshStandardMaterial({ map:oakT, color:0xd9c3a3, roughness:.5, envMapIntensity:.4 });
+  const blk = new THREE.MeshStandardMaterial({ color:0x111112, roughness:.6, metalness:.3 });
+  const box = (w,h,d,m,x,y,z) => { const g = new THREE.Mesh(new THREE.BoxGeometry(w,h,d), m); g.position.set(x,y,z); g.castShadow = g.receiveShadow = true; scene.add(g); return g; };
+  const L0 = -.86, L1 = .15, Dp = .34, cxm = (L0+L1)/2;
+  box(L1-L0, .032, Dp, oak, cxm, TT-.016, Dp/2+.004);
+  box(L1-L0-.04, .02, Dp-.05, oak, cxm, Y0+.2, Dp/2+.004);
+  for(const lx of [L0+.016, L1-.016]) for(const lz of [.02, Dp-.012]) box(.022, TT-.032-Y0, .022, blk, lx, (TT-.032+Y0)/2, lz);
+  /* terracotta vase */
+  const pts = [[0,0],[.035,0],[.05,.03],[.055,.08],[.045,.13],[.022,.16],[.02,.19],[.028,.2]].map(([r,y])=>new THREE.Vector2(r,y));
+  const vase = new THREE.Mesh(new THREE.LatheGeometry(pts, 48), new THREE.MeshStandardMaterial({ color:0xc0603a, roughness:.85 })); vase.position.set(-.6, TT, .16); vase.castShadow = true; scene.add(vase);
+}
 const stand = new THREE.Group(); rig.add(stand);
 { /* Smart Hub Pro 2 tabletop stand: a fabric-wrapped wedge on a thin white base; the panel leans back 30° against its front face */
   const ex = (shape, w, bv) => { const g = new THREE.ExtrudeGeometry(shape, { depth:w, bevelEnabled:true, bevelThickness:bv, bevelSize:bv, bevelSegments:6, curveSegments:16 }); g.translate(0,0,-w/2); g.rotateY(-Math.PI/2); return g; };
@@ -1040,57 +1078,22 @@ const stand = new THREE.Group(); rig.add(stand);
   const plate = new THREE.MeshStandardMaterial({ color:0xeeeeec, roughness:.5 });
   const wm = new THREE.Mesh(ex(w,.158,.004), fabric), bm = new THREE.Mesh(ex(b,.158,.0015), plate);
   for(const m of [wm,bm]){ m.castShadow = m.receiveShadow = true; stand.add(m); }
-  // usb-c port on the back of the base
   const port = new THREE.Mesh(new THREE.BoxGeometry(.012,.006,.003), new THREE.MeshStandardMaterial({ color:0xdedede, roughness:.35, metalness:.6 })); port.position.set(.05,.012,-.1); stand.add(port);
-  stand.rotation.x = TILT; }                                                 // counter the rig's lean so the stand sits flat on the table
-const MODE = { cur:'wall', t:0, from:0, to:0, t0:0 }, FR = { p:1, x:0 };     // FR.p: 0 = Fast Pitch's Modes section, 1 = Emulator section
-const TGT_W = new THREE.Vector3(0, 0, WZ+.012), TGT_T = new THREE.Vector3(0, .005, PZ+.015), TGT = new THREE.Vector3();
-let lastTgt = null;
-function applyMode(k){                                                       // k: 0 = on the wall, 1 = tabletop
-  const e = k<.5 ? 4*k*k*k : 1-Math.pow(-2*k+2,3)/2;
-  rig.rotation.x = -TILT*e;
-  const yWall = -(HB.max.y-HB.min.y)/2, yTable = TT+.0035;
-  rig.position.set(FR.x, yWall + (yTable-yWall)*e, (WZ+.001) + (PZ+.045-(WZ+.001))*e);
-  tableG.position.y = -.8*(1-e); tableG.visible = e > .001;
-  stand.visible = e > .02; stand.scale.setScalar(Math.max(.001, Math.min(1, (e-.35)/.65)));
-  TGT.lerpVectors(TGT_W, TGT_T, e);
-  if(typeof ctl !== 'undefined'){ if(lastTgt){ const d = TGT.clone().sub(lastTgt); cam.position.add(d); } ctl.target.copy(TGT); lastTgt = TGT.clone(); }
+  stand.rotation.x = TILT; }
+/* wall ↔ tabletop: the Hub lifts off the wall, glides down to the console and settles back onto its stand */
+const MODE = { cur:'wall', t:0, from:0, to:0, t0:0 }, FR = { p:0, q:0, qt:0, gx:96, sx:100, s2:.925, follow:true };
+const sstep = (a,b,x) => { const t = Math.max(0, Math.min(1, (x-a)/(b-a))); return t*t*(3-2*t); };
+const C = new THREE.Vector3();
+function applyMode(k){
+  const yWall = -(HB.max.y-HB.min.y)/2, yTable = TT+.0035, zT = .16;
+  rig.position.set(0, yWall + (yTable-yWall)*sstep(.18,.9,k), .001 + (zT-.001)*sstep(0,1,k) + .1*Math.sin(Math.PI*k));
+  rig.rotation.x = -TILT*sstep(.5,1,k);
+  stand.visible = k > .6; stand.scale.setScalar(Math.max(.001, sstep(.6,1,k)));
+  rig.updateMatrixWorld(true); C.copy(HUBC); rig.localToWorld(C);
   dirty = 2; }
-function setMode(m){ if(m===MODE.cur) return; MODE.cur = m; MODE.from = MODE.t; MODE.to = m==='table'?1:0; MODE.t0 = performance.now();
+function setMode(m){ if(m===MODE.cur) return; MODE.cur = m; MODE.from = MODE.t; MODE.to = m==='table'?1:0; MODE.t0 = performance.now(); FR.follow = true;
   document.querySelectorAll('#mode button').forEach(b=>b.classList.toggle('on', b.dataset.m===m)); document.getElementById('mode').dataset.m = m; }
 document.querySelectorAll('#mode button').forEach(b=>b.addEventListener('click', ()=>setMode(b.dataset.m)));
-
-/* ---- the room: an acoustic booth lined with pyramid foam, oak floor ---- */
-const CELL = .052, PH = .034, GAP = .003;
-{ const noise = document.createElement('canvas'); noise.width = noise.height = 128; const nx = noise.getContext('2d'), im = nx.createImageData(128,128);
-  for(let i=0;i<im.data.length;i+=4){ const v = 110 + Math.random()*120; im.data[i]=im.data[i+1]=im.data[i+2]=v; im.data[i+3]=255; } nx.putImageData(im,0,0);
-  const nt = new THREE.CanvasTexture(noise); nt.wrapS = nt.wrapT = THREE.RepeatWrapping; nt.repeat.set(3,3);
-  const foam = new THREE.MeshStandardMaterial({ color:0x161719, roughness:1, metalness:0, flatShading:true, bumpMap:nt, bumpScale:.5, envMapIntensity:.15 });
-  const pyr = new THREE.ConeGeometry(CELL/Math.SQRT2*.995, PH, 4, 1, true); pyr.rotateY(Math.PI/4); pyr.rotateX(Math.PI/2); pyr.translate(0,0,PH/2);  // base on z=0, tip toward +z
-  const m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), sc = new THREE.Vector3(1,1,1), p3 = new THREE.Vector3();
-  const grid = (a0,a1) => { const L=[]; for(let i=0, a=a0+CELL/2; a<a1; i++){ L.push(a); a += CELL + ((i%4)===3?GAP:0); } return L; };
-  function wall(us, vs, place, rot){ const mesh = new THREE.InstancedMesh(pyr, foam, us.length*vs.length); let n = 0; q.setFromEuler(rot);
-    for(const u of us) for(const v of vs){ place(u,v,p3); m4.compose(p3,q,sc); mesh.setMatrixAt(n++, m4); } mesh.instanceMatrix.needsUpdate = true; mesh.receiveShadow = true; scene.add(mesh); return mesh; }
-  const back = ROOM.zb;
-  wall(grid(-ROOM.x,ROOM.x), grid(ROOM.y0,ROOM.y1), (u,v,p)=>p.set(u,v,back), new THREE.Euler(0,0,0));                              // wall behind the Hub
-  wall(grid(back,ROOM.z), grid(ROOM.y0,ROOM.y1), (u,v,p)=>p.set(-ROOM.x,v,u), new THREE.Euler(0,Math.PI/2,0));                    // left wall
-  wall(grid(back,ROOM.z), grid(ROOM.y0,ROOM.y1), (u,v,p)=>p.set(ROOM.x,v,u), new THREE.Euler(0,-Math.PI/2,0));                   // right wall
-  wall(grid(-ROOM.x,ROOM.x), grid(back,ROOM.z), (u,v,p)=>p.set(u,ROOM.y1,v), new THREE.Euler(Math.PI/2,0,0));                    // ceiling
-  const backing = new THREE.MeshStandardMaterial({ color:0x111113, roughness:1 });
-  const pl = (w,h,x,y,z,ry,rx) => { const m = new THREE.Mesh(new THREE.PlaneGeometry(w,h), backing); m.position.set(x,y,z); m.rotation.set(rx||0,ry||0,0); scene.add(m); };
-  const D2 = ROOM.z-ROOM.zb, ZC = (ROOM.z+ROOM.zb)/2; pl(2*ROOM.x+.2, ROOM.y1-ROOM.y0+.2, 0, 0, back-.001); pl(D2+.2, 2.8, -ROOM.x-.001, 0, ZC, Math.PI/2); pl(D2+.2, 2.8, ROOM.x+.001, 0, ZC, -Math.PI/2); pl(3.2, D2+.2, 0, ROOM.y1+.001, ZC, 0, Math.PI/2);
-  /* oak floor */
-  const wc = document.createElement('canvas'); wc.width = 1024; wc.height = 1024; const w = wc.getContext('2d');
-  for(let r=0;r<8;r++){ const y = r*128, base = 168 + (r*37%5)*9; let x = -((r*389)%640);
-    while(x < 1024){ const L = 420 + ((x*7+r*131)%260); const tone = base + ((x+r*53)%23) - 11;
-      w.fillStyle = `rgb(${tone},${tone*.78|0},${tone*.55|0})`; w.fillRect(x,y,L,128);
-      for(let g=0; g<26; g++){ const gy = y + 4 + Math.random()*120; w.strokeStyle = `rgba(90,55,25,${.05+Math.random()*.08})`; w.lineWidth = .6+Math.random()*1.6; w.beginPath(); w.moveTo(x,gy); w.bezierCurveTo(x+L*.3,gy+Math.random()*6-3,x+L*.7,gy+Math.random()*6-3,x+L,gy+Math.random()*4-2); w.stroke(); }
-      w.fillStyle = 'rgba(40,25,10,.55)'; w.fillRect(x,y,2,128); x += L; }
-    w.fillStyle = 'rgba(40,25,10,.6)'; w.fillRect(0,y,1024,2); }
-  const wt = new THREE.CanvasTexture(wc); wt.colorSpace = THREE.SRGBColorSpace; wt.wrapS = wt.wrapT = THREE.RepeatWrapping; wt.repeat.set(2.2,1.6); wt.anisotropy = 8;
-  const floor = new THREE.Mesh(new THREE.PlaneGeometry(2*ROOM.x, ROOM.z-ROOM.zb), new THREE.MeshStandardMaterial({ map:wt, color:0x8a8178, roughness:.55, envMapIntensity:.2 }));
-  floor.rotation.x = -Math.PI/2; floor.position.set(0, ROOM.y0, (ROOM.z+ROOM.zb)/2); floor.receiveShadow = true; scene.add(floor);
-}
 
 /* ---- live UI on the glass ---- */
 const css = new CSS3DRenderer({ element: document.getElementById('css') });
@@ -1102,31 +1105,27 @@ const FM = new THREE.Matrix4().makeScale(F,F,F), SCm = new THREE.Matrix4().compo
 function syncCSS(){ rig.updateMatrixWorld(true); obj.matrix.copy(FM).multiply(hub.matrixWorld).multiply(SCm); obj.matrixWorldNeedsUpdate = true; }
 
 const ctl = new OrbitControls(cam, renderer.domElement);
-ctl.enablePan = false; ctl.enableDamping = true; ctl.dampingFactor = .08; ctl.rotateSpeed = .75; ctl.zoomSpeed = .8;
-ctl.minDistance = .2; ctl.maxDistance = .75; ctl.target.copy(TGT_W);
-ctl.minPolarAngle = .78; ctl.maxPolarAngle = 2.0; ctl.minAzimuthAngle = -.95; ctl.maxAzimuthAngle = .95;   // stay inside the booth, in front of the wall
-const BASE = new THREE.Spherical();
-function fit(){
-  const w = innerWidth, h = innerHeight; renderer.setSize(w, h, false); css.setSize(w, h); cam.aspect = w/h;
-  const vh = 2*Math.tan(THREE.MathUtils.degToRad(cam.fov/2));                     // view height at 1 m
-  const d = Math.max(.178/(vh*.66), .238/(vh*cam.aspect*.66));                       // hub fills ~2/3 of the frame, foam around it
-  BASE.set(d, THREE.MathUtils.degToRad(86), 0); cam.updateProjectionMatrix(); return d; }
-let D = fit();
-cam.position.setFromSpherical(new THREE.Spherical(.72, THREE.MathUtils.degToRad(80), THREE.MathUtils.degToRad(-50))).add(ctl.target);
-addEventListener('resize', () => { D = fit(); dirty = 3; });
+ctl.enablePan = false; ctl.enableDamping = true; ctl.dampingFactor = .08; ctl.rotateSpeed = .7; ctl.zoomSpeed = .8;
+ctl.minDistance = .15; ctl.maxDistance = 1.3; ctl.minPolarAngle = .5; ctl.maxPolarAngle = 2.2;
+function fit(){ const w = innerWidth, h = innerHeight; renderer.setSize(w, h, false); css.setSize(w, h); cam.aspect = w/h; cam.updateProjectionMatrix(); }
+fit(); addEventListener('resize', () => { fit(); dirty = 3; });
 
-/* intro: settle to the front */
-let tw = null;
-function toFront(ms=1100){ const s0 = new THREE.Spherical().setFromVector3(cam.position.clone().sub(ctl.target)); let th = s0.theta; th = Math.atan2(Math.sin(th), Math.cos(th));
-  tw = { t0:performance.now(), ms, a:{r:s0.radius, p:s0.phi, t:th}, b:{r:BASE.radius*(typeof frZoom==='number'?frZoom:1), p:BASE.phi, t:0} }; }
-setTimeout(()=>toFront(2400), 600);
-const ease = t => 1 - Math.pow(1-t, 3.2);
-ctl.addEventListener('start', () => { tw = null; hint(); });
-const fb = document.getElementById('front'); fb.onclick = () => toFront(900);
-
-/* hint fades once someone engages */
-let hinted = false; function hint(){ if(hinted) return; hinted = true; document.getElementById('hint').style.opacity = 0; }
-scr.addEventListener('pointerdown', hint);
+/* ---- framing: where the Hub sits on screen in Fast Pitch's Modes, Hardware and Specs views (pixel targets in this frame) ---- */
+const lerp = (a,b,t) => a + (b-a)*t, lp = (A,B,t) => ({ cx:lerp(A.cx,B.cx,t), cy:lerp(A.cy,B.cy,t), w:lerp(A.w,B.w,t), th:lerp(A.th,B.th,t), ph:lerp(A.ph,B.ph,t) });
+function presets(){ const Wi = innerWidth, Hi = innerHeight, tab = MODE.cur==='table', P = FR.pre || { modes:{a0:120, a1:Wi-222, top:150, bot:Hi-60}, hw:{cx:Wi/2, cy:Hi*.48, w:702}, sp:{cx:Wi*.3, cy:Hi*.45, w:480} };
+  const m = P.modes, w = Math.min((m.a1-m.a0)*.94, 1.44*(m.bot-m.top-80));
+  return { modes:{ cx:(m.a0+m.a1)/2, cy:(m.top+70+m.bot)/2, w, th:0, ph:Math.PI/2 },
+           hw:{ cx:P.hw.cx, cy:P.hw.cy, w:P.hw.w, th:0, ph:Math.PI/2 },
+           sp:{ cx:P.sp.cx, cy:P.sp.cy, w:P.sp.w, th:-.72, ph:tab ? 1.12 : 2.0 } }; }
+const P0 = new THREE.Vector3(), Pt = new THREE.Vector3(), dirV = new THREE.Vector3(), rgt = new THREE.Vector3(), upv = new THREE.Vector3(), Y = new THREE.Vector3(0,1,0);
+function want(){ const P = presets(), v = lp(P.modes, lp(P.hw, P.sp, FR.qt), FR.p);
+  const f = (innerHeight/2)/Math.tan(THREE.MathUtils.degToRad(cam.fov/2)), d = (HB.max.x-HB.min.x)*f/v.w;
+  dirV.setFromSphericalCoords(1, v.ph, v.th); rgt.crossVectors(dirV.clone().negate(), Y).normalize(); upv.crossVectors(rgt, dirV.clone().negate());
+  const s = rgt.clone().multiplyScalar(-(v.cx - innerWidth/2)*d/f).add(upv.clone().multiplyScalar(-(innerHeight/2 - v.cy)*d/f));
+  Pt.copy(C).add(s); P0.copy(C).addScaledVector(dirV, d).add(s); return v; }
+let snap = true;
+ctl.addEventListener('start', () => { FR.follow = false; });
+const fb = document.getElementById('front'); fb.onclick = () => { FR.follow = true; };
 
 /* precise pointer → screen px (for sliders, drag-scroll, edge swipes) */
 const rc = new THREE.Raycaster(), pl = new THREE.Plane(), v2 = new THREE.Vector2(), hit = new THREE.Vector3(), inv = new THREE.Matrix4();
@@ -1139,30 +1138,30 @@ UI.loc = e => { v2.set(e.clientX/innerWidth*2-1, -(e.clientY/innerHeight)*2+1); 
 addEventListener('wheel', e => { e.stopImmediatePropagation(); e.preventDefault(); try{ parent.postMessage({ fpEmu:'wheel', dy:e.deltaY }, '*'); }catch(_){} }, { capture:true, passive:false });
 
 let dirty = 3, run = true;
-let frZoom = 1;
-function setFrame(p){ const wasModes = FR.p < .5; FR.p = p; const vw = 2*BASE.radius*1.18*Math.tan(THREE.MathUtils.degToRad(cam.fov/2))*cam.aspect;
-  FR.x = -(1-p)*.12*vw; applyMode(MODE.t); const nowModes = p < .5;
-  document.body.classList.toggle('modes', nowModes);
-  if(nowModes !== wasModes){ frZoom = nowModes ? 1.18 : 1; toFront(1100); } }
-addEventListener('message', e => { const d = e.data||{}; if(d.fpEmu==='frame') setFrame(+d.p); if(d.fpEmu==='mode') UI.demo(+d.m); if(d.fpEmu==='vis'){ run = !!d.on; if(run){ dirty=2; loop(); } } if(d.fpEmu==='front') toFront(700); });
-const tmp = new THREE.Spherical();
+const modeEl = document.getElementById('mode'), dimEl = document.getElementById('dim');
+function setFrame(d){ if(d.p!=null) FR.p = +d.p; if(d.q!=null) FR.q = +d.q; if(d.pre) FR.pre = d.pre; FR.follow = true; document.body.classList.toggle('modes', FR.p < .35); dirty = 2; }
+addEventListener('message', e => { const d = e.data||{}; if(d.fpEmu==='frame') setFrame(d); if(d.fpEmu==='mode') UI.demo(+d.m); if(d.fpEmu==='vis'){ run = !!d.on; if(run){ dirty=2; loop(); } } });
 function loop(){
   if(!run) return; requestAnimationFrame(loop);
-  if(tw){ const k = Math.min(1, (performance.now()-tw.t0)/tw.ms), e = ease(k); tmp.set(tw.a.r+(tw.b.r-tw.a.r)*e, tw.a.p+(tw.b.p-tw.a.p)*e, tw.a.t+(tw.b.t-tw.a.t)*e); cam.position.setFromSpherical(tmp).add(ctl.target); cam.lookAt(ctl.target); if(k>=1) tw=null; dirty=2; }
-  if(MODE.t !== MODE.to){ const k = Math.min(1,(performance.now()-MODE.t0)/1300); MODE.t = MODE.from + (MODE.to-MODE.from)*k; applyMode(MODE.t); }
-  if(ctl.update()) dirty = 2;
-  if(ledPulse && ledOn){ const k = .5+.5*Math.sin(performance.now()/170); ledM.color.copy(LEDC).multiplyScalar(.35+.65*k); down.intensity = .5+1.6*k; dirty = 1; } else down.intensity = 1.1;
+  if(MODE.t !== MODE.to){ const k = Math.min(1,(performance.now()-MODE.t0)/1700); MODE.t = MODE.from + (MODE.to-MODE.from)*k; applyMode(MODE.t); }
+  if(Math.abs(FR.qt-FR.q) > .0005){ FR.qt += (FR.q-FR.qt)*.12; dirty = 2; } else FR.qt = FR.q;
+  if(FR.follow){ const v = want(); const k = snap ? 1 : .2; snap = false;
+    if(cam.position.distanceTo(P0) > 1e-5 || ctl.target.distanceTo(Pt) > 1e-5){ cam.position.lerp(P0, k); ctl.target.lerp(Pt, k); cam.lookAt(ctl.target); dirty = 2; }
+    const ht = (v.w/1.44)/2; modeEl.style.left = v.cx+'px'; modeEl.style.top = Math.max(150, v.cy - ht - 62)+'px';
+    dimEl.style.opacity = (FR.p*.92).toFixed(3); dimEl.style.background = `radial-gradient(ellipse ${(v.w*.78)|0}px ${(v.w*.6)|0}px at ${v.cx|0}px ${v.cy|0}px, rgba(0,0,0,0) 62%, rgba(0,0,0,.8) 100%)`; }
+  if(!FR.follow && ctl.update()) dirty = 2;
+  if(ledPulse && ledOn){ const k = .5+.5*Math.sin(performance.now()/170); ledM.color.copy(LEDC).multiplyScalar(.35+.65*k); down.intensity = .8+2.6*k; dirty = 1; } else down.intensity = 2.4;
   if(!dirty) return; dirty--;
   syncCSS(); renderer.render(scene, cam); cssCam.copy(cam); cssCam.position.multiplyScalar(F); cssCam.near=cam.near*F; cssCam.far=cam.far*F; cssCam.updateProjectionMatrix(); cssCam.updateMatrixWorld(); css.render(cssScene, cssCam);
-  const s = tmp.setFromVector3(cam.position.clone().sub(ctl.target));
-  const off = Math.abs(THREE.MathUtils.radToDeg(Math.atan2(Math.sin(s.theta),Math.cos(s.theta)))) + Math.abs(THREE.MathUtils.radToDeg(s.phi) - 86);
-  fb.classList.toggle('on', !tw && off > 14);
-  glare.style.opacity = Math.min(.5, off/120).toFixed(3);
+  fb.classList.toggle('on', !FR.follow);
+  const s = new THREE.Spherical().setFromVector3(cam.position.clone().sub(ctl.target));
+  const off = Math.abs(THREE.MathUtils.radToDeg(s.theta)) + Math.abs(THREE.MathUtils.radToDeg(s.phi) - 90);
+  glare.style.opacity = Math.min(.45, off/120).toFixed(3);
   glare.style.background = `linear-gradient(${(115 + THREE.MathUtils.radToDeg(s.theta)*1.4).toFixed(1)}deg, transparent 30%, rgba(255,255,255,.16) 46%, rgba(255,255,255,.05) 54%, transparent 70%)`;
 }
 document.getElementById('load').style.opacity = 0;
-applyMode(0);
-window.__emu = { cam, ctl, set:(r,p,t)=>{ tw=null; cam.position.setFromSpherical(new THREE.Spherical(r,p,t)).add(ctl.target); dirty=2; } };
+applyMode(0); document.body.classList.add('modes');
+window.__emu = { cam, ctl, frame:(p,q)=>setFrame({p,q}), mode:setMode };
 loop();
 }
 </script>

@@ -510,8 +510,17 @@ body:not(.ishome) #screen::after{display:none;content:"";position:absolute;left:
 #p-hub .lpage>.otab.fb{transform:none!important;margin:0!important;scroll-margin-top:0!important;border-radius:0!important;height:1032px!important;width:var(--W)!important;background:transparent!important;position:relative;z-index:2;pointer-events:none;overflow:visible!important;clip-path:none!important;-webkit-clip-path:none!important}
 #p-hub .lpage>.otab.fb>*{pointer-events:auto}
 #p-hub .otab.fb .emuhd{left:calc(var(--gx,0px) + 64px);top:112px;pointer-events:none}
-#p-hub .otab.fb .hbmodes{left:auto;right:40px;top:50%;transform:translateY(-50%);width:200px;padding:10px;border-radius:30px;background:rgba(20,20,22,.5);-webkit-backdrop-filter:blur(24px) saturate(1.4);backdrop-filter:blur(24px) saturate(1.4);box-shadow:0 20px 60px rgba(0,0,0,.45),inset 0 0 0 1px rgba(255,255,255,.08)}
-#p-hub .otab.fb .hbm{height:98px;margin-bottom:6px}#p-hub .otab.fb .hbm:last-child{margin-bottom:0}
+#p-hub .otab.fb .hbmodes{left:auto;right:36px;top:50%;transform:translateY(-50%);width:162px;padding:8px;transition:opacity .25s linear;border-radius:30px;background:rgba(20,20,22,.5);-webkit-backdrop-filter:blur(24px) saturate(1.4);backdrop-filter:blur(24px) saturate(1.4);box-shadow:0 20px 60px rgba(0,0,0,.45),inset 0 0 0 1px rgba(255,255,255,.08)}
+#p-hub .otab.fb .hbm{height:88px;margin-bottom:5px;font-size:16px;border-radius:20px}#p-hub .otab.fb .hbm img{width:34px;height:34px}#p-hub .otab.fb .hbm:last-child{margin-bottom:0}
+#p-hub .otab.fb>.fsp{left:calc(50% - 110px)!important;top:auto!important;bottom:84px}
+#p-hub .otab.fb .hbpane{transform-origin:0 0}
+#p-hub .otab.fb .hbc-img,#p-hub .otab.fb .hbs-img{visibility:hidden}
+#p-hub .otab.fb .hbpane{height:964px}
+#p-hub .otab.fb #hbCall>*,#p-hub .otab.fb .hbspec>div{opacity:0;transform:translateY(14px);transition:opacity .45s ease,transform .6s cubic-bezier(.22,.9,.2,1);transition-delay:0s}
+#p-hub .otab.fb #hbCall>.hbln{transform:none;transition:opacity .5s ease}
+#p-hub .otab.fb.popH #hbCall>*,#p-hub .otab.fb.popS .hbspec>div{opacity:1;transform:none;transition-delay:calc(var(--i,0)*55ms)}
+#p-hub .otab.fb .hbspec{background:rgba(14,14,16,.42);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);border-radius:28px;padding:26px 30px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.07)}
+#p-hub .otab.fb .hbco{text-shadow:0 1px 10px rgba(0,0,0,.45)}
 #emuLayer{position:absolute;left:0;top:0;width:var(--W)!important;margin:0!important;z-index:1;pointer-events:none}
 #emuLayer .st{position:sticky;top:0;height:1032px;pointer-events:auto;background:#020203;opacity:1!important;animation:none!important}
 #emuLayer .tf{position:absolute;left:0;right:0;top:0;height:170px;pointer-events:none;background:linear-gradient(180deg,#000 0%,rgba(0,0,0,.82) 26%,rgba(0,0,0,.35) 62%,rgba(0,0,0,0) 100%)}
@@ -2714,14 +2723,11 @@ body.hd3 #gTitle{opacity:0!important}
         <div class="hbpanel" id="hbPanel" hidden><img id="hbPoster" src="assets/hb/m0p.jpg?v=60" alt=""><video class="hbv" muted playsinline loop preload="auto"></video><video class="hbv" muted playsinline loop preload="auto"></video></div>
         <div class="hbmodes" id="hbModes"></div>
       </div>
-      <div class="otab hb fb" data-t="hubemu">
-        <div class="emuhd"><h2>Try the Hub.</h2><p>Tap the screen to use it. Drag around it to see every angle.</p></div>
-      </div>
-      <div id="emuLayer" class="in"><div class="st"><iframe id="emuF" class="emuf" title="Smart Hub Pro 2 emulator" allow="autoplay" data-src="assets/emu/index.html?v=6"></iframe><div class="tf"></div></div></div>
-      <div class="otab hb" data-t="feat">
+      <div class="otab hb fb" data-t="feat">
         <div class="strip"><div class="hbpane" id="hbCall"></div><div class="hbpane" id="hbSpec"></div></div>
         <div class="fsp spill" style="left:578px;top:869px;width:220px;height:60px"><i class="ind"></i><button class="on" data-fs="f">Hardware</button><button data-fs="s">Specs</button></div>
       </div>
+      <div id="emuLayer" class="in"><div class="st"><iframe id="emuF" class="emuf" title="Smart Hub Pro 2" allow="autoplay" data-src="assets/emu/index.html?v=7"></iframe><div class="tf"></div></div></div>
       <div class="otab hb" data-t="hist"><div class="hx3" id="hbX"><div class="hbpane" id="hbHist"></div><div class="hbpane" id="hbNew"></div><div class="hbpane" id="hbOut"></div></div><div class="hb3pill" id="hb3"><i class="ind"></i><button class="on" data-hb3="0">Historical</button><button data-hb3="1">What’s New</button><button data-hb3="2">Internet Outage</button></div></div>
       <div class="otab hb" data-t="cmp"><div id="hbCmp"></div></div>
       <div class="otab tall hb" data-t="videos" hidden><div id="hbVlib"></div></div>
@@ -2792,7 +2798,7 @@ body.hd3 #gTitle{opacity:0!important}
 const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
 
 /* ---------- scale stage ---------- */
-let HW=1376; window.FPV='v396'; if(Math.min(screen.width||0,screen.height||0)<500) document.documentElement.classList.add('phn');
+let HW=1376; window.FPV='v397'; if(Math.min(screen.width||0,screen.height||0)<500) document.documentElement.classList.add('phn');
 function safeBox(){ let pr=document.getElementById('safeProbe'); if(!pr){ pr=document.createElement('div'); pr.id='safeProbe';
   pr.style.cssText='position:fixed;left:0;top:0;width:100vw;height:100vh;height:100dvh;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);box-sizing:border-box;visibility:hidden;pointer-events:none;z-index:-1'; document.documentElement.appendChild(pr); }
   const cs=getComputedStyle(pr), t=parseFloat(cs.paddingTop)||0, b=parseFloat(cs.paddingBottom)||0, l=parseFloat(cs.paddingLeft)||0, r=parseFloat(cs.paddingRight)||0;
@@ -2874,7 +2880,7 @@ function barFor(p){
   if(p==='monitoring') r.innerHTML=[0,1,2,3,4,5].map(i=>`<button class="bbtn${i===monTab?' on':''}" data-mon="${i}"><img src="assets/icons/mon${i}.png" alt=""></button>`).join('');
   if(p==='ocp') r.innerHTML=(OC.mode==='p3'?['hero','feat','cmp','specs','hist','act','with','faq']:['hero','feat']).map(k=>k==='cube'?`<a class="bbtn" href="${VW}" target="_blank" rel="noopener" data-octab="cube"><img src="assets/oc/i_cube.png" alt="PreView"></a>`:`<button class="bbtn${k===OC.tab||(k==='play'&&OC.tab==='videos')?' on':''}" data-octab="${k}">${k==='hist'?HISTICO:`<img src="assets/oc/i_${k}.png" alt="">`}</button>`).join('');
   if(p==='prod') r.innerHTML=prBar();
-  if(p==='hub') r.innerHTML=[['hero','i_hero'],['modes',HBICO],['hubemu','i_hero'],['feat','i_specs'],['hist',HISTICO],['cmp','i_cmp'],['act','i_hero'],['with','i_hero'],['faq','i_hero']].map(([k,ic])=>k==='cube'?`<a class="bbtn" href="${VW}" target="_blank" rel="noopener"><img src="assets/oc/i_cube.png" alt="PreView"></a>`:`<button class="bbtn${k===HB.tab||(k==='play'&&HB.tab==='videos')?' on':''}" data-hbtab="${k}">${ic.startsWith('<')?ic:`<img src="assets/oc/${ic}.png" alt="">`}</button>`).join('');
+  if(p==='hub') r.innerHTML=[['hero','i_hero'],['modes',HBICO],['feat','i_specs'],['hist',HISTICO],['cmp','i_cmp'],['act','i_hero'],['with','i_hero'],['faq','i_hero']].map(([k,ic])=>k==='cube'?`<a class="bbtn" href="${VW}" target="_blank" rel="noopener"><img src="assets/oc/i_cube.png" alt="PreView"></a>`:`<button class="bbtn${k===HB.tab||(k==='play'&&HB.tab==='videos')?' on':''}" data-hbtab="${k}">${ic.startsWith('<')?ic:`<img src="assets/oc/${ic}.png" alt="">`}</button>`).join('');
   if(p==='dbcp') r.innerHTML=['hero','feat','cmp','specs','act','with','faq'].map(k=>k==='cube'?`<a class="bbtn" href="${VW}" target="_blank" rel="noopener"><img src="assets/oc/i_cube.png" alt="PreView"></a>`:`<button class="bbtn${k===DB.tab||(k==='play'&&DB.tab==='videos')?' on':''}" data-dbtab="${k}">${k==='feat'?DBICO:`<img src="assets/oc/i_${k}.png" alt="">`}</button>`).join('');
   if(p==='sign') r.innerHTML=`<button class="bbtn${signHouse?'':' on'}" data-sign="0"><svg width="30" height="30" viewBox="0 0 30 30" fill="none" stroke="#fff" stroke-width="2"><circle cx="15" cy="15" r="13"/><path d="M8 15h14"/></svg></button><button class="bbtn${signHouse?' on':''}" data-sign="1"><svg width="30" height="30" viewBox="0 0 30 30" fill="none" stroke="#fff" stroke-width="2"><rect x="3" y="4" width="24" height="22" rx="2"/><path d="M3 21l7-7 6 6 4-4 7 7"/><circle cx="20" cy="10" r="2"/></svg></button>`;
 }
@@ -3482,21 +3488,42 @@ const hbSpy=spy($('#hbScroll'),t=>{ HB.tab=t; if(cur==='hub') $$('#barRight [dat
   if(t==='modes') hbRender(); const hv=$('#hbHv'); if(hv){ if(t==='hero') hv.play().catch(()=>{}); else hv.pause(); } });
 $('#hbScroll').addEventListener('scroll',()=>titleLive($('#p-hub')),{passive:true});
 
-/* ---- Smart Hub emulator: one 3D Hub shared by Modes and Emulator; lazy-load, pause off-screen, wheel passes through ---- */
-(function(){ const f=$('#emuF'), box=$('#hbScroll'), L=$('#emuLayer'); if(!f||!L) return; let vis=null, lastJ=0, lastP=-1;
-  const mS=box.querySelector('[data-t=modes]'), eS=box.querySelector('[data-t=hubemu]');
+/* ---- Smart Hub: one live 3D Hub shared by Modes and Hardware/Specs; lazy-load, pause off-screen, wheel passes through ---- */
+(function(){ const f=$('#emuF'), box=$('#hbScroll'), L=$('#emuLayer'); if(!f||!L) return; let vis=null, lastJ=0, lastP=-1, Q=0;
+  const mS=box.querySelector('[data-t=modes]'), eS=box.querySelector('[data-t=feat]');
   const post=m=>{ try{ f.contentWindow&&f.contentWindow.postMessage(m,'*'); }catch(e){} };
+  /* lay out Hardware / Specs around the rail and title, and tell the 3D Hub where its picture sits in each */
+  let PRE=null;
+  const layout=()=>{ const br=box.getBoundingClientRect(); if(!br.width) return; const k=br.width/(box.offsetWidth||1)||1, Wl=box.offsetWidth, Hl=eS.offsetHeight||1032;
+    const rail=$('#barRight.pnav'), rr=rail&&rail.getBoundingClientRect(), L=(rr&&rr.width&&rr.right<br.left+br.width/2)?(rr.right-br.left)/k+26:40, R=Wl-30;
+    const pill=eS.querySelector(':scope>.fsp'), B=(pill?pill.offsetTop:Hl-150)-20, T=118;
+    const fitp=(u0,u1,v0,v1,mx)=>{ const sc=Math.min(1.12,(R-L)/(u1-u0),(B-T)/(v1-v0)); return { sc, tx:(L+R)/2-sc*mx, ty:T+((B-T)-sc*(v1-v0))/2-sc*v0 }; };
+    const h=fitp(22,1352,150,770,687), sp=fitp(60,1300,140,800,680);
+    const hc=$('#hbCall'), hs=$('#hbSpec'); if(hc) hc.style.transform=`translate(${h.tx.toFixed(1)}px,${h.ty.toFixed(1)}px) scale(${h.sc.toFixed(4)})`; if(hs) hs.style.transform=`translate(${sp.tx.toFixed(1)}px,${sp.ty.toFixed(1)}px) scale(${sp.sc.toFixed(4)})`;
+    const hm=$('#hbModes'), ml=hm&&hm.offsetWidth?(Wl-36-hm.offsetWidth):Wl-200;
+    PRE={ modes:{a0:L, a1:ml-24, top:150, bot:Hl-60}, hw:{cx:h.tx+h.sc*686, cy:h.ty+h.sc*498, w:h.sc*702}, sp:{cx:sp.tx+sp.sc*372, cy:sp.ty+sp.sc*450, w:sp.sc*480} }; };
+  const geo=()=>{ layout(); return { pre:PRE }; };
   const place=()=>{ const t=mS.offsetTop, b=eS.offsetTop+eS.offsetHeight; if(b>t){ L.style.top=t+'px'; L.style.height=(b-t)+'px'; } };
-  const prog=()=>{ const a=mS.offsetTop, b=eS.offsetTop, p=Math.max(0,Math.min(1,(box.scrollTop-a)/((b-a)||1))); if(Math.abs(p-lastP)>.003){ lastP=p; post({fpEmu:'frame',p}); } };
+  const pop=(cls,on)=>{ eS.classList.toggle(cls,on); };
+  const prog=()=>{ const a=mS.offsetTop, b=eS.offsetTop, p=Math.max(0,Math.min(1,(box.scrollTop-a)/((b-a)||1)));
+    const hm=$('#hbModes'); if(hm) hm.style.opacity=Math.max(0,1-p*2.2).toFixed(3);
+    if(p>.94){ if(!eS.classList.contains('popH')&&!eS.classList.contains('popS')) pop(Q?'popS':'popH',true); } else if(p<.7){ pop('popH',false); pop('popS',false); }
+    if(Math.abs(p-lastP)>.002){ lastP=p; post(Object.assign({fpEmu:'frame',p,q:Q},geo())); } };
   box.addEventListener('scroll',()=>requestAnimationFrame(prog),{passive:true});
-  if(window.ResizeObserver) new ResizeObserver(place).observe(box); place(); setInterval(place,1500);
+  if(window.ResizeObserver) new ResizeObserver(()=>{ place(); lastP=-1; prog(); }).observe(box); place(); setInterval(()=>{ place(); const o=JSON.stringify(PRE); layout(); if(JSON.stringify(PRE)!==o){ lastP=-1; prog(); } },1500);
   f.addEventListener('load',()=>{ lastP=-1; place(); prog(); post({fpEmu:'mode',m:HB.m}); vis=null; });
+  /* stagger indices for the pop-in */
+  const idx=()=>{ $$('#hbCall>*').forEach((e,i)=>e.style.setProperty('--i',i)); $$('#hbSpec .hbspec>div').forEach((e,i)=>e.style.setProperty('--i',i)); };
+  setTimeout(idx,500); const _hb=hbBuild; hbBuild=function(){ _hb.apply(this,arguments); idx(); };
+  /* Hardware ⇄ Specs: the Hub turns to the spec view while the strip slides; text pops in once it lands */
+  const _ss=stripSet; stripSet=function(sec,p,anim){ _ss.apply(this,arguments); if(sec===eS){ const q=Math.max(0,Math.min(1,p)); if(anim||Math.abs(q-Q)>.001){ Q=q; post({fpEmu:'frame',q:Q}); }
+      if(anim){ pop('popH',false); pop('popS',false); clearTimeout(eS.__pt); eS.__pt=setTimeout(()=>pop(Q>.5?'popS':'popH',true),420); } } };
   const order=()=>[...box.children].filter(c=>c.dataset.t&&!c.hidden).map(c=>c.dataset.t);
-  setInterval(()=>{ const near=cur==='hub'&&['hero','modes','hubemu','feat'].includes(HB.tab); if(near&&!f.src) f.src=f.dataset.src;
-    const on=cur==='hub'&&['modes','hubemu'].includes(HB.tab)&&!document.hidden; if(on!==vis&&f.contentWindow){ vis=on; post({fpEmu:'vis',on}); if(on){ lastP=-1; prog(); } } },400);
+  setInterval(()=>{ const near=cur==='hub'&&['hero','modes','feat','hist'].includes(HB.tab); if(near&&!f.src) f.src=f.dataset.src;
+    const on=cur==='hub'&&['modes','feat'].includes(HB.tab)&&!document.hidden; if(on!==vis&&f.contentWindow){ vis=on; post({fpEmu:'vis',on}); if(on){ lastP=-1; prog(); } } },400);
   addEventListener('message',e=>{ const d=e.data; if(!d||d.fpEmu!=='wheel'||e.source!==f.contentWindow) return; const now=Date.now(); if(Math.abs(d.dy)<12||now-lastJ<750) return; lastJ=now;
-    const o=order(), i=o.indexOf(HB.tab==='modes'?'modes':'hubemu'), t=o[Math.max(0,Math.min(o.length-1,i+(d.dy>0?1:-1)))]; if(t) jump(box,t); });
-  /* the Modes buttons now drive the emulator's screen */
+    const o=order(), i=o.indexOf(HB.tab), t=o[Math.max(0,Math.min(o.length-1,i+(d.dy>0?1:-1)))]; if(t) jump(box,t); });
+  /* the Modes buttons drive the Hub's screen */
   hbRender=function(){ if(!$('#hbModes').children.length) hbBuild(); $$('#hbModes .hbm').forEach((b,i)=>b.classList.toggle('on',i===HB.m)); post({fpEmu:'mode',m:HB.m}); };
 })();
 document.addEventListener('click',e=>{ const t=e.target.closest('[data-hbm],[data-hbtab]'); if(!t) return;
@@ -5055,7 +5082,7 @@ input,textarea,[contenteditable="true"]{-webkit-user-select:text!important;user-
   const leafs=pane=>[...pane.querySelectorAll('*')].filter(e=>{ if(e.closest('.fsp,.nxa')) return false; const r=e.getBoundingClientRect(); if(r.width<2||r.height<2) return false; const cs=getComputedStyle(e); if(cs.visibility==='hidden'||cs.display==='none') return false;
       if(/^svg$/i.test(e.tagName)&&r.width>pane.getBoundingClientRect().width*.8) return false; if(/^(line|circle)$/i.test(e.tagName)) return true;
       if(/^(IMG|VIDEO|CANVAS|svg)$/i.test(e.tagName)) return true; return [...e.childNodes].some(n=>n.nodeType===3&&n.textContent.trim()); });
-  const fit=(box,sec)=>{ const panes=[...sec.querySelectorAll('.fsp-pane,.hbpane')]; if(!panes.length) return; const pill=sec.querySelector(':scope>.fsp.spill'); if(!pill) return;
+  const fit=(box,sec)=>{ if(sec.classList.contains('fb')) return; /* Smart Hub Hardware/Specs: laid out against the live 3D Hub instead */ const panes=[...sec.querySelectorAll('.fsp-pane,.hbpane')]; if(!panes.length) return; const pill=sec.querySelector(':scope>.fsp.spill'); if(!pill) return;
     const key=innerWidth+'x'+innerHeight; const br=box.getBoundingClientRect(), kb=br.height/(box.offsetHeight||1)||1, sr=sec.getBoundingClientRect(), k=sr.width/(sec.offsetWidth||1)||1; if(!sr.width) return;
     const mt=parseFloat(getComputedStyle(sec).scrollMarginTop)||0, snapTop=br.top+mt*kb;
     const rail=$('#barRight.pnav'), rr=rail&&rail.getBoundingClientRect(), vr=rr&&rr.width&&rr.height>rr.width, onL=vr&&rr.left<br.left+br.width/2, railL=vr&&!onL?rr.left:br.right, railR=onL?rr.right:null; const tt=$('#gTitle'), tr=tt&&tt.getBoundingClientRect();
