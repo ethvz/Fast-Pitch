@@ -54,23 +54,23 @@ button:focus-visible{outline:2px solid var(--mint);outline-offset:3px}
 
 /* bottom rail */
 /* product carousel: identical to Fast Pitch's All Products sheet */
-#rail{position:fixed;left:18px;right:18px;bottom:12px;z-index:6;height:282px;border-radius:40px;background:#1c1c1e;box-shadow:0 30px 80px rgba(0,0,0,.6);pointer-events:auto}
-#railIn{position:absolute;left:0;right:0;top:22px;bottom:0;display:flex;gap:28px;overflow-x:auto;overflow-y:hidden;padding:0 32px 24px;scroll-padding:0 50px;scroll-snap-type:x proximity;scrollbar-width:none;-webkit-overflow-scrolling:touch;touch-action:pan-x;overscroll-behavior-x:contain;
-  -webkit-mask-image:linear-gradient(90deg,rgba(0,0,0,.18) 0,#000 13%,#000 87%,rgba(0,0,0,.18) 100%);mask-image:linear-gradient(90deg,rgba(0,0,0,.18) 0,#000 13%,#000 87%,rgba(0,0,0,.18) 100%)}
+#rail{position:fixed;left:0;right:0;bottom:10px;z-index:6;height:196px;pointer-events:none}
+#railIn{position:absolute;left:0;right:0;top:0;bottom:0;display:flex;gap:22px;overflow-x:auto;overflow-y:hidden;padding:0 28px 12px;scroll-padding:0 40px;scroll-snap-type:x proximity;scrollbar-width:none;-webkit-overflow-scrolling:touch;touch-action:pan-x;overscroll-behavior-x:contain;pointer-events:auto;
+  -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 5%,#000 95%,transparent 100%);mask-image:linear-gradient(90deg,transparent 0,#000 5%,#000 95%,transparent 100%)}
 #railIn::-webkit-scrollbar{display:none}
-#railIn .grp{flex:none;display:flex;flex-direction:column;gap:12px;scroll-snap-align:start}
+#railIn .grp{flex:none;display:flex;flex-direction:column;justify-content:flex-end;gap:9px;scroll-snap-align:start}
 #railIn .grp[hidden]{display:none}
-#railIn .grp>span{font-size:12.5px;letter-spacing:2px;text-transform:uppercase;color:#8e8e93;font-weight:500;padding-left:4px;white-space:nowrap}
-#railIn .row{display:flex;gap:12px}
-#railIn .pi{position:relative;width:150px;height:208px;flex:none;border:0;border-radius:22px;background:#1c1c1c;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding:0 10px 16px;gap:12px;text-align:center;font:inherit;font-size:14.5px;line-height:1.2;color:#e5e5ea;cursor:pointer;transition:transform .2s var(--ease),background .2s}
+#railIn .grp>span{font-size:11px;letter-spacing:1.8px;text-transform:uppercase;color:#fff;font-weight:600;padding-left:6px;white-space:nowrap;text-shadow:0 1px 6px rgba(0,0,0,.55)}
+#railIn .row{display:flex;gap:10px}
+#railIn .pi{position:relative;width:112px;height:152px;flex:none;border:0;border-radius:24px;background:rgba(36,36,38,.42);-webkit-backdrop-filter:blur(22px) saturate(1.6);backdrop-filter:blur(22px) saturate(1.6);box-shadow:inset 0 0 0 1px rgba(255,255,255,.16),0 8px 24px rgba(0,0,0,.18);display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding:0 8px 12px;gap:8px;text-align:center;font:inherit;font-size:12px;font-weight:500;line-height:1.2;color:#fff;cursor:pointer;transition:transform .2s var(--ease),background .25s,box-shadow .25s}
 #railIn .pi:active{transform:scale(.96)}
-#railIn .pi[aria-current="true"]{background:#48484a;color:#fff}
+#railIn .pi[aria-current="true"]{background:rgba(72,72,74,.72);box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.55),0 8px 24px rgba(0,0,0,.22)}
 #railIn .pi[hidden]{display:none}
-#railIn .pi img{width:118px;height:118px;object-fit:contain;margin-bottom:auto;margin-top:16px}
+#railIn .pi img{width:84px;height:84px;object-fit:contain;margin-bottom:auto;margin-top:12px;filter:drop-shadow(0 4px 8px rgba(0,0,0,.25))}
 
 /* detail card */
 #card{position:fixed;z-index:7;right:max(18px,env(safe-area-inset-right,0px));top:calc(env(safe-area-inset-top,0px) + 86px);
-  bottom:calc(env(safe-area-inset-bottom,0px) + 310px);width:min(360px,38vw);border-radius:24px;display:flex;flex-direction:column;overflow:hidden;
+  bottom:calc(env(safe-area-inset-bottom,0px) + 222px);width:min(360px,38vw);border-radius:24px;display:flex;flex-direction:column;overflow:hidden;
   transform:translateX(0);opacity:1;transition:transform .45s var(--ease),opacity .35s}
 #card.away{transform:translateX(30px);opacity:0;pointer-events:none}
 .c-media{position:relative;height:170px;flex:0 0 auto;display:grid;place-items:center;background:radial-gradient(70% 80% at 50% 60%,rgba(27,251,165,.14),transparent 70%)}
@@ -91,7 +91,7 @@ button:focus-visible{outline:2px solid var(--mint);outline-offset:3px}
 #prev{width:44px;padding:0;justify-content:center}
 
 /* hint + loading */
-#hint{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 310px);transform:translateX(-50%);z-index:4;padding:9px 16px;border-radius:18px;font-size:13px;font-weight:500;color:var(--fg);white-space:nowrap;transition:opacity .5s}
+#hint{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 222px);transform:translateX(-50%);z-index:4;padding:9px 16px;border-radius:18px;font-size:13px;font-weight:500;color:var(--fg);white-space:nowrap;transition:opacity .5s}
 #hint.gone{opacity:0}
 #loading{position:fixed;inset:0;display:grid;place-items:center;z-index:9;background:var(--bg);transition:opacity .6s}
 #loading.done{opacity:0;pointer-events:none}
@@ -164,7 +164,7 @@ body.focus #brand{display:none}
 </aside>
 
 <div id="hint" class="glass">Drag to look around · Pinch to zoom · Tap a ring</div>
-<nav id="rail" aria-label="Products"><div id="railIn" class="glass"></div></nav>
+<nav id="rail" aria-label="Products"><div id="railIn"></div></nav>
 <div id="loading"><div id="loadMsg">Building the house…</div><i id="loadBar"></i></div>
 
 <script type="importmap">
