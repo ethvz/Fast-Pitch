@@ -178,7 +178,7 @@ import * as THREE from 'three';
 /* three.js r165 + the addons the tour uses, bundled locally so the tour works offline */
 import { OrbitControls, RoundedBoxGeometry, RoomEnvironment, GLTFLoader, MeshoptDecoder } from 'three';
 /* textures, decals and the sky come in one bundle (pack.jpg) so Fast Pitch stays under its file limit */
-const __PK = await (async()=>{ try{ const r=await fetch('pack.jpg?v=6'); const tot=+r.headers.get('content-length')||9e6, rd=r.body.getReader(), parts=[]; let got=0;
+const __PK = await (async()=>{ try{ const r=await fetch('pack.jpg?v=7'); const tot=+r.headers.get('content-length')||9e6, rd=r.body.getReader(), parts=[]; let got=0;
   for(;;){ const {done,value}=await rd.read(); if(done) break; parts.push(value); got+=value.length; const b=document.getElementById('loadBar'); if(b) b.style.setProperty('--p', Math.min(92,Math.round(92*got/tot))+'%'); }
   const u8=new Uint8Array(got); let o=0; for(const p of parts){ u8.set(p,o); o+=p.length; } const buf=u8.buffer; const n=new DataView(buf).getUint32(0,true);
   const idx=JSON.parse(new TextDecoder().decode(new Uint8Array(buf,4,n))), base=4+n, m={};
@@ -203,7 +203,7 @@ const PRODUCTS = [
   {k:'smokeco',name:'Smoke & CO Detector',   where:'Great room',            img:'smokeco',   side:'r'},
   {k:'water',  name:'Water Sensor',          where:'Under the kitchen sink',img:'water',     side:'r'},
   {k:'fob',    name:'Key Fob',               where:'Kitchen island',        img:'fob',       side:'l'},
-  {k:'pendant',name:'Emergency Pendant',     where:'Coffee table',          img:'pendant',   side:'l'},
+  {k:'pendant',name:'Emergency Pendant',     where:'Hook by the entry',          img:'pendant',   side:'l'},
   {k:'icp',    name:'Indoor Camera Pro',     where:'Kitchen shelf',         img:'icp',       side:'l'},
   {k:'fire',   name:'Firefighter',           where:'Next to the smoke alarm',img:'fire',     side:'l'},
   {k:'keypad', name:'Keypad',                where:'Side entry',            img:'keypad',    side:'l'},
@@ -900,8 +900,32 @@ const MODELS = {
   glass(){ return photoSolid('glass',.055,.02); },
   keypad(){ return photoSolid('keypad',.075,.02); },
   plug(){ return photoSolid('plug',.045,.03); },
-  fob(){ return photoSolid('fob',.035,.012,true); },
-  pendant(){ return photoSolid('pendant',.035,.014,true); },
+  fob(){ const g=G();                                   // Key Fob on a split ring with the house keys, lying on the counter
+    const w=.035, d=.012; add(g, photoSolid('fob',w,d,true));
+    const [hx,hy] = holeCenter('fob',w), ring = mat(0xb8bcc0,{r:.25,m:1});
+    const rc = new THREE.Vector3(hx, d*.55, -hy+.011);
+    const r = add(g, new THREE.Mesh(new THREE.TorusGeometry(.0125,.0011,10,48), ring), rc.x, rc.y, rc.z); r.rotation.set(Math.PI/2-.18,0,0);
+    const brass = mat(0xc9a86a,{r:.3,m:1}), nickel = mat(0xc4c7ca,{r:.28,m:1});
+    const k1 = add(g, keyMesh(brass), rc.x+.006, .0012, rc.z+.016); k1.rotation.y = -1.05;
+    const k2 = add(g, keyMesh(nickel), rc.x-.008, .0009, rc.z+.014); k2.rotation.y = -2.25;
+    return g; },
+  pendant(){ const g=G();                               // Emergency Pendant on its black lanyard, hanging from a wall hook
+    const w=.035, d=.014, drop=.14, P = photoSolid('pendant',w,d);
+    const [hx,hy,hd] = holeCenter('pendant',w), py = -drop - hy;              // pendant placed so its hole sits `drop` below the hook
+    add(g, P, 0, py, .004); P.rotation.z = .04;
+    const blk = mat(0x161718,{r:.45,m:.5});
+    add(g, rslab(.016,.034,.004,.003,.0012,blk),0,0,.002);                    // hook plate
+    const arm = new THREE.Mesh(new THREE.TorusGeometry(.009,.0024,12,32,Math.PI*1.15), blk); arm.rotation.set(0,Math.PI/2,Math.PI*1.05); add(g, arm, 0,-.006,.012);
+    // lanyard: one loop of cord over the hook, down through the pendant's hole
+    const cord = mat(0x101112,{r:.85});
+    const top = new THREE.Vector3(0,-.002,.016), hole = new THREE.Vector3(hx, -drop, .004 + d/2);
+    const pts = [top, new THREE.Vector3(.010,-.05,.017), new THREE.Vector3(.008,-drop*.7,.016), new THREE.Vector3(hx+.003,-drop+hd*.6,.004+d+.002),
+                 hole, new THREE.Vector3(hx-.002,-drop+hd*.6,.001), new THREE.Vector3(-.007,-drop*.7,.012), new THREE.Vector3(-.009,-.05,.016)];
+    const curve = new THREE.CatmullRomCurve3(pts, true, 'centripetal');
+    const tube = new THREE.Mesh(new THREE.TubeGeometry(curve, 160, .0016, 8, true), cord); tube.castShadow = true; g.add(tube);
+    // the lanyard's slider bead just above the pendant
+    add(g, cyl(.0035,.009,blk,16),hx*.5,-drop*.82,.012);
+    return g; },
   ysign(){ const g=G();                                 // yard sign: double-sided round sign on a wire stake (origin at the ground)
     const t = photoTex('ysign'), face = new THREE.MeshStandardMaterial({map:t, transparent:true, alphaTest:.5, roughness:.45, side:THREE.DoubleSide});
     const disc = add(g, cyl(.224,.004,mat(0xe8780f,{r:.5}),64),0,.7,0); disc.rotation.x = Math.PI/2;
@@ -924,7 +948,8 @@ function photoSolid(k, w, d, flat=false){
     shape.moveTo(x0+r,y0); shape.lineTo(x0+w-r,y0); shape.quadraticCurveTo(x0+w,y0,x0+w,y0+r); shape.lineTo(x0+w,y0+h-r); shape.quadraticCurveTo(x0+w,y0+h,x0+w-r,y0+h);
     shape.lineTo(x0+r,y0+h); shape.quadraticCurveTo(x0,y0+h,x0,y0+h-r); shape.lineTo(x0,y0+r); shape.quadraticCurveTo(x0,y0,x0+r,y0); }
   else S.pts.forEach(([u,v],i) => { const x=(u-.5)*w, y=(v-.5)*h; i ? shape.lineTo(x,y) : shape.moveTo(x,y); });
-  const b = Math.min(d*.32, Math.min(w,h)*.09, .006);
+  if(S && S.holes) for(const hl of S.holes){ const p = new THREE.Path(); hl.forEach(([u,v],i) => { const x=(u-.5)*w, y=(v-.5)*h; i ? p.lineTo(x,y) : p.moveTo(x,y); }); shape.holes.push(p); }
+  const b = Math.min(d*.32, Math.min(w,h)*.09, .006, S && S.holes && S.holes.length ? .0025 : 1);
   const uvg = { generateTopUV(g,v,a,bb,c){ const f=i=>new THREE.Vector2(v[i*3]/w+.5, v[i*3+1]/h+.5); return [f(a),f(bb),f(c)]; },
                 generateSideWallUV(){ return [new THREE.Vector2(0,0),new THREE.Vector2(1,0),new THREE.Vector2(1,1),new THREE.Vector2(0,1)]; } };
   const geo = new THREE.ExtrudeGeometry(shape, {depth:Math.max(.001,d-2*b), bevelEnabled:true, bevelThickness:b, bevelSize:b*.85, bevelOffset:-b*.85, bevelSegments:5, curveSegments:24, UVGenerator:uvg});
@@ -935,6 +960,18 @@ function photoSolid(k, w, d, flat=false){
   const side = new THREE.MeshPhysicalMaterial({color:new THREE.Color(S ? S.edge : '#dddddd'), roughness:.45, clearcoat:.35, clearcoatRoughness:.3});
   const m = new THREE.Mesh(geo, [face, side]); m.castShadow = m.receiveShadow = true;
   const g = G(); g.add(m); return g; }
+function holeCenter(k, w){ const S = PHS[k]; if(!S || !S.holes || !S.holes[0]) return [0,0]; const h = w*S.aspect, pts = S.holes[0];
+  const u = pts.reduce((s,p)=>s+p[0],0)/pts.length, v = pts.reduce((s,p)=>s+p[1],0)/pts.length, vmax = Math.max(...pts.map(p=>p[1])), vmin = Math.min(...pts.map(p=>p[1]));
+  return [(u-.5)*w, (v-.5)*h, (vmax-vmin)*h]; }
+/* a plain house key, lying flat (blade along +x) */
+function keyMesh(mat){ const s = new THREE.Shape(); s.absarc(0,0,.012,0,Math.PI*2,false);
+  const hole = new THREE.Path(); hole.absarc(-.005,0,.0028,0,Math.PI*2,true); s.holes.push(hole);
+  const bl = new THREE.Shape(); bl.moveTo(.01,.0035); bl.lineTo(.046,.0035); bl.lineTo(.05,.0); bl.lineTo(.046,-.0015);
+  for(let i=0;i<5;i++){ const x=.042-i*.0065; bl.lineTo(x,-.0015); bl.lineTo(x-.002,-.0045); bl.lineTo(x-.004,-.0015); } bl.lineTo(.01,-.0035); bl.lineTo(.01,.0035);
+  const g = new THREE.Group();
+  for(const sh of [s,bl]){ const geo = new THREE.ExtrudeGeometry(sh,{depth:.0016,bevelEnabled:true,bevelThickness:.0003,bevelSize:.0003,bevelSegments:2,curveSegments:24}); geo.rotateX(-Math.PI/2);
+    const mm = new THREE.Mesh(geo, mat); mm.castShadow = true; g.add(mm); }
+  return g; }
 /* wall-mounted: back on the wall at z=0, face toward +z */
 function photoBody(k, w, d, r){ const g=G(), h = w*PH_ASPECT[k];
   add(g, rbox(w*.97,h*.97,d,r,PM.whiteM),0,0,d/2);
@@ -964,8 +1001,8 @@ const PLACE = {
   motion:{pos:V(1.72,FL+2.75,-5.68), view:V(.62,-.32,.62),     d:.72},
   smokeco:{pos:V(4.0,FL+5.3,-5.79),  view:V(0,0,1),            d:.8},
   water: {pos:V(5.15,FL+.012,-5.02), view:V(.05,.78,.62), flat:true, d:.62},
-  fob:   {pos:V(4.35,FL+.945,-2.75), view:V(.15,.8,.6),  flat:true, d:.55},
-  pendant:{pos:V(3.55,FL+.392,1.15), view:V(.4,.8,.5),   flat:true, d:.55},
+  fob:   {pos:V(4.35,FL+.945,-2.78), view:V(.15,.8,.6),  flat:true, s:1.2, d:.5},
+  pendant:{pos:V(1.665,FL+1.62,3.25), view:V(1,0,0), s:1.25, d:.82},
   icp:   {pos:V(9.52,FL+1.05,-2.55), view:V(-1,0,.45), stand:true, d:.72},
   fire:  {pos:V(9.79,FL+4.1,-2.98),  view:V(-1,0,0),            d:.75},
   keypad:{pos:V(9.79,FL+1.35,.12),   view:V(-1,0,0),            d:.7},
