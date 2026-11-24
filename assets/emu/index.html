@@ -12,10 +12,15 @@ html,body{margin:0;height:100%;background:#000;overflow:hidden;overscroll-behavi
 #css>div,#css>div>div{pointer-events:none}
 #scr{pointer-events:auto}
 #glare{position:absolute;inset:0;pointer-events:none;z-index:200;mix-blend-mode:screen;opacity:.0;transition:opacity .4s}
+#mode{position:fixed;left:50%;top:28px;transform:translateX(-50%);display:flex;padding:4px;border-radius:22px;background:rgba(28,28,28,.92);box-shadow:0 8px 30px rgba(0,0,0,.45),inset 0 0 0 1px rgba(255,255,255,.06);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);z-index:5}
+#mode .ind{position:absolute;top:4px;bottom:4px;left:4px;width:calc(50% - 4px);border-radius:18px;background:rgba(5,229,175,.16);transition:transform .45s cubic-bezier(.22,.8,.24,1)}
+#mode[data-m=table] .ind{transform:translateX(100%)}
+#mode button{position:relative;flex:1;display:flex;align-items:center;justify-content:center;gap:7px;height:34px;padding:0 16px;min-width:146px;border:0;background:none;color:rgba(255,255,255,.72);font:500 14px -apple-system,system-ui,sans-serif;cursor:pointer;transition:color .3s;white-space:nowrap}
+#mode button.on{color:#05E5AF}
 #hint{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);display:flex;gap:26px;align-items:center;font:500 15px/1 -apple-system,system-ui,sans-serif;color:rgba(255,255,255,.62);letter-spacing:.01em;transition:opacity .6s;pointer-events:none;white-space:nowrap}
 #hint span{display:flex;align-items:center;gap:9px}
 #hint i{width:7px;height:7px;border-radius:50%;background:#05E5AF;box-shadow:0 0 10px #05E5AF}
-#front{position:fixed;left:50%;bottom:18px;transform:translate(-50%,16px);opacity:0;pointer-events:none;height:40px;padding:0 20px;border-radius:20px;border:0;background:rgba(40,40,42,.9);color:#fff;font:500 15px -apple-system,system-ui,sans-serif;display:flex;align-items:center;gap:9px;transition:opacity .35s,transform .45s cubic-bezier(.22,.8,.24,1);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);cursor:pointer}
+#front{position:fixed;left:50%;bottom:58px;transform:translate(-50%,16px);opacity:0;pointer-events:none;height:40px;padding:0 20px;border-radius:20px;border:0;background:rgba(40,40,42,.9);color:#fff;font:500 15px -apple-system,system-ui,sans-serif;display:flex;align-items:center;gap:9px;transition:opacity .35s,transform .45s cubic-bezier(.22,.8,.24,1);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);cursor:pointer}
 #front.on{opacity:1;transform:translate(-50%,0);pointer-events:auto}
 #front svg{flex:none}
 #load{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;color:#777;font:14px -apple-system,system-ui,sans-serif;transition:opacity .6s;pointer-events:none}
@@ -403,6 +408,7 @@ body.one #scr{box-shadow:none;border-radius:0}body.one #hint{display:none}
 <script type="importmap">{"imports":{"three":"../tour/three.bundle.js"}}</script>
 </head><body>
 <div id="stage"><canvas id="gl"></canvas><div id="vig"></div><div id="css"></div></div>
+<div id="mode" data-m="wall"><i class="ind"></i><button data-m="wall" class="on"><svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2.5" y="3" width="11" height="8" rx="1.5"/><path d="M1 1v14"/></svg>Wall mounted</button><button data-m="table"><svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M4 2.5h8l1.5 8h-11z"/><path d="M8 10.5V14M4.5 14h7"/></svg>Tabletop</button></div>
 <div id="hint"><span><i></i>Tap the screen to use it</span><span><i></i>Drag around it to turn it</span></div>
 <button id="front"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#05E5AF" stroke-width="2" stroke-linecap="round"><path d="M2.5 8a5.5 5.5 0 1 0 1.7-4"/><path d="M2 2v3.3h3.3"/></svg>Face front</button>
 <div id="load"><i></i></div>
@@ -947,7 +953,7 @@ const cam = new THREE.PerspectiveCamera(28, 1, .01, 10);
 scene.background = new THREE.Color(0x020203);
 /* studio lighting: a raking key from the upper right (it is what sculpts the foam pyramids), a soft fill from the left */
 const key = new THREE.DirectionalLight(0xfff4ea, 1.15); key.position.set(1.1, .9, 1.5); scene.add(key, key.target);
-key.castShadow = true; key.shadow.mapSize.set(2048,2048); Object.assign(key.shadow.camera, {left:-.45,right:.45,top:.4,bottom:-.4,near:.5,far:3.5}); key.shadow.bias = -.0004; key.shadow.normalBias = .002; key.shadow.radius = 6;
+key.castShadow = true; key.shadow.mapSize.set(2048,2048); Object.assign(key.shadow.camera, {left:-.7,right:.7,top:.7,bottom:-.7,near:.5,far:4}); key.shadow.bias = -.0004; key.shadow.normalBias = .002; key.shadow.radius = 6;
 const fill = new THREE.DirectionalLight(0xdfe8ff, .18); fill.position.set(-1.2, .3, 1.2); scene.add(fill);
 scene.add(new THREE.HemisphereLight(0xffffff, 0x2a2018, .08));
 
@@ -989,16 +995,51 @@ const buf = await (await fetch('hubmdl.jpg')).arrayBuffer();
 const HB = new THREE.Box3().setFromObject(hub);
 const ledM = new THREE.MeshBasicMaterial({ color:0x05E5AF, toneMapped:false, side:THREE.DoubleSide });
 const ledBar = new THREE.Mesh(LEDG || new THREE.BoxGeometry(.044,.002,.004), ledM); if(!LEDG) ledBar.position.set(0, HB.min.y, .012); hub.add(ledBar);
-const down = new THREE.SpotLight(0x05E5AF, 1.1, 1.1, .78, 1, 1.8); down.position.set(0, HB.min.y-.003, .011);
-down.target.position.set(0, HB.min.y-.75, -.09); hub.add(down, down.target);
+const down = new THREE.SpotLight(0x05E5AF, 1.1, 1.6, .7, 1, 1.5); down.position.set(0, HB.min.y-.003, .011);
+down.target.position.set(0, HB.min.y-.8, .02); hub.add(down, down.target);
 const near = new THREE.PointLight(0x05E5AF, .045, .22, 1.5); near.position.set(0, HB.min.y-.012, .006); hub.add(near);
 let ledPulse = false, ledOn = true; const LEDC = new THREE.Color(0x05E5AF);
 addEventListener('hubled', e => { const d = e.detail; LEDC.set(d.c); ledM.color.copy(LEDC); down.color.copy(LEDC); near.color.copy(LEDC); ledOn = d.on; ledPulse = d.pulse;
   ledBar.visible = down.visible = near.visible = ledOn; if(!ledOn) {} dirty = 2; });
 setTimeout(()=>UI.led(),0);
 
+const ROOM = { x:1.1, y0:-.95, y1:.85, z:1.1, zb:-1.0 };
+/* ---- mounting: the Hub lives in a rig whose origin is its bottom-back edge (the tabletop stand's hinge) ---- */
+const rig = new THREE.Group(); scene.add(rig); scene.remove(hub); rig.add(hub); hub.position.set(0, -HB.min.y, -HB.min.z);
+const TILT = THREE.MathUtils.degToRad(16), TT = -.086;                       // stand lean; table-top height
+const white = M[0];
+const tableG = new THREE.Group(); scene.add(tableG);
+{ const black = new THREE.MeshStandardMaterial({ color:0x0c0c0d, roughness:.82, metalness:0, envMapIntensity:.25 });
+  const H = TT-ROOM.y0, R = .23;
+  const body = new THREE.Mesh(new THREE.CylinderGeometry(R, R, H-.02, 96, 1), black); body.position.y = ROOM.y0 + (H-.02)/2;
+  const top = new THREE.Mesh(new THREE.CylinderGeometry(R, R, .02, 96, 1), black); top.position.y = TT-.01;
+  const lip = new THREE.Mesh(new THREE.TorusGeometry(R-.002, .004, 12, 96), black); lip.rotation.x = Math.PI/2; lip.position.y = TT-.004;
+  for(const m of [body, top, lip]){ m.castShadow = m.receiveShadow = true; tableG.add(m); } }
+const stand = new THREE.Group(); rig.add(stand);
+{ // tabletop stand: low base plate with a front lip, and a wedge the panel leans on
+  const ex = (shape, w) => { const g = new THREE.ExtrudeGeometry(shape, { depth:w, bevelEnabled:true, bevelThickness:.0025, bevelSize:.0025, bevelSegments:4, curveSegments:12 }); g.translate(0,0,-w/2); g.rotateY(Math.PI/2); return g; };
+  const t = .1, L = .078, A = new THREE.Vector2(0,0);
+  const wedge = new THREE.Shape(); wedge.moveTo(-.004,-.006); wedge.lineTo(-L,-.006); wedge.lineTo(-t*Math.sin(TILT)-.004, t*Math.cos(TILT)); wedge.lineTo(-.004,.004); wedge.lineTo(-.004,-.006);
+  const base = new THREE.Shape(); base.moveTo(.034,-.006); base.lineTo(-L-.01,-.006); base.lineTo(-L-.01,0); base.lineTo(.026,0); base.lineTo(.026,.012); base.lineTo(.034,.012); base.lineTo(.034,-.006);
+  const wm = new THREE.Mesh(ex(wedge,.15), white), bm = new THREE.Mesh(ex(base,.2), white);
+  // shapes are drawn in (z,y): ExtrudeGeometry is x/y, rotateY maps x→-z; flip so the wedge sits behind the panel
+  for(const m of [wm,bm]){ m.scale.z = -1; m.castShadow = m.receiveShadow = true; stand.add(m); }
+  wm.rotation.x = 0; stand.rotation.x = TILT; }                                // counter the rig's lean so the stand sits flat on the table
+const MODE = { cur:'wall', t:0, from:0, to:0, t0:0 };
+function applyMode(k){                                                       // k: 0 = wall mounted (floating), 1 = tabletop
+  const e = k<.5 ? 4*k*k*k : 1-Math.pow(-2*k+2,3)/2;
+  rig.rotation.x = -TILT*e;
+  const yWall = -(HB.max.y-HB.min.y)/2, yTable = TT+.006;
+  rig.position.set(0, yWall + (yTable-yWall)*e, -.011*(1-e));
+  tableG.position.y = -1.05*(1-e); tableG.visible = e > .001;
+  stand.visible = e > .02; stand.scale.setScalar(Math.max(.001, Math.min(1, (e-.35)/.65)));
+  dirty = 2; }
+function setMode(m){ if(m===MODE.cur) return; MODE.cur = m; MODE.from = MODE.t; MODE.to = m==='table'?1:0; MODE.t0 = performance.now();
+  document.querySelectorAll('#mode button').forEach(b=>b.classList.toggle('on', b.dataset.m===m)); document.getElementById('mode').dataset.m = m; }
+document.querySelectorAll('#mode button').forEach(b=>b.addEventListener('click', ()=>setMode(b.dataset.m)));
+
 /* ---- the room: an acoustic booth lined with pyramid foam, oak floor ---- */
-const ROOM = { x:.85, y0:-.95, y1:.8, z:1.3 }, CELL = .052, PH = .034, GAP = .003;
+const CELL = .052, PH = .034, GAP = .003;
 { const noise = document.createElement('canvas'); noise.width = noise.height = 128; const nx = noise.getContext('2d'), im = nx.createImageData(128,128);
   for(let i=0;i<im.data.length;i+=4){ const v = 110 + Math.random()*120; im.data[i]=im.data[i+1]=im.data[i+2]=v; im.data[i+3]=255; } nx.putImageData(im,0,0);
   const nt = new THREE.CanvasTexture(noise); nt.wrapS = nt.wrapT = THREE.RepeatWrapping; nt.repeat.set(3,3);
@@ -1008,14 +1049,14 @@ const ROOM = { x:.85, y0:-.95, y1:.8, z:1.3 }, CELL = .052, PH = .034, GAP = .00
   const grid = (a0,a1) => { const L=[]; for(let i=0, a=a0+CELL/2; a<a1; i++){ L.push(a); a += CELL + ((i%4)===3?GAP:0); } return L; };
   function wall(us, vs, place, rot){ const mesh = new THREE.InstancedMesh(pyr, foam, us.length*vs.length); let n = 0; q.setFromEuler(rot);
     for(const u of us) for(const v of vs){ place(u,v,p3); m4.compose(p3,q,sc); mesh.setMatrixAt(n++, m4); } mesh.instanceMatrix.needsUpdate = true; mesh.receiveShadow = true; scene.add(mesh); return mesh; }
-  const back = -.002-PH;
+  const back = ROOM.zb;
   wall(grid(-ROOM.x,ROOM.x), grid(ROOM.y0,ROOM.y1), (u,v,p)=>p.set(u,v,back), new THREE.Euler(0,0,0));                              // wall behind the Hub
   wall(grid(back,ROOM.z), grid(ROOM.y0,ROOM.y1), (u,v,p)=>p.set(-ROOM.x,v,u), new THREE.Euler(0,Math.PI/2,0));                    // left wall
   wall(grid(back,ROOM.z), grid(ROOM.y0,ROOM.y1), (u,v,p)=>p.set(ROOM.x,v,u), new THREE.Euler(0,-Math.PI/2,0));                   // right wall
   wall(grid(-ROOM.x,ROOM.x), grid(back,ROOM.z), (u,v,p)=>p.set(u,ROOM.y1,v), new THREE.Euler(Math.PI/2,0,0));                    // ceiling
   const backing = new THREE.MeshStandardMaterial({ color:0x111113, roughness:1 });
   const pl = (w,h,x,y,z,ry,rx) => { const m = new THREE.Mesh(new THREE.PlaneGeometry(w,h), backing); m.position.set(x,y,z); m.rotation.set(rx||0,ry||0,0); scene.add(m); };
-  pl(2*ROOM.x+.2, ROOM.y1-ROOM.y0+.2, 0, 0, back-.001); pl(ROOM.z+.2, 2.8, -ROOM.x-.001, 0, ROOM.z/2, Math.PI/2); pl(ROOM.z+.2, 2.8, ROOM.x+.001, 0, ROOM.z/2, -Math.PI/2); pl(3.2, ROOM.z+.2, 0, ROOM.y1+.001, ROOM.z/2, 0, Math.PI/2);
+  const D2 = ROOM.z-ROOM.zb, ZC = (ROOM.z+ROOM.zb)/2; pl(2*ROOM.x+.2, ROOM.y1-ROOM.y0+.2, 0, 0, back-.001); pl(D2+.2, 2.8, -ROOM.x-.001, 0, ZC, Math.PI/2); pl(D2+.2, 2.8, ROOM.x+.001, 0, ZC, -Math.PI/2); pl(3.2, D2+.2, 0, ROOM.y1+.001, ZC, 0, Math.PI/2);
   /* oak floor */
   const wc = document.createElement('canvas'); wc.width = 1024; wc.height = 1024; const w = wc.getContext('2d');
   for(let r=0;r<8;r++){ const y = r*128, base = 168 + (r*37%5)*9; let x = -((r*389)%640);
@@ -1025,8 +1066,8 @@ const ROOM = { x:.85, y0:-.95, y1:.8, z:1.3 }, CELL = .052, PH = .034, GAP = .00
       w.fillStyle = 'rgba(40,25,10,.55)'; w.fillRect(x,y,2,128); x += L; }
     w.fillStyle = 'rgba(40,25,10,.6)'; w.fillRect(0,y,1024,2); }
   const wt = new THREE.CanvasTexture(wc); wt.colorSpace = THREE.SRGBColorSpace; wt.wrapS = wt.wrapT = THREE.RepeatWrapping; wt.repeat.set(2.2,1.6); wt.anisotropy = 8;
-  const floor = new THREE.Mesh(new THREE.PlaneGeometry(2*ROOM.x, ROOM.z+.1), new THREE.MeshStandardMaterial({ map:wt, color:0x8a8178, roughness:.55, envMapIntensity:.2 }));
-  floor.rotation.x = -Math.PI/2; floor.position.set(0, ROOM.y0, ROOM.z/2-.05); scene.add(floor);
+  const floor = new THREE.Mesh(new THREE.PlaneGeometry(2*ROOM.x, ROOM.z-ROOM.zb), new THREE.MeshStandardMaterial({ map:wt, color:0x8a8178, roughness:.55, envMapIntensity:.2 }));
+  floor.rotation.x = -Math.PI/2; floor.position.set(0, ROOM.y0, (ROOM.z+ROOM.zb)/2); floor.receiveShadow = true; scene.add(floor);
 }
 
 /* ---- live UI on the glass ---- */
@@ -1034,12 +1075,14 @@ const css = new CSS3DRenderer({ element: document.getElementById('css') });
 const glare = document.createElement('div'); glare.id = 'glare'; scr.appendChild(glare);
 /* CSS3D works in pixels: mirror the hub in a ×F scene so the DOM sits exactly on the glass */
 const F = 1000, cssScene = new THREE.Scene(), cssCam = new THREE.PerspectiveCamera();
-const obj = new CSS3DObject(scr); obj.scale.setScalar(K*F); obj.position.copy(SC).multiplyScalar(F); cssScene.add(obj);
+const obj = new CSS3DObject(scr); obj.matrixAutoUpdate = false; cssScene.add(obj);
+const FM = new THREE.Matrix4().makeScale(F,F,F), SCm = new THREE.Matrix4().compose(SC, new THREE.Quaternion(), new THREE.Vector3(K,K,K));
+function syncCSS(){ rig.updateMatrixWorld(true); obj.matrix.copy(FM).multiply(hub.matrixWorld).multiply(SCm); obj.matrixWorldNeedsUpdate = true; }
 
 const ctl = new OrbitControls(cam, renderer.domElement);
 ctl.enablePan = false; ctl.enableDamping = true; ctl.dampingFactor = .08; ctl.rotateSpeed = .75; ctl.zoomSpeed = .8;
 ctl.minDistance = .2; ctl.maxDistance = .92; ctl.target.set(0, -.004, 0);
-ctl.minAzimuthAngle = -.95; ctl.maxAzimuthAngle = .95; ctl.minPolarAngle = .72; ctl.maxPolarAngle = 2.05;   // stay inside the booth, in front of the wall
+ctl.minPolarAngle = .72; ctl.maxPolarAngle = 2.05;   // all the way around; never through the ceiling or floor
 const BASE = new THREE.Spherical();
 function fit(){
   const w = innerWidth, h = innerHeight; renderer.setSize(w, h, false); css.setSize(w, h); cam.aspect = w/h;
@@ -1066,7 +1109,7 @@ scr.addEventListener('pointerdown', hint);
 /* precise pointer → screen px (for sliders, drag-scroll, edge swipes) */
 const rc = new THREE.Raycaster(), pl = new THREE.Plane(), v2 = new THREE.Vector2(), hit = new THREE.Vector3(), inv = new THREE.Matrix4();
 UI.loc = e => { v2.set(e.clientX/innerWidth*2-1, -(e.clientY/innerHeight)*2+1); rc.setFromCamera(v2, cssCam);
-  obj.updateMatrixWorld(); const n = new THREE.Vector3(0,0,1).transformDirection(obj.matrixWorld), o = new THREE.Vector3().setFromMatrixPosition(obj.matrixWorld);
+  syncCSS(); obj.updateMatrixWorld(); const n = new THREE.Vector3(0,0,1).transformDirection(obj.matrixWorld), o = new THREE.Vector3().setFromMatrixPosition(obj.matrixWorld);
   pl.setFromNormalAndCoplanarPoint(n, o); if(!rc.ray.intersectPlane(pl, hit)) return null;
   inv.copy(obj.matrixWorld).invert(); hit.applyMatrix4(inv); return { x: hit.x + W/2, y: H/2 - hit.y }; };
 
@@ -1079,10 +1122,11 @@ const tmp = new THREE.Spherical();
 function loop(){
   if(!run) return; requestAnimationFrame(loop);
   if(tw){ const k = Math.min(1, (performance.now()-tw.t0)/tw.ms), e = ease(k); tmp.set(tw.a.r+(tw.b.r-tw.a.r)*e, tw.a.p+(tw.b.p-tw.a.p)*e, tw.a.t+(tw.b.t-tw.a.t)*e); cam.position.setFromSpherical(tmp).add(ctl.target); cam.lookAt(ctl.target); if(k>=1) tw=null; dirty=2; }
+  if(MODE.t !== MODE.to){ const k = Math.min(1,(performance.now()-MODE.t0)/1300); MODE.t = MODE.from + (MODE.to-MODE.from)*k; applyMode(MODE.t); }
   if(ctl.update()) dirty = 2;
   if(ledPulse && ledOn){ const k = .5+.5*Math.sin(performance.now()/170); ledM.color.copy(LEDC).multiplyScalar(.35+.65*k); down.intensity = .5+1.6*k; dirty = 1; } else down.intensity = 1.1;
   if(!dirty) return; dirty--;
-  renderer.render(scene, cam); cssCam.copy(cam); cssCam.position.multiplyScalar(F); cssCam.near=cam.near*F; cssCam.far=cam.far*F; cssCam.updateProjectionMatrix(); cssCam.updateMatrixWorld(); css.render(cssScene, cssCam);
+  syncCSS(); renderer.render(scene, cam); cssCam.copy(cam); cssCam.position.multiplyScalar(F); cssCam.near=cam.near*F; cssCam.far=cam.far*F; cssCam.updateProjectionMatrix(); cssCam.updateMatrixWorld(); css.render(cssScene, cssCam);
   const s = tmp.setFromVector3(cam.position.clone().sub(ctl.target));
   const off = Math.abs(THREE.MathUtils.radToDeg(Math.atan2(Math.sin(s.theta),Math.cos(s.theta)))) + Math.abs(THREE.MathUtils.radToDeg(s.phi) - 86);
   fb.classList.toggle('on', !tw && off > 14);
@@ -1090,6 +1134,8 @@ function loop(){
   glare.style.background = `linear-gradient(${(115 + THREE.MathUtils.radToDeg(s.theta)*1.4).toFixed(1)}deg, transparent 30%, rgba(255,255,255,.16) 46%, rgba(255,255,255,.05) 54%, transparent 70%)`;
 }
 document.getElementById('load').style.opacity = 0;
+applyMode(0);
+window.__emu = { cam, ctl, set:(r,p,t)=>{ tw=null; cam.position.setFromSpherical(new THREE.Spherical(r,p,t)).add(ctl.target); dirty=2; } };
 loop();
 }
 </script>
