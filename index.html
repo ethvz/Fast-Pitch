@@ -509,6 +509,8 @@ body:not(.ishome) #screen::after{display:none;content:"";position:absolute;left:
 /* Smart Hub: Modes + Emulator share one full-bleed 3D Hub (a sticky layer behind both sections) */
 #p-hub .lpage>.otab.fb{transform:none!important;margin:0!important;scroll-margin-top:0!important;border-radius:0!important;height:1032px!important;width:var(--W)!important;background:transparent!important;position:relative;z-index:2;pointer-events:none;overflow:visible!important;clip-path:none!important;-webkit-clip-path:none!important}
 #p-hub .lpage>.otab.fb>*{pointer-events:auto}
+#p-hub .lpage>.otab.fb>.strip,#p-hub .lpage>.otab.fb .hbpane{pointer-events:none!important}  /* Hardware/Specs text floats over the live Hub; touches reach the panel */
+#p-hub .lpage>.otab.fb>.fsp{pointer-events:auto!important}
 #p-hub .otab.fb .emuhd{left:calc(var(--gx,0px) + 64px);top:112px;pointer-events:none}
 #p-hub .otab.fb .hbmodes{left:auto;right:36px;top:50%;transform:translateY(-50%);width:162px;padding:8px;transition:opacity .25s linear;border-radius:30px;background:rgba(20,20,22,.5);-webkit-backdrop-filter:blur(24px) saturate(1.4);backdrop-filter:blur(24px) saturate(1.4);box-shadow:0 20px 60px rgba(0,0,0,.45),inset 0 0 0 1px rgba(255,255,255,.08)}
 #p-hub .otab.fb .hbm{height:88px;margin-bottom:5px;font-size:16px;border-radius:20px}#p-hub .otab.fb .hbm img{width:34px;height:34px}#p-hub .otab.fb .hbm:last-child{margin-bottom:0}
@@ -2806,7 +2808,7 @@ body.hd3 #gTitle{opacity:0!important}
 const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
 
 /* ---------- scale stage ---------- */
-let HW=1376; window.FPV='v398'; if(Math.min(screen.width||0,screen.height||0)<500) document.documentElement.classList.add('phn');
+let HW=1376; window.FPV='v399'; if(Math.min(screen.width||0,screen.height||0)<500) document.documentElement.classList.add('phn');
 function safeBox(){ let pr=document.getElementById('safeProbe'); if(!pr){ pr=document.createElement('div'); pr.id='safeProbe';
   pr.style.cssText='position:fixed;left:0;top:0;width:100vw;height:100vh;height:100dvh;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);box-sizing:border-box;visibility:hidden;pointer-events:none;z-index:-1'; document.documentElement.appendChild(pr); }
   const cs=getComputedStyle(pr), t=parseFloat(cs.paddingTop)||0, b=parseFloat(cs.paddingBottom)||0, l=parseFloat(cs.paddingLeft)||0, r=parseFloat(cs.paddingRight)||0;
