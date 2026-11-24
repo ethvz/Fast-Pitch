@@ -523,6 +523,7 @@ body:not(.ishome) #screen::after{display:none;content:"";position:absolute;left:
 #p-hub .otab.fb.popH #hbCall>*,#p-hub .otab.fb.popS .hbspec>div{opacity:1;transform:none;transition-delay:calc(var(--i,0)*55ms)}
 #p-hub .otab.fb .hbspec{background:rgba(14,14,16,.42);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);border-radius:28px;padding:26px 30px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.07)}
 #p-hub .otab.fb .hbco{text-shadow:0 1px 10px rgba(0,0,0,.45)}
+#p-hub .hbmodes.al{top:var(--mt)!important;height:var(--mh)!important;transform:none!important;display:flex;flex-direction:column;box-sizing:border-box}#p-hub .hbmodes.al .hbm{flex:1 1 0;height:auto!important;min-height:0}#p-hub .hbmodes.al .hbm:last-child{margin-bottom:0}
 #emuLayer{position:absolute;left:0;top:0;width:var(--W)!important;margin:0!important;z-index:1;pointer-events:none}
 #emuLayer .st{position:sticky;top:0;height:1032px;pointer-events:auto;background:#020203;opacity:1!important;animation:none!important}
 #emuLayer .tf{position:absolute;left:0;right:0;top:0;height:170px;pointer-events:none;background:linear-gradient(180deg,#000 0%,rgba(0,0,0,.82) 26%,rgba(0,0,0,.35) 62%,rgba(0,0,0,0) 100%)}
@@ -2737,7 +2738,7 @@ body.hd3 #gTitle{opacity:0!important}
         <div class="strip"><div class="hbpane" id="hbCall"></div><div class="hbpane" id="hbSpec"></div></div>
         <div class="fsp spill" style="left:578px;top:869px;width:220px;height:60px"><i class="ind"></i><button class="on" data-fs="f">Hardware</button><button data-fs="s">Specs</button></div>
       </div>
-      <div id="emuLayer" class="in"><div class="st"><iframe id="emuF" class="emuf" title="Smart Hub Pro 2" allow="autoplay" data-src="assets/emu/index.html?v=7"></iframe><div class="tf"></div></div></div>
+      <div id="emuLayer" class="in"><div class="st"><iframe id="emuF" class="emuf" title="Smart Hub Pro 2" allow="autoplay" data-src="assets/emu/index.html?v=8"></iframe><div class="tf"></div></div></div>
       <div class="otab hb" data-t="hist"><div class="hx3" id="hbX"><div class="hbpane" id="hbHist"></div><div class="hbpane" id="hbNew"></div><div class="hbpane" id="hbOut"></div></div><div class="hb3pill" id="hb3"><i class="ind"></i><button class="on" data-hb3="0">Historical</button><button data-hb3="1">What’s New</button><button data-hb3="2">Internet Outage</button></div></div>
       <div class="otab hb" data-t="cmp"><div id="hbCmp"></div></div>
       <div class="otab tall hb" data-t="videos" hidden><div id="hbVlib"></div></div>
@@ -2808,7 +2809,7 @@ body.hd3 #gTitle{opacity:0!important}
 const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
 
 /* ---------- scale stage ---------- */
-let HW=1376; window.FPV='v399'; if(Math.min(screen.width||0,screen.height||0)<500) document.documentElement.classList.add('phn');
+let HW=1376; window.FPV='v400'; if(Math.min(screen.width||0,screen.height||0)<500) document.documentElement.classList.add('phn');
 function safeBox(){ let pr=document.getElementById('safeProbe'); if(!pr){ pr=document.createElement('div'); pr.id='safeProbe';
   pr.style.cssText='position:fixed;left:0;top:0;width:100vw;height:100vh;height:100dvh;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);box-sizing:border-box;visibility:hidden;pointer-events:none;z-index:-1'; document.documentElement.appendChild(pr); }
   const cs=getComputedStyle(pr), t=parseFloat(cs.paddingTop)||0, b=parseFloat(cs.paddingBottom)||0, l=parseFloat(cs.paddingLeft)||0, r=parseFloat(cs.paddingRight)||0;
@@ -3556,6 +3557,7 @@ $('#hbScroll').addEventListener('scroll',()=>titleLive($('#p-hub')),{passive:tru
     const h=fitp(22,1352,150,770,687), sp=fitp(60,1300,140,800,680);
     const hc=$('#hbCall'), hs=$('#hbSpec'); if(hc) hc.style.transform=`translate(${h.tx.toFixed(1)}px,${h.ty.toFixed(1)}px) scale(${h.sc.toFixed(4)})`; if(hs) hs.style.transform=`translate(${sp.tx.toFixed(1)}px,${sp.ty.toFixed(1)}px) scale(${sp.sc.toFixed(4)})`;
     const hm=$('#hbModes'), ml=hm&&hm.offsetWidth?(Wl-36-hm.offsetWidth):Wl-200;
+    if(hm&&rr&&rr.height){ hm.classList.add('al'); hm.style.setProperty('--mt',((rr.top-br.top)/k).toFixed(1)+'px'); hm.style.setProperty('--mh',(rr.height/k).toFixed(1)+'px'); }  /* Modes menu: same height and top as the left pill rail */
     PRE={ modes:{a0:L, a1:ml-24, top:150, bot:Hl-60}, hw:{cx:h.tx+h.sc*686, cy:h.ty+h.sc*498, w:h.sc*702}, sp:{cx:sp.tx+sp.sc*372, cy:sp.ty+sp.sc*450, w:sp.sc*480} }; };
   const geo=()=>{ layout(); return { pre:PRE }; };
   const place=()=>{ const t=mS.offsetTop, b=eS.offsetTop+eS.offsetHeight; if(b>t){ L.style.top=t+'px'; L.style.height=(b-t)+'px'; } };

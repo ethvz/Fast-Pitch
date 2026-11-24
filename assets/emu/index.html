@@ -15,7 +15,7 @@ html,body{margin:0;height:100%;background:#000;overflow:hidden;overscroll-behavi
 #scr{pointer-events:auto}
 #glare{position:absolute;inset:0;pointer-events:none;z-index:200;mix-blend-mode:screen;opacity:.0;transition:opacity .4s}
 body:not(.modes) #mode{opacity:0!important;pointer-events:none!important}
-#mode{transition:opacity .4s;position:fixed;left:50%;top:196px;transform:translate(-50%,0);display:flex;padding:4px;border-radius:22px;background:rgba(28,28,28,.92);box-shadow:0 8px 30px rgba(0,0,0,.45),inset 0 0 0 1px rgba(255,255,255,.06);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);z-index:5}
+#mode{transition:opacity .4s;position:fixed;left:50%;top:196px;transform:translate(-50%,0);display:flex;padding:4px;border-radius:22px;background:rgba(20,20,22,.5);box-shadow:0 20px 60px rgba(0,0,0,.45),inset 0 0 0 1px rgba(255,255,255,.08);-webkit-backdrop-filter:blur(24px) saturate(1.4);backdrop-filter:blur(24px) saturate(1.4);z-index:5}
 #mode .ind{position:absolute;top:4px;bottom:4px;left:4px;width:calc(50% - 4px);border-radius:18px;background:rgba(5,229,175,.16);transition:transform .45s cubic-bezier(.22,.8,.24,1)}
 #mode[data-m=table] .ind{transform:translateX(100%)}
 #mode button{position:relative;flex:1;display:flex;align-items:center;justify-content:center;gap:7px;height:34px;padding:0 16px;min-width:146px;border:0;background:none;color:rgba(255,255,255,.72);font:500 14px -apple-system,system-ui,sans-serif;cursor:pointer;transition:color .3s;white-space:nowrap}
@@ -945,7 +945,7 @@ import { CSS3DRenderer, CSS3DObject } from './css3d.js';
 const scr = document.getElementById('scr');
 UI.build();
 const W = 1280, H = 750, SW = .1513, K = SW / W;   // design px → metres on the glass
-const SC = new THREE.Vector3(-.0032, .01555, .02272);
+const SC = new THREE.Vector3(0, .01555, .02272);
 
 let renderer;
 if(/flat/.test(location.search)) flat(1); else try { renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('gl'), antialias: true, alpha: false, powerPreference: 'high-performance' }); }
@@ -1156,8 +1156,10 @@ function loop(){
   fb.classList.toggle('on', !FR.follow);
   const s = new THREE.Spherical().setFromVector3(cam.position.clone().sub(ctl.target));
   const off = Math.abs(THREE.MathUtils.radToDeg(s.theta)) + Math.abs(THREE.MathUtils.radToDeg(s.phi) - 90);
-  glare.style.opacity = Math.min(.45, off/120).toFixed(3);
-  glare.style.background = `linear-gradient(${(115 + THREE.MathUtils.radToDeg(s.theta)*1.4).toFixed(1)}deg, transparent 30%, rgba(255,255,255,.16) 46%, rgba(255,255,255,.05) 54%, transparent 70%)`;
+  /* glass glare: always a soft sheen, the streak slides as the view turns */
+  const th = THREE.MathUtils.radToDeg(s.theta), ph = THREE.MathUtils.radToDeg(s.phi) - 90, sx = 38 + th*.9, sy = 18 + ph*.6;
+  glare.style.opacity = Math.min(1, .7 + off/90).toFixed(3);
+  glare.style.background = `linear-gradient(${(118 + th*1.4).toFixed(1)}deg, rgba(255,255,255,0) ${(24+th*.5).toFixed(1)}%, rgba(255,255,255,.10) ${(40+th*.5).toFixed(1)}%, rgba(255,255,255,.035) ${(47+th*.5).toFixed(1)}%, rgba(255,255,255,0) ${(56+th*.5).toFixed(1)}%), radial-gradient(ellipse 70% 55% at ${sx.toFixed(1)}% ${sy.toFixed(1)}%, rgba(255,255,255,.09), rgba(255,255,255,0) 70%), linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,0) 32%)`;
 }
 document.getElementById('load').style.opacity = 0;
 applyMode(0); document.body.classList.add('modes');
