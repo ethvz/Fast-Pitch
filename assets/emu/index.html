@@ -12,7 +12,8 @@ html,body{margin:0;height:100%;background:#000;overflow:hidden;overscroll-behavi
 #css>div,#css>div>div{pointer-events:none}
 #scr{pointer-events:auto}
 #glare{position:absolute;inset:0;pointer-events:none;z-index:200;mix-blend-mode:screen;opacity:.0;transition:opacity .4s}
-#mode{position:fixed;left:50%;top:28px;transform:translateX(-50%);display:flex;padding:4px;border-radius:22px;background:rgba(28,28,28,.92);box-shadow:0 8px 30px rgba(0,0,0,.45),inset 0 0 0 1px rgba(255,255,255,.06);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);z-index:5}
+body.modes #mode,body.modes #hint,body.modes #front{opacity:0!important;pointer-events:none!important}
+#mode{transition:opacity .4s;position:fixed;left:50%;top:196px;transform:translateX(-50%);display:flex;padding:4px;border-radius:22px;background:rgba(28,28,28,.92);box-shadow:0 8px 30px rgba(0,0,0,.45),inset 0 0 0 1px rgba(255,255,255,.06);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);z-index:5}
 #mode .ind{position:absolute;top:4px;bottom:4px;left:4px;width:calc(50% - 4px);border-radius:18px;background:rgba(5,229,175,.16);transition:transform .45s cubic-bezier(.22,.8,.24,1)}
 #mode[data-m=table] .ind{transform:translateX(100%)}
 #mode button{position:relative;flex:1;display:flex;align-items:center;justify-content:center;gap:7px;height:34px;padding:0 16px;min-width:146px;border:0;background:none;color:rgba(255,255,255,.72);font:500 14px -apple-system,system-ui,sans-serif;cursor:pointer;transition:color .3s;white-space:nowrap}
@@ -707,9 +708,9 @@ let svT=null;
 function closeSV(){ clearTimeout(pdT); clearInterval(svT); closeOv(); setTab('home'); }
 function svPage(p){ $('#sv').dataset.p=p; }
 function svCycle(){ clearInterval(svT); svT=setInterval(()=>{ if(S.open!=='sv'){ clearInterval(svT); return; } svPage($('#sv').dataset.p==='a'?'b':'a'); },14000); }
-function openSV(){ renderSV(); svPage('a'); openOv('sv'); clearTimeout(pdT); clearInterval(svT);
+function openSV(quiet){ renderSV(); svPage('a'); openOv('sv'); clearTimeout(pdT); clearInterval(svT);
   setTimeout(()=>{ if(S.open==='sv') svPage('b'); svCycle(); },4500);                       // clock page, then it glides to the forecast
-  if(!pdOnce){ pdT=setTimeout(()=>{ if(S.open==='sv'){ pdOnce=true; openPD(); } },11000); } }
+  if(!pdOnce && !quiet){ pdT=setTimeout(()=>{ if(S.open==='sv'){ pdOnce=true; openPD(); } },11000); } }
 function openPD(){ $('#pdD').textContent = dayStr(true); PD.mute=true; renderPD(); openOv('pd'); const v=$('#pdV'); if(!v.src) v.src='img/ev_person.mp4'; v.currentTime=0; v.play().catch(()=>{}); }
 const PD={mute:true};
 function renderPD(){ $('#pdLk').innerHTML = S.locks.front?IC.lockC(40):IC.lockO(40); $('#pdLkT').textContent = S.locks.front?'Unlock door':'Lock door'; $('#pdLk').parentElement.classList.toggle('on',S.locks.front);
@@ -921,7 +922,17 @@ function build(){
   $('#live').addEventListener('pointerup',e=>{ const p=UI.loc(e); if(sx!=null&&p&&p.x-sx>120) closeOv(); sx=null; });
   document.addEventListener('touchstart',()=>{}, {passive:true});
 }
-return { build, S, led, loc:(e)=>({x:e.offsetX,y:e.offsetY}) };
+/* Fast Pitch's Modes buttons drive the screen: Disarmed, Armed Away, Panic, Alarm, Cameras, Always On */
+function demo(m){ clearTimeout(pdT); clearInterval(svT); clearInterval(cdT); $('#arm').classList.remove('cd'); scr.classList.remove('set'); closeOv(); closePop();
+  const home=()=>{ setTab('home'); $('#hm').scrollTo({left:0}); };
+  if(m===0){ S.alarm=false; S.arm='dis'; renderArm(); home(); }
+  else if(m===1){ S.alarm=false; S.arm='away'; renderArm(); home(); }
+  else if(m===2){ S.alarm=false; renderArm(); home(); $('#sos').classList.remove('fired'); openOv('sos'); }
+  else if(m===3){ S.arm='away'; renderArm(); home(); alarm('The front door was opened.'); }
+  else if(m===4){ S.alarm=false; renderArm(); home(); openPD(); }
+  else if(m===5){ S.alarm=false; renderArm(); home(); openSV(true); }
+  poke(); }
+return { build, S, led, demo, loc:(e)=>({x:e.offsetX,y:e.offsetY}) };
 })();
 </script>
 <script type="module">
@@ -1003,36 +1014,47 @@ addEventListener('hubled', e => { const d = e.detail; LEDC.set(d.c); ledM.color.
   ledBar.visible = down.visible = near.visible = ledOn; if(!ledOn) {} dirty = 2; });
 setTimeout(()=>UI.led(),0);
 
-const ROOM = { x:1.1, y0:-.95, y1:.85, z:1.1, zb:-1.0 };
-/* ---- mounting: the Hub lives in a rig whose origin is its bottom-back edge (the tabletop stand's hinge) ---- */
+/* ---- a small acoustic booth; the Hub hangs on its back wall (or sits on a pedestal in front of it) ---- */
+const WZ = -.19, PZ = WZ + .27;                                              // foam tips plane; pedestal centre
+const ROOM = { x:.68, y0:-.72, y1:.6, z:.95, zb:WZ-.034 };
+/* the Hub lives in a rig whose origin is its bottom-back edge (the tabletop stand's hinge) */
 const rig = new THREE.Group(); scene.add(rig); scene.remove(hub); rig.add(hub); hub.position.set(0, -HB.min.y, -HB.min.z);
-const TILT = THREE.MathUtils.degToRad(16), TT = -.086;                       // stand lean; table-top height
-const white = M[0];
-const tableG = new THREE.Group(); scene.add(tableG);
-{ const black = new THREE.MeshStandardMaterial({ color:0x0c0c0d, roughness:.82, metalness:0, envMapIntensity:.25 });
+const TILT = THREE.MathUtils.degToRad(30), TT = -.072;                      // lean on the stand (from Vivint's side render); table-top height
+const tableG = new THREE.Group(); scene.add(tableG); tableG.position.z = PZ;
+{ const black = new THREE.MeshStandardMaterial({ color:0x0b0b0c, roughness:.85, metalness:0, envMapIntensity:.22 });
   const H = TT-ROOM.y0, R = .23;
   const body = new THREE.Mesh(new THREE.CylinderGeometry(R, R, H-.02, 96, 1), black); body.position.y = ROOM.y0 + (H-.02)/2;
   const top = new THREE.Mesh(new THREE.CylinderGeometry(R, R, .02, 96, 1), black); top.position.y = TT-.01;
   const lip = new THREE.Mesh(new THREE.TorusGeometry(R-.002, .004, 12, 96), black); lip.rotation.x = Math.PI/2; lip.position.y = TT-.004;
   for(const m of [body, top, lip]){ m.castShadow = m.receiveShadow = true; tableG.add(m); } }
 const stand = new THREE.Group(); rig.add(stand);
-{ // tabletop stand: low base plate with a front lip, and a wedge the panel leans on
-  const ex = (shape, w) => { const g = new THREE.ExtrudeGeometry(shape, { depth:w, bevelEnabled:true, bevelThickness:.0025, bevelSize:.0025, bevelSegments:4, curveSegments:12 }); g.translate(0,0,-w/2); g.rotateY(Math.PI/2); return g; };
-  const t = .1, L = .078, A = new THREE.Vector2(0,0);
-  const wedge = new THREE.Shape(); wedge.moveTo(-.004,-.006); wedge.lineTo(-L,-.006); wedge.lineTo(-t*Math.sin(TILT)-.004, t*Math.cos(TILT)); wedge.lineTo(-.004,.004); wedge.lineTo(-.004,-.006);
-  const base = new THREE.Shape(); base.moveTo(.034,-.006); base.lineTo(-L-.01,-.006); base.lineTo(-L-.01,0); base.lineTo(.026,0); base.lineTo(.026,.012); base.lineTo(.034,.012); base.lineTo(.034,-.006);
-  const wm = new THREE.Mesh(ex(wedge,.15), white), bm = new THREE.Mesh(ex(base,.2), white);
-  // shapes are drawn in (z,y): ExtrudeGeometry is x/y, rotateY maps x→-z; flip so the wedge sits behind the panel
-  for(const m of [wm,bm]){ m.scale.z = -1; m.castShadow = m.receiveShadow = true; stand.add(m); }
-  wm.rotation.x = 0; stand.rotation.x = TILT; }                                // counter the rig's lean so the stand sits flat on the table
-const MODE = { cur:'wall', t:0, from:0, to:0, t0:0 };
-function applyMode(k){                                                       // k: 0 = wall mounted (floating), 1 = tabletop
+{ /* Smart Hub Pro 2 tabletop stand: a fabric-wrapped wedge on a thin white base; the panel leans back 30° against its front face */
+  const ex = (shape, w, bv) => { const g = new THREE.ExtrudeGeometry(shape, { depth:w, bevelEnabled:true, bevelThickness:bv, bevelSize:bv, bevelSegments:6, curveSegments:16 }); g.translate(0,0,-w/2); g.rotateY(-Math.PI/2); return g; };
+  const sn = Math.sin(TILT), cs = Math.cos(TILT), s1 = .062;
+  const w = new THREE.Shape(); w.moveTo(-.006,.006); w.lineTo(-.006 - s1*sn, .006 + s1*cs);
+  w.quadraticCurveTo(-.012 - (s1+.012)*sn, .006 + (s1+.012)*cs, -.052, .056);
+  w.lineTo(-.094, .02); w.quadraticCurveTo(-.101, .014, -.101, .007); w.lineTo(-.006,.006);
+  const b = new THREE.Shape(); b.moveTo(-.002,-.0035); b.lineTo(-.106,-.0035); b.lineTo(-.106,.0035); b.lineTo(-.002,.0035); b.lineTo(-.002,-.0035);
+  const fabB = fab.clone(); fabB.wrapS = fabB.wrapT = THREE.RepeatWrapping; fabB.repeat.set(5,5); fabB.needsUpdate = true;
+  const fabric = new THREE.MeshStandardMaterial({ color:0xb9b6b1, roughness:.97, bumpMap:fabB, bumpScale:1.4, envMapIntensity:.25 });
+  const plate = new THREE.MeshStandardMaterial({ color:0xeeeeec, roughness:.5 });
+  const wm = new THREE.Mesh(ex(w,.158,.004), fabric), bm = new THREE.Mesh(ex(b,.158,.0015), plate);
+  for(const m of [wm,bm]){ m.castShadow = m.receiveShadow = true; stand.add(m); }
+  // usb-c port on the back of the base
+  const port = new THREE.Mesh(new THREE.BoxGeometry(.012,.006,.003), new THREE.MeshStandardMaterial({ color:0xdedede, roughness:.35, metalness:.6 })); port.position.set(.05,.012,-.1); stand.add(port);
+  stand.rotation.x = TILT; }                                                 // counter the rig's lean so the stand sits flat on the table
+const MODE = { cur:'wall', t:0, from:0, to:0, t0:0 }, FR = { p:1, x:0 };     // FR.p: 0 = Fast Pitch's Modes section, 1 = Emulator section
+const TGT_W = new THREE.Vector3(0, 0, WZ+.012), TGT_T = new THREE.Vector3(0, .005, PZ+.015), TGT = new THREE.Vector3();
+let lastTgt = null;
+function applyMode(k){                                                       // k: 0 = on the wall, 1 = tabletop
   const e = k<.5 ? 4*k*k*k : 1-Math.pow(-2*k+2,3)/2;
   rig.rotation.x = -TILT*e;
-  const yWall = -(HB.max.y-HB.min.y)/2, yTable = TT+.006;
-  rig.position.set(0, yWall + (yTable-yWall)*e, -.011*(1-e));
-  tableG.position.y = -1.05*(1-e); tableG.visible = e > .001;
+  const yWall = -(HB.max.y-HB.min.y)/2, yTable = TT+.0035;
+  rig.position.set(FR.x, yWall + (yTable-yWall)*e, (WZ+.001) + (PZ+.045-(WZ+.001))*e);
+  tableG.position.y = -.8*(1-e); tableG.visible = e > .001;
   stand.visible = e > .02; stand.scale.setScalar(Math.max(.001, Math.min(1, (e-.35)/.65)));
+  TGT.lerpVectors(TGT_W, TGT_T, e);
+  if(typeof ctl !== 'undefined'){ if(lastTgt){ const d = TGT.clone().sub(lastTgt); cam.position.add(d); } ctl.target.copy(TGT); lastTgt = TGT.clone(); }
   dirty = 2; }
 function setMode(m){ if(m===MODE.cur) return; MODE.cur = m; MODE.from = MODE.t; MODE.to = m==='table'?1:0; MODE.t0 = performance.now();
   document.querySelectorAll('#mode button').forEach(b=>b.classList.toggle('on', b.dataset.m===m)); document.getElementById('mode').dataset.m = m; }
@@ -1081,8 +1103,8 @@ function syncCSS(){ rig.updateMatrixWorld(true); obj.matrix.copy(FM).multiply(hu
 
 const ctl = new OrbitControls(cam, renderer.domElement);
 ctl.enablePan = false; ctl.enableDamping = true; ctl.dampingFactor = .08; ctl.rotateSpeed = .75; ctl.zoomSpeed = .8;
-ctl.minDistance = .2; ctl.maxDistance = .92; ctl.target.set(0, -.004, 0);
-ctl.minPolarAngle = .72; ctl.maxPolarAngle = 2.05;   // all the way around; never through the ceiling or floor
+ctl.minDistance = .2; ctl.maxDistance = .75; ctl.target.copy(TGT_W);
+ctl.minPolarAngle = .78; ctl.maxPolarAngle = 2.0; ctl.minAzimuthAngle = -.95; ctl.maxAzimuthAngle = .95;   // stay inside the booth, in front of the wall
 const BASE = new THREE.Spherical();
 function fit(){
   const w = innerWidth, h = innerHeight; renderer.setSize(w, h, false); css.setSize(w, h); cam.aspect = w/h;
@@ -1090,13 +1112,13 @@ function fit(){
   const d = Math.max(.178/(vh*.66), .238/(vh*cam.aspect*.66));                       // hub fills ~2/3 of the frame, foam around it
   BASE.set(d, THREE.MathUtils.degToRad(86), 0); cam.updateProjectionMatrix(); return d; }
 let D = fit();
-cam.position.setFromSpherical(new THREE.Spherical(.9, THREE.MathUtils.degToRad(80), THREE.MathUtils.degToRad(-44))).add(ctl.target);
+cam.position.setFromSpherical(new THREE.Spherical(.72, THREE.MathUtils.degToRad(80), THREE.MathUtils.degToRad(-50))).add(ctl.target);
 addEventListener('resize', () => { D = fit(); dirty = 3; });
 
 /* intro: settle to the front */
 let tw = null;
 function toFront(ms=1100){ const s0 = new THREE.Spherical().setFromVector3(cam.position.clone().sub(ctl.target)); let th = s0.theta; th = Math.atan2(Math.sin(th), Math.cos(th));
-  tw = { t0:performance.now(), ms, a:{r:s0.radius, p:s0.phi, t:th}, b:{r:BASE.radius, p:BASE.phi, t:0} }; }
+  tw = { t0:performance.now(), ms, a:{r:s0.radius, p:s0.phi, t:th}, b:{r:BASE.radius*(typeof frZoom==='number'?frZoom:1), p:BASE.phi, t:0} }; }
 setTimeout(()=>toFront(2400), 600);
 const ease = t => 1 - Math.pow(1-t, 3.2);
 ctl.addEventListener('start', () => { tw = null; hint(); });
@@ -1117,7 +1139,12 @@ UI.loc = e => { v2.set(e.clientX/innerWidth*2-1, -(e.clientY/innerHeight)*2+1); 
 addEventListener('wheel', e => { e.stopImmediatePropagation(); e.preventDefault(); try{ parent.postMessage({ fpEmu:'wheel', dy:e.deltaY }, '*'); }catch(_){} }, { capture:true, passive:false });
 
 let dirty = 3, run = true;
-addEventListener('message', e => { const d = e.data||{}; if(d.fpEmu==='vis'){ run = !!d.on; if(run){ dirty=2; loop(); } } if(d.fpEmu==='front') toFront(700); });
+let frZoom = 1;
+function setFrame(p){ const wasModes = FR.p < .5; FR.p = p; const vw = 2*BASE.radius*1.18*Math.tan(THREE.MathUtils.degToRad(cam.fov/2))*cam.aspect;
+  FR.x = -(1-p)*.12*vw; applyMode(MODE.t); const nowModes = p < .5;
+  document.body.classList.toggle('modes', nowModes);
+  if(nowModes !== wasModes){ frZoom = nowModes ? 1.18 : 1; toFront(1100); } }
+addEventListener('message', e => { const d = e.data||{}; if(d.fpEmu==='frame') setFrame(+d.p); if(d.fpEmu==='mode') UI.demo(+d.m); if(d.fpEmu==='vis'){ run = !!d.on; if(run){ dirty=2; loop(); } } if(d.fpEmu==='front') toFront(700); });
 const tmp = new THREE.Spherical();
 function loop(){
   if(!run) return; requestAnimationFrame(loop);

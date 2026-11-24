@@ -504,7 +504,18 @@ body:not(.ishome) #screen::after{display:none;content:"";position:absolute;left:
 
 /* ===== Smart Hub Pro 2 ===== */
 .otab.hb{background:#000}
-.otab.hb[data-t=hubemu]{background:#020203}
+.otab.hb[data-t=hubemu]{background:transparent}
+
+/* Smart Hub: Modes + Emulator share one full-bleed 3D Hub (a sticky layer behind both sections) */
+#p-hub .lpage>.otab.fb{transform:none!important;margin:0!important;scroll-margin-top:0!important;border-radius:0!important;height:1032px!important;width:var(--W)!important;background:transparent!important;position:relative;z-index:2;pointer-events:none;overflow:visible!important;clip-path:none!important;-webkit-clip-path:none!important}
+#p-hub .lpage>.otab.fb>*{pointer-events:auto}
+#p-hub .otab.fb .emuhd{left:calc(var(--gx,0px) + 64px);top:112px;pointer-events:none}
+#p-hub .otab.fb .hbmodes{left:auto;right:40px;top:50%;transform:translateY(-50%);width:200px;padding:10px;border-radius:30px;background:rgba(20,20,22,.5);-webkit-backdrop-filter:blur(24px) saturate(1.4);backdrop-filter:blur(24px) saturate(1.4);box-shadow:0 20px 60px rgba(0,0,0,.45),inset 0 0 0 1px rgba(255,255,255,.08)}
+#p-hub .otab.fb .hbm{height:98px;margin-bottom:6px}#p-hub .otab.fb .hbm:last-child{margin-bottom:0}
+#emuLayer{position:absolute;left:0;top:0;width:var(--W)!important;margin:0!important;z-index:1;pointer-events:none}
+#emuLayer .st{position:sticky;top:0;height:1032px;pointer-events:auto;background:#020203;opacity:1!important;animation:none!important}
+#emuLayer .tf{position:absolute;left:0;right:0;top:0;height:170px;pointer-events:none;background:linear-gradient(180deg,#000 0%,rgba(0,0,0,.82) 26%,rgba(0,0,0,.35) 62%,rgba(0,0,0,0) 100%)}
+
 .emuhd{position:absolute;left:64px;top:44px;z-index:2;pointer-events:none;text-shadow:0 2px 14px rgba(0,0,0,.6)}
 .emuhd h2{margin:0;font-size:46px;font-weight:600;color:#fff;letter-spacing:-.02em}
 .emuhd p{margin:8px 0 0;font-size:21px;color:rgba(255,255,255,.6)}
@@ -2699,14 +2710,14 @@ body.hd3 #gTitle{opacity:0!important}
         <video class="hbh-vid" id="hbHv" src="assets/hb/hero.mp4?v=73" poster="assets/hb/hero_v.jpg?v=73" muted playsinline loop autoplay preload="auto"></video>
         <div class="hbh-top"><h1>Your home’s command center.</h1><p>Security, cameras, locks and climate. One always-on screen.</p></div>
       </div>
-      <div class="otab hb" data-t="modes">
-        <div class="hbpanel" id="hbPanel"><img id="hbPoster" src="assets/hb/m0p.jpg?v=60" alt=""><video class="hbv" muted playsinline loop preload="auto"></video><video class="hbv" muted playsinline loop preload="auto"></video></div>
+      <div class="otab hb fb" data-t="modes">
+        <div class="hbpanel" id="hbPanel" hidden><img id="hbPoster" src="assets/hb/m0p.jpg?v=60" alt=""><video class="hbv" muted playsinline loop preload="auto"></video><video class="hbv" muted playsinline loop preload="auto"></video></div>
         <div class="hbmodes" id="hbModes"></div>
       </div>
-      <div class="otab hb" data-t="hubemu">
+      <div class="otab hb fb" data-t="hubemu">
         <div class="emuhd"><h2>Try the Hub.</h2><p>Tap the screen to use it. Drag around it to see every angle.</p></div>
-        <iframe id="emuF" class="emuf" title="Smart Hub Pro 2 emulator" allow="autoplay" data-src="assets/emu/index.html?v=5"></iframe>
       </div>
+      <div id="emuLayer" class="in"><div class="st"><iframe id="emuF" class="emuf" title="Smart Hub Pro 2 emulator" allow="autoplay" data-src="assets/emu/index.html?v=6"></iframe><div class="tf"></div></div></div>
       <div class="otab hb" data-t="feat">
         <div class="strip"><div class="hbpane" id="hbCall"></div><div class="hbpane" id="hbSpec"></div></div>
         <div class="fsp spill" style="left:578px;top:869px;width:220px;height:60px"><i class="ind"></i><button class="on" data-fs="f">Hardware</button><button data-fs="s">Specs</button></div>
@@ -2781,7 +2792,7 @@ body.hd3 #gTitle{opacity:0!important}
 const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
 
 /* ---------- scale stage ---------- */
-let HW=1376; window.FPV='v395'; if(Math.min(screen.width||0,screen.height||0)<500) document.documentElement.classList.add('phn');
+let HW=1376; window.FPV='v396'; if(Math.min(screen.width||0,screen.height||0)<500) document.documentElement.classList.add('phn');
 function safeBox(){ let pr=document.getElementById('safeProbe'); if(!pr){ pr=document.createElement('div'); pr.id='safeProbe';
   pr.style.cssText='position:fixed;left:0;top:0;width:100vw;height:100vh;height:100dvh;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);box-sizing:border-box;visibility:hidden;pointer-events:none;z-index:-1'; document.documentElement.appendChild(pr); }
   const cs=getComputedStyle(pr), t=parseFloat(cs.paddingTop)||0, b=parseFloat(cs.paddingBottom)||0, l=parseFloat(cs.paddingLeft)||0, r=parseFloat(cs.paddingRight)||0;
@@ -3032,7 +3043,7 @@ function vid(el,src,box,base='assets/oc/'){ if(!src){el.hidden=true;el.pause();e
   if(el.closest('[data-vis="1"]')){const p=el.play(); if(p)p.catch(()=>{el.muted=true;el.play().catch(()=>{});});} }
 /* scroll-spy: which section is on screen; play its videos, pause the rest */
 function spy(box,onTab){ let last='';
-  const tick=()=>{ const secs=[...box.children].filter(x=>!x.hidden&&x.offsetHeight); const br=box.getBoundingClientRect(), mid=br.top+br.height*0.45; let curS=secs[0];
+  const tick=()=>{ const secs=[...box.children].filter(x=>!x.hidden&&x.offsetHeight&&x.dataset.t); const br=box.getBoundingClientRect(), mid=br.top+br.height*0.45; let curS=secs[0];
     if(box.__jt){ curS=secs.find(x=>x.dataset.t===box.__jt)||curS; } else for(const x of secs){ if(x.getBoundingClientRect().top<=mid) curS=x; }
     secs.forEach(x=>{const on=x===curS; if((x.dataset.vis==='1')!==on){x.dataset.vis=on?'1':'0'; x.querySelectorAll('video').forEach(v=>{ if(on&&!v.hidden&&v.__u){v.play().catch(()=>{v.muted=true;v.play().catch(()=>{});});} else v.pause(); });}});
     if(curS&&curS.dataset.t!==last){ last=curS.dataset.t; onTab(last); } };
@@ -3471,13 +3482,23 @@ const hbSpy=spy($('#hbScroll'),t=>{ HB.tab=t; if(cur==='hub') $$('#barRight [dat
   if(t==='modes') hbRender(); const hv=$('#hbHv'); if(hv){ if(t==='hero') hv.play().catch(()=>{}); else hv.pause(); } });
 $('#hbScroll').addEventListener('scroll',()=>titleLive($('#p-hub')),{passive:true});
 
-/* ---- Smart Hub emulator: lazy-load, pause off-screen, wheel passes through ---- */
-(function(){ const f=$('#emuF'); if(!f) return; let vis=null, lastJ=0;
-  const order=()=>[...$('#hbScroll').children].filter(c=>c.dataset.t&&!c.hidden).map(c=>c.dataset.t);
-  setInterval(()=>{ const near=cur==='hub'&&['modes','hubemu','feat'].includes(HB.tab); if(near&&!f.src) f.src=f.dataset.src;
-    const on=cur==='hub'&&HB.tab==='hubemu'&&!document.hidden; if(on!==vis&&f.contentWindow){ vis=on; f.contentWindow.postMessage({fpEmu:'vis',on},'*'); } },400);
+/* ---- Smart Hub emulator: one 3D Hub shared by Modes and Emulator; lazy-load, pause off-screen, wheel passes through ---- */
+(function(){ const f=$('#emuF'), box=$('#hbScroll'), L=$('#emuLayer'); if(!f||!L) return; let vis=null, lastJ=0, lastP=-1;
+  const mS=box.querySelector('[data-t=modes]'), eS=box.querySelector('[data-t=hubemu]');
+  const post=m=>{ try{ f.contentWindow&&f.contentWindow.postMessage(m,'*'); }catch(e){} };
+  const place=()=>{ const t=mS.offsetTop, b=eS.offsetTop+eS.offsetHeight; if(b>t){ L.style.top=t+'px'; L.style.height=(b-t)+'px'; } };
+  const prog=()=>{ const a=mS.offsetTop, b=eS.offsetTop, p=Math.max(0,Math.min(1,(box.scrollTop-a)/((b-a)||1))); if(Math.abs(p-lastP)>.003){ lastP=p; post({fpEmu:'frame',p}); } };
+  box.addEventListener('scroll',()=>requestAnimationFrame(prog),{passive:true});
+  if(window.ResizeObserver) new ResizeObserver(place).observe(box); place(); setInterval(place,1500);
+  f.addEventListener('load',()=>{ lastP=-1; place(); prog(); post({fpEmu:'mode',m:HB.m}); vis=null; });
+  const order=()=>[...box.children].filter(c=>c.dataset.t&&!c.hidden).map(c=>c.dataset.t);
+  setInterval(()=>{ const near=cur==='hub'&&['hero','modes','hubemu','feat'].includes(HB.tab); if(near&&!f.src) f.src=f.dataset.src;
+    const on=cur==='hub'&&['modes','hubemu'].includes(HB.tab)&&!document.hidden; if(on!==vis&&f.contentWindow){ vis=on; post({fpEmu:'vis',on}); if(on){ lastP=-1; prog(); } } },400);
   addEventListener('message',e=>{ const d=e.data; if(!d||d.fpEmu!=='wheel'||e.source!==f.contentWindow) return; const now=Date.now(); if(Math.abs(d.dy)<12||now-lastJ<750) return; lastJ=now;
-    const o=order(), i=o.indexOf('hubemu'), t=o[Math.max(0,Math.min(o.length-1,i+(d.dy>0?1:-1)))]; if(t) jump($('#hbScroll'),t); }); })();
+    const o=order(), i=o.indexOf(HB.tab==='modes'?'modes':'hubemu'), t=o[Math.max(0,Math.min(o.length-1,i+(d.dy>0?1:-1)))]; if(t) jump(box,t); });
+  /* the Modes buttons now drive the emulator's screen */
+  hbRender=function(){ if(!$('#hbModes').children.length) hbBuild(); $$('#hbModes .hbm').forEach((b,i)=>b.classList.toggle('on',i===HB.m)); post({fpEmu:'mode',m:HB.m}); };
+})();
 document.addEventListener('click',e=>{ const t=e.target.closest('[data-hbm],[data-hbtab]'); if(!t) return;
   if(t.dataset.hbm!==undefined){ HB.m=+t.dataset.hbm; return hbRender(); }
   let k=t.dataset.hbtab; if(k==='play') k='videos'; jump($('#hbScroll'),k); });
@@ -4670,7 +4691,7 @@ $$('.lpage').forEach(box=>{ let t=0, touching=false, lastY=box.scrollTop, dir=1,
     raf=requestAnimationFrame(step); };
   const layout=()=>{ const H=box.clientHeight, pts=[], free=[]; if(!H) return null;
     let prevTop=null;
-    [...box.children].forEach(c=>{ if(c.hidden||!c.offsetHeight) return; const mt=parseFloat(getComputedStyle(c).scrollMarginTop)||0, top=Math.max(0,c.offsetTop-mt), h=c.offsetHeight+mt;
+    [...box.children].forEach(c=>{ if(c.hidden||!c.offsetHeight||c.id==='emuLayer') return; const mt=parseFloat(getComputedStyle(c).scrollMarginTop)||0, top=Math.max(0,c.offsetTop-mt), h=c.offsetHeight+mt;
       if(c.classList.contains('hum')&&prevTop!=null){ /* scroll animation is part of Overview: one free region from the top of Overview to the end of the animation */
         pts.push(top+h-H); free.push([prevTop,top+h-H]); prevTop=null; return; }
       pts.push(top); prevTop=top; if(h>H+40){ pts.push(top+h-H); free.push([top,top+h-H]); } });
