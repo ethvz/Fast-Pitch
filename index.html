@@ -2821,7 +2821,7 @@ body.hd3 #gTitle{opacity:0!important}
 const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
 
 /* ---------- scale stage ---------- */
-let HW=1376; window.FPV='v406'; if(Math.min(screen.width||0,screen.height||0)<500) document.documentElement.classList.add('phn');
+let HW=1376; window.FPV='v407'; if(Math.min(screen.width||0,screen.height||0)<500) document.documentElement.classList.add('phn');
 function safeBox(){ let pr=document.getElementById('safeProbe'); if(!pr){ pr=document.createElement('div'); pr.id='safeProbe';
   pr.style.cssText='position:fixed;left:0;top:0;width:100vw;height:100vh;height:100dvh;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);box-sizing:border-box;visibility:hidden;pointer-events:none;z-index:-1'; document.documentElement.appendChild(pr); }
   const cs=getComputedStyle(pr), t=parseFloat(cs.paddingTop)||0, b=parseFloat(cs.paddingBottom)||0, l=parseFloat(cs.paddingLeft)||0, r=parseFloat(cs.paddingRight)||0;
@@ -3548,7 +3548,7 @@ function fpDock(rail,o){ let S=null, A=0, aT=0, raf=0, lastEnd=0; const FL=o.fli
     its.forEach(b=>{ const k=keyOf(b); const sec=k&&[...box.children].find(c=>c.dataset&&c.dataset.t===k&&!c.hidden&&c.offsetHeight); if(sec) map.push({b,c:b.offsetTop+b.offsetHeight/2,top:Math.max(0,sec.offsetTop-(parseFloat(getComputedStyle(sec).scrollMarginTop)||0)),k}); });
     if(map.length<2) return S=null;
     S.on=true; S.box=box; S.map=map; start(e); }
-  function start(e){ rail.classList.add('scrub'); try{ rail.setPointerCapture(e.pointerId); }catch(_){}
+  function start(e){ rail.classList.add('scrub'); try{ if(e.pointerId!=null) rail.setPointerCapture(e.pointerId); }catch(_){}
     let dot=rail.querySelector(':scope>.scrubDot'); if(!dot){ dot=document.createElement('i'); dot.className='scrubDot'; rail.prepend(dot); } S.dot=dot; dot.style.opacity='1'; dot.style.transition='none';
     items().forEach(b=>b.style.transition='color .2s'); update(e,true); animA(26); }
   function update(e,first){ const M=S.map, ly=Math.max(M[0].c,Math.min(M[M.length-1].c,local(e))); S.ly=ly;
@@ -3558,15 +3558,21 @@ function fpDock(rail,o){ let S=null, A=0, aT=0, raf=0, lastEnd=0; const FL=o.fli
     if(!first&&!S.rq){ S.rq=requestAnimationFrame(()=>{ if(S){ S.rq=0; draw(); magnify(); } }); } }
   function end(){ const s=S; S=null; if(!s||!s.on) return; lastEnd=Date.now(); const near=s.near;
     s.dot.style.transition='top .3s cubic-bezier(.22,.9,.2,1), width .3s, height .3s, margin-top .3s, left .3s, opacity .25s .2s'; s.dot.style.top=near.c+'px'; const w0=rail.offsetWidth-2*G; s.dot.style.width=s.dot.style.height=w0+'px'; s.dot.style.marginTop=(-w0/2)+'px'; s.dot.style.left=G+'px'; s.dot.style.opacity='0'; items().forEach(b=>b.style.transition='transform .3s cubic-bezier(.22,.9,.2,1), color .2s');
-    S={ly:near.c,dot:null}; animA(0,()=>{ S=null; rail.classList.remove('scrub'); items().forEach(b=>{ b.style.transform=''; b.style.transition=''; b.classList.remove('near'); }); const g=rail.querySelector(':scope>.scrubBg'); if(g) g.remove(); s.dot.remove(); });
+    S={ly:near.c,dot:null,fin:1}; animA(0,()=>{ S=null; rail.classList.remove('scrub'); items().forEach(b=>{ b.style.transform=''; b.style.transition=''; b.classList.remove('near'); }); const g=rail.querySelector(':scope>.scrubBg'); if(g) g.remove(); s.dot.remove(); });
     if(s.box) s.box.__jtt=setTimeout(()=>{ s.box.__jt=null; },1500); near.b.click(); }
-  rail.addEventListener('pointerdown',e=>{ if(!active()||S) return; S={on:false,y0:e.clientY,t:0,ev:e}; });  // a tap is just a tap; the dock wakes the moment the finger starts to drag (no hold)
-  rail.addEventListener('pointermove',e=>{ if(!S||!S.on&&S.ly!==undefined) return; if(!S.on){ S.ev=e; if(Math.abs(e.clientY-S.y0)>6){ clearTimeout(S.t); begin(e); } return; } update(e); },{passive:true});
-  const up=()=>{ if(!S) return; clearTimeout(S.t); if(S.on) end(); else if(!S.box) S=null; };
-  rail.addEventListener('pointerup',up); rail.addEventListener('pointercancel',up); rail.addEventListener('lostpointercapture',up);
+  /* A tap is just a tap; the dock wakes the moment the finger starts to drag. Moves are read from both pointer and touch
+     events at window level, so iPad Safari can't swallow them on the way to the rail. */
+  const mv=e=>{ if(!S||S.fin) return; if(!S.on){ S.ev=e; if(Math.abs(e.clientY-S.y0)>6) begin(e); return; } update(e); };
+  rail.addEventListener('pointerdown',e=>{ if(!active()||S&&!S.fin) return; S={on:false,y0:e.clientY,t:0,ev:e,pid:e.pointerId}; });
+  rail.addEventListener('touchstart',e=>{ if(S&&!S.fin||!active()) return; const t=e.touches[0]; S={on:false,y0:t.clientY,t:0,ev:{clientY:t.clientY},pid:null}; },{passive:true});
+  window.addEventListener('pointermove',e=>{ if(S&&(S.pid==null||S.pid===e.pointerId)) mv(e); },{capture:true,passive:true});
+  rail.addEventListener('touchmove',e=>{ if(!S) return; const t=e.touches[0]; mv({clientY:t.clientY,pointerId:S.pid}); if(S&&S.on) e.preventDefault(); },{passive:false});
+  const up=()=>{ if(!S||S.fin) return; clearTimeout(S.t); if(S.on) end(); else S=null; };
+  window.addEventListener('pointerup',e=>{ if(S&&(S.pid==null||S.pid===e.pointerId)) up(); },true); window.addEventListener('pointercancel',e=>{ if(S&&S.on&&S.pid!=null) return; if(S&&!S.on) S=null; },true);
+  rail.addEventListener('touchend',up); rail.addEventListener('touchcancel',up);
   /* the finger's own click after a scrub doesn't count as a tap */
   window.addEventListener('click',e=>{ if(e.isTrusted&&Date.now()-lastEnd<450&&e.target.closest&&rail.contains(e.target)){ e.stopPropagation(); e.preventDefault(); } },true);
-  rail.addEventListener('touchmove',e=>{ if(S&&S.on) e.preventDefault(); },{passive:false}); }
+  }
 fpDock($('#barRight'),{ items:'.bbtn', active:()=>{ const rail=$('#barRight'), r=rail.getBoundingClientRect(); return rail.classList.contains('pnav')&&!$('#bar').classList.contains('home')&&r.height>r.width; } });
 
 
