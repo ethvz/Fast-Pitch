@@ -535,21 +535,6 @@ body:not(.ishome) #screen::after{display:none;content:"";position:absolute;left:
 #p-hub .hbmodes.al .scrubBg{position:absolute!important;z-index:0}
 #p-hub .hbmodes.al>.scrubDot{position:absolute!important;display:block!important;z-index:1;background:rgba(5,229,175,.24)!important;box-shadow:0 0 0 1px rgba(5,229,175,.35),0 0 24px rgba(5,229,175,.25)!important;pointer-events:none;flex:none}
 #p-hub .hbmodes.al .hbm{z-index:2}
-#hmode i{width:calc((100% - 6px)/3)!important}
-#hmode.gd i{transform:translateX(200%)!important}
-#gbar{position:absolute;left:50%;bottom:12px;z-index:46;display:flex;align-items:center;gap:6px;height:46px;padding:4px;border-radius:999px;background:rgba(28,28,28,.94);box-shadow:0 0 0 1px rgba(255,255,255,.08),0 10px 30px rgba(0,0,0,.5);transform:translate(-50%,24px);opacity:0;pointer-events:none;transition:opacity .35s,transform .45s cubic-bezier(.3,1.25,.5,1)}
-body.guided #gbar{opacity:1;transform:translate(-50%,0);pointer-events:auto}
-#gbar button{white-space:nowrap;flex:none;border:0;background:none;color:rgba(255,255,255,.62);font:600 13px/1 inherit;font-family:inherit;cursor:pointer;display:flex;align-items:center;gap:7px;height:38px;border-radius:999px}
-#gbar .gx{width:38px;justify-content:center;background:rgba(255,255,255,.07)}
-#gbar .gs{display:flex;align-items:center;gap:2px}
-#gbar .gs i{width:14px;height:1.5px;background:rgba(255,255,255,.16);border-radius:1px}
-#gbar [data-gs]{padding:0 12px 0 6px;transition:background .3s,color .3s}
-#gbar [data-gs] b{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11.5px;background:rgba(255,255,255,.1);transition:background .3s,color .3s}
-#gbar [data-gs].done{color:rgba(255,255,255,.8)} #gbar [data-gs].done b{background:rgba(5,229,175,.25);color:#05E5AF}
-#gbar [data-gs].on{background:rgba(5,229,175,.16);color:#05E5AF} #gbar [data-gs].on b{background:#05E5AF;color:#062a20}
-#gbar .gn{padding:0 14px 0 18px;background:#05E5AF;color:#04261d;transition:width .3s,opacity .3s}
-#gbar.last .gn{display:none}
-body.guided #bar .chev,body.guided .scrollHint{opacity:0!important}
 #emuLayer{position:absolute;left:0;top:0;width:var(--W)!important;margin:0!important;z-index:1;pointer-events:none}
 #emuLayer .st{position:sticky;top:0;height:1032px;pointer-events:auto;background:#020203;opacity:1!important;animation:none!important}
 #emuLayer .tf{position:absolute;left:0;right:0;top:0;height:170px;pointer-events:none;background:linear-gradient(180deg,#000 0%,rgba(0,0,0,.82) 26%,rgba(0,0,0,.35) 62%,rgba(0,0,0,0) 100%)}
@@ -2836,7 +2821,7 @@ body.hd3 #gTitle{opacity:0!important}
 const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
 
 /* ---------- scale stage ---------- */
-let HW=1376; window.FPV='v411'; if(Math.min(screen.width||0,screen.height||0)<500) document.documentElement.classList.add('phn');
+let HW=1376; window.FPV='v412'; if(Math.min(screen.width||0,screen.height||0)<500) document.documentElement.classList.add('phn');
 function safeBox(){ let pr=document.getElementById('safeProbe'); if(!pr){ pr=document.createElement('div'); pr.id='safeProbe';
   pr.style.cssText='position:fixed;left:0;top:0;width:100vw;height:100vh;height:100dvh;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);box-sizing:border-box;visibility:hidden;pointer-events:none;z-index:-1'; document.documentElement.appendChild(pr); }
   const cs=getComputedStyle(pr), t=parseFloat(cs.paddingTop)||0, b=parseFloat(cs.paddingBottom)||0, l=parseFloat(cs.paddingLeft)||0, r=parseFloat(cs.paddingRight)||0;
@@ -4617,26 +4602,6 @@ IP.tools='<path d="M14.5 6.5a4 4 0 0 0-5 5L4 17l3 3 5.5-5.5a4 4 0 0 0 5-5l-2.5 2
   scr.addEventListener('click',e=>{ if(pan&&pan.moved){ e.stopPropagation(); e.preventDefault(); } },true);
   /* trackpad pinch (ctrl+wheel) on desktop */
   scr.addEventListener('wheel',e=>{ if(!e.ctrlKey) return; e.preventDefault(); if(NOZ()) return; pg=$('#p-'+cur)||pg; const m=loc(e.clientX,e.clientY); zoomAt(Z*Math.exp(-e.deltaY*0.01),m[0],m[1],false); if(Z<=1.01) reset(false); },{passive:false}); }
-
-/* ===== Guided mode =====
-   Third option on the landing toggle (Tiles | 3D Home | Guided). Same landing page, but the pitch runs in order:
-   Porch (All) → Sensors → Smart Home → Cameras, ending on Cameras. A slim step bar follows the rep onto every page;
-   the rep still picks the products and their order inside each step, and can tap any step or leave with ✕. */
-{ const pill=$('#hmode'), st=$('#stage'), STEPS=[['all','Porch'],['sensors','Sensors'],['smart','Smart Home'],['cams','Cameras']];
-  pill.insertAdjacentHTML('beforeend','<button data-hm="guided"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="18" r="2.2"/><circle cx="19" cy="6" r="2.2"/><path d="M7.2 18H15a3.5 3.5 0 0 0 0-7H9a3.5 3.5 0 0 1 0-7h7.8"/></svg>Guided</button>');
-  st.insertAdjacentHTML('beforeend',`<div id="gbar" aria-label="Guided pitch"><button class="gx" aria-label="Leave guided mode"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button><div class="gs">${STEPS.map(([k,l],i)=>`<button data-gs="${i}"><b>${i+1}</b><span>${l}</span></button>`).join('<i></i>')}</div><button class="gn"><span>Next</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></button></div>`);
-  const bar=$('#gbar'); let G=false, step=0;
-  const render=()=>{ document.body.classList.toggle('guided',G); pill.classList.toggle('gd',G);
-    if(G) pill.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.hm==='guided'));
-    bar.querySelectorAll('[data-gs]').forEach(b=>{ const i=+b.dataset.gs; b.classList.toggle('on',i===step); b.classList.toggle('done',i<step); });
-    const last=step>=STEPS.length-1; bar.classList.toggle('last',last); bar.querySelector('.gn span').textContent=last?'':'Next: '+STEPS[step+1][1]; };
-  const goStep=i=>{ step=Math.max(0,Math.min(STEPS.length-1,i)); if(cur!=='home') go('home'); setTimeout(()=>{ setHcat(STEPS[step][0],true); render(); },cur==='home'?0:60); render(); };
-  const on=v=>{ G=v; if(v){ if(window.HOMEVIEW) HOMEVIEW('grid'); step=Math.max(0,HORD.indexOf(hcat)); } else if(window.HOMEVIEW) HOMEVIEW('grid'); render(); };
-  pill.addEventListener('click',e=>{ const b=e.target.closest('[data-hm]'); if(!b) return; if(b.dataset.hm==='guided'){ e.stopPropagation(); e.preventDefault(); if(!G) on(true); } else if(G){ G=false; render(); } },true);
-  bar.addEventListener('click',e=>{ e.stopPropagation(); if(e.target.closest('.gx')) return on(false); const s=e.target.closest('[data-gs]'); if(s) return goStep(+s.dataset.gs); if(e.target.closest('.gn')) goStep(step+1); });
-  /* keep the step in sync when the rep moves with the side rail or swipes between categories */
-  const _sh=setHcat; setHcat=function(c){ const r=_sh.apply(this,arguments); const i=HORD.indexOf(c); if(G&&i>=0&&i!==step){ step=i; render(); } return r; };
-  render(); }
 
 /* ===== Global pinned page title ===== */
 { const NAMES={verify:'Verify a Rep',military:'Military',playback:'Video Plans',compat:'Compatibility',buyouts:'Buyouts',social:'Social',psa:'Purchase & Service Agreement',moves:'Moves',protection:'Protection Plans',monitoring:'Monitoring',about:'About Vivint',nrg:'Vivint, an NRG Company',awards:'Awards',sign:'Yard Sign',patents:'Patents',packages:'Packages',pricing:'Pricing Options',comparisons:'Comparisons',reviews:'Reviews',videos:'Video Library',ai:'AI Technologies',whatsnew:'What’s New',history:'History',install:'Installation'};
