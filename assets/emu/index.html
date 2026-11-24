@@ -8,6 +8,7 @@ html,body{margin:0;height:100%;background:#000;overflow:hidden;overscroll-behavi
 #gl{position:absolute;inset:0;width:100%;height:100%;touch-action:none;cursor:grab;outline:none}
 #gl:active{cursor:grabbing}
 #css{position:absolute;inset:0;pointer-events:none}
+#vig{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 72% 70% at 50% 50%,rgba(0,0,0,0) 45%,rgba(0,0,0,.55) 78%,rgba(0,0,0,.92) 100%)}
 #css>div,#css>div>div{pointer-events:none}
 #scr{pointer-events:auto}
 #glare{position:absolute;inset:0;pointer-events:none;z-index:200;mix-blend-mode:screen;opacity:.0;transition:opacity .4s}
@@ -376,7 +377,7 @@ body.one #scr{box-shadow:none;border-radius:0}body.one #hint{display:none}
 #sv[data-p=b] .svp.a{transform:translateX(-30%);opacity:0}
 #sv .card{animation:drift2 36s ease-in-out infinite alternate}
 @keyframes drift2{0%{translate:-8px -4px}50%{translate:6px 5px}100%{translate:9px -6px}}
-#sv .a .card{position:absolute;left:37px;top:30px;width:1206px;height:690px;border-radius:22px;overflow:hidden;background:linear-gradient(100deg,#0f6e50 0%,#0b5240 28%,#083326 60%,#061b14 100%);transition:background .8s}
+#sv .a .card{position:absolute;left:0;top:0;width:1280px;height:750px;border-radius:0;animation:none;overflow:hidden;background:linear-gradient(100deg,#0f6e50 0%,#0b5240 28%,#083326 60%,#061b14 100%);transition:background .8s}
 #sv.arm .a .card{background:linear-gradient(100deg,#c2491a 0%,#8f3210 30%,#4a1a07 62%,#1d0b03 100%)}
 #sv .a .tm2{position:absolute;left:118px;top:272px;width:auto;font-size:190px;font-weight:300;text-align:left}
 #sv .wxa{position:absolute;left:760px;top:276px;display:flex;align-items:baseline;gap:12px}
@@ -391,11 +392,17 @@ body.one #scr{box-shadow:none;border-radius:0}body.one #hint{display:none}
 #sv .svp.b::before{content:"";position:absolute;left:44px;top:24px;width:1192px;height:692px;border-radius:34px;background:radial-gradient(120% 140% at 100% 100%,rgba(20,150,104,.75),rgba(12,90,64,.45) 45%,rgba(10,60,44,.25));animation:breath 5.5s ease-in-out infinite alternate;filter:blur(6px)}
 #sv.arm .svp.b::before{background:radial-gradient(120% 140% at 100% 100%,rgba(214,96,30,.75),rgba(150,60,18,.45) 45%,rgba(90,34,10,.25))}
 #sv .b .card .glow{display:none}
+#sv .rh{position:absolute;right:0;top:250px;width:44px;height:250px;z-index:5;display:flex;align-items:center;justify-content:flex-end}
+#sv .rh i{width:6px;height:96px;border-radius:3px;background:rgba(255,255,255,.85);margin-right:6px}
+#sv .a .tm2{left:132px;top:282px}
+#sv .wxa{left:780px;top:286px}
+#sv .dta{left:780px;top:398px}
+#sv .a .chip{left:64px;top:640px}
 
 </style>
 <script type="importmap">{"imports":{"three":"../tour/three.bundle.js"}}</script>
 </head><body>
-<div id="stage"><canvas id="gl"></canvas><div id="css"></div></div>
+<div id="stage"><canvas id="gl"></canvas><div id="vig"></div><div id="css"></div></div>
 <div id="hint"><span><i></i>Tap the screen to use it</span><span><i></i>Drag around it to turn it</span></div>
 <button id="front"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#05E5AF" stroke-width="2" stroke-linecap="round"><path d="M2.5 8a5.5 5.5 0 1 0 1.7-4"/><path d="M2 2v3.3h3.3"/></svg>Face front</button>
 <div id="load"><i></i></div>
@@ -607,6 +614,7 @@ function darkHTML(){ return `
     <div class="ls">${[['db','Package detected','Doorbell · 2m ago','Package'],['pd','Person detected','Doorbell · just now','Person'],['bd','Person detected','Back door · 1m ago','Person'],['fy','Motion','Front yard · 30m ago','Motion'],['db','Doorbell rang','Doorbell · 1h ago','Ring'],['bd','Animal detected','Back door · 2h ago','Animal'],['fy','Vehicle detected','Front yard · 3h ago','Vehicle'],['db','Person detected','Doorbell · 4h ago','Person']].map(([k,t,s,g])=>`<button class="evr tap" data-act="live" data-cam="${k}" style="width:100%;text-align:left"><span class="th" style="background-image:url(${IMG[k]})"></span><span><b>${t}</b><small>${s}</small></span><span class="tg">${g}</span></button>`).join('')}</div>
   </div>
   <div class="ov" id="sv" data-p="a">
+    <button class="rh" data-act="svx" aria-label="Back to Home"><i></i></button>
     <div class="svp a"><div class="card"><div class="tm2" data-clock="S"></div><div class="wxa">${ICX.psun(54)}<b>65°</b><small>55°</small></div><div class="dta" id="svDa"></div><div class="chip" id="svCa"></div></div></div>
     <div class="svp b"><div class="card"><div class="glow"></div>
       <div class="svl"><div class="wx">${ICX.psun(50)}<b>65°</b><small>55°</small></div><div class="tm2" data-clock="S"></div><div class="dt2" id="svD"></div><div class="chip" id="svC"></div></div>
@@ -690,6 +698,7 @@ function renderSV(){ $('#svD').textContent = dayStr(false); $('#svDa').textConte
   $('#svF').innerHTML = fc.map(([ic,h,l],i)=>`<div class="fr"><span class="dn">${W[(t+1+i)%7]}</span>${ic}<span class="hi">${h}°</span><span class="lo">${l}°</span></div>`).join(''); }
 let pdOnce=false, pdT=null, svSw=false;
 let svT=null;
+function closeSV(){ clearTimeout(pdT); clearInterval(svT); closeOv(); setTab('home'); }
 function svPage(p){ $('#sv').dataset.p=p; }
 function svCycle(){ clearInterval(svT); svT=setInterval(()=>{ if(S.open!=='sv'){ clearInterval(svT); return; } svPage($('#sv').dataset.p==='a'?'b':'a'); },14000); }
 function openSV(){ renderSV(); svPage('a'); openOv('sv'); clearTimeout(pdT); clearInterval(svT);
@@ -817,7 +826,7 @@ function onClick(e){
   const ch=t.closest('[data-chime]'); if(ch){ S.chime=ch.dataset.chime; $$('[data-chime]').forEach(r=>r.querySelector('.v').innerHTML=S.chime===r.dataset.chime?IC.check(28):''); $$('[data-chv]').forEach(x=>x.textContent=S.chime); return; }
   const gon=t.closest('[data-go]'); if(gon){ const id=gon.dataset.go; if(dyn(id)) push(id); return; }
   const pk=t.closest('[data-pin]'); if(pk){ pinKey(pk.dataset.pin); return; }
-  if(S.open==='sv'){ if(svSw){ svSw=false; return; } closeOv(); clearTimeout(pdT); clearInterval(svT); return; }
+  if(S.open==='sv' && !t.closest('.rh')){ if(svSw){ svSw=false; return; } closeOv(); clearTimeout(pdT); clearInterval(svT); return; }
   const pp=t.closest('[data-pop]'); if(pp){ openPop(pp.dataset.pop, pp); return; }
   if(!t.closest('#pop')) closePop();
   const a=t.closest('[data-act]'); if(!a) return;
@@ -840,6 +849,7 @@ function onClick(e){
     case 'lock': { const k=a.dataset.lk; if(a.classList.contains('busy')) break; a.classList.add('busy'); setTimeout(()=>{ a.classList.remove('busy'); S.locks[k]=!S.locks[k]; renderLocks(); if(k==='front') doorOpened(); },700); break; }
     case 'garage': { if(a.classList.contains('busy')) break; const open=S.garage==='open'; a.classList.add('busy'); $('#gT').textContent=open?'Closing…':'Opening…'; setTimeout(()=>{ a.classList.remove('busy'); S.garage=open?'closed':'open'; $('#gT').textContent=open?'Closed':'Open'; a.querySelector('.ico').innerHTML=open?ICX.garage(44):ICX.garageO(44); a.classList.toggle('on',!open); },1600); break; }
     case 'sv': openSV(); break;
+    case 'svx': closeSV(); break;
     case 'pdlock': S.locks.front=!S.locks.front; renderLocks(); renderPD(); toast(S.locks.front?'Front door locked':'Front door unlocked'); doorOpened(); break;
     case 'pdmute': PD.mute=!PD.mute; renderPD(); break;
     case 'pdtalk': a.classList.toggle('on'); break;
@@ -899,7 +909,7 @@ function build(){
     $('#dk').addEventListener('pointerup',e=>{ const p=UI.loc(e); if(ex!=null&&p&&p.x-ex>90){ openSV(); svSw=true; setTimeout(()=>svSw=false,60); } ex=null; }, true); }
   // swipe left/right inside the status view flips its two pages
   { let sx=null; $('#sv').addEventListener('pointerdown',e=>{ const p=UI.loc(e); sx=p?p.x:null; });
-    $('#sv').addEventListener('pointerup',e=>{ const p=UI.loc(e); if(sx!=null&&p&&Math.abs(p.x-sx)>80){ svPage(p.x<sx?'b':'a'); svSw=true; svCycle(); } sx=null; }); }
+    $('#sv').addEventListener('pointerup',e=>{ const p=UI.loc(e); if(sx!=null&&p&&Math.abs(p.x-sx)>80){ svSw=true; if(sx>1220&&p.x<sx) closeSV(); else { svPage(p.x<sx?'b':'a'); svCycle(); } } sx=null; }); }
   // swipe-from-left-edge closes live view
   let sx=null; $('#live').addEventListener('pointerdown',e=>{ const p=UI.loc(e); sx=p&&p.x<120?p.x:null; });
   $('#live').addEventListener('pointerup',e=>{ const p=UI.loc(e); if(sx!=null&&p&&p.x-sx>120) closeOv(); sx=null; });
@@ -934,12 +944,12 @@ const pm = new THREE.PMREMGenerator(renderer);
 scene.environment = pm.fromScene(new RoomEnvironment(), .04).texture;
 scene.environmentIntensity = .9;
 const cam = new THREE.PerspectiveCamera(28, 1, .01, 10);
-scene.background = new THREE.Color(0x050506);
+scene.background = new THREE.Color(0x020203);
 /* studio lighting: a raking key from the upper right (it is what sculpts the foam pyramids), a soft fill from the left */
-const key = new THREE.DirectionalLight(0xfff4ea, 1.7); key.position.set(1.1, .9, 1.5); scene.add(key, key.target);
+const key = new THREE.DirectionalLight(0xfff4ea, 1.15); key.position.set(1.1, .9, 1.5); scene.add(key, key.target);
 key.castShadow = true; key.shadow.mapSize.set(2048,2048); Object.assign(key.shadow.camera, {left:-.45,right:.45,top:.4,bottom:-.4,near:.5,far:3.5}); key.shadow.bias = -.0004; key.shadow.normalBias = .002; key.shadow.radius = 6;
-const fill = new THREE.DirectionalLight(0xdfe8ff, .35); fill.position.set(-1.2, .3, 1.2); scene.add(fill);
-scene.add(new THREE.HemisphereLight(0xffffff, 0x2a2018, .18));
+const fill = new THREE.DirectionalLight(0xdfe8ff, .18); fill.position.set(-1.2, .3, 1.2); scene.add(fill);
+scene.add(new THREE.HemisphereLight(0xffffff, 0x2a2018, .08));
 
 /* ---- the Smart Hub Pro 2, from the engineering STEP (exterior shell) ---- */
 const hub = new THREE.Group(); scene.add(hub);
@@ -988,11 +998,11 @@ addEventListener('hubled', e => { const d = e.detail; LEDC.set(d.c); ledM.color.
 setTimeout(()=>UI.led(),0);
 
 /* ---- the room: an acoustic booth lined with pyramid foam, oak floor ---- */
-const ROOM = { x:1.5, y0:-1.3, y1:1.3, z:2.2 }, CELL = .052, PH = .034, GAP = .003;
+const ROOM = { x:.85, y0:-.95, y1:.8, z:1.3 }, CELL = .052, PH = .034, GAP = .003;
 { const noise = document.createElement('canvas'); noise.width = noise.height = 128; const nx = noise.getContext('2d'), im = nx.createImageData(128,128);
   for(let i=0;i<im.data.length;i+=4){ const v = 110 + Math.random()*120; im.data[i]=im.data[i+1]=im.data[i+2]=v; im.data[i+3]=255; } nx.putImageData(im,0,0);
   const nt = new THREE.CanvasTexture(noise); nt.wrapS = nt.wrapT = THREE.RepeatWrapping; nt.repeat.set(3,3);
-  const foam = new THREE.MeshStandardMaterial({ color:0x242528, roughness:1, metalness:0, flatShading:true, bumpMap:nt, bumpScale:.5, envMapIntensity:.15 });
+  const foam = new THREE.MeshStandardMaterial({ color:0x161719, roughness:1, metalness:0, flatShading:true, bumpMap:nt, bumpScale:.5, envMapIntensity:.15 });
   const pyr = new THREE.ConeGeometry(CELL/Math.SQRT2*.995, PH, 4, 1, true); pyr.rotateY(Math.PI/4); pyr.rotateX(Math.PI/2); pyr.translate(0,0,PH/2);  // base on z=0, tip toward +z
   const m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), sc = new THREE.Vector3(1,1,1), p3 = new THREE.Vector3();
   const grid = (a0,a1) => { const L=[]; for(let i=0, a=a0+CELL/2; a<a1; i++){ L.push(a); a += CELL + ((i%4)===3?GAP:0); } return L; };
@@ -1015,7 +1025,7 @@ const ROOM = { x:1.5, y0:-1.3, y1:1.3, z:2.2 }, CELL = .052, PH = .034, GAP = .0
       w.fillStyle = 'rgba(40,25,10,.55)'; w.fillRect(x,y,2,128); x += L; }
     w.fillStyle = 'rgba(40,25,10,.6)'; w.fillRect(0,y,1024,2); }
   const wt = new THREE.CanvasTexture(wc); wt.colorSpace = THREE.SRGBColorSpace; wt.wrapS = wt.wrapT = THREE.RepeatWrapping; wt.repeat.set(2.2,1.6); wt.anisotropy = 8;
-  const floor = new THREE.Mesh(new THREE.PlaneGeometry(2*ROOM.x, ROOM.z+.1), new THREE.MeshStandardMaterial({ map:wt, roughness:.5, envMapIntensity:.35 }));
+  const floor = new THREE.Mesh(new THREE.PlaneGeometry(2*ROOM.x, ROOM.z+.1), new THREE.MeshStandardMaterial({ map:wt, color:0x8a8178, roughness:.55, envMapIntensity:.2 }));
   floor.rotation.x = -Math.PI/2; floor.position.set(0, ROOM.y0, ROOM.z/2-.05); scene.add(floor);
 }
 
@@ -1028,8 +1038,8 @@ const obj = new CSS3DObject(scr); obj.scale.setScalar(K*F); obj.position.copy(SC
 
 const ctl = new OrbitControls(cam, renderer.domElement);
 ctl.enablePan = false; ctl.enableDamping = true; ctl.dampingFactor = .08; ctl.rotateSpeed = .75; ctl.zoomSpeed = .8;
-ctl.minDistance = .2; ctl.maxDistance = 1.45; ctl.target.set(0, -.004, 0);
-ctl.minAzimuthAngle = -1.15; ctl.maxAzimuthAngle = 1.15; ctl.minPolarAngle = .62; ctl.maxPolarAngle = 2.05;   // stay inside the booth, in front of the wall
+ctl.minDistance = .2; ctl.maxDistance = .92; ctl.target.set(0, -.004, 0);
+ctl.minAzimuthAngle = -.95; ctl.maxAzimuthAngle = .95; ctl.minPolarAngle = .72; ctl.maxPolarAngle = 2.05;   // stay inside the booth, in front of the wall
 const BASE = new THREE.Spherical();
 function fit(){
   const w = innerWidth, h = innerHeight; renderer.setSize(w, h, false); css.setSize(w, h); cam.aspect = w/h;
@@ -1037,7 +1047,7 @@ function fit(){
   const d = Math.max(.178/(vh*.66), .238/(vh*cam.aspect*.66));                       // hub fills ~2/3 of the frame, foam around it
   BASE.set(d, THREE.MathUtils.degToRad(86), 0); cam.updateProjectionMatrix(); return d; }
 let D = fit();
-cam.position.setFromSpherical(new THREE.Spherical(1.3, THREE.MathUtils.degToRad(80), THREE.MathUtils.degToRad(-46))).add(ctl.target);
+cam.position.setFromSpherical(new THREE.Spherical(.9, THREE.MathUtils.degToRad(80), THREE.MathUtils.degToRad(-44))).add(ctl.target);
 addEventListener('resize', () => { D = fit(); dirty = 3; });
 
 /* intro: settle to the front */

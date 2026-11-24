@@ -504,11 +504,11 @@ body:not(.ishome) #screen::after{display:none;content:"";position:absolute;left:
 
 /* ===== Smart Hub Pro 2 ===== */
 .otab.hb{background:#000}
-.otab.hb[data-t=hubemu]{background:radial-gradient(60% 55% at 50% 55%,#1a1d1f 0%,#0b0c0d 60%,#000 100%)}
-.emuhd{position:absolute;left:64px;top:44px;z-index:2;pointer-events:none}
+.otab.hb[data-t=hubemu]{background:#020203}
+.emuhd{position:absolute;left:64px;top:44px;z-index:2;pointer-events:none;text-shadow:0 2px 14px rgba(0,0,0,.6)}
 .emuhd h2{margin:0;font-size:46px;font-weight:600;color:#fff;letter-spacing:-.02em}
 .emuhd p{margin:8px 0 0;font-size:21px;color:rgba(255,255,255,.6)}
-.emuf{position:absolute;left:0;top:150px;width:1376px;height:814px;border:0;background:transparent;display:block}
+.emuf{position:absolute;left:0;top:0;width:100%;height:100%;border:0;background:#020203;display:block}
 
 .hbh-txt{position:absolute;left:72px;top:250px;width:520px}
 .hbh-txt h1{font-size:88px;line-height:.98;font-weight:600;letter-spacing:-2px;margin:0 0 24px}
@@ -2705,7 +2705,7 @@ body.hd3 #gTitle{opacity:0!important}
       </div>
       <div class="otab hb" data-t="hubemu">
         <div class="emuhd"><h2>Try the Hub.</h2><p>Tap the screen to use it. Drag around it to see every angle.</p></div>
-        <iframe id="emuF" class="emuf" title="Smart Hub Pro 2 emulator" allow="autoplay" data-src="assets/emu/index.html?v=3"></iframe>
+        <iframe id="emuF" class="emuf" title="Smart Hub Pro 2 emulator" allow="autoplay" data-src="assets/emu/index.html?v=4"></iframe>
       </div>
       <div class="otab hb" data-t="feat">
         <div class="strip"><div class="hbpane" id="hbCall"></div><div class="hbpane" id="hbSpec"></div></div>
@@ -2781,7 +2781,7 @@ body.hd3 #gTitle{opacity:0!important}
 const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
 
 /* ---------- scale stage ---------- */
-let HW=1376; window.FPV='v393'; if(Math.min(screen.width||0,screen.height||0)<500) document.documentElement.classList.add('phn');
+let HW=1376; window.FPV='v394'; if(Math.min(screen.width||0,screen.height||0)<500) document.documentElement.classList.add('phn');
 function safeBox(){ let pr=document.getElementById('safeProbe'); if(!pr){ pr=document.createElement('div'); pr.id='safeProbe';
   pr.style.cssText='position:fixed;left:0;top:0;width:100vw;height:100vh;height:100dvh;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);box-sizing:border-box;visibility:hidden;pointer-events:none;z-index:-1'; document.documentElement.appendChild(pr); }
   const cs=getComputedStyle(pr), t=parseFloat(cs.paddingTop)||0, b=parseFloat(cs.paddingBottom)||0, l=parseFloat(cs.paddingLeft)||0, r=parseFloat(cs.paddingRight)||0;
