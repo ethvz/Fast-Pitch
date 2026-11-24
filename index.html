@@ -2330,11 +2330,16 @@ html.phn .dbm-card,html.phn .ocm-col,html.phn .dbm-phone .dch{transform:none!imp
 .icm .ocm-card img.rnd.pt{object-position:20% 50%}
 .icm .ocm-card:has(img.rnd.on){-webkit-mask-image:none;mask-image:none}
 /* Home: Grid | 3D Home pill; the 3D home tour runs in its own page (assets/tour) inside a frame, loaded on first use */
-#hmode{position:absolute;left:50%;top:28px;transform:translateX(-50%);z-index:40;display:flex;padding:4px;border-radius:24px;background:rgba(40,40,44,.72);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.1);box-shadow:0 8px 24px rgba(0,0,0,.35)}
-#hmode button{position:relative;z-index:1;height:36px;min-width:96px;padding:0 16px;border:0;background:none;color:rgba(255,255,255,.7);font:600 14px/1 inherit;font-family:inherit;border-radius:18px;cursor:pointer;transition:color .3s}
-#hmode button.on{color:#000}
-#hmode i{position:absolute;top:4px;bottom:4px;left:4px;width:calc(50% - 4px);border-radius:18px;background:#fff;transition:transform .45s cubic-bezier(.3,1.3,.5,1)}
+#hmode{position:absolute;left:50%;top:9px;transform:translateX(-50%);z-index:40;display:flex;padding:3px;border-radius:999px;background:rgba(28,28,28,.92);box-shadow:0 0 0 1px rgba(255,255,255,.08),0 8px 24px rgba(0,0,0,.45)}
+#hmode button{position:relative;z-index:1;display:flex;align-items:center;justify-content:center;gap:7px;height:30px;min-width:104px;padding:0 16px 0 13px;border:0;background:none;color:rgba(255,255,255,.62);font:600 13.5px/1 inherit;font-family:inherit;letter-spacing:.1px;border-radius:999px;cursor:pointer;transition:color .3s}
+#hmode button svg{width:17px;height:17px;flex:none}
+#hmode button.on{color:#05E5AF}
+#hmode i{position:absolute;top:3px;bottom:3px;left:3px;width:calc(50% - 3px);border-radius:999px;background:rgba(5,229,175,.16);transition:transform .45s cubic-bezier(.3,1.3,.5,1)}
 #hmode.d3 i{transform:translateX(100%)}
+#allTiles{transform:translateY(8px)}
+#tourBack{position:fixed;left:16px;top:calc(env(safe-area-inset-top,0px) + 14px);z-index:9000;display:flex;align-items:center;gap:6px;height:38px;padding:0 16px 0 10px;border:0;border-radius:999px;background:rgba(28,28,28,.92);color:#fff;font:600 14px/1 inherit;font-family:inherit;box-shadow:0 0 0 1px rgba(255,255,255,.1),0 8px 24px rgba(0,0,0,.45);cursor:pointer;opacity:0;transform:translateY(-8px);pointer-events:none;transition:opacity .3s,transform .4s cubic-bezier(.2,.9,.3,1.2)}
+#tourBack.on{opacity:1;transform:none;pointer-events:auto}
+#tourBack svg{width:20px;height:20px;color:#05E5AF}
 #tour3d{position:absolute;left:0;right:0;top:0;bottom:76px;z-index:30;opacity:0;pointer-events:none;transition:opacity .5s ease;background:#0b0f0f;border-radius:0 0 28px 28px;overflow:hidden}
 #tour3d iframe{width:100%;height:100%;border:0;display:block}
 #p-home.d3 #tour3d{opacity:1;pointer-events:auto}
@@ -2347,7 +2352,7 @@ body.hd3 #gTitle{opacity:0!important}
 
     <!-- HOME -->
     <section class="page" id="p-home">
-      <div id="hmode" role="group" aria-label="Home view"><i></i><button data-hm="grid" class="on">Grid</button><button data-hm="3d">3D Home</button></div><div id="tour3d"></div>
+      <div id="hmode" role="group" aria-label="Home view"><i></i><button data-hm="grid" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="7" height="7" rx="1.8"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.8"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.8"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.8"/></svg>Tiles</button><button data-hm="3d"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.8 20.5 7.5v9L12 21.2 3.5 16.5v-9z"/><path d="M3.8 7.6 12 12.2l8.2-4.6M12 12.2v8.8"/></svg>3D Home</button></div><div id="tour3d"></div>
       <div id="homeTrack"><div id="homeAll" class="hpane"><div id="allTiles"></div>
       <div class="amb"></div>
       </div>
@@ -2766,7 +2771,7 @@ body.hd3 #gTitle{opacity:0!important}
 const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
 
 /* ---------- scale stage ---------- */
-let HW=1376; window.FPV='v385'; if(Math.min(screen.width||0,screen.height||0)<500) document.documentElement.classList.add('phn');
+let HW=1376; window.FPV='v386'; if(Math.min(screen.width||0,screen.height||0)<500) document.documentElement.classList.add('phn');
 function safeBox(){ let pr=document.getElementById('safeProbe'); if(!pr){ pr=document.createElement('div'); pr.id='safeProbe';
   pr.style.cssText='position:fixed;left:0;top:0;width:100vw;height:100vh;height:100dvh;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);box-sizing:border-box;visibility:hidden;pointer-events:none;z-index:-1'; document.documentElement.appendChild(pr); }
   const cs=getComputedStyle(pr), t=parseFloat(cs.paddingTop)||0, b=parseFloat(cs.paddingBottom)||0, l=parseFloat(cs.paddingLeft)||0, r=parseFloat(cs.paddingRight)||0;
@@ -5280,8 +5285,15 @@ window.USMAP={w:1000,h:620,ut:[222.1, 266.2],c:[[72.8,371.6,9],[907.0,214.8,9],[
   /* the tour's "See full product" opens the matching Fast Pitch page */
   const MAP={dbcp:['go','dbcp'],ocp:['go','ocp'],ocspot:['go','ocp'],hub:['go','hub'],therm:['go','therm'],lock:['pr','lock'],window:['pr','window'],icp:['pr','icp'],motion:['pr','motion'],water:['pr','water'],smokeco:['pr','smokeco'],
     glass:['pr','glass'],fire:['pr','fire'],pendant:['pr','pendant'],fob:['pr','fob'],chime:['pr','chime'],keypad:['pr','keypad'],plug:['pr','plug'],garage:['pr','garage']};
+  /* a "3D Home" back button follows the rep onto the product page and returns them to the same spot in the house */
+  const tb=document.createElement('button'); tb.id='tourBack'; tb.setAttribute('aria-label','Back to the 3D home');
+  tb.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>3D Home';
+  document.body.appendChild(tb);
+  tb.addEventListener('click',e=>{ e.stopPropagation(); tb.classList.remove('on'); try{closeMenu();closeModals();}catch(_){} stack=['home']; show('home'); set('3d'); });
+  const _show=show; show=function(p){ if(p==='home') tb.classList.remove('on'); return _show.apply(this,arguments); };
   addEventListener('message',e=>{ const d=e.data; if(!d||d.fpTour!=='open'||!MAP[d.k]) return; const [t,id]=MAP[d.k];
-    const el=document.createElement('button'); el.dataset[t==='go'?'go':'pr']=id; el.style.display='none'; document.body.appendChild(el); el.click(); el.remove(); });
+    const el=document.createElement('button'); el.dataset[t==='go'?'go':'pr']=id; el.style.display='none'; document.body.appendChild(el); el.click(); el.remove();
+    setTimeout(()=>{ if(cur!=='home') tb.classList.add('on'); },60); });
   /* the All / Sensors / Smart Home / Cameras tabs also filter the 3D house (it stays in 3D) */
   const sendCat=()=>{ const f=box.firstChild; if(f&&f.contentWindow) f.contentWindow.postMessage({fpTourCtl:'cat',cat:hcat},'*'); };
   const _ft=flipTo; flipTo=function(c){ const r=_ft.apply(this,arguments); sendCat(); return r; };
