@@ -2372,6 +2372,14 @@ html.phn .dbm-card,html.phn .ocm-col,html.phn .dbm-phone .dch{transform:none!imp
 #p-home.d3 #homeTrack{opacity:0;pointer-events:none;transition:opacity .4s}
 #p-home #homeTrack{transition:opacity .4s}
 body.hd3 #gTitle{opacity:0!important}
+
+/* side-rail fast scroller: press & hold, drag to fly through sections; dock magnification with a bulge */
+#barRight.pnav.scrub{background:transparent!important;box-shadow:none!important;overflow:visible!important}
+#barRight.pnav.scrub .bbtn.on{background:transparent!important;color:rgba(255,255,255,.62)!important}
+#barRight.pnav .bbtn{transform-origin:50% 50%;will-change:transform}
+#barRight.pnav .scrubBg{position:absolute;left:0;top:0;pointer-events:none;z-index:-1;overflow:visible;filter:drop-shadow(0 6px 18px rgba(0,0,0,.45))}
+#barRight.pnav .scrubDot{position:absolute;left:6px;width:56px;height:56px;margin-top:-28px;border-radius:28px;background:rgba(5,229,175,.22);box-shadow:0 0 0 1px rgba(5,229,175,.35),0 0 24px rgba(5,229,175,.25);pointer-events:none;z-index:-1;transition:transform .2s cubic-bezier(.22,.9,.2,1)}
+#barRight.pnav .bbtn.near{color:#fff!important}
 </style>
 <div id="stage">
   <div id="screen">
@@ -2798,7 +2806,7 @@ body.hd3 #gTitle{opacity:0!important}
 const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
 
 /* ---------- scale stage ---------- */
-let HW=1376; window.FPV='v397'; if(Math.min(screen.width||0,screen.height||0)<500) document.documentElement.classList.add('phn');
+let HW=1376; window.FPV='v398'; if(Math.min(screen.width||0,screen.height||0)<500) document.documentElement.classList.add('phn');
 function safeBox(){ let pr=document.getElementById('safeProbe'); if(!pr){ pr=document.createElement('div'); pr.id='safeProbe';
   pr.style.cssText='position:fixed;left:0;top:0;width:100vw;height:100vh;height:100dvh;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);box-sizing:border-box;visibility:hidden;pointer-events:none;z-index:-1'; document.documentElement.appendChild(pr); }
   const cs=getComputedStyle(pr), t=parseFloat(cs.paddingTop)||0, b=parseFloat(cs.paddingBottom)||0, l=parseFloat(cs.paddingLeft)||0, r=parseFloat(cs.paddingRight)||0;
@@ -3487,6 +3495,51 @@ const hbSpy=spy($('#hbScroll'),t=>{ HB.tab=t; if(cur==='hub') $$('#barRight [dat
   if(t==='cmp'&&!HB.noted&&cur==='hub'){ HB.noted=true;  }
   if(t==='modes') hbRender(); const hv=$('#hbHv'); if(hv){ if(t==='hero') hv.play().catch(()=>{}); else hv.pause(); } });
 $('#hbScroll').addEventListener('scroll',()=>titleLive($('#p-hub')),{passive:true});
+
+
+/* ===== Side rail fast scroller =====
+   Press and hold (or just drag) on a product page's section rail: the green highlight follows the finger, the page flies
+   through its sections to match, and the rail magnifies like the macOS Dock with a soft bulge on its right edge. */
+{ const rail=$('#barRight'); let S=null, A=0, aT=0, raf=0, lastEnd=0;
+  const keyOf=b=>{ const d=b.dataset; let k=d.octab||d.prtab||d.dbtab||d.hbtab||d.thtab||''; return k==='play'?'videos':k; };
+  const active=()=>rail.classList.contains('pnav')&&!$('#bar').classList.contains('home')&&rail.getBoundingClientRect().height>rail.getBoundingClientRect().width;
+  const local=e=>{ const r=rail.getBoundingClientRect(), k=r.height/(rail.offsetHeight||1)||1; return (e.clientY-r.top)/k; };
+  const items=()=>[...rail.children].filter(x=>x.matches('.bbtn'));
+  function draw(){ const W=rail.offsetWidth, H=rail.offsetHeight, R=Math.min(W/2,34), sig=50; let svg=rail.querySelector(':scope>.scrubBg');
+    if(!svg){ svg=document.createElementNS('http://www.w3.org/2000/svg','svg'); svg.setAttribute('class','scrubBg'); svg.innerHTML='<path fill="#1c1c1c" stroke="rgba(255,255,255,.08)" stroke-width="1"/>'; rail.prepend(svg); }
+    const pad=70; svg.setAttribute('width',W+pad); svg.setAttribute('height',H+40); svg.setAttribute('viewBox',`0 -20 ${W+pad} ${H+40}`); svg.style.top='-20px';
+    const y0=S?S.ly:H/2, bump=y=>A*Math.exp(-Math.pow((y-y0)/sig,2));
+    let d=`M ${R} 0 L ${W-R} 0 A ${R} ${R} 0 0 1 ${W} ${R}`;
+    for(let y=R;y<=H-R;y+=3) d+=` L ${(W+bump(y)).toFixed(2)} ${y}`;
+    d+=` L ${W} ${H-R} A ${R} ${R} 0 0 1 ${W-R} ${H} L ${R} ${H} A ${R} ${R} 0 0 1 0 ${H-R} L 0 ${R} A ${R} ${R} 0 0 1 ${R} 0 Z`;
+    svg.firstChild.setAttribute('d',d); }
+  function magnify(){ const ly=S?S.ly:0;
+    items().forEach(b=>{ const c=b.offsetTop+b.offsetHeight/2, dd=ly-c, g=S?Math.exp(-Math.pow(dd/46,2)):0, sc=1+.5*g*(A/26), push=S?Math.tanh(-dd/70)*14*(A/26):0;
+      b.style.transform=`translate(${(16*g*(A/26)).toFixed(1)}px,${push.toFixed(1)}px) scale(${sc.toFixed(3)})`; b.classList.toggle('near',g>.5); }); }
+  function animA(to,done){ cancelAnimationFrame(raf); const a0=A, t0=performance.now();
+    const step=now=>{ const k=Math.min(1,(now-t0)/260), e=1-Math.pow(1-k,3); A=a0+(to-a0)*e; draw(); magnify(); if(k<1) raf=requestAnimationFrame(step); else if(done) done(); };
+    raf=requestAnimationFrame(step); }
+  function begin(e){ const box=$('.page.on .lpage'); if(!box) return; const its=items(), map=[];
+    its.forEach(b=>{ const k=keyOf(b); const sec=k&&[...box.children].find(c=>c.dataset&&c.dataset.t===k&&!c.hidden&&c.offsetHeight); if(sec) map.push({b,c:b.offsetTop+b.offsetHeight/2,top:Math.max(0,sec.offsetTop-(parseFloat(getComputedStyle(sec).scrollMarginTop)||0)),k}); });
+    if(map.length<2) return S=null;
+    S.on=true; S.box=box; S.map=map; rail.classList.add('scrub'); try{ rail.setPointerCapture(e.pointerId); }catch(_){}
+    let dot=rail.querySelector(':scope>.scrubDot'); if(!dot){ dot=document.createElement('i'); dot.className='scrubDot'; rail.prepend(dot); } S.dot=dot; dot.style.transition='none';
+    items().forEach(b=>b.style.transition='transform .14s cubic-bezier(.22,.9,.2,1), color .2s'); update(e,true); animA(26); }
+  function update(e,first){ const M=S.map, ly=Math.max(M[0].c,Math.min(M[M.length-1].c,local(e))); S.ly=ly; S.dot.style.top=ly+'px';
+    let i=0; while(i<M.length-2&&ly>M[i+1].c) i++; const a=M[i], b=M[i+1], t=Math.max(0,Math.min(1,(ly-a.c)/(b.c-a.c)));
+    const y=a.top+(b.top-a.top)*t, near=t<.5?a:b; S.near=near; S.box.__jt=near.k; clearTimeout(S.box.__jtt); S.box.scrollTop=y; if(S.box.__spy) S.box.__spy();
+    if(!first){ draw(); magnify(); } }
+  function end(){ const s=S; S=null; if(!s||!s.on) return; lastEnd=Date.now(); const near=s.near;
+    s.dot.style.transition='top .32s cubic-bezier(.22,.9,.2,1), opacity .3s .25s'; s.dot.style.top=near.c+'px'; s.dot.style.opacity='0';
+    S={ly:near.c}; animA(0,()=>{ S=null; rail.classList.remove('scrub'); items().forEach(b=>{ b.style.transform=''; b.style.transition=''; b.classList.remove('near'); }); const g=rail.querySelector(':scope>.scrubBg'); if(g) g.remove(); s.dot.remove(); });
+    s.box.__jtt=setTimeout(()=>{ s.box.__jt=null; },1500); near.b.click(); }
+  rail.addEventListener('pointerdown',e=>{ if(!active()||S) return; S={on:false,y0:e.clientY,t:setTimeout(()=>{ if(S&&!S.on) begin(S.ev||e); },170),ev:e}; },{passive:true});
+  rail.addEventListener('pointermove',e=>{ if(!S||S.ly!==undefined&&!S.on&&!S.box) return; if(!S.on){ S.ev=e; if(Math.abs(e.clientY-S.y0)>7){ clearTimeout(S.t); begin(e); } return; } update(e); },{passive:true});
+  const up=()=>{ if(!S) return; clearTimeout(S.t); if(S.on) end(); else if(!S.box) S=null; };
+  rail.addEventListener('pointerup',up); rail.addEventListener('pointercancel',up); rail.addEventListener('lostpointercapture',up);
+  /* the finger's own click after a scrub doesn't count as a tap */
+  window.addEventListener('click',e=>{ if(e.isTrusted&&Date.now()-lastEnd<450&&e.target.closest&&e.target.closest('#barRight')){ e.stopPropagation(); e.preventDefault(); } },true);
+  rail.addEventListener('touchmove',e=>{ if(S&&S.on) e.preventDefault(); },{passive:false}); }
 
 /* ---- Smart Hub: one live 3D Hub shared by Modes and Hardware/Specs; lazy-load, pause off-screen, wheel passes through ---- */
 (function(){ const f=$('#emuF'), box=$('#hbScroll'), L=$('#emuLayer'); if(!f||!L) return; let vis=null, lastJ=0, lastP=-1, Q=0;
