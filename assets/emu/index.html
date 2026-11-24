@@ -1168,16 +1168,24 @@ const HUBC = new THREE.Vector3((HB.min.x+HB.max.x)/2, (HB.min.y+HB.max.y)/2 - HB
     const a = R(w(i),w(j),s), b = R(w(i+1),w(j),s), c2 = R(w(i),w(j+1),s), d = R(w(i+1),w(j+1),s); return a + (b-a)*sx + (c2-a)*sy + (a-b-c2+d)*sx*sy; };
   for(let y=0;y<N;y++) for(let q=0;q<N;q++){ const u=q/N, v=y/N; const n = .45*vn(u,v,4,1)+.27*vn(u,v,9,2)+.16*vn(u,v,23,3)+.12*vn(u,v,71,4); const g = Math.max(0,Math.min(255, 128 + (n-.5)*170 + (Math.random()-.5)*16)); const o=(y*N+q)*4; im.data[o]=im.data[o+1]=im.data[o+2]=g; im.data[o+3]=255; }
   x.putImageData(im,0,0);
+  /* sprayed drywall "orange peel": thousands of soft paint droplets over the trowel noise */
+  for(let i=0;i<14000;i++){ const px=Math.random()*N, py=Math.random()*N, r=.8+Math.random()*Math.random()*4.2, a=.16+Math.random()*.3, up=Math.random()<.62;
+    for(const ox of [0,-N,N]) for(const oy of [0,-N,N]){ if(px+ox<-6||px+ox>N+6||py+oy<-6||py+oy>N+6) continue; const g=x.createRadialGradient(px+ox,py+oy,0,px+ox,py+oy,r); g.addColorStop(0,up?`rgba(255,255,255,${a})`:`rgba(0,0,0,${a*.8})`); g.addColorStop(1,'rgba(128,128,128,0)'); x.fillStyle=g; x.beginPath(); x.arc(px+ox,py+oy,r,0,7); x.fill(); } }
   const c2 = document.createElement('canvas'); c2.width = c2.height = N; const x2 = c2.getContext('2d'), im2 = x2.createImageData(N,N);
-  for(let o=0;o<im.data.length;o+=4){ const g = 236 + (im.data[o]-128)*.16; im2.data[o]=g; im2.data[o+1]=g-3; im2.data[o+2]=g-8; im2.data[o+3]=255; } x2.putImageData(im2,0,0);
-  const bump = new THREE.CanvasTexture(c); bump.wrapS = bump.wrapT = THREE.RepeatWrapping; bump.repeat.set(3,3);
+  for(let o=0;o<im.data.length;o+=4){ const g = 238 + (im.data[o]-128)*.2; im2.data[o]=g; im2.data[o+1]=g-6; im2.data[o+2]=g-20; im2.data[o+3]=255; } x2.putImageData(im2,0,0);   // warm cream paint
+  const bump = new THREE.CanvasTexture(c); bump.wrapS = bump.wrapT = THREE.RepeatWrapping; bump.repeat.set(7,7); bump.anisotropy = 8;
   const mott = new THREE.CanvasTexture(c2); mott.wrapS = mott.wrapT = THREE.RepeatWrapping; mott.repeat.set(1.2,1.2); mott.colorSpace = THREE.SRGBColorSpace;
-  const wallM = new THREE.MeshStandardMaterial({ color:0xf1e8d8, map:mott, bumpMap:bump, bumpScale:1.6, roughness:.93, envMapIntensity:.35 });
+  const wallM = new THREE.MeshStandardMaterial({ color:0xf1e4c9, map:mott, bumpMap:bump, bumpScale:5.5, roughness:.9, envMapIntensity:.3 });
   // the shade map pulls the mottling toward cream (a grey map would grey the wall): tint via onBeforeCompile-free trick — blend in the colour
-  wallM.color.setHex(0xf3e9d7); mott.offset.set(.13,.27);
+  wallM.color.setHex(0xf3dcb3); mott.offset.set(.13,.27);
   const wall = new THREE.Mesh(new THREE.PlaneGeometry(3.2, 3.2), wallM); wall.position.set(CX-1.6, Y0+1.6, 0); wall.receiveShadow = true; scene.add(wall);
   const ret = new THREE.Mesh(new THREE.PlaneGeometry(1.8, 3.2), wallM); ret.rotation.y = Math.PI/2; ret.position.set(CX, Y0+1.6, -.9); ret.receiveShadow = true; scene.add(ret);
   const bead = new THREE.Mesh(new THREE.CylinderGeometry(.0045,.0045,3.2,16), wallM); bead.position.set(CX-.0045, Y0+1.6, -.0045); scene.add(bead);
+  /* the rest of the room in the same cream paint, so panning around never shows the void */
+  const RW = 3.6, wl = new THREE.Mesh(new THREE.PlaneGeometry(RW, 3.2), wallM); wl.rotation.y = Math.PI/2; wl.position.set(CX-3.2, Y0+1.6, RW/2-.0); wl.receiveShadow = true; scene.add(wl);
+  const wb = new THREE.Mesh(new THREE.PlaneGeometry(4.6, 3.2), wallM); wb.rotation.y = Math.PI; wb.position.set(CX-1.4, Y0+1.6, RW); wb.receiveShadow = true; scene.add(wb);
+  const wr = new THREE.Mesh(new THREE.PlaneGeometry(RW, 3.2), wallM); wr.rotation.y = -Math.PI/2; wr.position.set(CX+.9, Y0+1.6, RW/2+.6); scene.add(wr);
+  const ceil = new THREE.Mesh(new THREE.PlaneGeometry(6, 6), new THREE.MeshStandardMaterial({ color:0xf7f2e8, roughness:.95, bumpMap:bump, bumpScale:1 })); ceil.rotation.x = Math.PI/2; ceil.position.set(CX-1.2, Y0+2.75, .6); scene.add(ceil);
   const paint = new THREE.MeshStandardMaterial({ color:0xf6f3ec, roughness:.45 });
   const base1 = new THREE.Mesh(new THREE.BoxGeometry(3.2,.095,.014), paint); base1.position.set(CX-1.6, Y0+.0475, .007); scene.add(base1);
   /* the dining room around the corner, out of focus */
@@ -1193,7 +1201,7 @@ const HUBC = new THREE.Vector3((HB.min.x+HB.max.x)/2, (HB.min.y+HB.max.y)/2 - HB
       w.fillStyle = 'rgba(40,25,10,.5)'; w.fillRect(xx,y,2,128); xx += L; }
     w.fillStyle = 'rgba(40,25,10,.55)'; w.fillRect(0,y,1024,2); }
   const wt = new THREE.CanvasTexture(wc); wt.colorSpace = THREE.SRGBColorSpace; wt.wrapS = wt.wrapT = THREE.RepeatWrapping; wt.repeat.set(3,2.4); wt.anisotropy = 8;
-  const floor = new THREE.Mesh(new THREE.PlaneGeometry(6, 5), new THREE.MeshStandardMaterial({ map:wt, roughness:.55, envMapIntensity:.3 })); floor.rotation.x = -Math.PI/2; floor.position.set(0, Y0, 0); floor.receiveShadow = true; scene.add(floor);
+  const floor = new THREE.Mesh(new THREE.PlaneGeometry(7, 7.4), new THREE.MeshStandardMaterial({ map:wt, roughness:.55, envMapIntensity:.3 })); floor.rotation.x = -Math.PI/2; floor.position.set(0, Y0, .6); floor.receiveShadow = true; scene.add(floor);
   /* console table: oak top and shelf on slim matte-black legs */
   const oakT = wt.clone(); oakT.repeat.set(1.4,.5); oakT.needsUpdate = true;
   const oak = new THREE.MeshStandardMaterial({ map:oakT, color:0xd9c3a3, roughness:.5, envMapIntensity:.4 });
@@ -1267,8 +1275,8 @@ fit(); addEventListener('resize', () => { fit(); dirty = 3; });
 /* ---- framing: where the Hub sits on screen in Fast Pitch's Modes, Hardware and Specs views (pixel targets in this frame) ---- */
 const lerp = (a,b,t) => a + (b-a)*t, lp = (A,B,t) => ({ cx:lerp(A.cx,B.cx,t), cy:lerp(A.cy,B.cy,t), w:lerp(A.w,B.w,t), th:lerp(A.th,B.th,t), ph:lerp(A.ph,B.ph,t) });
 function presets(){ const Wi = innerWidth, Hi = innerHeight, tab = MODE.cur==='table', P = FR.pre || { modes:{a0:120, a1:Wi-222, top:150, bot:Hi-60}, hw:{cx:Wi/2, cy:Hi*.48, w:702}, sp:{cx:Wi*.3, cy:Hi*.45, w:480} };
-  const m = P.modes, kt = Math.max(0, Math.min(1, MODE.t||0)), w = Math.min((m.a1-m.a0)*.94, 1.44*(m.bot-m.top-80)) * (1-.14*kt);
-  return { modes:{ cx:(m.a0+m.a1)/2, cy:(m.top+70+m.bot)/2 + 10*kt, w, th:0, ph:Math.PI/2 - .4*kt },   // tabletop: look down onto the tilted glass
+  const m = P.modes, kt = Math.max(0, Math.min(1, MODE.t||0)), mcx = Wi/2, w = Math.min(2*Math.min(mcx-m.a0, m.a1-mcx)*.92, 1.44*(m.bot-m.top-80)) * .88 * (1-.14*kt);   // centred on the screen, a little zoomed out
+  return { modes:{ cx:mcx, cy:(m.top+70+m.bot)/2 + 10*kt, w, th:0, ph:Math.PI/2 - .4*kt },   // tabletop: look down onto the tilted glass
            hw:{ cx:P.hw.cx, cy:P.hw.cy, w:P.hw.w, th:0, ph:Math.PI/2 },
            sp:{ cx:P.sp.cx, cy:P.sp.cy, w:P.sp.w, th:-.72, ph:tab ? 1.12 : 2.0 } }; }
 const P0 = new THREE.Vector3(), Pt = new THREE.Vector3(), dirV = new THREE.Vector3(), rgt = new THREE.Vector3(), upv = new THREE.Vector3(), Y = new THREE.Vector3(0,1,0);
@@ -1318,7 +1326,7 @@ function loop(){
   if(Math.abs(FR.qt-FR.q) > .0005){ FR.qt += (FR.q-FR.qt)*.12; dirty = 2; } else FR.qt = FR.q;
   if(FR.follow){ const v = want(); const k = snap ? 1 : .2; snap = false;
     if(cam.position.distanceTo(P0) > 1e-5 || ctl.target.distanceTo(Pt) > 1e-5){ cam.position.lerp(P0, k); ctl.target.lerp(Pt, k); cam.lookAt(ctl.target); dirty = 2; }
-    const ht = (v.w/1.44)/2; modeEl.style.left = v.cx+'px'; modeEl.style.top = Math.max(150, v.cy - ht - 62)+'px';
+    const ht = (v.w/1.44)/2; modeEl.style.left = v.cx+'px'; modeEl.style.top = Math.max(118, v.cy - ht - 92)+'px';
     dimEl.style.opacity = (FR.p*.92).toFixed(3); dimEl.style.background = `radial-gradient(ellipse ${(v.w*.78)|0}px ${(v.w*.6)|0}px at ${v.cx|0}px ${v.cy|0}px, rgba(0,0,0,0) 62%, rgba(0,0,0,.8) 100%)`; }
   if(!FR.follow && ctl.update()) dirty = 2;
   if(ledPulse && ledOn){ const k = .5+.5*Math.sin(performance.now()/170); ledM.color.copy(LEDC).multiplyScalar(.35+.65*k); down.intensity = .8+2.6*k; dirty = 1; } else down.intensity = 2.4;

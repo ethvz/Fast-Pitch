@@ -524,6 +524,17 @@ body:not(.ishome) #screen::after{display:none;content:"";position:absolute;left:
 #p-hub .otab.fb .hbspec{background:rgba(14,14,16,.42);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);border-radius:28px;padding:26px 30px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.07)}
 #p-hub .otab.fb .hbco{text-shadow:0 1px 10px rgba(0,0,0,.45)}
 #p-hub .hbmodes.al{top:var(--mt)!important;height:var(--mh)!important;transform:none!important;display:flex;flex-direction:column;box-sizing:border-box}#p-hub .hbmodes.al .hbm{flex:1 1 0;height:auto!important;min-height:0}#p-hub .hbmodes.al .hbm:last-child{margin-bottom:0}
+#p-hub .hbmodes.al{left:auto!important;right:var(--mr)!important;width:var(--mw)!important;padding:6px!important;gap:3px;justify-content:space-between;align-items:center;border-radius:34px!important;background:rgba(28,28,28,.92)!important;box-shadow:0 10px 40px rgba(0,0,0,.5)!important;-webkit-backdrop-filter:blur(18px)!important;backdrop-filter:blur(18px)!important;overflow:visible;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+#p-hub .hbmodes.al .hbm{flex:none!important;width:64px;height:64px!important;border-radius:32px;margin:0!important;padding:0;gap:4px;font-size:10.5px;font-weight:500;letter-spacing:.15px;color:rgba(255,255,255,.62);background:transparent!important;border:0!important}
+#p-hub .hbmodes.al .hbm.on{background:rgba(5,229,175,.16)!important;color:var(--vg)!important}
+#p-hub .hbmodes.al .hbm span{white-space:nowrap;line-height:1}
+#p-hub .hbmodes.al .hbm .mic{width:22px;height:22px;flex:none;background:currentColor;-webkit-mask:var(--m) center/contain no-repeat;mask:var(--m) center/contain no-repeat}
+#p-hub .hbmodes.al .hbm .lvi{width:22px!important;height:22px!important}
+#p-hub .hbmodes.al.scrub{background:transparent!important;box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+#p-hub .hbmodes.al.scrub .hbm.on{background:transparent!important}
+#p-hub .hbmodes.al .scrubBg{position:absolute!important;z-index:0}
+#p-hub .hbmodes.al>.scrubDot{position:absolute!important;display:block!important;z-index:1;background:rgba(5,229,175,.24)!important;box-shadow:0 0 0 1px rgba(5,229,175,.35),0 0 24px rgba(5,229,175,.25)!important;pointer-events:none;flex:none}
+#p-hub .hbmodes.al .hbm{z-index:2}
 #emuLayer{position:absolute;left:0;top:0;width:var(--W)!important;margin:0!important;z-index:1;pointer-events:none}
 #emuLayer .st{position:sticky;top:0;height:1032px;pointer-events:auto;background:#020203;opacity:1!important;animation:none!important}
 #emuLayer .tf{position:absolute;left:0;right:0;top:0;height:170px;pointer-events:none;background:linear-gradient(180deg,#000 0%,rgba(0,0,0,.82) 26%,rgba(0,0,0,.35) 62%,rgba(0,0,0,0) 100%)}
@@ -2739,7 +2750,7 @@ body.hd3 #gTitle{opacity:0!important}
         <div class="strip"><div class="hbpane" id="hbCall"></div><div class="hbpane" id="hbSpec"></div></div>
         <div class="fsp spill" style="left:578px;top:869px;width:220px;height:60px"><i class="ind"></i><button class="on" data-fs="f">Hardware</button><button data-fs="s">Specs</button></div>
       </div>
-      <div id="emuLayer" class="in"><div class="st"><iframe id="emuF" class="emuf" title="Smart Hub Pro 2" allow="autoplay" data-src="assets/emu/index.html?v=9"></iframe><div class="tf"></div></div></div>
+      <div id="emuLayer" class="in"><div class="st"><iframe id="emuF" class="emuf" title="Smart Hub Pro 2" allow="autoplay" data-src="assets/emu/index.html?v=10"></iframe><div class="tf"></div></div></div>
       <div class="otab hb" data-t="hist"><div class="hx3" id="hbX"><div class="hbpane" id="hbHist"></div><div class="hbpane" id="hbNew"></div><div class="hbpane" id="hbOut"></div></div><div class="hb3pill" id="hb3"><i class="ind"></i><button class="on" data-hb3="0">Historical</button><button data-hb3="1">What’s New</button><button data-hb3="2">Internet Outage</button></div></div>
       <div class="otab hb" data-t="cmp"><div id="hbCmp"></div></div>
       <div class="otab tall hb" data-t="videos" hidden><div id="hbVlib"></div></div>
@@ -2810,7 +2821,7 @@ body.hd3 #gTitle{opacity:0!important}
 const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
 
 /* ---------- scale stage ---------- */
-let HW=1376; window.FPV='v404'; if(Math.min(screen.width||0,screen.height||0)<500) document.documentElement.classList.add('phn');
+let HW=1376; window.FPV='v405'; if(Math.min(screen.width||0,screen.height||0)<500) document.documentElement.classList.add('phn');
 function safeBox(){ let pr=document.getElementById('safeProbe'); if(!pr){ pr=document.createElement('div'); pr.id='safeProbe';
   pr.style.cssText='position:fixed;left:0;top:0;width:100vw;height:100vh;height:100dvh;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);box-sizing:border-box;visibility:hidden;pointer-events:none;z-index:-1'; document.documentElement.appendChild(pr); }
   const cs=getComputedStyle(pr), t=parseFloat(cs.paddingTop)||0, b=parseFloat(cs.paddingBottom)||0, l=parseFloat(cs.paddingLeft)||0, r=parseFloat(cs.paddingRight)||0;
@@ -3504,11 +3515,12 @@ $('#hbScroll').addEventListener('scroll',()=>titleLive($('#p-hub')),{passive:tru
 /* ===== Side rail fast scroller =====
    Press and hold (or just drag) on a product page's section rail: the green highlight follows the finger, the page flies
    through its sections to match, and the rail magnifies like the macOS Dock with a soft bulge on its right edge. */
-{ const rail=$('#barRight'); let S=null, A=0, aT=0, raf=0, lastEnd=0;
+/* dock(rail,o): o.items selector, o.active(), o.flip = bulge to the left (a menu on the right edge), o.pick = no page scrolling, release picks the item */
+function fpDock(rail,o){ let S=null, A=0, aT=0, raf=0, lastEnd=0; const FL=o.flip?-1:1;
   const keyOf=b=>{ const d=b.dataset; let k=d.octab||d.prtab||d.dbtab||d.hbtab||d.thtab||''; return k==='play'?'videos':k; };
-  const active=()=>rail.classList.contains('pnav')&&!$('#bar').classList.contains('home')&&rail.getBoundingClientRect().height>rail.getBoundingClientRect().width;
+  const active=o.active;
   const local=e=>{ const r=rail.getBoundingClientRect(), k=r.height/(rail.offsetHeight||1)||1; return (e.clientY-r.top)/k; };
-  const items=()=>[...rail.children].filter(x=>x.matches('.bbtn'));
+  const items=()=>[...rail.children].filter(x=>x.matches(o.items));
   /* The green circle rides exactly under the finger (no easing). The pill's right edge is a smooth union of the pill and the
      circle grown by the same gap it keeps on the left, so the lump always wraps the circle with an even margin, never touching it. */
   const G=6, RMAX=41, RMIN=22;
@@ -3516,7 +3528,7 @@ $('#hbScroll').addEventListener('scroll',()=>titleLive($('#p-hub')),{passive:tru
   const smax=(a,b,k)=>{ const m=Math.max(a,b); return m+k*Math.log(Math.exp((a-m)/k)+Math.exp((b-m)/k)); };
   function draw(){ const H=rail.offsetHeight, { W, k, r, cx, cy }=geo(), R=Math.min(W/2,34), Rg=r+G; let svg=rail.querySelector(':scope>.scrubBg');
     if(!svg){ svg=document.createElementNS('http://www.w3.org/2000/svg','svg'); svg.setAttribute('class','scrubBg'); svg.innerHTML='<path fill="#1c1c1c" stroke="rgba(255,255,255,.08)" stroke-width="1"/>'; rail.prepend(svg); }
-    const pad=90; svg.setAttribute('width',W+pad); svg.setAttribute('height',H+80); svg.setAttribute('viewBox',`0 -40 ${W+pad} ${H+80}`); svg.style.top='-40px';
+    const pad=90; svg.style.left=o.flip?(-pad)+'px':'0px'; svg.style.transform=o.flip?'scaleX(-1)':''; svg.setAttribute('width',W+pad); svg.setAttribute('height',H+80); svg.setAttribute('viewBox',`0 -40 ${W+pad} ${H+80}`); svg.style.top='-40px';
     const edge=y=>{ const dy=y-cy, c=Math.abs(dy)<Rg?cx+Math.sqrt(Rg*Rg-dy*dy):cx-Rg, sh=W+(cx+Rg-W)*.55*Math.exp(-Math.pow(dy/(Rg*1.35),2)); return smax(W,smax(c,sh,5),6)-W; };  // extra width at height y
     const eT=Math.max(0,Rg-cy)*Math.min(1,k*1.4), eB=Math.max(0,cy+Rg-H)*Math.min(1,k*1.4), pts=[];
     const arc=(ax,ay,a0,a1)=>{ for(let i=0;i<=16;i++){ const t=a0+(a1-a0)*i/16; pts.push([ax+R*Math.cos(t), ay+R*Math.sin(t)]); } };
@@ -3524,34 +3536,39 @@ $('#hbScroll').addEventListener('scroll',()=>titleLive($('#p-hub')),{passive:tru
     const d=pts.map(([x,y],i)=>{ const yy=y-eT*Math.max(0,1-y/(Rg*2.2))+eB*Math.max(0,1-(H-y)/(Rg*2.2)), w=Math.max(0,x-W/2)/(W/2); return `${i?'L':'M'} ${(x+edge(yy)*w*w).toFixed(2)} ${yy.toFixed(2)}`; }).join(' ')+' Z';
     svg.firstChild.setAttribute('d',d); }
   /* Dock magnify: icons near the finger grow and are pulled to the circle's centre; neighbours part to make room */
-  function magnify(){ const { W, k, r, cx, cy }=geo();
-    items().forEach(b=>{ const c=b.offsetTop+b.offsetHeight/2, dd=cy-c, g=S?Math.exp(-Math.pow(dd/30,2)):0, sc=1+.5*g*k, pull=dd*Math.exp(-Math.pow(dd/24,2)), push=Math.tanh(-dd/60)*16*k*(1-g);
-      b.style.transform=S?`translate(${((cx-W/2)*g).toFixed(1)}px,${(pull*k+push).toFixed(1)}px) scale(${sc.toFixed(3)})`:''; b.classList.toggle('near',g>.5); });
-    const dot=S&&S.dot; if(dot){ const D=2*r; dot.style.width=dot.style.height=D+'px'; dot.style.marginTop=(-r)+'px'; dot.style.borderRadius=r+'px'; dot.style.left=G+'px'; dot.style.top=cy+'px'; } }
+  function magnify(){ const { W, k, r, cx, cy }=geo(), its=items(), sp=its.length>1?(its[its.length-1].offsetTop-its[0].offsetTop)/(its.length-1):52, sg=sp*.58, sq=sp*.46;
+    its.forEach(b=>{ const c=b.offsetTop+b.offsetHeight/2, dd=cy-c, g=S?Math.exp(-Math.pow(dd/sg,2)):0, sc=1+.5*g*k, pull=dd*Math.exp(-Math.pow(dd/sq,2)), push=Math.tanh(-dd/60)*16*k*(1-g);
+      b.style.transform=S?`translate(${(FL*(cx-W/2)*g).toFixed(1)}px,${(pull*k+push).toFixed(1)}px) scale(${sc.toFixed(3)})`:''; b.classList.toggle('near',g>.5); });
+    const dot=S&&S.dot; if(dot){ const D=2*r; dot.style.width=dot.style.height=D+'px'; dot.style.marginTop=(-r)+'px'; dot.style.borderRadius=r+'px'; dot.style.left=(o.flip?W-G-D:G)+'px'; dot.style.top=cy+'px'; } }
   function animA(to,done){ cancelAnimationFrame(raf); const a0=A, t0=performance.now();
     const step=now=>{ const k=Math.min(1,(now-t0)/260), e=1-Math.pow(1-k,3); A=a0+(to-a0)*e; draw(); magnify(); if(k<1) raf=requestAnimationFrame(step); else if(done) done(); };
     raf=requestAnimationFrame(step); }
-  function begin(e){ const box=$('.page.on .lpage'); if(!box) return; const its=items(), map=[];
+  function begin(e){ if(o.pick){ const map=items().map(b=>({b,c:b.offsetTop+b.offsetHeight/2})); if(map.length<2) return S=null; S.on=true; S.map=map; S.pick=true; return start(e); }
+    const box=$('.page.on .lpage'); if(!box) return; const its=items(), map=[];
     its.forEach(b=>{ const k=keyOf(b); const sec=k&&[...box.children].find(c=>c.dataset&&c.dataset.t===k&&!c.hidden&&c.offsetHeight); if(sec) map.push({b,c:b.offsetTop+b.offsetHeight/2,top:Math.max(0,sec.offsetTop-(parseFloat(getComputedStyle(sec).scrollMarginTop)||0)),k}); });
     if(map.length<2) return S=null;
-    S.on=true; S.box=box; S.map=map; rail.classList.add('scrub'); try{ rail.setPointerCapture(e.pointerId); }catch(_){}
+    S.on=true; S.box=box; S.map=map; start(e); }
+  function start(e){ rail.classList.add('scrub'); try{ rail.setPointerCapture(e.pointerId); }catch(_){}
     let dot=rail.querySelector(':scope>.scrubDot'); if(!dot){ dot=document.createElement('i'); dot.className='scrubDot'; rail.prepend(dot); } S.dot=dot; dot.style.opacity='1'; dot.style.transition='none';
     items().forEach(b=>b.style.transition='color .2s'); update(e,true); animA(26); }
   function update(e,first){ const M=S.map, ly=Math.max(M[0].c,Math.min(M[M.length-1].c,local(e))); S.ly=ly;
+    if(S.pick){ let n=M[0]; M.forEach(m=>{ if(Math.abs(m.c-ly)<Math.abs(n.c-ly)) n=m; }); S.near=n; if(!first&&!S.rq){ S.rq=requestAnimationFrame(()=>{ if(S){ S.rq=0; draw(); magnify(); } }); } return; }
     let i=0; while(i<M.length-2&&ly>M[i+1].c) i++; const a=M[i], b=M[i+1], t=Math.max(0,Math.min(1,(ly-a.c)/(b.c-a.c)));
     const y=a.top+(b.top-a.top)*t, near=t<.5?a:b; S.near=near; S.box.__jt=near.k; clearTimeout(S.box.__jtt); S.box.scrollTop=y; if(S.box.__spy) S.box.__spy();
     if(!first&&!S.rq){ S.rq=requestAnimationFrame(()=>{ if(S){ S.rq=0; draw(); magnify(); } }); } }
   function end(){ const s=S; S=null; if(!s||!s.on) return; lastEnd=Date.now(); const near=s.near;
     s.dot.style.transition='top .3s cubic-bezier(.22,.9,.2,1), width .3s, height .3s, margin-top .3s, left .3s, opacity .25s .2s'; s.dot.style.top=near.c+'px'; const w0=rail.offsetWidth-2*G; s.dot.style.width=s.dot.style.height=w0+'px'; s.dot.style.marginTop=(-w0/2)+'px'; s.dot.style.left=G+'px'; s.dot.style.opacity='0'; items().forEach(b=>b.style.transition='transform .3s cubic-bezier(.22,.9,.2,1), color .2s');
     S={ly:near.c,dot:null}; animA(0,()=>{ S=null; rail.classList.remove('scrub'); items().forEach(b=>{ b.style.transform=''; b.style.transition=''; b.classList.remove('near'); }); const g=rail.querySelector(':scope>.scrubBg'); if(g) g.remove(); s.dot.remove(); });
-    s.box.__jtt=setTimeout(()=>{ s.box.__jt=null; },1500); near.b.click(); }
+    if(s.box) s.box.__jtt=setTimeout(()=>{ s.box.__jt=null; },1500); near.b.click(); }
   rail.addEventListener('pointerdown',e=>{ if(!active()||S) return; S={on:false,y0:e.clientY,t:0,ev:e}; begin(e); if(S&&!S.on) S=null; });  // live on first touch: no hold needed
-  rail.addEventListener('pointermove',e=>{ if(!S||S.ly!==undefined&&!S.on&&!S.box) return; if(!S.on){ S.ev=e; if(Math.abs(e.clientY-S.y0)>7){ clearTimeout(S.t); begin(e); } return; } update(e); },{passive:true});
+  rail.addEventListener('pointermove',e=>{ if(!S||!S.on&&S.ly!==undefined) return; if(!S.on){ S.ev=e; if(Math.abs(e.clientY-S.y0)>7){ clearTimeout(S.t); begin(e); } return; } update(e); },{passive:true});
   const up=()=>{ if(!S) return; clearTimeout(S.t); if(S.on) end(); else if(!S.box) S=null; };
   rail.addEventListener('pointerup',up); rail.addEventListener('pointercancel',up); rail.addEventListener('lostpointercapture',up);
   /* the finger's own click after a scrub doesn't count as a tap */
-  window.addEventListener('click',e=>{ if(e.isTrusted&&Date.now()-lastEnd<450&&e.target.closest&&e.target.closest('#barRight')){ e.stopPropagation(); e.preventDefault(); } },true);
+  window.addEventListener('click',e=>{ if(e.isTrusted&&Date.now()-lastEnd<450&&e.target.closest&&rail.contains(e.target)){ e.stopPropagation(); e.preventDefault(); } },true);
   rail.addEventListener('touchmove',e=>{ if(S&&S.on) e.preventDefault(); },{passive:false}); }
+fpDock($('#barRight'),{ items:'.bbtn', active:()=>{ const rail=$('#barRight'), r=rail.getBoundingClientRect(); return rail.classList.contains('pnav')&&!$('#bar').classList.contains('home')&&r.height>r.width; } });
+
 
 /* ---- Smart Hub: one live 3D Hub shared by Modes and Hardware/Specs; lazy-load, pause off-screen, wheel passes through ---- */
 (function(){ const f=$('#emuF'), box=$('#hbScroll'), L=$('#emuLayer'); if(!f||!L) return; let vis=null, lastJ=0, lastP=-1, Q=0;
@@ -3566,7 +3583,11 @@ $('#hbScroll').addEventListener('scroll',()=>titleLive($('#p-hub')),{passive:tru
     const h=fitp(22,1352,150,770,687), sp=fitp(60,1300,140,800,680);
     const hc=$('#hbCall'), hs=$('#hbSpec'); if(hc) hc.style.transform=`translate(${h.tx.toFixed(1)}px,${h.ty.toFixed(1)}px) scale(${h.sc.toFixed(4)})`; if(hs) hs.style.transform=`translate(${sp.tx.toFixed(1)}px,${sp.ty.toFixed(1)}px) scale(${sp.sc.toFixed(4)})`;
     const hm=$('#hbModes'), ml=hm&&hm.offsetWidth?(Wl-36-hm.offsetWidth):Wl-200;
-    if(hm&&rr&&rr.height){ hm.classList.add('al'); hm.style.setProperty('--mt',((rr.top-br.top)/k).toFixed(1)+'px'); hm.style.setProperty('--mh',(rr.height/k).toFixed(1)+'px'); }  /* Modes menu: same height and top as the left pill rail */
+    if(hm&&rr&&rr.height){ hm.classList.add('al'); hm.style.setProperty('--mt',((rr.top-br.top)/k).toFixed(1)+'px'); hm.style.setProperty('--mh',(rr.height/k).toFixed(1)+'px');
+      hm.style.setProperty('--mw',(rr.width/k).toFixed(1)+'px'); hm.style.setProperty('--mr',((rr.left-br.left)/k).toFixed(1)+'px');   /* mirror of the left pill: same width, same inset from the edge */
+      hm.querySelectorAll('.hbm').forEach(b=>{ const im=b.querySelector(':scope>img'); if(im){ const i=document.createElement('i'); i.className='mic'; i.style.setProperty('--m',`url("${im.getAttribute('src')}")`); im.replaceWith(i); }
+        [...b.childNodes].forEach(n=>{ if(n.nodeType===3&&n.textContent.trim()){ const sp=document.createElement('span'); sp.textContent=n.textContent.trim(); n.replaceWith(sp); } }); });
+      if(!hm.__dock){ hm.__dock=1; fpDock(hm,{ items:'.hbm', flip:true, pick:true, active:()=>parseFloat(getComputedStyle(hm).opacity)>.5 }); } }  /* Modes menu: same height and top as the left pill rail */
     PRE={ modes:{a0:L, a1:ml-24, top:150, bot:Hl-60}, hw:{cx:h.tx+h.sc*686, cy:h.ty+h.sc*498, w:h.sc*702}, sp:{cx:sp.tx+sp.sc*372, cy:sp.ty+sp.sc*450, w:sp.sc*480} }; };
   const geo=()=>{ layout(); return { pre:PRE }; };
   const place=()=>{ const t=mS.offsetTop, b=eS.offsetTop+eS.offsetHeight; if(b>t){ L.style.top=t+'px'; L.style.height=(b-t)+'px'; } };
