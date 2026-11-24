@@ -1,0 +1,893 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Smart Hub Pro 2 Emulator</title>
+<style>
+html,body{margin:0;height:100%;background:#000;overflow:hidden;overscroll-behavior:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+#stage{position:fixed;inset:0;background:radial-gradient(70% 60% at 50% 46%,#1a1d1f 0%,#0b0c0d 55%,#000 100%)}
+#gl{position:absolute;inset:0;width:100%;height:100%;touch-action:none;cursor:grab;outline:none}
+#gl:active{cursor:grabbing}
+#css{position:absolute;inset:0;pointer-events:none}
+#css>div,#css>div>div{pointer-events:none}
+#scr{pointer-events:auto}
+#glare{position:absolute;inset:0;pointer-events:none;z-index:200;mix-blend-mode:screen;opacity:.0;transition:opacity .4s}
+#hint{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);display:flex;gap:26px;align-items:center;font:500 15px/1 -apple-system,system-ui,sans-serif;color:rgba(255,255,255,.62);letter-spacing:.01em;transition:opacity .6s;pointer-events:none;white-space:nowrap}
+#hint span{display:flex;align-items:center;gap:9px}
+#hint i{width:7px;height:7px;border-radius:50%;background:#05E5AF;box-shadow:0 0 10px #05E5AF}
+#front{position:fixed;left:50%;bottom:18px;transform:translate(-50%,16px);opacity:0;pointer-events:none;height:40px;padding:0 20px;border-radius:20px;border:0;background:rgba(40,40,42,.9);color:#fff;font:500 15px -apple-system,system-ui,sans-serif;display:flex;align-items:center;gap:9px;transition:opacity .35s,transform .45s cubic-bezier(.22,.8,.24,1);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);cursor:pointer}
+#front.on{opacity:1;transform:translate(-50%,0);pointer-events:auto}
+#front svg{flex:none}
+#load{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;color:#777;font:14px -apple-system,system-ui,sans-serif;transition:opacity .6s;pointer-events:none}
+#load i{width:28px;height:28px;border-radius:50%;border:2.5px solid #333;border-top-color:#05E5AF;animation:sp .9s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+body.flat #gl{display:none}
+body.flat #scr{position:fixed;transform-origin:0 0;border-radius:14px;box-shadow:0 0 0 14px #0c0c0c,0 0 0 16px #e9eae8}
+body.one #scr{box-shadow:none;border-radius:0}body.one #hint{display:none}
+/* ===== Smart Hub Pro 2 UI — 1280×750 design canvas ===== */
+@font-face{font-family:VS;src:url(../fonts/VivintSans-Regular.woff) format('woff');font-weight:400}
+@font-face{font-family:VS;src:url(../fonts/VivintSans-Medium.woff) format('woff');font-weight:500}
+@font-face{font-family:VS;src:url(../fonts/VivintSans-Bold.woff) format('woff');font-weight:700}
+@font-face{font-family:VS;src:url(../fonts/VivintSans-Light.woff) format('woff');font-weight:300}
+#scr{--mint:#3fe0b4;--or:#ff7a1a;--ease:cubic-bezier(.22,.8,.24,1);position:absolute;left:0;top:0;width:1280px;height:750px;overflow:hidden;background:#000;color:#fff;font-family:VS,-apple-system,system-ui,sans-serif;font-weight:400;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;backface-visibility:hidden;-webkit-backface-visibility:hidden;cursor:default;letter-spacing:-.005em}
+#scr *{box-sizing:border-box}
+:where(#scr button){font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent}
+:where(#scr svg){display:block;flex:none}
+#scr .L{position:absolute;inset:0}
+#scr [hidden]{display:none!important}
+/* press feedback everywhere */
+#scr .tap{transition:transform .18s var(--ease),filter .18s,background-color .25s,opacity .25s}
+#scr .tap:active,#scr .tap.pr{transform:scale(.965);filter:brightness(1.18)}
+#scr .lt .tap:active,#scr .lt .tap.pr{filter:brightness(.94)}
+
+/* ---------- dark world ---------- */
+#dk{background:#000}
+#dk .bg{position:absolute;inset:0;transition:opacity .6s}
+#dk .bg.g{background:radial-gradient(120% 140% at 0% 0%,#163d2e 0%,#0c1c17 38%,#050a08 62%,#000 80%)}
+#dk .bg.o{background:radial-gradient(120% 140% at 0% 0%,#45200e 0%,#211009 40%,#0a0503 62%,#000 80%);opacity:0}
+#dk.arm .bg.o{opacity:1}
+.tabv{position:absolute;left:0;top:0;width:1280px;height:668px;opacity:0;pointer-events:none;transition:opacity .35s var(--ease),transform .45s var(--ease);transform:translateY(10px)}
+.tabv.on{opacity:1;pointer-events:auto;transform:none}
+
+/* bottom nav (dark) */
+#nvD{position:absolute;left:0;right:0;bottom:0;height:82px;transition:background .4s}
+#nvD .hm{position:absolute;left:22px;top:20px;width:40px;height:40px}
+#nvD .sc{position:absolute;left:78px;width:988px;top:0;height:82px;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;-webkit-mask:linear-gradient(90deg,transparent 0,#000 22px,#000 92%,transparent 100%);mask:linear-gradient(90deg,transparent 0,#000 22px,#000 92%,transparent 100%);touch-action:pan-x}
+#nvD .sc::-webkit-scrollbar{display:none}
+#nvD .row{display:flex;align-items:center;height:82px;padding-left:22px;width:max-content;padding-right:40px}
+#nvD .it{font-size:25px;color:#e9e9e9;margin-right:0;position:relative;height:82px;display:flex;align-items:center;white-space:nowrap}
+#nvD .it.n{width:220px}
+#nvD .it.n:nth-child(4){width:200px}
+#nvD .it.on{color:#fff;font-weight:500}
+#nvD .it.n::after{content:"";position:absolute;left:0;width:0;bottom:12px;height:2.5px;border-radius:2px;background:#fff;transition:width .35s var(--ease)}
+#nvD .it.n.on::after{width:44px;left:12px}
+#nvD .st{display:flex;align-items:center;gap:38px;margin-left:30px;height:82px}
+#nvD .st button{width:44px;height:44px;display:flex;align-items:center;justify-content:center;color:#fff}
+#nvD .dv{position:absolute;left:1065px;top:20px;width:2px;height:42px;background:#d9d9d9;border-radius:1px}
+#nvD .tm{position:absolute;right:14px;top:0;height:82px;display:flex;align-items:center;font-size:25px;color:#fff}
+
+/* home */
+#hm{overflow-x:auto;overflow-y:hidden;scrollbar-width:none;touch-action:pan-x;scroll-snap-type:x proximity}
+#hm::-webkit-scrollbar{display:none}
+#hm .strip{position:relative;width:1930px;height:668px}
+.sec{position:absolute;left:22px;top:38px;width:604px;height:604px;border-radius:24px;overflow:hidden;scroll-snap-align:start;scroll-margin-left:22px}
+.sec .fill{position:absolute;inset:0;transition:opacity .7s}
+.sec .fill.g{background:linear-gradient(140deg,#076448 0%,#0b5843 30%,#104636 70%,#163629 100%)}
+.sec .fill.o{background:linear-gradient(140deg,#c04a18 0%,#b23f12 35%,#a03510 70%,#872a09 100%);opacity:0}
+#dk.arm .sec .fill.o{opacity:1}
+.sos{position:absolute;left:20px;top:20px;height:80px;padding:0 30px 0 26px;border-radius:40px;background:rgba(0,0,0,.26);display:flex;align-items:center;gap:16px;font-size:29px;font-weight:500}
+.sec .gm{position:absolute;left:0;right:0;top:172px;text-align:center;font-size:29px;color:rgba(255,255,255,.72)}
+.sec .stt{position:absolute;left:0;right:0;top:240px;display:flex;justify-content:center;align-items:center;gap:26px;font-size:44px;font-weight:500}
+.sec .stt span{display:inline-block}
+.sec .chev{position:absolute;left:254px;top:340px;width:96px;height:96px;border-radius:50%;background:rgba(0,0,0,.28);display:flex;align-items:center;justify-content:center}
+.tl{position:absolute;width:286px;height:286px;border-radius:22px;background:#1c1c1c;box-shadow:inset 0 0 0 1px rgba(255,255,255,.05);overflow:hidden}
+.tl .t1{position:absolute;left:22px;top:24px;font-size:29px;color:#f4f4f4}
+.tl .t2{position:absolute;left:22px;top:70px;font-size:29px;color:#8b8b8b;transition:color .3s}
+.lk{position:absolute;right:22px;bottom:22px;width:104px;height:104px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:background .35s var(--ease),box-shadow .35s,color .35s;box-shadow:inset 0 0 0 1.5px #4b4b4b;color:#fff}
+.lk.on{background:#fff;box-shadow:inset 0 0 0 1.5px #fff;color:#111}
+.lk .spin{position:absolute;inset:-2px;border-radius:50%;border:3px solid transparent;border-top-color:var(--mint);opacity:0;animation:spin .8s linear infinite}
+.lk.busy .spin{opacity:1}
+@keyframes spin{to{transform:rotate(360deg)}}
+.ct .im{position:absolute;left:0;top:0;width:286px;height:232px;background-size:cover;background-position:center}
+.ct .nm{position:absolute;left:22px;top:24px;font-size:25px;font-weight:500;text-shadow:0 1px 6px rgba(0,0,0,.55)}
+.ct .ft{position:absolute;left:0;right:0;bottom:0;height:54px;display:flex;align-items:center;justify-content:space-between;padding:0 18px 0 22px;font-size:25px;color:#eee}
+.th .big{position:absolute;left:20px;bottom:6px;font-size:132px;font-weight:500;letter-spacing:-.03em;line-height:1}
+.th.cur .big{background:linear-gradient(180deg,#ffb58e,#f08a5d);-webkit-background-clip:text;background-clip:text;color:transparent}
+.th.cool{background:linear-gradient(160deg,#55689a,#3f5285)}
+
+/* cameras */
+#cm .vae{position:absolute;right:46px;top:26px;font-size:23px;display:flex;align-items:center;gap:12px;color:#eee}
+#cm .sc{position:absolute;left:0;right:0;top:110px;height:540px;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;touch-action:pan-x}
+#cm .sc::-webkit-scrollbar{display:none}
+#cm .row{display:flex;gap:32px;padding:18px 20px;width:max-content}
+.cc{position:relative;height:503px;border-radius:18px;overflow:hidden;background:#1c1c1c;flex:none}
+.cc .im{position:absolute;left:0;top:0;right:0;height:383px;background-size:cover;background-position:center}
+.cc .n1{position:absolute;left:20px;top:405px;font-size:29px}
+.cc .n2{position:absolute;left:20px;top:446px;font-size:25px;color:#a9a9a9}
+.cc .cl{position:absolute;right:20px;top:420px}
+.dt{position:absolute;left:24px;top:22px;height:76px;padding:0 28px 0 8px;border-radius:38px;background:rgba(40,40,40,.62);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);display:flex;align-items:center;gap:14px;font-size:30px}
+.dt .bn{width:60px;height:60px;border-radius:50%;background:#fff;color:#111;display:flex;align-items:center;justify-content:center;transition:background .3s,color .3s}
+.dt.on .bn{background:var(--mint)}
+
+/* thermostat */
+#tm{transition:background .5s}
+#tm{background:#00479a}
+#tm.heat{background:#b4471a}#tm.off{background:#2c2c2e}#tm.auto{background:#33507a}
+#tm .l{position:absolute;left:0;width:647px;top:0;height:668px;text-align:center}
+#tm .h1{position:absolute;left:0;right:0;top:198px;font-size:65px;font-weight:500}
+#tm .h2{position:absolute;left:0;right:0;top:308px;font-size:44px;display:flex;justify-content:center;align-items:center;gap:14px}
+#tm .pl{position:absolute;top:425px;width:284px;height:84px;border-radius:42px;background:#fff;color:#0a4aa0;font-size:31px;display:flex;align-items:center;justify-content:center;gap:12px;transition:color .4s}
+#tm.heat .pl{color:#b4471a}#tm.off .pl{color:#2c2c2e}#tm.auto .pl{color:#33507a}
+#tm .dvd{position:absolute;left:646px;top:152px;width:2px;height:420px;background:rgba(255,255,255,.22)}
+#tm .r{position:absolute;left:648px;right:0;top:0;height:668px}
+#tm .ar{position:absolute;left:50%;width:120px;height:100px;margin-left:-60px;display:flex;align-items:center;justify-content:center}
+#tm .spv{position:absolute;left:0;right:0;top:262px;text-align:center;font-size:170px;font-weight:500;line-height:1;letter-spacing:-.02em}
+#tm .spv sup{position:absolute;font-size:46px;margin-left:8px;top:6px}
+#tm .ic{position:absolute;bottom:14px;display:flex;gap:46px;right:44px}
+#tm .ic button{width:44px;height:44px;display:flex;align-items:center;justify-content:center}
+#tm .num{display:inline-block;transition:transform .25s var(--ease),opacity .25s}
+
+/* lights */
+#lt .hd{position:absolute;left:36px;top:34px;font-size:34px;font-weight:500}
+#lt .gr{position:absolute;left:36px;top:104px;right:36px;display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
+.lc{height:250px;border-radius:22px;background:#1c1c1c;box-shadow:inset 0 0 0 1px rgba(255,255,255,.05);position:relative;overflow:hidden;transition:background .4s}
+.lc.on{background:linear-gradient(160deg,#3a3320,#24211a)}
+.lc .n{position:absolute;left:24px;top:24px;font-size:29px}
+.lc .s{position:absolute;left:24px;top:68px;font-size:25px;color:#8b8b8b}
+.lc.on .s{color:#ffd77a}
+.lc .bl{position:absolute;right:22px;top:22px;width:84px;height:84px;border-radius:50%;box-shadow:inset 0 0 0 1.5px #4b4b4b;display:flex;align-items:center;justify-content:center;transition:all .35s}
+.lc.on .bl{background:#ffd15c;color:#2a2210;box-shadow:0 0 40px rgba(255,209,92,.45)}
+.lc .dim{position:absolute;left:24px;right:24px;bottom:30px;height:46px;border-radius:23px;background:#2c2c2c;overflow:hidden;touch-action:none}
+.lc .dim i{position:absolute;left:0;top:0;bottom:0;background:#4a4a4a;border-radius:23px;transition:background .35s}
+.lc.on .dim i{background:linear-gradient(90deg,#c89c3a,#ffd15c)}
+
+/* overlays (dark) */
+.ov{position:absolute;inset:0;opacity:0;pointer-events:none;transition:opacity .35s var(--ease)}
+.ov.on{opacity:1;pointer-events:auto}
+#arm .bgx{position:absolute;inset:0;opacity:.93;background:radial-gradient(110% 130% at 0% 10%,#1a4a37 0%,#0f2a20 34%,#070e0b 60%,#000 82%);transition:opacity .6s}
+#arm .bgx.o{background:radial-gradient(110% 130% at 0% 10%,#8a2c09 0%,#5a1d08 32%,#2a1004 58%,#0b0601 82%);opacity:0}
+#arm.arm .bgx.o{opacity:.93}
+#arm .opt{position:absolute;left:1093px;top:17px;height:83px;padding:0 34px;border-radius:42px;box-shadow:inset 0 0 0 2px rgba(255,255,255,.75);font-size:35px;display:flex;align-items:center}
+.ap{position:absolute;left:27px;width:576px;height:134px;border-radius:67px;background:rgba(255,255,255,.1);box-shadow:inset 0 0 0 1px rgba(255,255,255,.06);display:flex;align-items:center;padding-left:44px;gap:30px;text-align:left;transition:background .45s var(--ease),transform .5s var(--ease),opacity .4s}
+.ap .tx b{display:block;font-weight:400;font-size:37px;line-height:1.15}
+.ap .tx small{display:block;font-size:31px;color:rgba(255,255,255,.75);line-height:1.2}
+.ap.cur.g{background:#1e5c46}
+.ap.cur.o{background:#c34719}
+#arm .ap{transform:translateX(-30px);opacity:0}
+#arm.on .ap{transform:none;opacity:1}
+#arm.on .ap:nth-of-type(2){transition-delay:.04s}#arm.on .ap:nth-of-type(3){transition-delay:.08s}
+#arm .cnt{position:absolute;left:660px;right:60px;top:250px;text-align:center;font-size:30px;color:rgba(255,255,255,.75);opacity:0;transition:opacity .4s}
+#arm .cnt b{display:block;font-size:120px;font-weight:500;color:#fff;line-height:1.1}
+#arm.cd .cnt{opacity:1}
+
+#sopt .dim{position:absolute;inset:0;background:rgba(0,0,0,.55)}
+#sopt .pn{position:absolute;left:427px;top:0;right:0;bottom:0;background:#1c1c1c;transform:translateX(100%);transition:transform .45s var(--ease)}
+#sopt.on .pn{transform:none}
+#sopt .x{position:absolute;right:14px;top:12px;width:48px;height:48px;display:flex;align-items:center;justify-content:center}
+#sopt h3{position:absolute;left:82px;top:144px;margin:0;font-size:45px;font-weight:500}
+.so{position:absolute;left:82px;height:85px;padding:0 40px 0 34px;border-radius:43px;box-shadow:inset 0 0 0 2px rgba(255,255,255,.75);display:flex;align-items:center;gap:24px;font-size:33px;transition:background .3s,color .3s}
+.so.on{background:#fff;color:#111}
+.socap{position:absolute;left:82px;font-size:25px;color:#e0e0e0}
+
+#sos{background:#000}
+#sos .bk{position:absolute;left:12px;top:12px;height:52px;padding:0 14px;display:flex;align-items:center;gap:16px;font-size:29px}
+#sos h2{position:absolute;left:27px;top:224px;width:560px;margin:0;font-size:46px;font-weight:500;line-height:1.27}
+#sos p{position:absolute;left:27px;top:448px;width:560px;margin:0;font-size:29px;line-height:1.36;color:#e6e6e6}
+.sp{position:absolute;left:689px;width:575px;height:143px;border-radius:72px;background:#1d1d1d;box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);display:flex;align-items:center;gap:30px;padding-left:30px;text-align:left;overflow:hidden}
+.sp .ci{width:76px;height:76px;border-radius:50%;display:flex;align-items:center;justify-content:center;position:relative;z-index:1}
+.sp .tx{position:relative;z-index:1}
+.sp .tx b{display:block;font-weight:500;font-size:36px}
+.sp .tx small{display:block;font-size:30px;color:#e2e2e2}
+.sp .pg{position:absolute;left:0;top:0;bottom:0;width:0;opacity:.28}
+.sp.hold .pg{width:100%;transition:width 3s linear}
+#sos .ah{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;opacity:0;pointer-events:none;transition:opacity .4s;background:#000}
+#sos.fired .ah{opacity:1;pointer-events:auto}
+#sos .ah .ring{width:180px;height:180px;border-radius:50%;display:flex;align-items:center;justify-content:center;animation:pulse 1.4s ease-out infinite}
+#sos .ah h4{margin:40px 0 10px;font-size:48px;font-weight:500}
+#sos .ah div{font-size:29px;color:#cfcfcf}
+#sos .ah button{margin-top:44px;height:84px;padding:0 54px;border-radius:42px;box-shadow:inset 0 0 0 2px rgba(255,255,255,.8);font-size:32px}
+@keyframes pulse{0%{box-shadow:0 0 0 0 var(--pc)}100%{box-shadow:0 0 0 70px transparent}}
+
+#live{background:#000}
+#live .im{position:absolute;left:0;top:0;width:1109px;height:750px;background-size:cover;background-position:center;animation:drift 18s ease-in-out infinite alternate}
+#live .im.por{background-size:contain;background-repeat:no-repeat}
+@keyframes drift{from{transform:scale(1.0)}to{transform:scale(1.035) translate(-6px,4px)}}
+#live .mask{position:absolute;left:0;top:0;width:1109px;height:750px;overflow:hidden}
+#live .lv{position:absolute;left:0;width:1109px;top:28px;display:flex;justify-content:center;align-items:center;gap:14px;font-size:33px;text-shadow:0 1px 6px rgba(0,0,0,.4)}
+#live .lv i{width:24px;height:24px;border-radius:50%;background:#e8431f;animation:blink 1.6s infinite}
+@keyframes blink{50%{opacity:.35}}
+#live .rl{position:absolute;left:1109px;top:0;right:0;bottom:0;background:#151a1c;display:flex;flex-direction:column;align-items:center;justify-content:space-evenly;padding:18px 0}
+.rb{display:flex;flex-direction:column;align-items:center;gap:12px;font-size:26px;color:#fff}
+.rb .c{width:104px;height:104px;border-radius:50%;box-shadow:inset 0 0 0 2px rgba(255,255,255,.55);display:flex;align-items:center;justify-content:center;transition:background .3s,color .3s,box-shadow .3s}
+.rb.on .c{background:#fff;color:#111;box-shadow:inset 0 0 0 2px #fff}
+.rb.talk.on .c{background:var(--mint);box-shadow:0 0 0 10px rgba(63,224,180,.18)}
+.rb.lite.on .c{background:#ffd15c;color:#2a2210;box-shadow:0 0 30px rgba(255,209,92,.5)}
+#live .edge{position:absolute;left:0;top:0;width:44px;height:750px;display:flex;align-items:center}
+#live .edge i{width:6px;height:96px;border-radius:3px;background:rgba(255,255,255,.85);margin-left:6px;box-shadow:0 0 8px rgba(0,0,0,.4)}
+#live .gear{position:absolute;right:192px;top:20px;width:64px;height:64px;display:flex;align-items:center;justify-content:center}
+#live .wave{position:absolute;left:50%;bottom:44px;transform:translateX(-50%);display:flex;gap:8px;align-items:center;height:60px;padding:0 30px;border-radius:30px;background:rgba(0,0,0,.45);opacity:0;transition:opacity .3s}
+#live.talk .wave{opacity:1}
+#live .wave i{width:6px;border-radius:3px;background:var(--mint);animation:wv .9s ease-in-out infinite}
+@keyframes wv{0%,100%{height:12px}50%{height:40px}}
+#live .toast,#scr .toast{position:absolute;left:50%;top:22px;transform:translate(-50%,-10px);padding:16px 30px;border-radius:30px;background:rgba(20,20,20,.82);font-size:26px;opacity:0;transition:all .35s var(--ease);pointer-events:none;white-space:nowrap;z-index:50}
+#scr .toast.on{opacity:1;transform:translate(-50%,0)}
+
+#ev{background:#000}
+#ev .bk{position:absolute;left:12px;top:12px;height:52px;padding:0 14px;display:flex;align-items:center;gap:16px;font-size:29px}
+#ev h3{position:absolute;left:0;right:0;top:18px;text-align:center;margin:0;font-size:31px;font-weight:500}
+#ev .ls{position:absolute;left:0;right:0;top:84px;bottom:82px;overflow-y:auto;padding:10px 30px 30px;scrollbar-width:none;touch-action:pan-y}
+#ev .ls::-webkit-scrollbar{display:none}
+.evr{display:flex;align-items:center;gap:26px;height:132px;border-bottom:1px solid #262626}
+.evr .th{width:170px;height:104px;border-radius:12px;background-size:cover;background-position:center;flex:none}
+.evr b{display:block;font-weight:400;font-size:29px}
+.evr small{display:block;font-size:24px;color:#9a9a9a;margin-top:4px}
+.evr .tg{margin-left:auto;font-size:22px;padding:8px 18px;border-radius:20px;background:#232323;color:#ddd}
+
+/* status popover */
+#pop{position:absolute;width:264px;height:190px;border-radius:22px;background:#fff;color:#111;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:28px;opacity:0;transform:translateY(12px) scale(.96);transform-origin:50% 100%;transition:opacity .25s,transform .3s var(--ease);pointer-events:none;z-index:40}
+#pop.on{opacity:1;transform:none;pointer-events:auto}
+#pop::after{content:"";position:absolute;left:50%;bottom:-11px;margin-left:-12px;border:12px solid transparent;border-bottom:0;border-top-color:#fff}
+#pop b{font-size:26px;font-weight:500}
+#pop .pi{height:86px;display:flex;align-items:center}
+#pop small{font-size:17px;color:#333}
+
+/* ---------- light world (settings) ---------- */
+.lt{background:#fff;color:#1c1c1c}
+#st .sd{position:absolute;left:0;top:0;width:421px;height:632px;background:#fff}
+#st .cap{position:absolute;left:37px;top:36px;font-size:21px;color:#8b8b8b;letter-spacing:.02em}
+#st .si{position:absolute;left:24px;height:62px;width:370px;display:flex;align-items:center;gap:26px;padding-left:12px;border-radius:12px;font-size:28px;color:#262626;transition:background .25s}
+#st .si.on{font-weight:500}
+#st .si.on svg{color:#262626}
+#st .si svg{color:#555}
+#st .mn{position:absolute;left:421px;top:0;right:0;height:632px;background:#ebebeb;overflow:hidden;box-shadow:inset 1px 0 0 #d8d8d8}
+.pg2{position:absolute;inset:0;transition:transform .42s var(--ease),opacity .3s;background:#ebebeb}
+.pg2.r{transform:translateX(100%)}
+.pg2.l{transform:translateX(-30%);opacity:0}
+.pg2 .hd{position:absolute;left:0;right:0;top:0;height:96px;display:flex;align-items:center;justify-content:center;font-size:28px;color:#262626;z-index:2;background:#ebebeb}
+.pg2 .hd .bk{position:absolute;left:24px;top:22px;height:52px;padding:0 10px;display:flex;align-items:center;gap:8px;font-size:28px;color:#262626}
+.pg2 .bd{position:absolute;left:0;right:0;top:96px;bottom:0;overflow-y:auto;padding:4px 34px 40px 30px;scrollbar-width:thin;scrollbar-color:#9e9e9e transparent;touch-action:pan-y}
+.pg2 .bd::-webkit-scrollbar{width:7px}.pg2 .bd::-webkit-scrollbar-thumb{background:#a4a4a4;border-radius:4px}
+.gp{background:#fff;border:1.5px solid #cfcfcf;margin-bottom:26px}
+.gp>*+*{border-top:1.5px solid #d4d4d4}
+.rw{display:flex;align-items:center;min-height:90px;padding:0 30px 0 36px;font-size:29px;color:#262626;gap:18px;width:100%;text-align:left;background:#fff;transition:background .2s}
+.rw:active{background:#f2f2f2}
+.rw .v{margin-left:auto;color:#262626;display:flex;align-items:center;gap:22px}
+.rw .v.g{color:#555}
+.rw .ic{width:30px;display:flex;justify-content:center;color:#444;margin-right:4px}
+.rw.add{color:#ff6b00}
+.rw.add .ic{color:#ff6b00}
+.rw.dg{color:#ff6b00}
+.ttl{font-size:21px;color:#3a3a3a;letter-spacing:.03em;margin:22px 0 10px 4px}
+.cap2{font-size:21px;color:#3a3a3a;margin:-14px 0 26px 36px;line-height:1.35}
+.tg{width:82px;height:46px;border-radius:23px;background:#2a2a2a;position:relative;flex:none;transition:background .3s}
+.tg i{position:absolute;left:4px;top:4px;width:38px;height:38px;border-radius:50%;background:#fff;transition:transform .3s var(--ease)}
+.tg.on{background:#ff6b00}
+.tg.on i{transform:translateX(36px)}
+.sl{position:relative;flex:1;height:46px;display:flex;align-items:center;touch-action:none}
+.sl .tr{position:absolute;left:0;right:0;height:2.5px;background:#262626;border-radius:2px}
+.sl .fl{position:absolute;left:0;height:2.5px;background:#ff6b00;border-radius:2px}
+.sl .kn{position:absolute;width:30px;height:30px;margin-left:-15px;border-radius:50%;background:#fff;box-shadow:inset 0 0 0 2.5px #262626}
+.sl.o .kn{box-shadow:inset 0 0 0 2.5px #ff6b00}
+.sl .tk{position:absolute;width:2px;height:16px;background:#262626}
+.seg{display:flex;border-radius:24px;background:#e6e6e6;overflow:hidden;height:48px}
+.seg button{padding:0 22px;font-size:26px;color:#8a8a8a!important;transition:background .3s,color .3s}
+.seg button.on{background:#ff6b00;color:#fff!important;border-radius:24px}
+.dd{overflow:hidden;max-height:0;transition:max-height .4s var(--ease);background:#fafafa}
+.dd.on{max-height:520px}
+.dd .op{display:flex;align-items:center;justify-content:space-between;height:74px;padding:0 44px 0 60px;font-size:27px;width:100%;color:#262626}
+.dd .op.on{color:#ff6b00}
+.cf{color:#3ba9dd}.hf{color:#ff6b00}
+.chv{transition:transform .35s var(--ease)}
+.chv.up{transform:rotate(180deg)}
+.tp{display:flex;align-items:center;justify-content:center;gap:28px;padding:22px 10px;font-size:28px;background:#fff;box-shadow:0 10px 24px rgba(0,0,0,.12) inset}
+.tp .cl{display:flex;flex-direction:column;align-items:center;gap:4px}
+.tp .cl button{width:44px;height:36px;display:flex;align-items:center;justify-content:center}
+.tp .lb{margin-right:6px}
+/* add device */
+.dg2{display:grid;grid-template-columns:repeat(3,227px);gap:25px;padding:6px 0 30px 24px}
+.dvt{width:227px;height:224px;background:#fff;border:1.5px solid #cfcfcf;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:28px;font-size:25px;line-height:1.1;text-align:center;color:#262626}
+.dvt .pic{height:112px;display:flex;align-items:center;justify-content:center;margin-bottom:12px}
+.dvt .pic img{max-height:100%;max-width:150px;display:block}
+/* searching modal */
+#srch{position:absolute;left:0;right:0;top:0;height:750px;background:#fff;z-index:20;opacity:0;pointer-events:none;transition:opacity .35s}
+#srch.on{opacity:1;pointer-events:auto}
+#srch .x{position:absolute;right:20px;top:18px;width:56px;height:56px;display:flex;align-items:center;justify-content:center;color:#666}
+#srch .cir{position:absolute;left:106px;top:171px;width:400px;height:400px;border-radius:50%;background:#b5e9dd;animation:br 2.6s ease-in-out infinite}
+@keyframes br{50%{transform:scale(.92);background:#9fe2d2}}
+#srch img{position:absolute;left:306px;top:174px;height:394px;transform:translateX(-50%)}
+#srch h4{position:absolute;left:639px;top:176px;font-size:44px!important;margin:0;font-size:40px;font-weight:500}
+#srch p{position:absolute;left:639px;top:252px;width:570px;margin:0;font-size:28px;line-height:1.36;color:#555}
+#srch .sg{position:absolute;left:639px;top:612px;display:flex;font-size:27px!important;align-items:center;gap:14px;font-size:24px;color:#9a9a9a}
+#srch .sg i{width:26px;height:26px;border-radius:50%;border:3px solid #ccc;border-top-color:#777;animation:spin .9s linear infinite}
+#srch.found .sg{color:#1c9a76}
+/* light nav */
+#nvL{position:absolute;left:0;right:0;bottom:0;height:118px;background:#fff;display:flex;align-items:center}
+#nvL .hm{position:absolute;left:46px;top:40px}
+#nvL .it{position:absolute;top:0;height:118px;display:flex;align-items:center;font-size:28px;color:#1c1c1c}
+#nvL .dv{position:absolute;left:957px;top:42px;width:2px;height:36px;background:#1c1c1c}
+#nvL .bt{position:absolute;left:1052px;top:48px}
+#nvL .tm{position:absolute;left:1124px;top:0;height:118px;display:flex;align-items:center;font-size:28px}
+/* touchscreen disabled */
+#tsd{position:absolute;inset:0;background:rgba(0,0,0,.88);display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;opacity:0;pointer-events:none;transition:opacity .4s;z-index:90;text-align:center}
+#tsd.on{opacity:1;pointer-events:auto}
+#tsd b{font-size:140px;font-weight:500;line-height:1}
+#tsd div{font-size:30px;margin-top:20px;color:#ddd}
+#tsd small{font-size:22px;color:#8a8a8a;margin-top:30px}
+/* world switch */
+#dk,#st{transition:opacity .45s var(--ease),transform .45s var(--ease)}
+#st{opacity:0;pointer-events:none;transform:scale(1.02)}
+#scr.set #st{opacity:1;pointer-events:auto;transform:none}
+#scr.set #dk{opacity:0;pointer-events:none;transform:scale(.985)}
+
+</style>
+<script type="importmap">{"imports":{"three":"../tour/three.bundle.js"}}</script>
+</head><body>
+<div id="stage"><canvas id="gl"></canvas><div id="css"></div></div>
+<div id="hint"><span><i></i>Tap the screen to use it</span><span><i></i>Drag around it to turn it</span></div>
+<button id="front"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#05E5AF" stroke-width="2" stroke-linecap="round"><path d="M2.5 8a5.5 5.5 0 1 0 1.7-4"/><path d="M2 2v3.3h3.3"/></svg>Face front</button>
+<div id="load"><i></i></div>
+<div id="scrHost"><div id="scr"></div></div>
+<script>/* hand-drawn icon set matching the Smart Hub UI */
+const sv = (w, h, vb, body, extra='') => `<svg width="${w}" height="${h}" viewBox="${vb}" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" ${extra}>${body}</svg>`;
+const SHIELD = 'M24 3 41 9.5v13.3C41 34 33.6 41.6 24 45 14.4 41.6 7 34 7 22.8V9.5Z';
+const IC = {
+  homeMint: (s=40) => `<svg width="${s}" height="${s}" viewBox="0 0 40 40"><path d="M20 4 36 17v18a3 3 0 0 1-3 3h-9V28a4 4 0 0 0-8 0v10H7a3 3 0 0 1-3-3V17Z" fill="#3fe0b4"/></svg>`,
+  homeMintL: (s=36) => `<svg width="${s}" height="${s}" viewBox="0 0 40 40"><path d="M20 4 36 17v18a3 3 0 0 1-3 3h-9V28a4 4 0 0 0-8 0v10H7a3 3 0 0 1-3-3V17Z" fill="#2bc79b"/></svg>`,
+  sos: (s=34) => `<svg width="${s}" height="${s}" viewBox="0 0 48 48"><path d="${SHIELD}" fill="#fff"/><path d="m24 15 2.7 5.6 6.1.8-4.5 4.2 1.1 6.1L24 28.8l-5.4 2.9 1.1-6.1-4.5-4.2 6.1-.8Z" fill="#0b4a38"/></svg>`,
+  shDis: (s=56) => `<svg width="${s}" height="${s}" viewBox="0 0 48 48"><defs><linearGradient id="gDis" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5cf0c8"/><stop offset="1" stop-color="#21c196"/></linearGradient></defs><path d="${SHIELD}" fill="url(#gDis)"/><path d="m17.5 17.5 13 13m0-13-13 13" stroke="#0b4a38" stroke-width="4.6" stroke-linecap="round"/></svg>`,
+  shAway: (s=56) => `<svg width="${s}" height="${s}" viewBox="0 0 48 48"><defs><linearGradient id="gAway" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd23f"/><stop offset="1" stop-color="#ff8a1f"/></linearGradient></defs><path d="${SHIELD}" fill="url(#gAway)"/><path d="M14.5 30v-5.2l2.6-6.1a2.5 2.5 0 0 1 2.3-1.5h9.2a2.5 2.5 0 0 1 2.3 1.5l2.6 6.1V30a1.5 1.5 0 0 1-1.5 1.5h-15.5A1.5 1.5 0 0 1 14.5 30Z" fill="#c2471a"/><circle cx="19" cy="26.6" r="1.9" fill="#ffc531"/><circle cx="29" cy="26.6" r="1.9" fill="#ffc531"/><path d="M17.6 23.4h12.8" stroke="#ffc531" stroke-width="1.6"/></svg>`,
+  shStay: (s=56) => `<svg width="${s}" height="${s}" viewBox="0 0 48 48"><defs><linearGradient id="gStay" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffb23a"/><stop offset="1" stop-color="#ff6a1a"/></linearGradient></defs><path d="${SHIELD}" fill="url(#gStay)"/><path d="M24 14.5 34 22.5V33H14V22.5Z" fill="#fff2cf"/><path d="M21.5 33v-5.5a2.5 2.5 0 0 1 5 0V33Z" fill="#ff8a24"/></svg>`,
+  chevD: (s=40, w=3) => sv(s, s, '0 0 40 40', `<path d="m9 15 11 11 11-11" stroke-width="${w}"/>`),
+  chevU: (s=40, w=3) => sv(s, s, '0 0 40 40', `<path d="m9 26 11-11 11 11" stroke-width="${w}"/>`),
+  chevR: (s=22, w=2) => sv(s, s, '0 0 22 22', `<path d="m8 4 7 7-7 7" stroke-width="${w}"/>`),
+  chevL: (s=22, w=2) => sv(s, s, '0 0 22 22', `<path d="m14 4-7 7 7 7" stroke-width="${w}"/>`),
+  lockC: (s=40) => `<svg width="${s}" height="${s}" viewBox="0 0 40 40"><path d="M12.5 17v-4.5a7.5 7.5 0 0 1 15 0V17" fill="none" stroke="currentColor" stroke-width="3"/><rect x="9" y="17" width="22" height="17" rx="2.5" fill="currentColor"/><path d="M20 23.5v4" stroke="var(--lkh,#fff)" stroke-width="2.6" stroke-linecap="round"/></svg>`,
+  lockO: (s=40) => sv(s, s, '0 0 40 40', `<path d="M12.5 17v-4.5a7.5 7.5 0 0 1 14.6-2.4" stroke-width="2.2"/><rect x="9" y="17" width="22" height="17" rx="2.5" stroke-width="2.2"/><path d="M20 23.5v4" stroke-width="2.4"/>`),
+  clip: (s=34) => sv(s, s, '0 0 34 34', `<rect x="3" y="5" width="24" height="20" rx="3" stroke-width="2"/><path d="M31 9v17a3 3 0 0 1-3 3H8" stroke-width="2"/><path d="m12 10 8 5-8 5Z" fill="currentColor" stroke-width="1.4"/>`),
+  ban: (s=40) => sv(s, s, '0 0 40 40', `<circle cx="20" cy="20" r="13" stroke-width="3.4"/><path d="m11 11 18 18" stroke-width="3.4"/>`),
+  spkX: (s=40) => sv(s, s, '0 0 40 40', `<path d="M6 15.5h6l8-6.5v22l-8-6.5H6Z" stroke-width="2"/><path d="m26 16 8 8m0-8-8 8" stroke-width="2"/>`),
+  spk: (s=40) => sv(s, s, '0 0 40 40', `<path d="M6 15.5h6l8-6.5v22l-8-6.5H6Z" stroke-width="2"/><path d="M26 14.5a8 8 0 0 1 0 11M29.5 11a13 13 0 0 1 0 18" stroke-width="2"/>`),
+  mic: (s=40) => sv(s, s, '0 0 40 40', `<rect x="14" y="5" width="12" height="20" rx="6" stroke-width="2"/><path d="M9 19a11 11 0 0 0 22 0M20 30v5" stroke-width="2"/><path d="M14 12h4M14 17h4" stroke-width="1.6"/>`),
+  bulb: (s=40) => sv(s, s, '0 0 40 40', `<path d="M14.5 26c0-3.5-4.5-6-4.5-11.5a10 10 0 0 1 20 0C30 20 25.5 22.5 25.5 26Z" stroke-width="2"/><path d="M15.5 30.5h9M17 34.5h6" stroke-width="2"/>`),
+  gear: (s=40, w=2) => sv(s, s, '0 0 40 40', `<circle cx="20" cy="20" r="5" stroke-width="${w}"/><path d="M17.2 4h5.6l.9 4.4 3 1.7 4.2-1.5 2.8 4.8-3.3 3v3.4l3.3 3-2.8 4.8-4.2-1.5-3 1.7-.9 4.4h-5.6l-.9-4.4-3-1.7-4.2 1.5-2.8-4.8 3.3-3v-3.4l-3.3-3 2.8-4.8 4.2 1.5 3-1.7Z" stroke-width="${w}"/>`),
+  gearF: (s=40) => `<svg width="${s}" height="${s}" viewBox="0 0 40 40"><path fill="currentColor" fill-rule="evenodd" d="M17.2 4h5.6l.9 4.4 3 1.7 4.2-1.5 2.8 4.8-3.3 3v3.4l3.3 3-2.8 4.8-4.2-1.5-3 1.7-.9 4.4h-5.6l-.9-4.4-3-1.7-4.2 1.5-2.8-4.8 3.3-3v-3.4l-3.3-3 2.8-4.8 4.2 1.5 3-1.7ZM20 15a5 5 0 1 0 0 10 5 5 0 0 0 0-10Z"/></svg>`,
+  drop: (s=40) => `<svg width="${s}" height="${s}" viewBox="0 0 40 40"><path d="M20 5c5 7 10 12.5 10 18a10 10 0 0 1-20 0c0-5.5 5-11 10-18Z" fill="currentColor"/></svg>`,
+  dropO: (s=34) => sv(s, s, '0 0 40 40', `<path d="M20 5c5 7 10 12.5 10 18a10 10 0 0 1-20 0c0-5.5 5-11 10-18Z" stroke-width="2.4"/>`),
+  house: (s=40) => `<svg width="${s}" height="${s}" viewBox="0 0 40 40"><path d="M20 6 34 18v15a2 2 0 0 1-2 2h-8V26h-8v9H8a2 2 0 0 1-2-2V18Z" fill="currentColor"/></svg>`,
+  snow: (s=30, w=2.6) => sv(s, s, '0 0 30 30', `<path d="M15 3v24M4.6 9l20.8 12M4.6 21 25.4 9" stroke-width="${w}"/><path d="m11.5 4.5 3.5 3 3.5-3m-7 21 3.5-3 3.5 3" stroke-width="${w*.8}"/>`),
+  flame: (s=30) => `<svg width="${s}" height="${s}" viewBox="0 0 30 30"><path d="M15 3c1 5 7 7.5 7 14a7 7 0 0 1-14 0c0-3.2 1.8-5 3-6.5.3 2.3 1.4 3.5 2.6 3.8C13 10.5 14 7 15 3Z" fill="currentColor"/></svg>`,
+  fan: (s=30) => `<svg width="${s}" height="${s}" viewBox="0 0 30 30" fill="currentColor"><circle cx="15" cy="15" r="2.6"/><path d="M15 12.4c-1.5-3.5-.6-7.4 2.3-7.4 2.8 0 3.5 4.4-.3 7.2Z"/><path d="M17.3 16.4c3.7.4 6.6 3.2 5.2 5.7-1.4 2.4-5.5.8-6.1-3.8Z"/><path d="M12.6 16.2c-2.2 3-6.1 4.2-7.5 1.7-1.4-2.4 2.1-5.3 6.4-3.3Z"/></svg>`,
+  power: (s=30) => sv(s, s, '0 0 30 30', `<path d="M15 4v10" stroke-width="2.8"/><path d="M9 8.5a9 9 0 1 0 12 0" stroke-width="2.8"/>`),
+  auto: (s=30) => sv(s, s, '0 0 30 30', `<path d="M6 15a9 9 0 0 1 15.5-6.2M24 15a9 9 0 0 1-15.5 6.2" stroke-width="2.6"/><path d="M21.5 4v5h-5M8.5 26v-5h5" stroke-width="2.6"/>`),
+  sigbars: (s=40) => `<svg width="${s}" height="${s}" viewBox="0 0 40 40" fill="currentColor"><rect x="5" y="24" width="5" height="9" rx="1"/><rect x="13" y="19" width="5" height="14" rx="1"/><rect x="21" y="13" width="5" height="20" rx="1"/><rect x="29" y="7" width="5" height="26" rx="1"/></svg>`,
+  plug: (s=48) => `<svg width="${s}" height="${s*.62}" viewBox="0 0 64 40" fill="currentColor"><rect x="0" y="18" width="20" height="4" rx="2"/><path d="M18 9h12a14 11 0 0 1 14 11 14 11 0 0 1-14 11H18Z"/><rect x="40" y="10" width="20" height="4.6" rx="2.3"/><rect x="40" y="25.4" width="20" height="4.6" rx="2.3"/></svg>`,
+  batt: (s=46) => `<svg width="${s}" height="${s*.6}" viewBox="0 0 50 30"><rect x="2" y="5" width="40" height="20" rx="5" fill="none" stroke="currentColor" stroke-width="2.4"/><rect x="44" y="11" width="4" height="8" rx="1.5" fill="currentColor"/><path d="m25 8-6 8h6l-3 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/></svg>`,
+  battBig: (s=96) => `<svg width="${s}" height="${s*.6}" viewBox="0 0 50 30"><path d="M14 5H7a5 5 0 0 0-5 5v10a5 5 0 0 0 5 5h7M30 5h7a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5h-7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/><rect x="44" y="11" width="4" height="8" rx="1.5" fill="currentColor"/><path d="m24 6-6 9.5h7l-3 8.5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"/></svg>`,
+  battL: (s=36) => `<svg width="${s}" height="${s*.5}" viewBox="0 0 40 20"><rect x="1.5" y="3" width="33" height="14" rx="4" fill="none" stroke="#1c1c1c" stroke-width="2"/><rect x="5" y="6.5" width="26" height="7" rx="1.5" fill="#1c1c1c"/><rect x="36" y="7" width="3" height="6" rx="1" fill="#1c1c1c"/></svg>`,
+  wifi: (s=40) => `<svg width="${s}" height="${s}" viewBox="0 0 40 40" fill="currentColor"><path d="M20 30.5 24 26a6 6 0 0 0-8 0Z"/><path d="M20 21a11 11 0 0 1 7.8 3.2l2.6-2.9a15 15 0 0 0-20.8 0l2.6 2.9A11 11 0 0 1 20 21Z"/><path d="M20 12.5a19.5 19.5 0 0 1 13.6 5.5l2.6-2.9a23.5 23.5 0 0 0-32.4 0l2.6 2.9A19.5 19.5 0 0 1 20 12.5Z"/></svg>`,
+  x: (s=30, w=2.4) => sv(s, s, '0 0 30 30', `<path d="m6 6 18 18M24 6 6 24" stroke-width="${w}"/>`),
+  clock: (s=40) => sv(s, s, '0 0 40 40', `<circle cx="20" cy="20" r="13" stroke-width="2"/><path d="M20 12v8.5l5 3" stroke-width="2"/>`),
+  police: (s=42) => `<svg width="${s}" height="${s}" viewBox="0 0 48 48"><path d="${SHIELD}" fill="#0a2a5a"/><path d="m24 15 2.7 5.6 6.1.8-4.5 4.2 1.1 6.1L24 28.8l-5.4 2.9 1.1-6.1-4.5-4.2 6.1-.8Z" fill="#fff"/></svg>`,
+  cross: (s=40) => `<svg width="${s}" height="${s}" viewBox="0 0 40 40"><path d="M15 6h10v9h9v10h-9v9H15v-9H6V15h9Z" fill="#7a0d05"/></svg>`,
+  fire: (s=40) => `<svg width="${s}" height="${s}" viewBox="0 0 40 40"><path d="M20 4c1.6 6.4 9.5 9.6 9.5 18a9.5 9.5 0 0 1-19 0c0-4.3 2.3-6.7 4-8.6.4 3 1.9 4.6 3.5 5C17.4 13.6 18.6 9 20 4Z" fill="#6b3b00"/><path d="M20 22c.7 2.5 4 3.5 4 6.5a4 4 0 0 1-8 0c0-1.6.8-2.6 1.6-3.4.3 1 .8 1.6 1.4 1.8-.2-2 .4-3.5 1-4.9Z" fill="#ffd23f"/></svg>`,
+  /* settings sidebar */
+  sDev: (s=34) => `<svg width="${s}" height="${s}" viewBox="0 0 34 34"><rect x="3" y="9" width="28" height="16" rx="3" fill="currentColor"/><rect x="3" y="20" width="28" height="2.4" fill="#fff"/></svg>`,
+  sUsr: (s=34) => sv(s, s, '0 0 34 34', `<circle cx="12" cy="12" r="4.6" stroke-width="1.8"/><circle cx="23" cy="12" r="4.6" stroke-width="1.8"/><path d="M3.5 26c.8-4.6 4.2-7 8.5-7s7.7 2.4 8.5 7M15.8 19.6c1.9-.4 4.8-.6 7.2-.6 4.3 0 7.7 2.4 8.5 7" stroke-width="1.8"/>`),
+  sSec: (s=34) => sv(s, s, '0 0 34 34', `<path d="M17 3.5 28 8v9.2c0 7.3-4.8 12.2-11 14.3C10.8 29.4 6 24.5 6 17.2V8Z" stroke-width="1.8"/>`),
+  sGen: (s=34) => sv(s, s, '0 0 40 40', `<circle cx="20" cy="20" r="5" stroke-width="1.8"/><path d="M17.2 4h5.6l.9 4.4 3 1.7 4.2-1.5 2.8 4.8-3.3 3v3.4l3.3 3-2.8 4.8-4.2-1.5-3 1.7-.9 4.4h-5.6l-.9-4.4-3-1.7-4.2 1.5-2.8-4.8 3.3-3v-3.4l-3.3-3 2.8-4.8 4.2 1.5 3-1.7Z" stroke-width="1.8"/>`),
+  sSup: (s=34) => sv(s, s, '0 0 34 34', `<circle cx="17" cy="17" r="13" stroke-width="1.8"/><path d="M13 13.5a4 4 0 1 1 5.6 3.7c-1 .5-1.6 1.3-1.6 2.4v.9" stroke-width="1.8"/><circle cx="17" cy="24.4" r=".6" stroke-width="1.8"/>`),
+  sDvp: (s=34) => sv(s, s, '0 0 34 34', `<rect x="3" y="7" width="28" height="20" rx="2.5" stroke-width="1.8"/><path d="M7 12h20M7 22h20" stroke-width="1.8"/><path d="M11 17h12" stroke-width="1.8"/>`),
+  plus: (s=26) => sv(s, s, '0 0 26 26', `<path d="M13 3v20M3 13h20" stroke-width="2"/>`),
+  hubI: (s=30) => sv(s, s, '0 0 30 30', `<path d="M15 4 27 25H3Z" stroke-width="1.6"/><path d="M6.5 19h17" stroke-width="1.6"/>`),
+  camI: (s=30) => sv(s, s, '0 0 30 30', `<rect x="3" y="8" width="17" height="14" rx="2" stroke-width="1.6"/><path d="m20 13 7-3.5v11L20 17" stroke-width="1.6"/>`),
+  lockI: (s=30) => sv(s, s, '0 0 30 30', `<circle cx="15" cy="15" r="11" stroke-width="1.6"/><circle cx="15" cy="13" r="3" stroke-width="1.6"/><path d="M15 16v5" stroke-width="1.6"/>`),
+  bulbI: (s=30) => sv(s, s, '0 0 30 30', `<circle cx="15" cy="15" r="11" stroke-width="1.6"/><path d="M12 19.5h6M15 8a5 5 0 0 0-3 9h6a5 5 0 0 0-3-9Z" stroke-width="1.5"/>`),
+  winI: (s=30) => sv(s, s, '0 0 30 30', `<path d="m9 7 12 8-12 8Z" stroke-width="1.6"/>`),
+  motI: (s=30) => sv(s, s, '0 0 30 30', `<path d="M8 9a10 10 0 0 1 14 0M11 12.5a5.5 5.5 0 0 1 8 0" stroke-width="1.6"/><circle cx="15" cy="17" r="2" stroke-width="1.6"/><path d="M15 19v6" stroke-width="1.6"/>`),
+  info: (s=24) => sv(s, s, '0 0 24 24', `<circle cx="12" cy="12" r="9" stroke-width="1.4"/><path d="M12 11v6" stroke-width="1.6"/><circle cx="12" cy="7.6" r=".5" stroke-width="1.6"/>`),
+  check: (s=28) => sv(s, s, '0 0 28 28', `<path d="m5 14.5 6 6L23 8" stroke-width="2.6"/>`),
+  triU: (s=36, c='currentColor') => `<svg width="${s}" height="${s}" viewBox="0 0 36 36"><path d="M18 6 32 30H4Z" fill="none" stroke="${c}" stroke-width="2.2" stroke-linejoin="round"/></svg>`,
+  triD: (s=36, c='currentColor') => `<svg width="${s}" height="${s}" viewBox="0 0 36 36"><path d="M18 30 32 6H4Z" fill="none" stroke="${c}" stroke-width="2.2" stroke-linejoin="round"/></svg>`,
+  vlo: (s=34) => sv(s, s, '0 0 34 34', `<path d="M5 13h5l7-5.5v19L10 21H5Z" stroke-width="1.8"/>`),
+  vhi: (s=34) => sv(s, s, '0 0 34 34', `<path d="M3 13h5l7-5.5v19L8 21H3Z" stroke-width="1.8"/><path d="M20 12.5a6 6 0 0 1 0 9M23.5 9a11 11 0 0 1 0 16" stroke-width="1.8"/>`),
+  vmute: (s=34) => sv(s, s, '0 0 34 34', `<path d="M3 13h5l7-5.5v19L8 21H3Z" stroke-width="1.8"/><path d="m20.5 13.5 7 7m0-7-7 7" stroke-width="1.8"/>`),
+  sunLo: (s=32) => sv(s, s, '0 0 32 32', `<path d="M16 7c-3.6 0-6 2.4-6 5.6 0 2.4 1.3 3.6 2.4 5 .8 1 .9 1.8.9 3h5.4c0-1.2.1-2 .9-3 1.1-1.4 2.4-2.6 2.4-5C22 9.4 19.6 7 16 7Z" stroke-width="1.8"/><path d="M13.6 25h4.8" stroke-width="1.8"/>`),
+};
+</script>
+<script>/* ===== Smart Hub Pro 2 — working UI, rebuilt as live components ===== */
+const UI = (() => {
+const scr = document.getElementById('scr');
+const $ = (q, r=scr) => r.querySelector(q), $$ = (q, r=scr) => [...r.querySelectorAll(q)];
+const IMG = { db:'img/db_live.webp', fy:'img/fy_live.webp', bd:'img/bd.jpg' };
+const S = {
+  arm:'dis', locks:{front:true, side:false}, tab:'home',
+  th:{sp:68, cur:70, hum:33, mode:'cool', fan:'auto', zone:'Hallway'},
+  lights:{drive:{on:true,b:80}, porch:{on:false,b:60}, living:{on:true,b:45}, kitchen:{on:false,b:100}, office:{on:false,b:70}, patio:{on:true,b:100}},
+  silent:false, noEntry:false,
+  t:{downcast:true, autob:false, taps:true, statusv:true, p_det:true, pk_det:true, db_rang:true, deter:false, sp_det:false, spk_det:true, mutedb:false, lockrange:false, voice:false, autolock:true, glass:true, smoke:true, dev:false, wifi:true},
+  sl:{hubvol:62, dbvol:40, bright:94, dbv2:6, timeout:0},
+  seg:{units:'F', fw:'act', office:'act'},
+  dd:{mode:'Cool', fan:'Auto', hold:'Permanent'},
+  chime:'None',
+  sched:{Wake:{h:6,m:0,ap:'AM',c:78,ht:70}, Leave:{h:8,m:0,ap:'AM',c:81,ht:66}, Arrive:{h:5,m:30,ap:'PM',c:78,ht:70}, Sleep:{h:10,m:0,ap:'PM',c:80,ht:66}},
+  open:null,
+};
+const ARM = { dis:{t:'Disarmed', act:'Disarm', ic:IC.shDis, sub:''}, away:{t:'Armed Away', act:'Arm Away', ic:IC.shAway, sub:'Use when no one is home'}, stay:{t:'Armed Stay', act:'Arm Stay', ic:IC.shStay, sub:'Use when someone is home'} };
+
+/* ---------- clock ---------- */
+const clock = (light) => { const d = new Date(); let h = d.getHours(), m = d.getMinutes(), ap = h>=12?'pm':'am'; h = h%12||12; return `${h}:${String(m).padStart(2,'0')} ${light?ap.toUpperCase():ap}`; };
+const greet = () => { const h = new Date().getHours(); return h<12?'Good morning':h<18?'Good afternoon':'Good evening'; };
+function tick(){ $$('[data-clock]').forEach(e => e.textContent = clock(e.dataset.clock==='L')); const g=$('#gm'); if(g) g.textContent = greet()+', your home is'; }
+
+/* ---------- toast ---------- */
+let tT; function toast(msg){ const t=$('#toast'); t.textContent=msg; t.classList.add('on'); clearTimeout(tT); tT=setTimeout(()=>t.classList.remove('on'),1800); }
+
+/* ================= DARK WORLD ================= */
+const camTile = (k, name, ago, x, y) => `<button class="tl ct tap" data-act="live" data-cam="${k}" style="left:${x}px;top:${y}px"><div class="im" style="background-image:url(${IMG[k]})"></div><div class="nm">${name}</div><div class="ft"><span>${ago}</span>${IC.clip(34)}</div></button>`;
+const lockTile = (k, name, x, y) => `<div class="tl" style="left:${x}px;top:${y}px"><div class="t1">${name}</div><div class="t2" data-lkt="${k}"></div><button class="lk tap" data-act="lock" data-lk="${k}"><span class="spin"></span><span class="ico"></span></button></div>`;
+function darkHTML(){ return `
+<div id="dk" class="L">
+  <div class="bg g"></div><div class="bg o"></div>
+  <div class="tabv on L" id="hm" data-tab="home"><div class="strip">
+    <div class="sec">
+      <div class="fill g"></div><div class="fill o"></div>
+      <button class="sos tap" data-act="sos">${IC.sos(36)}SOS</button>
+      <div class="gm" id="gm"></div>
+      <button class="stt" data-act="arm" id="stt"></button>
+      <button class="chev tap" data-act="arm">${IC.chevD(46,3)}</button>
+    </div>
+    ${lockTile('front','Front door',658,38)}${lockTile('side','Side door',658,356)}
+    ${camTile('db','Doorbell','2m ago',976,38)}${camTile('fy','Front yard','30m ago',976,356)}
+    ${camTile('bd','Back door','1m ago',1294,38)}
+    <button class="tl th cur tap" data-act="tab" data-tab="therm" style="left:1612px;top:38px"><div class="t1">Hallway</div><div class="t2" style="color:#f4f4f4;top:66px">Currently</div><div class="big" id="thH">${S.th.cur-5}</div></button>
+    <button class="tl th cool tap" data-act="tab" data-tab="therm" style="left:1612px;top:356px"><div class="t1">Downstairs</div><div class="t2" style="color:#f4f4f4;top:66px" id="thDl">Cooling to</div><div class="big" id="thD">62</div></button>
+  </div></div>
+
+  <div class="tabv L" id="cm" data-tab="cams">
+    <button class="vae tap" data-act="events">View all events ${IC.chevR(22,2)}</button>
+    <div class="sc"><div class="row">
+      ${[['db','Doorbell',400],['fy','Front yard',680],['bd','Back door',680],['db','Front porch',400],['fy','Side yard',680]].map(([k,n,w],i)=>`<button class="cc tap" data-act="live" data-cam="${k}" data-nm="${n}" style="width:${w}px"><div class="im" style="background-image:url(${IMG[k]})${k==='db'?';background-position:50% 60%':''}"></div><div class="dt" data-deter><span class="bn">${IC.ban(40)}</span>Deter off</div><div class="n1">${n}</div><div class="n2">${['2m','2m','1m','14m','30m'][i]} ago</div><span class="cl">${IC.clip(40)}</span></button>`).join('')}
+    </div></div>
+  </div>
+
+  <div class="tabv L" id="tm" data-tab="therm">
+    <div class="l">
+      <div class="h1" id="tmH1"></div>
+      <div class="h2">${IC.dropO(32)}<span>Humidity ${S.th.hum}%</span></div>
+      <button class="pl tap" data-act="tmode" style="left:25px" id="tmMode"></button>
+      <button class="pl tap" data-act="tfan" style="left:331px" id="tmFan"></button>
+    </div>
+    <div class="dvd"></div>
+    <div class="r">
+      <button class="ar tap" data-act="tup" style="top:170px">${IC.chevU(78,3.4)}</button>
+      <div class="spv"><span class="num" id="tmSp"></span><sup id="tmSup"></sup></div>
+      <button class="ar tap" data-act="tdn" style="top:426px">${IC.chevD(78,3.4)}</button>
+      <div class="ic"><button class="tap" data-act="thum">${IC.drop(40)}</button><button class="tap" data-act="tzone">${IC.house(40)}</button><button class="tap" data-act="tset">${IC.gearF(40)}</button></div>
+    </div>
+  </div>
+
+  <div class="tabv L" id="lt" data-tab="lights">
+    <div class="hd">Lights</div>
+    <div class="gr">${[['drive','Driveway'],['porch','Front porch'],['living','Living room'],['kitchen','Kitchen'],['office','Office'],['patio','Patio']].map(([k,n])=>`<div class="lc" data-lc="${k}"><div class="n">${n}</div><div class="s"></div><button class="bl tap" data-act="light" data-k="${k}">${IC.bulb(40)}</button><div class="dim" data-dim="${k}"><i></i></div></div>`).join('')}</div>
+  </div>
+
+  <div id="nvD">
+    <button class="hm tap" data-act="tab" data-tab="home">${IC.homeMint(40)}</button>
+    <div class="sc"><div class="row">
+      ${[['home','Home'],['cams','Cameras'],['therm','Thermostat'],['lights','Lights']].map(([k,n])=>`<button class="it n" data-act="tab" data-tab="${k}">${n}</button>`).join('')}
+      <button class="it" data-act="settings">Settings</button>
+      <div class="st"><button data-pop="cell">${IC.sigbars(40)}</button><button data-pop="ac">${IC.plug(46)}</button><button data-pop="batt">${IC.batt(46)}</button><button data-pop="wifi">${IC.wifi(42)}</button></div>
+    </div></div>
+    <div class="dv"></div>
+    <div class="tm" data-clock="D"></div>
+  </div>
+
+  <!-- arm menu -->
+  <div class="ov" id="arm">
+    <div class="bgx"></div><div class="bgx o"></div>
+    <button class="opt tap" data-act="sopt">Options</button>
+    <div id="apl"></div>
+    <div class="cnt"><b id="cdn">30</b>Exit delay. Leave now.</div>
+  </div>
+  <!-- security options -->
+  <div class="ov" id="sopt">
+    <div class="dim" data-act="soptx"></div>
+    <div class="pn">
+      <button class="x tap" data-act="soptx">${IC.x(30,2.4)}</button>
+      <h3>Security options for this session</h3>
+      <button class="so tap" data-act="silent" style="top:264px">${IC.spkX(40)}<span>Turn on silent exit</span></button>
+      <div class="socap" style="top:381px">Extends exit delay to 4 minutes and silences sounds</div>
+      <button class="so tap" data-act="noentry" style="top:472px">${IC.clock(40)}<span>Turn off entry delay</span></button>
+      <div class="socap" style="top:589px">The alarm will sound instantly if a door or window is opened</div>
+    </div>
+  </div>
+  <!-- SOS -->
+  <div class="ov" id="sos">
+    <button class="bk tap" data-act="close">${IC.chevL(26,2.4)}Back</button>
+    <h2>Press and hold for 3 seconds to activate an alarm</h2>
+    <p>The siren will sound, Vivint will contact you, and authorities will be sent to your home.</p>
+    ${[['police','Police','Request police department','#29a3f0',IC.police(46)],['emer','Emergency','Request emergency services','#ea4b3c',IC.cross(40)],['fire','Fire','Request fire department','#f8c51c',IC.fire(42)]].map(([k,t,s,c,ic],i)=>`<button class="sp" data-hold="${k}" style="top:${140+i*168}px"><i class="pg" style="background:${c}"></i><span class="ci" style="background:${c}">${ic}</span><span class="tx"><b>${t}</b><small>${s}</small></span></button>`).join('')}
+    <div class="ah"><div class="ring" id="sosRing"></div><h4 id="sosT"></h4><div>Demo mode. No one was contacted.</div><button class="tap" data-act="sosx">Cancel alarm</button></div>
+  </div>
+  <!-- live view -->
+  <div class="ov" id="live">
+    <div class="mask"><div class="im" id="lvIm"></div></div>
+    <div class="dt" data-deter style="left:16px;top:16px"><span class="bn">${IC.ban(40)}</span>Deter off</div>
+    <div class="lv"><i></i>Live</div>
+    <button class="gear tap" data-act="camset" id="lvGear">${IC.gear(44,2)}</button>
+    <div class="rl" id="lvRail"></div>
+    <div class="wave">${Array.from({length:9},(_,i)=>`<i style="animation-delay:${i*.09}s"></i>`).join('')}</div>
+    <button class="edge" data-act="close"><i></i></button>
+  </div>
+  <!-- events -->
+  <div class="ov" id="ev">
+    <button class="bk tap" data-act="close">${IC.chevL(26,2.4)}Back</button>
+    <h3>All events</h3>
+    <div class="ls">${[['db','Package detected','Doorbell · 2m ago','Package'],['bd','Person detected','Back door · 1m ago','Person'],['fy','Motion','Front yard · 30m ago','Motion'],['db','Doorbell rang','Doorbell · 1h ago','Ring'],['bd','Animal detected','Back door · 2h ago','Animal'],['fy','Vehicle detected','Front yard · 3h ago','Vehicle'],['db','Person detected','Doorbell · 4h ago','Person']].map(([k,t,s,g])=>`<button class="evr tap" data-act="live" data-cam="${k}" style="width:100%;text-align:left"><span class="th" style="background-image:url(${IMG[k]})"></span><span><b>${t}</b><small>${s}</small></span><span class="tg">${g}</span></button>`).join('')}</div>
+  </div>
+  <div id="pop"><b id="popT"></b><div class="pi" id="popI"></div><small id="popS"></small></div>
+</div>`; }
+
+function renderArm(){
+  const a = S.arm, armed = a!=='dis';
+  $('#dk').classList.toggle('arm', armed); $('#arm').classList.toggle('arm', armed);
+  $('#stt').innerHTML = `${ARM[a].ic(58)}<span>${ARM[a].t}</span>`;
+  $('#apl').innerHTML = ['dis','away','stay'].map((k,i)=>{ const cur = k===a; return `<button class="ap tap${cur?' cur '+(k==='dis'?'g':'o'):''}" data-act="setarm" data-arm="${k}" style="top:${149+i*163}px">${ARM[k].ic(54)}<span class="tx"><b>${cur?ARM[k].t:ARM[k].act}</b>${cur||!ARM[k].sub?'':`<small>${ARM[k].sub}</small>`}</span></button>`; }).join('');
+}
+function renderLocks(){ for(const k of ['front','side']){ const on=S.locks[k]; const b=$(`[data-lk=${k}]`); b.classList.toggle('on',on); b.querySelector('.ico').innerHTML = on?IC.lockC(42):IC.lockO(42); $(`[data-lkt=${k}]`).textContent = on?'Locked':'Unlocked'; } }
+const MODES = ['cool','heat','auto','off'];
+function renderTherm(bump){
+  const t = S.th, el = $('#tm');
+  MODES.forEach(m=>el.classList.toggle(m,t.mode===m));
+  const sp = t.sp;
+  let h = t.mode==='off' ? `Currently ${t.cur}°` : t.mode==='cool' ? (sp<t.cur?`Cooling from ${t.cur}°`:`Currently ${t.cur}°`) : t.mode==='heat' ? (sp>t.cur?`Heating from ${t.cur}°`:`Currently ${t.cur}°`) : `Auto · ${t.cur}°`;
+  $('#tmH1').textContent = h;
+  $('#tmMode').innerHTML = (t.mode==='cool'?IC.snow(28,2.4):t.mode==='heat'?IC.flame(28):t.mode==='auto'?IC.auto(28):IC.power(28)) + `<span>${t.mode[0].toUpperCase()+t.mode.slice(1)}</span>`;
+  $('#tmFan').innerHTML = IC.fan(28)+`<span>Fan ${t.fan}</span>`;
+  const n = $('#tmSp');
+  if(bump){ n.style.transform=`translateY(${bump*-16}px)`; n.style.opacity=.3; requestAnimationFrame(()=>requestAnimationFrame(()=>{ n.style.transform=''; n.style.opacity=''; })); }
+  n.textContent = t.mode==='off' ? '--' : sp;
+  $('#tmSup').innerHTML = t.mode==='cool'?IC.snow(46,2.6):t.mode==='heat'?`<span style="color:#ffd2b8">${IC.flame(44)}</span>`:'';
+  $('#thH').textContent = t.cur-5;
+}
+function renderLights(){ for(const [k,v] of Object.entries(S.lights)){ const c=$(`[data-lc=${k}]`); c.classList.toggle('on',v.on); c.querySelector('.s').textContent = v.on?`On · ${v.b}%`:'Off'; c.querySelector('.dim i').style.width = (v.on?Math.max(10,v.b):10)+'%'; } }
+function renderNav(){ $$('#nvD .it.n').forEach(b=>b.classList.toggle('on',b.dataset.tab===S.tab)); }
+function setTab(t){ S.tab=t; $$('#dk .tabv').forEach(v=>v.classList.toggle('on',v.dataset.tab===t)); renderNav(); closePop();
+  const sc=$('#nvD .sc'); if(sc && t!=='home') {} if(t==='home') $('#hm').scrollTo({left:0,behavior:'smooth'}); }
+function openOv(id){ $$('#dk .ov').forEach(o=>o.classList.toggle('on',o.id===id)); S.open=id; closePop(); }
+function closeOv(){ $$('#dk .ov').forEach(o=>o.classList.remove('on')); S.open=null; }
+
+let cdT=null;
+function setArm(k){
+  if(k===S.arm){ closeOv(); return; }
+  S.arm=k; renderArm();
+  if(k!=='dis' && !S.silent){ // brief exit-delay countdown, then home
+    const el=$('#arm'); let n=k==='away'?(S.silent?240:60):60; $('#cdn').textContent=n; el.classList.add('cd'); clearInterval(cdT);
+    let shown=0; cdT=setInterval(()=>{ n--; shown++; $('#cdn').textContent=n; if(shown>=2){ clearInterval(cdT); el.classList.remove('cd'); closeOv(); toast(k==='away'?'Armed Away. Exit delay running':'Armed Stay. Exit delay running'); } },700);
+  } else { setTimeout(closeOv,550); if(k==='dis') toast('System disarmed'); }
+}
+
+/* live view */
+const CAMS = { db:{nm:'Doorbell', por:true, rail:['lock','mute','talk']}, fy:{nm:'Front yard', rail:['lock','mute','talk','light']}, bd:{nm:'Back door', rail:['lock','mute','talk','light']} };
+const RAIL = { lock:[()=>S.locks.front?IC.lockC(40):IC.lockO(40),()=>S.locks.front?'Unlock door':'Lock door'], mute:[()=>LV.mute?IC.spkX(40):IC.spk(40),()=>LV.mute?'Unmute':'Mute'], talk:[()=>IC.mic(40),()=>LV.talk?'Talking':'Talk'], light:[()=>IC.bulb(40),()=>LV.light?'Light on':'Light'] };
+const LV = {cam:'db', mute:true, talk:false, light:false};
+function openLive(k){ LV.cam=k; LV.mute=true; LV.talk=false; LV.light=false; const c=CAMS[k]; const im=$('#lvIm'); im.style.backgroundImage=`url(${IMG[k]})`; im.classList.toggle('por',!!c.por); im.style.backgroundColor='#000'; $('#lvGear').hidden=!c.por; $('#live').classList.remove('talk'); renderRail(); openOv('live'); }
+function renderRail(){ const c=CAMS[LV.cam]; $('#lvRail').innerHTML = c.rail.map(r=>`<button class="rb tap ${r}${(r==='lock'&&S.locks.front)||(r==='talk'&&LV.talk)||(r==='light'&&LV.light)?' on':''}" data-act="rail" data-r="${r}"><span class="c">${RAIL[r][0]()}</span><span>${RAIL[r][1]()}</span></button>`).join(''); $('#live').classList.toggle('talk',LV.talk); }
+
+/* status popovers */
+const POPS = { cell:['Cellular',()=>IC.sigbars(80),'LTE · Strong signal'], ac:['AC power',()=>IC.plug(124),'AC Connected'], batt:['Battery',()=>IC.battBig(92),'Battery charging - 81%'], wifi:['Wi-Fi',()=>IC.wifi(80),'Connected · Home network'] };
+function openPop(k, btn){ const p=$('#pop'); if(p.classList.contains('on')&&p.dataset.k===k){ closePop(); return; } const [t,i,s]=POPS[k]; $('#popT').textContent=t; $('#popI').innerHTML=i(); $('#popS').textContent=s; p.dataset.k=k;
+  const r = localRect(btn); p.style.left = (r.x + r.w/2 - 132)+'px'; p.style.top = (r.y - 206)+'px'; p.classList.add('on'); }
+function closePop(){ const p=$('#pop'); if(p) p.classList.remove('on'); }
+function localRect(el){ let x=0,y=0,n=el; while(n && n!==scr){ x+=n.offsetLeft - (n.parentElement && n.parentElement!==scr ? 0:0); y+=n.offsetTop; n=n.offsetParent; } // offsetParent chain; subtract scroll
+  let s=el.parentElement; while(s && s!==scr){ x-=s.scrollLeft||0; y-=s.scrollTop||0; s=s.parentElement; } return {x,y,w:el.offsetWidth,h:el.offsetHeight}; }
+
+/* SOS hold */
+let holdT=null;
+function sosFire(k){ const c={police:['#29a3f0','Police alarm activated',IC.police(90)],emer:['#ea4b3c','Emergency alarm activated',IC.cross(80)],fire:['#f8c51c','Fire alarm activated',IC.fire(84)]}[k]; const r=$('#sosRing'); r.style.background=c[0]; r.style.setProperty('--pc',c[0]+'aa'); r.innerHTML=c[2]; $('#sosT').textContent=c[1]; $('#sos').classList.add('fired'); }
+
+/* ================= LIGHT WORLD: settings ================= */
+const SIDE = [['devices','Devices',IC.sDev],['users','Users',IC.sUsr],['security','Security',IC.sSec],['general','General',IC.sGen],['support','Support',IC.sSup],['developer','Developer',IC.sDvp]];
+function lightHTML(){ return `
+<div id="st" class="L lt">
+  <div class="sd"><div class="cap">SMART HOME SETTINGS</div>${SIDE.map(([k,n,ic],i)=>`<button class="si tap" data-act="side" data-k="${k}" style="top:${86+i*78}px">${ic(34)}<span>${n}</span></button>`).join('')}</div>
+  <div class="mn" id="mn"></div>
+  <div id="srch"><button class="x tap" data-act="srchx">${IC.x(30,2)}</button><div class="cir"></div><img src="img/icp_big.webp" alt=""><h4 id="srT">Searching...</h4><p id="srP">Make sure your camera is powered on and breathing green. It may take up to 5 minutes for the panel to find your camera.</p><div class="sg"><i></i><span id="srS">Searching</span></div></div>
+  <div id="nvL"><button class="hm tap" data-act="home">${IC.homeMintL(38)}</button><button class="it tap" data-act="home" style="left:129px">Home</button><button class="it tap" data-act="lcams" style="left:371px">Cameras</button><button class="it tap" data-act="ltherm" style="left:653px">Thermostats</button><div class="dv"></div><span class="bt">${IC.battL(38)}</span><span class="tm" data-clock="L"></span></div>
+</div>`; }
+
+/* row builders */
+const go = (id, label, val='', ic='') => `<button class="rw" data-go="${id}">${ic?`<span class="ic">${ic}</span>`:''}<span>${label}</span><span class="v">${val}${IC.chevR(24,1.8)}</span></button>`;
+const tgl = (k, label, info) => `<div class="rw"><span>${label}</span>${info?`<span style="color:#888;margin-left:-6px">${IC.info(24)}</span>`:''}<span class="v"><button class="tg${S.t[k]?' on':''}" data-tg="${k}"><i></i></button></span></div>`;
+const kv = (label, val) => `<div class="rw"><span>${label}</span><span class="v g" style="color:#262626">${val}</span></div>`;
+const sld = (k, lo, hi, opts={}) => `<div class="rw" style="gap:26px">${lo}<div class="sl${opts.o?' o':''}" data-sl="${k}" data-steps="${opts.steps||0}"><span class="tr"></span><span class="fl"></span>${opts.ticks?Array.from({length:opts.steps+1},(_,i)=>`<span class="tk" style="left:${i/opts.steps*100}%"></span>`).join(''):''}<span class="kn"></span></div>${hi}</div>`;
+const ddr = (k, label, opts) => `<div><button class="rw" data-ddo="${k}"><span>${label}</span><span class="v"><span data-ddv="${k}">${S.dd[k]}</span><span class="chv">${IC.chevD(30,1.8)}</span></span></button><div class="dd" data-dd="${k}">${opts.map(o=>`<button class="op${S.dd[k]===o?' on':''}" data-ddset="${k}" data-v="${o}"><span>${o}</span>${S.dd[k]===o?IC.check(26):''}</button>`).join('')}</div></div>`;
+const segr = (k, label, opts) => `<div class="rw"><span>${label}</span><span class="v"><span class="seg" data-seg="${k}">${opts.map(([v,n])=>`<button class="${S.seg[k]===v?'on':''}" data-sv="${v}">${n}</button>`).join('')}</span></span></div>`;
+const G = (...rows) => `<div class="gp">${rows.join('')}</div>`;
+const T = (t) => `<div class="ttl">${t}</div>`;
+const CAP = (t) => `<div class="cap2">${t}</div>`;
+const schedRow = (k) => { const s=S.sched[k]; return `<div><button class="rw" data-sch="${k}"><span>${k}</span><span class="v"><span><span class="cf">Cool ${s.c}°</span> | <span class="hf">Heat ${s.ht}°</span></span><span class="chv">${IC.chevD(30,1.8)}</span></span></button><div class="dd" data-schd="${k}"><div class="tp"><span class="lb">Time:</span>${['h','m','ap'].map(f=>`<span class="cl"><button data-sa="${k}:${f}:1">${IC.triU(32)}</button><span data-sv2="${k}:${f}">${f==='m'?String(s.m).padStart(2,'0'):s[f]}</span><button data-sa="${k}:${f}:-1">${IC.triD(32)}</button></span>`).join('')}<span class="lb" style="margin-left:30px">Cool:</span><span class="cl cf"><button data-sa="${k}:c:1">${IC.triU(32,'#3ba9dd')}</button><span data-sv2="${k}:c">${s.c}°</span><button data-sa="${k}:c:-1">${IC.triD(32,'#3ba9dd')}</button></span><span class="lb" style="margin-left:18px">Heat:</span><span class="cl hf"><button data-sa="${k}:ht:1">${IC.triU(32,'#ff6b00')}</button><span data-sv2="${k}:ht">${s.ht}°</span><button data-sa="${k}:ht:-1">${IC.triD(32,'#ff6b00')}</button></span></div></div></div>`; };
+const sensorPage = (name, key) => () => G(go('rename',`Name`, name), kv('Battery Level','100%'), kv('Sensor status','Closed'), go('chime','Chime', `<span data-chv>${S.chime}</span>`), segr(key, name, [['ign','Ignored'],['act','Active']])) + CAP('Ignored sensors will not trigger an alarm.') + G(`<button class="rw dg" data-act="del">Delete sensor</button>`);
+
+const PAGES = {
+  devices:{t:'Devices', b:()=>G(`<button class="rw add" data-go="add"><span class="ic">${IC.plus(26)}</span><span>Add new device</span><span class="v">${IC.chevR(24,1.8)}</span></button>`) + G(go('hub','Smart Hub Pro (Gen 2)','',IC.hubI()), go('cams','Cameras','',IC.camI()), go('therm','Thermostat','',`<span style="font-size:22px;color:#444">${S.th.cur+3}°</span>`), go('locks','Door locks','',IC.lockI()), go('lights','Lighting &amp; outlets','',IC.bulbI()), go('fwin','Front Window','',IC.winI()), go('office','Office','',IC.motI()))},
+  add:{t:'Add new device', b:()=>`<div class="dg2">${[['doorbell','Doorbell<br>Camera'],['icp','Indoor<br>Camera Pro'],['ic','Indoor<br>Camera'],['ocp','Outdoor<br>Camera Pro'],['chime','Chime'],['dws','Door /<br>Window<br>Sensor']].map(([k,n])=>`<button class="dvt tap" data-act="srch" data-k="${k}"><span class="pic"><img src="img/dev_${k}.png" alt=""></span>${n}</button>`).join('')}</div>`},
+  hub:{t:'Smart Hub Pro (Gen 2)', b:()=>G(go('vol','Hub volume'), go('display','Hub screen settings'), go('conn','Connectivity'), go('listen','Listeners')) + G(tgl('downcast','Downcast light'))},
+  vol:{t:'Volume', b:()=>T('HUB VOLUME')+G(sld('hubvol',IC.vlo(34),IC.vhi(34)))+T('DOORBELL VOLUME')+G(sld('dbvol',IC.vmute(34),IC.vhi(34)))+G(tgl('taps','Screen taps'))+G(go('advaudio','Advanced Audio'))},
+  advaudio:{t:'Advanced Audio', b:()=>G(tgl('voice','Voice announcements'), kv('Alarm siren','Full volume'), kv('Entry beeps','On'))},
+  display:{t:'Display', b:()=>T('BRIGHTNESS')+G(sld('bright',IC.sunLo(32),IC.sunLo(32),{o:1}), tgl('autob','Auto-Brightness'))+T('TIMEOUT')+G(`<div class="rw" style="gap:22px"><span>30s</span>${sld('timeout','','',{steps:5,ticks:1}).replace(/^<div class="rw" style="gap:26px">|<\/div>$/g,'')}<span>Never</span></div>`)+G(go('statusv','Status view settings'))+G(`<button class="rw dg" data-act="tsd">Temporarily disable touchscreen</button>`)+CAP('Touchscreen will be disabled for 30 seconds to allow you to safely wipe off the surface of the Hub.')},
+  statusv:{t:'Status view settings', b:()=>G(tgl('statusv','Status view'), go('bgs','Backgrounds'))},
+  bgs:{t:'Backgrounds', b:()=>`<div class="dg2">${['#0b5843','#16233f','#3a2a1c','#202020','#4b1e0e','#103a4a'].map((c,i)=>`<button class="dvt tap" data-act="bgpick" style="background:linear-gradient(140deg,${c},#000);color:#fff;justify-content:flex-end;padding-bottom:20px">${['Vivint','Midnight','Walnut','Graphite','Ember','Lagoon'][i]}</button>`).join('')}</div>`},
+  conn:{t:'Connectivity', b:()=>G(tgl('wifi','Wi-Fi'), kv('Network','Home network'), kv('Signal','Excellent'))+G(kv('Cellular','LTE · Strong'), kv('Cellular backup','Active'))+G(kv('Z-Wave','42 devices'), kv('Bluetooth','On'))},
+  listen:{t:'Listeners', b:()=>G(tgl('glass','Glass break listening'), tgl('smoke','Smoke &amp; CO listening'))+CAP('The Hub listens for the sound of breaking glass and alarm tones from smoke and CO detectors.')},
+  cams:{t:'Cameras', b:()=>G(go('dbset','Doorbell'), go('cam:Driveway','Driveway'), go('cam:Front Yard','Front Yard'), go('cam:Living room','Living room'), go('cam:Back door','Back door'), go('cam:Camera 1','Camera 1'))},
+  dbset:{t:'Doorbell', b:()=>G(go('camdet','Camera details'))+T('VIDEO NOTIFICATIONS')+G(tgl('p_det','Person detected'), tgl('pk_det','Package detected'), tgl('db_rang','Doorbell rang'), tgl('deter','Deter triggered',1))+T('SOUND NOTIFICATIONS')+G(tgl('sp_det','Person detected'), tgl('spk_det','Package detected'), go('chime','Chime options'))+T('DOORBELL VOLUME')+G(sld('dbv2',IC.vlo(34),IC.vhi(34)), tgl('mutedb','Mute doorbell',1))+G(`<button class="rw dg" data-act="del">Delete camera</button>`)},
+  camdet:{t:'Camera details', b:()=>G(kv('Model','Doorbell Camera Pro'), kv('Status','Online'), kv('Wi-Fi signal','Strong'), kv('Firmware','Up to date'))},
+  therm:{t:'Thermostat', b:()=>G(go('rename','Name','Thermostat'), kv('State','Online'))+G(ddr('mode','Mode',['Cool','Heat','Auto','Off']), ddr('fan','Fan',['Auto','On','Circulate']), ddr('hold','Hold',['Permanent','Until next schedule','2 hours']), tgl('lockrange','Lock temperature range'))+CAP('Only admins will be able to adjust the temperature range. Other users will not be able to adjust the thermostat outside your preferences on the app, panel, and physical thermostat.')+G(kv('Humidity level',String(S.th.hum)))+G(go('wkd','Weekdays'), go('wke','Weekends'))+G(segr('units','Temp units',[['F','°F'],['C','°C']]))},
+  wkd:{t:'Weekdays', b:()=>G(...['Wake','Leave','Arrive','Sleep'].map(schedRow))},
+  wke:{t:'Weekends', b:()=>G(...['Wake','Leave','Arrive','Sleep'].map(schedRow))},
+  locks:{t:'Door locks', b:()=>G(go('lock:front','Front door',`<span data-lkv="front">${S.locks.front?'Locked':'Unlocked'}</span>`), go('lock:side','Side door',`<span data-lkv="side">${S.locks.side?'Locked':'Unlocked'}</span>`))},
+  lights:{t:'Lighting &amp; outlets', b:()=>T('ALL BULBS &amp; OUTLETS')+G(...[['drive','Driveway Light'],['porch','Front Porch Light'],['living','Living room'],['kitchen','Kitchen'],['office','Office'],['patio','Patio']].map(([k,n])=>`<div class="rw"><span>${n}</span><span class="v"><button class="tg${S.lights[k].on?' on':''}" data-ltg="${k}"><i></i></button></span></div>`))},
+  fwin:{t:'Front Window', b:sensorPage('Front Window','fw')},
+  office:{t:'Office', b:sensorPage('Office','office')},
+  chime:{t:'Chime options', b:()=>G(tgl('voice','Voice'))+G(...['None','Traditional','Elevator','Insight','Low double','Ding dong','Westminster'].map(c=>`<button class="rw" data-chime="${c}"><span>${c}</span><span class="v" style="color:#ff6b00">${S.chime===c?IC.check(28):''}</span></button>`))},
+  rename:{t:'Name', b:()=>G(kv('Name','Use the Vivint app to rename devices'))},
+  users:{t:'Users', b:()=>G(go('u1','Primary user','Admin'), go('u2','Family','User'), go('u3','Guest','Guest'))+G(`<button class="rw add"><span class="ic">${IC.plus(26)}</span><span>Add new user</span></button>`)},
+  security:{t:'Security', b:()=>G(kv('Exit delay','60 seconds'), kv('Entry delay','30 seconds'), tgl('autolock','Auto-lock doors when armed'))+G(go('fwin','Sensors','7 active'), go('chime','Chimes'))+G(kv('Monitoring','Active · 24/7'))},
+  general:{t:'General', b:()=>G(kv('Language','English'), kv('Time zone','Mountain Time'), kv('Date & time','Automatic'))+G(kv('Software','Hub OS · Up to date'), kv('Serial number','SHP2-4F8A-21C9'))},
+  support:{t:'Support', b:()=>G(kv('Contact Vivint','1-800-216-5232'), go('restart','Restart Hub'), go('about','About'))},
+  restart:{t:'Restart Hub', b:()=>G(`<button class="rw dg" data-act="restart">Restart now</button>`)+CAP('The Hub will restart and reconnect to your devices. This takes about a minute.')},
+  about:{t:'About', b:()=>G(kv('Model','Smart Hub Pro (Gen 2)'), kv('Display','7-inch HD touchscreen'), kv('Backup','Cellular + battery'))},
+  developer:{t:'Developer', b:()=>G(tgl('dev','Developer mode'), kv('Build','Production'))},
+  u1:{t:'Primary user', b:()=>G(kv('Role','Admin'), kv('Hub PIN','••••'), kv('Duress PIN','••••'))},
+  u2:{t:'Family', b:()=>G(kv('Role','User'), kv('Hub PIN','••••'))},
+  u3:{t:'Guest', b:()=>G(kv('Role','Guest'), kv('Access','Weekdays 9 AM–5 PM'))},
+};
+const dyn = id => {
+  if(id.startsWith('cam:')){ const n=id.slice(4); return {t:n, b:()=>G(go('camdet','Camera details'))+T('VIDEO NOTIFICATIONS')+G(tgl('p_det','Person detected'), tgl('pk_det','Package detected'), tgl('deter','Deter triggered',1))+G(`<button class="rw dg" data-act="del">Delete camera</button>`)}; }
+  if(id.startsWith('lock:')){ const k=id.slice(5), n=k==='front'?'Front door':'Side door'; return {t:n, b:()=>G(go('rename','Name',n), `<div class="rw"><span>State</span><span class="v"><button class="tg${S.locks[k]?' on':''}" data-lktg="${k}"><i></i></button><span data-lkv="${k}" style="min-width:120px;text-align:right">${S.locks[k]?'Locked':'Unlocked'}</span></span></div>`, kv('Battery Level','92%'), tgl('autolock','Auto-lock'))+T('PIN CODES')+G(kv('Primary user','••••'), kv('Family','••••'), kv('Guest','•••• · Weekdays'), `<button class="rw add"><span class="ic">${IC.plus(26)}</span><span>Add PIN</span></button>`)}; }
+  return PAGES[id];
+};
+
+let STK = [];
+function pageEl(id){ const P=dyn(id); const el=document.createElement('div'); el.className='pg2'; el.dataset.id=id;
+  el.innerHTML = `<div class="hd"><button class="bk tap" data-act="${STK.length?'pop':'home'}">${IC.chevL(24,1.8)}Back</button><span>${P.t}</span></div><div class="bd">${P.b()}</div>`; return el; }
+function setRoot(id){ const mn=$('#mn'); mn.innerHTML=''; STK=[]; const el=pageEl(id); STK.push(id); mn.appendChild(el); hydrate(el); $$('#st .si').forEach(b=>b.classList.toggle('on',b.dataset.k===id)); }
+function push(id){ const mn=$('#mn'); const cur=mn.lastElementChild; STK.push(id); const el=pageEl(id); el.classList.add('r'); mn.appendChild(el); hydrate(el); el.offsetWidth; el.classList.remove('r'); if(cur){ cur.classList.add('l'); setTimeout(()=>cur.style.visibility='hidden',420); } }
+function pop(){ if(STK.length<2) return; const mn=$('#mn'); const cur=mn.lastElementChild, prev=cur.previousElementSibling; STK.pop(); cur.classList.add('r'); if(prev){ prev.style.visibility=''; prev.offsetWidth; prev.classList.remove('l'); refreshPage(prev); } setTimeout(()=>cur.remove(),430); }
+function refreshPage(el){ const P=dyn(el.dataset.id); const bd=el.querySelector('.bd'), st=bd.scrollTop; bd.innerHTML=P.b(); bd.scrollTop=st; hydrate(el); }
+function hydrate(root){ $$('[data-sl]',root).forEach(s=>setSl(s,S.sl[s.dataset.sl])); }
+function setSl(s,v){ const steps=+s.dataset.steps; if(steps) v=Math.round(v/100*steps)/steps*100; v=Math.max(0,Math.min(100,v)); S.sl[s.dataset.sl]=v; s.querySelector('.kn').style.left=v+'%'; s.querySelector('.fl').style.width=(s.classList.contains('o')?v:0)+'%'; }
+
+function enterSettings(root='devices'){ scr.classList.add('set'); closeOv(); closePop(); if(!STK.length||root!==STK[0]) setRoot(root); else while(STK.length>1){ const mn=$('#mn'); mn.lastElementChild.remove(); STK.pop(); const l=mn.lastElementChild; l.classList.remove('l'); l.style.visibility=''; } }
+function leaveSettings(tab='home'){ scr.classList.remove('set'); setTab(tab); }
+
+/* searching flow */
+let srT=[];
+function openSearch(k){ const names={doorbell:'doorbell camera',icp:'camera',ic:'camera',ocp:'camera',chime:'chime',dws:'sensor'}; const s=$('#srch'); s.classList.remove('found'); $('#srT').textContent='Searching...'; $('#srS').textContent='Searching'; $('#srP').textContent=`Make sure your ${names[k]} is powered on and breathing green. It may take up to 5 minutes for the panel to find your ${names[k]}.`; s.querySelector('img').src = ['icp','ic','ocp'].includes(k)?'img/icp_big.webp':`img/s_${k}.webp`; s.classList.add('on'); srT.forEach(clearTimeout); srT=[setTimeout(()=>{ s.classList.add('found'); $('#srT').textContent='Device found'; $('#srS').textContent='Ready to add'; },4200)]; }
+
+/* touchscreen disable */
+let tsdT;
+function tsd(){ const o=$('#tsd'); let n=30; o.querySelector('b').textContent=n; o.classList.add('on'); clearInterval(tsdT); tsdT=setInterval(()=>{ n--; o.querySelector('b').textContent=n; if(n<=0){ clearInterval(tsdT); o.classList.remove('on'); } },1000); }
+
+/* ================= events ================= */
+function onClick(e){
+  const t=e.target;
+  if(S.tsd) return;
+  // toggles, sliders, segments, dropdowns inside settings
+  const tg=t.closest('[data-tg]'); if(tg){ const k=tg.dataset.tg; S.t[k]=!S.t[k]; $$(`[data-tg=${k}]`).forEach(x=>x.classList.toggle('on',S.t[k])); return; }
+  const ltg=t.closest('[data-ltg]'); if(ltg){ const k=ltg.dataset.ltg; S.lights[k].on=!S.lights[k].on; ltg.classList.toggle('on',S.lights[k].on); renderLights(); return; }
+  const lktg=t.closest('[data-lktg]'); if(lktg){ const k=lktg.dataset.lktg; S.locks[k]=!S.locks[k]; lktg.classList.toggle('on',S.locks[k]); $$(`[data-lkv=${k}]`).forEach(x=>x.textContent=S.locks[k]?'Locked':'Unlocked'); renderLocks(); return; }
+  const sv=t.closest('[data-seg] button'); if(sv){ const seg=sv.parentElement, k=seg.dataset.seg; S.seg[k]=sv.dataset.sv; $$('button',seg).forEach(b=>b.classList.toggle('on',b===sv)); return; }
+  const ddo=t.closest('[data-ddo]'); if(ddo){ const k=ddo.dataset.ddo, d=$(`[data-dd=${k}]`,ddo.parentElement); const on=!d.classList.contains('on'); $$('.dd.on').forEach(x=>{x.classList.remove('on'); x.previousElementSibling.querySelector('.chv')?.classList.remove('up');}); d.classList.toggle('on',on); ddo.querySelector('.chv').classList.toggle('up',on); return; }
+  const dds=t.closest('[data-ddset]'); if(dds){ const k=dds.dataset.ddset, v=dds.dataset.v; S.dd[k]=v; if(k==='mode'){ S.th.mode=v.toLowerCase(); renderTherm(); } if(k==='fan'){ S.th.fan=v==='Auto'?'auto':'on'; renderTherm(); } const box=dds.parentElement; $$('.op',box).forEach(o=>{ const on=o.dataset.v===v; o.classList.toggle('on',on); o.innerHTML=`<span>${o.dataset.v}</span>${on?IC.check(26):''}`; }); $(`[data-ddv=${k}]`).textContent=v; setTimeout(()=>{ box.classList.remove('on'); box.previousElementSibling.querySelector('.chv').classList.remove('up'); },220); return; }
+  const sch=t.closest('[data-sch]'); if(sch){ const k=sch.dataset.sch, d=$(`[data-schd=${k}]`,sch.parentElement); const on=!d.classList.contains('on'); $$('.dd.on').forEach(x=>{x.classList.remove('on'); x.previousElementSibling.querySelector('.chv')?.classList.remove('up');}); d.classList.toggle('on',on); sch.querySelector('.chv').classList.toggle('up',on); return; }
+  const sa=t.closest('[data-sa]'); if(sa){ const [k,f,dir]=sa.dataset.sa.split(':'); const s=S.sched[k], d=+dir;
+    if(f==='h') s.h=((s.h-1+d+12)%12)+1; else if(f==='m') s.m=(s.m+d*15+60)%60; else if(f==='ap') s.ap=s.ap==='AM'?'PM':'AM'; else s[f]=Math.max(50,Math.min(90,s[f]+d));
+    $(`[data-sv2="${k}:${f}"]`).textContent = f==='m'?String(s.m).padStart(2,'0'):(f==='c'||f==='ht')?s[f]+'°':s[f];
+    const row=$(`[data-sch=${k}]`); row.querySelector('.cf').textContent=`Cool ${s.c}°`; row.querySelector('.hf').textContent=`Heat ${s.ht}°`; return; }
+  const ch=t.closest('[data-chime]'); if(ch){ S.chime=ch.dataset.chime; $$('[data-chime]').forEach(r=>r.querySelector('.v').innerHTML=S.chime===r.dataset.chime?IC.check(28):''); $$('[data-chv]').forEach(x=>x.textContent=S.chime); return; }
+  const gon=t.closest('[data-go]'); if(gon){ const id=gon.dataset.go; if(dyn(id)) push(id); return; }
+  const pp=t.closest('[data-pop]'); if(pp){ openPop(pp.dataset.pop, pp); return; }
+  if(!t.closest('#pop')) closePop();
+  const a=t.closest('[data-act]'); if(!a) return;
+  const act=a.dataset.act;
+  switch(act){
+    case 'tab': closeOv(); setTab(a.dataset.tab); break;
+    case 'settings': enterSettings('devices'); break;
+    case 'home': leaveSettings('home'); break;
+    case 'lcams': leaveSettings('cams'); break;
+    case 'ltherm': leaveSettings('therm'); break;
+    case 'arm': openOv('arm'); break;
+    case 'setarm': setArm(a.dataset.arm); break;
+    case 'sopt': openOv('sopt'); $('#arm').classList.add('on'); break;
+    case 'soptx': $('#sopt').classList.remove('on'); S.open='arm'; break;
+    case 'silent': S.silent=!S.silent; a.classList.toggle('on',S.silent); a.querySelector('span').textContent=S.silent?'Turn off silent exit':'Turn on silent exit'; break;
+    case 'noentry': S.noEntry=!S.noEntry; a.classList.toggle('on',S.noEntry); a.querySelector('span').textContent=S.noEntry?'Turn on entry delay':'Turn off entry delay'; break;
+    case 'sos': $('#sos').classList.remove('fired'); openOv('sos'); break;
+    case 'sosx': $('#sos').classList.remove('fired'); closeOv(); toast('Alarm canceled'); break;
+    case 'close': closeOv(); break;
+    case 'lock': { const k=a.dataset.lk; if(a.classList.contains('busy')) break; a.classList.add('busy'); setTimeout(()=>{ a.classList.remove('busy'); S.locks[k]=!S.locks[k]; renderLocks(); },700); break; }
+    case 'live': openLive(a.dataset.cam); break;
+    case 'events': openOv('ev'); break;
+    case 'rail': { const r=a.dataset.r; if(r==='lock'){ S.locks.front=!S.locks.front; renderLocks(); toast(S.locks.front?'Front door locked':'Front door unlocked'); } if(r==='mute') LV.mute=!LV.mute; if(r==='talk') LV.talk=!LV.talk; if(r==='light') LV.light=!LV.light; renderRail(); break; }
+    case 'camset': enterSettings('devices'); push('cams'); setTimeout(()=>push('dbset'),60); break;
+    case 'tup': if(S.th.mode!=='off'&&S.th.sp<90){ S.th.sp++; renderTherm(1); } break;
+    case 'tdn': if(S.th.mode!=='off'&&S.th.sp>50){ S.th.sp--; renderTherm(-1); } break;
+    case 'tmode': { S.th.mode=MODES[(MODES.indexOf(S.th.mode)+1)%4]; S.dd.mode=S.th.mode[0].toUpperCase()+S.th.mode.slice(1); renderTherm(); break; }
+    case 'tfan': S.th.fan=S.th.fan==='auto'?'on':'auto'; S.dd.fan=S.th.fan==='auto'?'Auto':'On'; renderTherm(); break;
+    case 'thum': toast(`Indoor humidity ${S.th.hum}%`); break;
+    case 'tzone': toast('Hallway · Downstairs'); break;
+    case 'tset': enterSettings('devices'); push('therm'); break;
+    case 'light': { const k=a.dataset.k; S.lights[k].on=!S.lights[k].on; renderLights(); break; }
+    case 'side': setRoot(a.dataset.k); break;
+    case 'pop': pop(); break;
+    case 'srch': openSearch(a.dataset.k); break;
+    case 'srchx': $('#srch').classList.remove('on'); srT.forEach(clearTimeout); break;
+    case 'tsd': tsd(); break;
+    case 'del': toast('Demo mode: nothing was deleted'); break;
+    case 'restart': toast('Demo mode: restart skipped'); break;
+    case 'bgpick': toast('Background updated'); break;
+  }
+}
+
+/* sliders + dimmers + SOS hold use pointer tracking in screen space */
+let drag=null;
+function onDown(e){
+  const t=e.target;
+  const tp=t.closest('.tap'); if(tp){ tp.classList.add('pr'); const up=()=>{ tp.classList.remove('pr'); window.removeEventListener('pointerup',up); window.removeEventListener('pointercancel',up); }; window.addEventListener('pointerup',up); window.addEventListener('pointercancel',up); }
+  const sl=t.closest('[data-sl]'); if(sl){ drag={sl}; moveSl(e); e.preventDefault(); return; }
+  const dm=t.closest('[data-dim]'); if(dm){ drag={dm}; moveSl(e); e.preventDefault(); return; }
+  const h=t.closest('[data-hold]'); if(h){ h.classList.add('hold'); holdT=setTimeout(()=>{ h.classList.remove('hold'); sosFire(h.dataset.hold); },3000); const end=()=>{ clearTimeout(holdT); h.classList.remove('hold'); window.removeEventListener('pointerup',end); window.removeEventListener('pointercancel',end); }; window.addEventListener('pointerup',end); window.addEventListener('pointercancel',end); e.preventDefault(); return; }
+  const hs=t.closest('.hsc'); if(hs && e.pointerType==='mouse'){ const p=UI.loc(e); drag={hs, x0:p.x, y0:p.y, s0:hs.scrollLeft, t0:hs.scrollTop, moved:false}; }
+}
+function moveSl(e){ const p=UI.loc(e); if(!p) return;
+  if(drag.sl){ const r=localRect(drag.sl); setSl(drag.sl,(p.x-r.x)/r.w*100); }
+  if(drag.dm){ const r=localRect(drag.dm); const k=drag.dm.dataset.dim; const v=Math.round(Math.max(5,Math.min(100,(p.x-r.x)/r.w*100))); S.lights[k].b=v; S.lights[k].on=true; renderLights(); } }
+function onMove(e){ if(!drag) return; if(drag.sl||drag.dm){ moveSl(e); return; }
+  if(drag.hs){ const p=UI.loc(e); if(!p) return; const dx=p.x-drag.x0, dy=p.y-drag.y0; if(Math.abs(dx)+Math.abs(dy)>6) drag.moved=true; drag.hs.scrollLeft=drag.s0-dx; drag.hs.scrollTop=drag.t0-dy; } }
+function onUp(){ if(drag&&drag.hs&&drag.moved){ const cap=ev=>{ ev.stopPropagation(); ev.preventDefault(); }; window.addEventListener('click',cap,{capture:true,once:true}); setTimeout(()=>window.removeEventListener('click',cap,{capture:true}),50); } drag=null; }
+
+function build(){
+  scr.innerHTML = darkHTML() + lightHTML() + `<div class="toast" id="toast"></div><div id="tsd"><b>30</b><div>Touchscreen disabled</div><small>Wipe the screen. It turns back on automatically.</small></div>`;
+  ['#hm','#cm .sc','#nvD .sc','#ev .ls'].forEach(q=>$(q).classList.add('hsc'));
+  renderArm(); renderLocks(); renderTherm(); renderLights(); renderNav(); tick(); setInterval(tick, 10000);
+  scr.addEventListener('click', onClick);
+  scr.addEventListener('pointerdown', onDown);
+  window.addEventListener('pointermove', onMove);
+  window.addEventListener('pointerup', onUp); window.addEventListener('pointercancel', onUp);
+  // tap outside arm menu pills closes it
+  $('#arm').addEventListener('click', e=>{ if(e.target.id==='arm'||e.target.classList.contains('bgx')) closeOv(); });
+  // swipe-from-left-edge closes live view
+  let sx=null; $('#live').addEventListener('pointerdown',e=>{ const p=UI.loc(e); sx=p&&p.x<120?p.x:null; });
+  $('#live').addEventListener('pointerup',e=>{ const p=UI.loc(e); if(sx!=null&&p&&p.x-sx>120) closeOv(); sx=null; });
+  document.addEventListener('touchstart',()=>{}, {passive:true});
+}
+return { build, S, loc:(e)=>({x:e.offsetX,y:e.offsetY}) };
+})();
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls, RoomEnvironment } from 'three';
+import { CSS3DRenderer, CSS3DObject } from './css3d.js';
+
+const scr = document.getElementById('scr');
+UI.build();
+const W = 1280, H = 750, SW = .1513, K = SW / W;   // design px → metres on the glass
+const SC = new THREE.Vector3(-.0032, .01555, .02272);
+
+let renderer;
+if(/flat/.test(location.search)) flat(1); else try { renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('gl'), antialias: true, alpha: true, powerPreference: 'high-performance' }); }
+catch(e){ flat(); }
+function flat(one){ document.body.classList.add('flat'); if(one) document.body.classList.add('one');
+  const fit = () => { const s = one?1:Math.min(innerWidth*.86/W, innerHeight*.8/H); scr.style.transform=`scale(${s})`; scr.style.left=one?'0':(innerWidth-W*s)/2+'px'; scr.style.top=one?'0':(innerHeight-H*s)/2+'px'; };
+  fit(); addEventListener('resize', fit); document.getElementById('load').style.opacity = 0; UI.loc = e => { const r = scr.getBoundingClientRect(); return { x:(e.clientX-r.left)/r.width*W, y:(e.clientY-r.top)/r.height*H }; }; }
+
+if(renderer){
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.05;
+const scene = new THREE.Scene();
+const pm = new THREE.PMREMGenerator(renderer);
+scene.environment = pm.fromScene(new RoomEnvironment(), .04).texture;
+scene.environmentIntensity = .9;
+const cam = new THREE.PerspectiveCamera(28, 1, .01, 10);
+const key = new THREE.DirectionalLight(0xffffff, 1.6); key.position.set(-.4, .6, .8); scene.add(key);
+const rim = new THREE.DirectionalLight(0xbfe9ff, .7); rim.position.set(.6, .2, -.6); scene.add(rim);
+scene.add(new THREE.AmbientLight(0xffffff, .15));
+
+/* ---- the Smart Hub Pro 2, from the engineering STEP (exterior shell) ---- */
+const hub = new THREE.Group(); scene.add(hub);
+const tl = new THREE.TextureLoader();
+const fab = tl.load('img/hubfab.jpg'); fab.colorSpace = THREE.SRGBColorSpace; fab.anisotropy = 8;
+const M = [
+  new THREE.MeshPhysicalMaterial({ color:0xe9eae8, roughness:.42, clearcoat:.25, clearcoatRoughness:.35, sheen:.3, sheenRoughness:.6, sheenColor:0xffffff }),
+  new THREE.MeshPhysicalMaterial({ color:0x020203, roughness:.12, clearcoat:.7, clearcoatRoughness:.04, envMapIntensity:.22, ior:1.52, specularIntensity:.8 }),
+  new THREE.MeshStandardMaterial({ color:0x1e2022, roughness:.55, metalness:.2 }),
+  new THREE.MeshStandardMaterial({ map:fab, roughness:.95, envMapIntensity:.1 }),
+  new THREE.MeshStandardMaterial({ color:0x060607, roughness:.3, envMapIntensity:.3 }),
+]; M.forEach(m => m.side = THREE.DoubleSide);
+const buf = await (await fetch('hubmdl.jpg')).arrayBuffer();
+{ const n = new DataView(buf).getUint32(0, true), h = JSON.parse(new TextDecoder().decode(new Uint8Array(buf, 4, n))), b = buf.slice(4 + n);
+  for(const p of h.parts){
+    const geo = new THREE.BufferGeometry(), P = new Int16Array(b, p.p, p.nv*3), pos = new Float32Array(p.nv*3);
+    for(let i=0;i<pos.length;i++) pos[i] = P[i]*h.s;
+    geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    geo.setAttribute('normal', new THREE.BufferAttribute(new Int8Array(b, p.n, p.nv*3), 3, true));
+    geo.setIndex(new THREE.BufferAttribute(p.i32 ? new Uint32Array(b, p.i, p.ni) : new Uint16Array(b, p.i, p.ni), 1));
+    if(p.g===3){ const nz=new Float32Array(p.nv*3); for(let i=0;i<p.nv;i++) nz[3*i+2]=1; geo.setAttribute('normal', new THREE.BufferAttribute(nz,3)); const uv=new Float32Array(p.nv*2); for(let i=0;i<p.nv;i++){ uv[2*i]=(pos[3*i]+.1117)/.2234; uv[2*i+1]=(pos[3*i+1]+.0769)/.0307; } geo.setAttribute('uv', new THREE.BufferAttribute(uv,2)); }
+    hub.add(new THREE.Mesh(geo, M[p.g]));
+  }
+}
+/* cover glass: rounded top corners, square where it meets the speaker fabric */
+{ const w=.2232/2, top=.0766, bot=-.0463, r=.012, sh=new THREE.Shape();
+  sh.moveTo(-w,bot); sh.lineTo(w,bot); sh.lineTo(w,top-r); sh.absarc(w-r,top-r,r,0,Math.PI/2,false); sh.lineTo(-w+r,top); sh.absarc(-w+r,top-r,r,Math.PI/2,Math.PI,false); sh.lineTo(-w,bot);
+  const g = new THREE.Mesh(new THREE.ExtrudeGeometry(sh,{depth:.0008,bevelEnabled:true,bevelThickness:.00015,bevelSize:.00015,bevelSegments:3,curveSegments:24}), M[1]); g.position.z=.02165; hub.add(g); }
+/* black display under the live UI (shows through only at grazing angles) */
+{ const s = new THREE.Mesh(new THREE.PlaneGeometry(SW, H*K), new THREE.MeshBasicMaterial({ color:0x000000 })); s.position.copy(SC).z -= .0001; hub.add(s); }
+/* soft contact shadow */
+{ const c=document.createElement('canvas'); c.width=c.height=128; const x=c.getContext('2d'), g=x.createRadialGradient(64,64,0,64,64,64); g.addColorStop(0,'rgba(0,0,0,.55)'); g.addColorStop(1,'rgba(0,0,0,0)'); x.fillStyle=g; x.fillRect(0,0,128,128);
+  const sh=new THREE.Mesh(new THREE.PlaneGeometry(.3,.09), new THREE.MeshBasicMaterial({ map:new THREE.CanvasTexture(c), transparent:true, depthWrite:false })); sh.rotation.x=-Math.PI/2; sh.position.set(0,-.088,0); hub.add(sh); }
+
+/* ---- live UI on the glass ---- */
+const css = new CSS3DRenderer({ element: document.getElementById('css') });
+const glare = document.createElement('div'); glare.id = 'glare'; scr.appendChild(glare);
+/* CSS3D works in pixels: mirror the hub in a ×F scene so the DOM sits exactly on the glass */
+const F = 1000, cssScene = new THREE.Scene(), cssCam = new THREE.PerspectiveCamera();
+const obj = new CSS3DObject(scr); obj.scale.setScalar(K*F); obj.position.copy(SC).multiplyScalar(F); cssScene.add(obj);
+
+const ctl = new OrbitControls(cam, renderer.domElement);
+ctl.enablePan = false; ctl.enableDamping = true; ctl.dampingFactor = .08; ctl.rotateSpeed = .75; ctl.zoomSpeed = .8;
+ctl.minDistance = .2; ctl.maxDistance = .75; ctl.target.set(0, -.004, 0);
+const BASE = new THREE.Spherical();
+function fit(){
+  const w = innerWidth, h = innerHeight; renderer.setSize(w, h, false); css.setSize(w, h); cam.aspect = w/h;
+  const vh = 2*Math.tan(THREE.MathUtils.degToRad(cam.fov/2));                     // view height at 1 m
+  const d = Math.max(.178/(vh*.8), .238/(vh*cam.aspect*.8));                        // hub fills ~80% of the frame
+  BASE.set(d, THREE.MathUtils.degToRad(86), 0); cam.updateProjectionMatrix(); return d; }
+let D = fit();
+cam.position.setFromSpherical(new THREE.Spherical(D*1.12, THREE.MathUtils.degToRad(74), THREE.MathUtils.degToRad(-32))).add(ctl.target);
+addEventListener('resize', () => { D = fit(); dirty = 3; });
+
+/* intro: settle to the front */
+let tw = null;
+function toFront(ms=1100){ const s0 = new THREE.Spherical().setFromVector3(cam.position.clone().sub(ctl.target)); let th = s0.theta; th = Math.atan2(Math.sin(th), Math.cos(th));
+  tw = { t0:performance.now(), ms, a:{r:s0.radius, p:s0.phi, t:th}, b:{r:BASE.radius, p:BASE.phi, t:0} }; }
+setTimeout(()=>toFront(1600), 250);
+const ease = t => 1 - Math.pow(1-t, 3.2);
+ctl.addEventListener('start', () => { tw = null; hint(); });
+const fb = document.getElementById('front'); fb.onclick = () => toFront(900);
+
+/* hint fades once someone engages */
+let hinted = false; function hint(){ if(hinted) return; hinted = true; document.getElementById('hint').style.opacity = 0; }
+scr.addEventListener('pointerdown', hint);
+
+/* precise pointer → screen px (for sliders, drag-scroll, edge swipes) */
+const rc = new THREE.Raycaster(), pl = new THREE.Plane(), v2 = new THREE.Vector2(), hit = new THREE.Vector3(), inv = new THREE.Matrix4();
+UI.loc = e => { v2.set(e.clientX/innerWidth*2-1, -(e.clientY/innerHeight)*2+1); rc.setFromCamera(v2, cssCam);
+  obj.updateMatrixWorld(); const n = new THREE.Vector3(0,0,1).transformDirection(obj.matrixWorld), o = new THREE.Vector3().setFromMatrixPosition(obj.matrixWorld);
+  pl.setFromNormalAndCoplanarPoint(n, o); if(!rc.ray.intersectPlane(pl, hit)) return null;
+  inv.copy(obj.matrixWorld).invert(); hit.applyMatrix4(inv); return { x: hit.x + W/2, y: H/2 - hit.y }; };
+
+/* wheel scrolls the page around us instead of zooming */
+addEventListener('wheel', e => { e.stopImmediatePropagation(); e.preventDefault(); try{ parent.postMessage({ fpEmu:'wheel', dy:e.deltaY }, '*'); }catch(_){} }, { capture:true, passive:false });
+
+let dirty = 3, run = true;
+addEventListener('message', e => { const d = e.data||{}; if(d.fpEmu==='vis'){ run = !!d.on; if(run){ dirty=2; loop(); } } if(d.fpEmu==='front') toFront(700); });
+const tmp = new THREE.Spherical();
+function loop(){
+  if(!run) return; requestAnimationFrame(loop);
+  if(tw){ const k = Math.min(1, (performance.now()-tw.t0)/tw.ms), e = ease(k); tmp.set(tw.a.r+(tw.b.r-tw.a.r)*e, tw.a.p+(tw.b.p-tw.a.p)*e, tw.a.t+(tw.b.t-tw.a.t)*e); cam.position.setFromSpherical(tmp).add(ctl.target); cam.lookAt(ctl.target); if(k>=1) tw=null; dirty=2; }
+  if(ctl.update()) dirty = 2;
+  if(!dirty) return; dirty--;
+  renderer.render(scene, cam); cssCam.copy(cam); cssCam.position.multiplyScalar(F); cssCam.near=cam.near*F; cssCam.far=cam.far*F; cssCam.updateProjectionMatrix(); cssCam.updateMatrixWorld(); css.render(cssScene, cssCam);
+  const s = tmp.setFromVector3(cam.position.clone().sub(ctl.target));
+  const off = Math.abs(THREE.MathUtils.radToDeg(Math.atan2(Math.sin(s.theta),Math.cos(s.theta)))) + Math.abs(THREE.MathUtils.radToDeg(s.phi) - 86);
+  fb.classList.toggle('on', !tw && off > 14);
+  glare.style.opacity = Math.min(.5, off/120).toFixed(3);
+  glare.style.background = `linear-gradient(${(115 + THREE.MathUtils.radToDeg(s.theta)*1.4).toFixed(1)}deg, transparent 30%, rgba(255,255,255,.16) 46%, rgba(255,255,255,.05) 54%, transparent 70%)`;
+}
+document.getElementById('load').style.opacity = 0;
+loop();
+}
+</script>
+</body></html>
