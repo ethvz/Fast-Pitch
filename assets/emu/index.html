@@ -1161,6 +1161,7 @@ setTimeout(()=>UI.led(),0);
 const CX = .165, Y0 = -1.4, TT = -.55, TILT = THREE.MathUtils.degToRad(30);
 const rig = new THREE.Group(); scene.add(rig); scene.remove(hub); rig.add(hub); hub.position.set(0, -HB.min.y, -HB.min.z);
 const HUBC = new THREE.Vector3((HB.min.x+HB.max.x)/2, (HB.min.y+HB.max.y)/2 - HB.min.y, (HB.min.z+HB.max.z)/2 - HB.min.z);  // hub centre in rig space
+const LIV = new THREE.Group(); scene.add(LIV);
 { /* plaster: a few octaves of value noise for a hand-troweled finish */
   const N = 512, c = document.createElement('canvas'); c.width = c.height = N; const x = c.getContext('2d'), im = x.createImageData(N,N);
   const R = (i,j,s) => { const h = Math.sin(i*127.1 + j*311.7 + s*74.7)*43758.5453; return h - Math.floor(h); };
@@ -1178,20 +1179,20 @@ const HUBC = new THREE.Vector3((HB.min.x+HB.max.x)/2, (HB.min.y+HB.max.y)/2 - HB
   const wallM = new THREE.MeshStandardMaterial({ color:0xf1e4c9, map:mott, bumpMap:bump, bumpScale:5.5, roughness:.9, envMapIntensity:.3 });
   // the shade map pulls the mottling toward cream (a grey map would grey the wall): tint via onBeforeCompile-free trick — blend in the colour
   wallM.color.setHex(0xf3dcb3); mott.offset.set(.13,.27);
-  const wall = new THREE.Mesh(new THREE.PlaneGeometry(3.2, 3.2), wallM); wall.position.set(CX-1.6, Y0+1.6, 0); wall.receiveShadow = true; scene.add(wall);
-  const ret = new THREE.Mesh(new THREE.PlaneGeometry(1.8, 3.2), wallM); ret.rotation.y = Math.PI/2; ret.position.set(CX, Y0+1.6, -.9); ret.receiveShadow = true; scene.add(ret);
-  const bead = new THREE.Mesh(new THREE.CylinderGeometry(.0045,.0045,3.2,16), wallM); bead.position.set(CX-.0045, Y0+1.6, -.0045); scene.add(bead);
+  const wall = new THREE.Mesh(new THREE.PlaneGeometry(3.2, 3.2), wallM); wall.position.set(CX-1.6, Y0+1.6, 0); wall.receiveShadow = true; LIV.add(wall);
+  const ret = new THREE.Mesh(new THREE.PlaneGeometry(1.8, 3.2), wallM); ret.rotation.y = Math.PI/2; ret.position.set(CX, Y0+1.6, -.9); ret.receiveShadow = true; LIV.add(ret);
+  const bead = new THREE.Mesh(new THREE.CylinderGeometry(.0045,.0045,3.2,16), wallM); bead.position.set(CX-.0045, Y0+1.6, -.0045); LIV.add(bead);
   /* the rest of the room in the same cream paint, so panning around never shows the void */
-  const RW = 3.6, wl = new THREE.Mesh(new THREE.PlaneGeometry(RW, 3.2), wallM); wl.rotation.y = Math.PI/2; wl.position.set(CX-3.2, Y0+1.6, RW/2-.0); wl.receiveShadow = true; scene.add(wl);
-  const wb = new THREE.Mesh(new THREE.PlaneGeometry(4.6, 3.2), wallM); wb.rotation.y = Math.PI; wb.position.set(CX-1.4, Y0+1.6, RW); wb.receiveShadow = true; scene.add(wb);
-  const wr = new THREE.Mesh(new THREE.PlaneGeometry(RW, 3.2), wallM); wr.rotation.y = -Math.PI/2; wr.position.set(CX+.9, Y0+1.6, RW/2+.6); scene.add(wr);
-  const ceil = new THREE.Mesh(new THREE.PlaneGeometry(6, 6), new THREE.MeshStandardMaterial({ color:0xf7f2e8, roughness:.95, bumpMap:bump, bumpScale:1 })); ceil.rotation.x = Math.PI/2; ceil.position.set(CX-1.2, Y0+2.75, .6); scene.add(ceil);
+  const RW = 3.6, wl = new THREE.Mesh(new THREE.PlaneGeometry(RW, 3.2), wallM); wl.rotation.y = Math.PI/2; wl.position.set(CX-3.2, Y0+1.6, RW/2-.0); wl.receiveShadow = true; LIV.add(wl);
+  const wb = new THREE.Mesh(new THREE.PlaneGeometry(4.6, 3.2), wallM); wb.rotation.y = Math.PI; wb.position.set(CX-1.4, Y0+1.6, RW); wb.receiveShadow = true; LIV.add(wb);
+  const wr = new THREE.Mesh(new THREE.PlaneGeometry(RW, 3.2), wallM); wr.rotation.y = -Math.PI/2; wr.position.set(CX+.9, Y0+1.6, RW/2+.6); LIV.add(wr);
+  const ceil = new THREE.Mesh(new THREE.PlaneGeometry(6, 6), new THREE.MeshStandardMaterial({ color:0xf7f2e8, roughness:.95, bumpMap:bump, bumpScale:1 })); ceil.rotation.x = Math.PI/2; ceil.position.set(CX-1.2, Y0+2.75, .6); LIV.add(ceil);
   const paint = new THREE.MeshStandardMaterial({ color:0xf6f3ec, roughness:.45 });
-  const base1 = new THREE.Mesh(new THREE.BoxGeometry(3.2,.095,.014), paint); base1.position.set(CX-1.6, Y0+.0475, .007); scene.add(base1);
+  const base1 = new THREE.Mesh(new THREE.BoxGeometry(3.2,.095,.014), paint); base1.position.set(CX-1.6, Y0+.0475, .007); LIV.add(base1);
   /* the dining room around the corner, out of focus */
   const dt = tl.load('img/dining.webp'); dt.colorSpace = THREE.SRGBColorSpace;
-  const din = new THREE.Mesh(new THREE.PlaneGeometry(3.0, 2.9), new THREE.MeshBasicMaterial({ map:dt, color:0xe2dcd2 })); din.position.set(CX+1.1, Y0+1.35, -2.4); scene.add(din);
-  const glowL = new THREE.PointLight(0xfff1dc, .6, 3, 1.5); glowL.position.set(CX+.6, .4, -1.2); scene.add(glowL);
+  const din = new THREE.Mesh(new THREE.PlaneGeometry(3.0, 2.9), new THREE.MeshBasicMaterial({ map:dt, color:0xe2dcd2 })); din.position.set(CX+1.1, Y0+1.35, -2.4); LIV.add(din);
+  const glowL = new THREE.PointLight(0xfff1dc, .6, 3, 1.5); glowL.position.set(CX+.6, .4, -1.2); LIV.add(glowL);
   /* oak floor */
   const wc = document.createElement('canvas'); wc.width = 1024; wc.height = 1024; const w = wc.getContext('2d');
   for(let r=0;r<8;r++){ const y = r*128, base = 168 + (r*37%5)*9; let xx = -((r*389)%640);
@@ -1201,7 +1202,7 @@ const HUBC = new THREE.Vector3((HB.min.x+HB.max.x)/2, (HB.min.y+HB.max.y)/2 - HB
       w.fillStyle = 'rgba(40,25,10,.5)'; w.fillRect(xx,y,2,128); xx += L; }
     w.fillStyle = 'rgba(40,25,10,.55)'; w.fillRect(0,y,1024,2); }
   const wt = new THREE.CanvasTexture(wc); wt.colorSpace = THREE.SRGBColorSpace; wt.wrapS = wt.wrapT = THREE.RepeatWrapping; wt.repeat.set(3,2.4); wt.anisotropy = 8;
-  const floor = new THREE.Mesh(new THREE.PlaneGeometry(7, 7.4), new THREE.MeshStandardMaterial({ map:wt, roughness:.55, envMapIntensity:.3 })); floor.rotation.x = -Math.PI/2; floor.position.set(0, Y0, .6); floor.receiveShadow = true; scene.add(floor);
+  const floor = new THREE.Mesh(new THREE.PlaneGeometry(7, 7.4), new THREE.MeshStandardMaterial({ map:wt, roughness:.55, envMapIntensity:.3 })); floor.rotation.x = -Math.PI/2; floor.position.set(0, Y0, .6); floor.receiveShadow = true; LIV.add(floor);
   /* console table: oak top and shelf on slim matte-black legs */
   const oakT = wt.clone(); oakT.repeat.set(1.4,.5); oakT.needsUpdate = true;
   const oak = new THREE.MeshStandardMaterial({ map:oakT, color:0xd9c3a3, roughness:.5, envMapIntensity:.4 });
@@ -1213,8 +1214,49 @@ const HUBC = new THREE.Vector3((HB.min.x+HB.max.x)/2, (HB.min.y+HB.max.y)/2 - HB
   for(const lx of [L0+.016, L1-.016]) for(const lz of [.02, Dp-.012]) box(.022, TT-.032-Y0, .022, blk, lx, (TT-.032+Y0)/2, lz);
   /* terracotta vase */
   const pts = [[0,0],[.035,0],[.05,.03],[.055,.08],[.045,.13],[.022,.16],[.02,.19],[.028,.2]].map(([r,y])=>new THREE.Vector2(r,y));
-  const vase = new THREE.Mesh(new THREE.LatheGeometry(pts, 48), new THREE.MeshStandardMaterial({ color:0xc0603a, roughness:.85 })); vase.position.set(-.6, TT, .16); vase.castShadow = true; scene.add(vase);
+  const vase = new THREE.Mesh(new THREE.LatheGeometry(pts, 48), new THREE.MeshStandardMaterial({ color:0xc0603a, roughness:.85 })); vase.position.set(-.6, TT, .16); vase.castShadow = true; LIV.add(vase);
 }
+
+/* ---- Specs: the acoustic recording booth (pyramid foam, dark oak), cross-faded in as the page scrolls Modes → Specs ---- */
+const BOOTH = new THREE.Group(); BOOTH.visible = false; scene.add(BOOTH);
+{ const ROOM = { x:.95, y0:Y0, y1:.85, z:1.35, zb:-.034 }, CELL = .052, PH = .034, GAP = .003;
+  const noise = document.createElement('canvas'); noise.width = noise.height = 128; const nx = noise.getContext('2d'), im = nx.createImageData(128,128);
+  for(let i=0;i<im.data.length;i+=4){ const v = 110 + Math.random()*120; im.data[i]=im.data[i+1]=im.data[i+2]=v; im.data[i+3]=255; } nx.putImageData(im,0,0);
+  const nt = new THREE.CanvasTexture(noise); nt.wrapS = nt.wrapT = THREE.RepeatWrapping; nt.repeat.set(3,3);
+  const foam = new THREE.MeshStandardMaterial({ color:0x18191b, roughness:1, metalness:0, flatShading:true, bumpMap:nt, bumpScale:.5, envMapIntensity:.15 });
+  const pyr = new THREE.ConeGeometry(CELL/Math.SQRT2*.995, PH, 4, 1, true); pyr.rotateY(Math.PI/4); pyr.rotateX(Math.PI/2); pyr.translate(0,0,PH/2);
+  const m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), sc = new THREE.Vector3(1,1,1), p3 = new THREE.Vector3();
+  const grid = (a0,a1) => { const L=[]; for(let i=0, a=a0+CELL/2; a<a1; i++){ L.push(a); a += CELL + ((i%4)===3?GAP:0); } return L; };
+  const wall = (us, vs, place, rot) => { const mesh = new THREE.InstancedMesh(pyr, foam, us.length*vs.length); let n = 0; q.setFromEuler(rot);
+    for(const u of us) for(const v of vs){ place(u,v,p3); m4.compose(p3,q,sc); mesh.setMatrixAt(n++, m4); } mesh.instanceMatrix.needsUpdate = true; mesh.receiveShadow = true; BOOTH.add(mesh); };
+  const back = ROOM.zb;
+  wall(grid(-ROOM.x,ROOM.x), grid(ROOM.y0,ROOM.y1), (u,v,p)=>p.set(u,v,back), new THREE.Euler(0,0,0));
+  wall(grid(back,ROOM.z), grid(ROOM.y0,ROOM.y1), (u,v,p)=>p.set(-ROOM.x,v,u), new THREE.Euler(0,Math.PI/2,0));
+  wall(grid(back,ROOM.z), grid(ROOM.y0,ROOM.y1), (u,v,p)=>p.set(ROOM.x,v,u), new THREE.Euler(0,-Math.PI/2,0));
+  wall(grid(-ROOM.x,ROOM.x), grid(back,ROOM.z), (u,v,p)=>p.set(u,ROOM.y1,v), new THREE.Euler(Math.PI/2,0,0));
+  wall(grid(-ROOM.x,ROOM.x), grid(ROOM.y0,ROOM.y1), (u,v,p)=>p.set(u,v,ROOM.z), new THREE.Euler(0,Math.PI,0));
+  const backing = new THREE.MeshStandardMaterial({ color:0x111113, roughness:1, side:THREE.DoubleSide });
+  const pl = (w,h,x,y,z,ry,rx) => { const m = new THREE.Mesh(new THREE.PlaneGeometry(w,h), backing); m.position.set(x,y,z); m.rotation.set(rx||0,ry||0,0); BOOTH.add(m); };
+  const D2 = ROOM.z-ROOM.zb, ZC = (ROOM.z+ROOM.zb)/2, HH = ROOM.y1-ROOM.y0, YC = (ROOM.y1+ROOM.y0)/2;
+  pl(2*ROOM.x+.2, HH+.2, 0, YC, back-.001); pl(D2+.2, HH+.2, -ROOM.x-.001, YC, ZC, Math.PI/2); pl(D2+.2, HH+.2, ROOM.x+.001, YC, ZC, -Math.PI/2); pl(2*ROOM.x+.2, D2+.2, 0, ROOM.y1+.001, ZC, 0, Math.PI/2); pl(2*ROOM.x+.2, HH+.2, 0, YC, ROOM.z+.001, Math.PI);
+  const wc = document.createElement('canvas'); wc.width = wc.height = 512; const w = wc.getContext('2d');
+  for(let r=0;r<4;r++){ const y = r*128; let x = -((r*389)%320); while(x < 512){ const L = 220 + ((x*7+r*131)%130), t = 120 + ((x+r*53)%19); w.fillStyle = `rgb(${t},${t*.76|0},${t*.54|0})`; w.fillRect(x,y,L,128); w.fillStyle = 'rgba(30,18,8,.6)'; w.fillRect(x,y,2,128); x += L; } w.fillRect(0,y,512,2); }
+  const wt = new THREE.CanvasTexture(wc); wt.colorSpace = THREE.SRGBColorSpace; wt.wrapS = wt.wrapT = THREE.RepeatWrapping; wt.repeat.set(3,2.6);
+  const floor = new THREE.Mesh(new THREE.PlaneGeometry(2*ROOM.x, D2), new THREE.MeshStandardMaterial({ map:wt, color:0x6d655d, roughness:.6, envMapIntensity:.2 }));
+  floor.rotation.x = -Math.PI/2; floor.position.set(0, ROOM.y0+.001, ZC); floor.receiveShadow = true; BOOTH.add(floor); }
+/* two-room cross-fade: each room renders to its own buffer, a full-screen quad mixes them (tone-mapped once, at the end) */
+const RTO = { samples:4, type:THREE.HalfFloatType }, rtA = new THREE.WebGLRenderTarget(4,4,RTO), rtB = new THREE.WebGLRenderTarget(4,4,RTO);
+const fadeM = new THREE.ShaderMaterial({ uniforms:{ a:{ value:rtA.texture }, b:{ value:rtB.texture }, m:{ value:0 } }, depthTest:false, depthWrite:false, toneMapped:true,
+  vertexShader:'varying vec2 vU; void main(){ vU = uv; gl_Position = vec4(position.xy, 0., 1.); }',
+  fragmentShader:'uniform sampler2D a; uniform sampler2D b; uniform float m; varying vec2 vU;\nvoid main(){ vec3 A = sqrt(max(texture2D(a, vU).rgb, 0.)), B = sqrt(max(texture2D(b, vU).rgb, 0.)); vec3 c = mix(A, B, m); gl_FragColor = vec4(c*c, 1.);\n#include <tonemapping_fragment>\n#include <colorspace_fragment>\n}' });
+const fadeS = new THREE.Scene(), fadeC = new THREE.OrthographicCamera(-1,1,1,-1,0,1), fadeQ = new THREE.Mesh(new THREE.PlaneGeometry(2,2), fadeM); fadeQ.frustumCulled = false; fadeS.add(fadeQ);
+const dbs = new THREE.Vector2();
+function renderRooms(){ const t = Math.max(0, Math.min(1, (FR.p-.2)/.6)), m = t*t*(3-2*t);
+  if(m < .002 || m > .998){ LIV.visible = m < .5; BOOTH.visible = !LIV.visible; renderer.render(scene, cam); return; }
+  renderer.getDrawingBufferSize(dbs); if(rtA.width !== dbs.x || rtA.height !== dbs.y){ rtA.setSize(dbs.x, dbs.y); rtB.setSize(dbs.x, dbs.y); }
+  LIV.visible = true; BOOTH.visible = false; renderer.setRenderTarget(rtA); renderer.render(scene, cam);
+  LIV.visible = false; BOOTH.visible = true; renderer.setRenderTarget(rtB); renderer.render(scene, cam);
+  renderer.setRenderTarget(null); fadeM.uniforms.m.value = m; renderer.render(fadeS, fadeC); }
 const stand = new THREE.Group(); rig.add(stand);
 { /* Smart Hub Pro 2 tabletop stand: a fabric-wrapped wedge on a thin white base; the panel leans back 30° against its front face */
   const ex = (shape, w, bv) => { const g = new THREE.ExtrudeGeometry(shape, { depth:w, bevelEnabled:true, bevelThickness:bv, bevelSize:bv, bevelSegments:6, curveSegments:16 }); g.translate(0,0,-w/2); g.rotateY(-Math.PI/2); return g; };
@@ -1331,7 +1373,7 @@ function loop(){
   if(!FR.follow && ctl.update()) dirty = 2;
   if(ledPulse && ledOn){ const k = .5+.5*Math.sin(performance.now()/170); ledM.color.copy(LEDC).multiplyScalar(.35+.65*k); down.intensity = .8+2.6*k; dirty = 1; } else down.intensity = 2.4;
   if(!dirty) return; dirty--;
-  syncCSS(); renderer.render(scene, cam); cssCam.copy(cam); cssCam.position.multiplyScalar(F); cssCam.near=cam.near*F; cssCam.far=cam.far*F; cssCam.updateProjectionMatrix(); cssCam.updateMatrixWorld(); css.render(cssScene, cssCam);
+  syncCSS(); renderRooms(); cssCam.copy(cam); cssCam.position.multiplyScalar(F); cssCam.near=cam.near*F; cssCam.far=cam.far*F; cssCam.updateProjectionMatrix(); cssCam.updateMatrixWorld(); css.render(cssScene, cssCam);
   fb.classList.toggle('on', !FR.follow);
   const s = new THREE.Spherical().setFromVector3(cam.position.clone().sub(ctl.target));
   const off = Math.abs(THREE.MathUtils.radToDeg(s.theta)) + Math.abs(THREE.MathUtils.radToDeg(s.phi) - 90);
@@ -1342,7 +1384,7 @@ function loop(){
 }
 document.getElementById('load').style.opacity = 0;
 applyMode(0); document.body.classList.add('modes');
-window.__emu = { cam, ctl, scene, rig, stand, hub, C, want, HUBC, P0, Pt, FR, frame:(p,q)=>setFrame({p,q}), mode:setMode };
+window.__emu = { cam, ctl, scene, rig, stand, hub, C, want, HUBC, P0, Pt, FR, fadeM, rtA, LIV, BOOTH, frame:(p,q)=>setFrame({p,q}), mode:setMode };
 loop();
 }
 </script>
