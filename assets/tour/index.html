@@ -53,23 +53,24 @@ button:focus-visible{outline:2px solid var(--mint);outline-offset:3px}
 @keyframes pulse{0%{transform:scale(.6);opacity:.9}80%,100%{transform:scale(1.5);opacity:0}}
 
 /* bottom rail */
-#rail{position:fixed;left:0;right:0;bottom:0;z-index:6;padding-bottom:calc(env(safe-area-inset-bottom,0px) + 16px);
-  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;justify-content:center;pointer-events:none}
-#railIn{display:flex;gap:4px;padding:6px 8px;border-radius:22px;max-width:min(100%,1120px);overflow-x:auto;overflow-y:hidden;scrollbar-width:none;pointer-events:auto;-webkit-overflow-scrolling:touch;touch-action:pan-x;
-  scroll-snap-type:x proximity;scroll-padding:0 24px;overscroll-behavior-x:contain;
-  -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 22px,#000 calc(100% - 22px),transparent 100%);mask-image:linear-gradient(90deg,transparent 0,#000 22px,#000 calc(100% - 22px),transparent 100%)}
+/* product carousel: identical to Fast Pitch's All Products sheet */
+#rail{position:fixed;left:18px;right:18px;bottom:12px;z-index:6;height:282px;border-radius:40px;background:#1c1c1e;box-shadow:0 30px 80px rgba(0,0,0,.6);pointer-events:auto}
+#railIn{position:absolute;left:0;right:0;top:22px;bottom:0;display:flex;gap:28px;overflow-x:auto;overflow-y:hidden;padding:0 32px 24px;scroll-padding:0 50px;scroll-snap-type:x proximity;scrollbar-width:none;-webkit-overflow-scrolling:touch;touch-action:pan-x;overscroll-behavior-x:contain;
+  -webkit-mask-image:linear-gradient(90deg,rgba(0,0,0,.18) 0,#000 13%,#000 87%,rgba(0,0,0,.18) 100%);mask-image:linear-gradient(90deg,rgba(0,0,0,.18) 0,#000 13%,#000 87%,rgba(0,0,0,.18) 100%)}
 #railIn::-webkit-scrollbar{display:none}
-.chip{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:7px;width:90px;height:94px;padding:9px 4px 6px;border-radius:16px;transition:background .25s,opacity .3s;scroll-snap-align:center}
-.chip .im{height:46px;width:100%;display:flex;align-items:center;justify-content:center;flex:0 0 46px}
-.chip img{height:46px;width:auto;max-width:78px;object-fit:contain;filter:drop-shadow(0 3px 6px rgba(0,0,0,.45))}
-.chip span{display:block;width:100%;font-size:11px;font-weight:600;line-height:1.2;text-align:center;color:var(--muted);text-wrap:balance;align-self:flex-start}
-.chip[aria-current="true"]{background:var(--glass-2);box-shadow:inset 0 0 0 1.5px var(--mint)}
-.chip[aria-current="true"] span{color:var(--fg)}
-.chip[hidden]{display:none}
+#railIn .grp{flex:none;display:flex;flex-direction:column;gap:12px;scroll-snap-align:start}
+#railIn .grp[hidden]{display:none}
+#railIn .grp>span{font-size:12.5px;letter-spacing:2px;text-transform:uppercase;color:#8e8e93;font-weight:500;padding-left:4px;white-space:nowrap}
+#railIn .row{display:flex;gap:12px}
+#railIn .pi{position:relative;width:150px;height:208px;flex:none;border:0;border-radius:22px;background:#1c1c1c;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding:0 10px 16px;gap:12px;text-align:center;font:inherit;font-size:14.5px;line-height:1.2;color:#e5e5ea;cursor:pointer;transition:transform .2s var(--ease),background .2s}
+#railIn .pi:active{transform:scale(.96)}
+#railIn .pi[aria-current="true"]{background:#48484a;color:#fff}
+#railIn .pi[hidden]{display:none}
+#railIn .pi img{width:118px;height:118px;object-fit:contain;margin-bottom:auto;margin-top:16px}
 
 /* detail card */
 #card{position:fixed;z-index:7;right:max(18px,env(safe-area-inset-right,0px));top:calc(env(safe-area-inset-top,0px) + 86px);
-  bottom:calc(env(safe-area-inset-bottom,0px) + 126px);width:min(360px,38vw);border-radius:24px;display:flex;flex-direction:column;overflow:hidden;
+  bottom:calc(env(safe-area-inset-bottom,0px) + 310px);width:min(360px,38vw);border-radius:24px;display:flex;flex-direction:column;overflow:hidden;
   transform:translateX(0);opacity:1;transition:transform .45s var(--ease),opacity .35s}
 #card.away{transform:translateX(30px);opacity:0;pointer-events:none}
 .c-media{position:relative;height:170px;flex:0 0 auto;display:grid;place-items:center;background:radial-gradient(70% 80% at 50% 60%,rgba(27,251,165,.14),transparent 70%)}
@@ -90,7 +91,7 @@ button:focus-visible{outline:2px solid var(--mint);outline-offset:3px}
 #prev{width:44px;padding:0;justify-content:center}
 
 /* hint + loading */
-#hint{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 124px);transform:translateX(-50%);z-index:4;padding:9px 16px;border-radius:18px;font-size:13px;font-weight:500;color:var(--fg);white-space:nowrap;transition:opacity .5s}
+#hint{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 310px);transform:translateX(-50%);z-index:4;padding:9px 16px;border-radius:18px;font-size:13px;font-weight:500;color:var(--fg);white-space:nowrap;transition:opacity .5s}
 #hint.gone{opacity:0}
 #loading{position:fixed;inset:0;display:grid;place-items:center;z-index:9;background:var(--bg);transition:opacity .6s}
 #loading.done{opacity:0;pointer-events:none}
@@ -178,7 +179,7 @@ import * as THREE from 'three';
 /* three.js r165 + the addons the tour uses, bundled locally so the tour works offline */
 import { OrbitControls, RoundedBoxGeometry, RoomEnvironment, GLTFLoader, MeshoptDecoder } from 'three';
 /* textures, decals and the sky come in one bundle (pack.jpg) so Fast Pitch stays under its file limit */
-const __PK = await (async()=>{ try{ const r=await fetch('pack.jpg?v=7'); const tot=+r.headers.get('content-length')||9e6, rd=r.body.getReader(), parts=[]; let got=0;
+const __PK = await (async()=>{ try{ const r=await fetch('pack.jpg?v=8'); const tot=+r.headers.get('content-length')||9e6, rd=r.body.getReader(), parts=[]; let got=0;
   for(;;){ const {done,value}=await rd.read(); if(done) break; parts.push(value); got+=value.length; const b=document.getElementById('loadBar'); if(b) b.style.setProperty('--p', Math.min(92,Math.round(92*got/tot))+'%'); }
   const u8=new Uint8Array(got); let o=0; for(const p of parts){ u8.set(p,o); o+=p.length; } const buf=u8.buffer; const n=new DataView(buf).getUint32(0,true);
   const idx=JSON.parse(new TextDecoder().decode(new Uint8Array(buf,4,n))), base=4+n, m={};
@@ -990,6 +991,10 @@ scene.add(prodLight, prodLight.target);
 
 
 /* ------------------------------------------------------------------ product placement */
+const RAILG = [['Smart Hub & Mobile App',['hub']],['Cameras',['ocp','ocspot','dbcp','icp']],['Smart Home',['lock','garage','therm','plug']],
+  ['Sensors',['keypad','motion','glass','window','water','smokeco','fire','pendant','fob','chime']],['Yard Sign',['ysign']]];
+const RLAB = {hub:'Smart Hub Pro 2',ocp:'Outdoor Camera Pro',ocspot:'Outdoor Camera + Spotlight',dbcp:'Doorbell Camera Pro',icp:'Indoor Camera Pro',lock:'Smart Lock',garage:'Garage Control',therm:'Smart Thermostat',plug:'Smart Plug',keypad:'Keypad',motion:'Motion Sensor',glass:'Glass Break',window:'Door & Window',water:'Water Sensor',smokeco:'Smoke & CO Detector',fire:'Smoke/CO Monitor',pendant:'Panic Pendant',fob:'Key Fob',chime:'Chime Extender',ysign:'Yard Sign'};
+{ const ORD = RAILG.flatMap(g=>g[1]); PRODUCTS.sort((a,b)=>(ORD.indexOf(a.k)+99*(ORD.indexOf(a.k)<0))-(ORD.indexOf(b.k)+99*(ORD.indexOf(b.k)<0))); }
 const PLACE = {
   ysign: {pos:V(4.3,0,8.2),          view:V(.25,0,1),  stand:true, s:1, d:1.5},
   ocspot:{pos:V(-9.35,2.72,4.02),    view:V(0,0,1),            d:1.1},
@@ -999,7 +1004,7 @@ const PLACE = {
   hub:   {pos:V(1.62,FL+1.5,-1.25),  view:V(1,0,0),            d:1.1},
   chime: {pos:V(1.62,FL+.32,-2.6),   view:V(1,0,0),            d:.7},
   motion:{pos:V(1.72,FL+2.75,-5.68), view:V(.62,-.32,.62),     d:.72},
-  smokeco:{pos:V(4.0,FL+5.3,-5.79),  view:V(0,0,1),            d:.8},
+  smokeco:{pos:V(4.2,EH+FL-.035,-3.6), view:V(0,-1,.02),         d:.9},
   water: {pos:V(5.15,FL+.012,-5.02), view:V(.05,.78,.62), flat:true, d:.62},
   fob:   {pos:V(4.35,FL+.945,-2.78), view:V(.15,.8,.6),  flat:true, s:1.2, d:.5},
   pendant:{pos:V(1.665,FL+1.62,3.25), view:V(1,0,0), s:1.25, d:.82},
@@ -1104,11 +1109,17 @@ for(const p of PRODUCTS){
   b.addEventListener('click', e => { e.stopPropagation(); focus(p); });
   spotsEl.appendChild(b); p.el = b;
   const c = document.createElement('button');
-  c.className = 'chip'; c.dataset.k = p.k; c.setAttribute('aria-current','false');
-  c.innerHTML = `<div class="im"><img src="${PK('chip/'+p.img+'.webp')}" alt=""></div><span>${p.name}</span>`;
+  c.className = 'pi'; c.dataset.k = p.k; c.setAttribute('aria-current','false');
+  c.innerHTML = `<img src="${PK('cat/'+(p.k==='hub'?'shp2_home':p.k)+'.webp')}" alt="">${RLAB[p.k]||p.name}`;
   c.addEventListener('click', () => focus(p));
-  railIn.appendChild(c); p.chip = c;
+  p.chip = c;
 }
+for(const [n,ks] of RAILG){ const g = document.createElement('div'); g.className = 'grp'; g.innerHTML = `<span>${n}</span><div class="row"></div>`;
+  const row = g.querySelector('.row'); ks.forEach(k => { const p = PRODUCTS.find(q=>q.k===k); if(p) row.appendChild(p.chip); });
+  if(row.children.length) railIn.appendChild(g); }
+/* centre a chip inside the carousel only — scrollIntoView would also scroll Fast Pitch's page around this frame */
+function railTo(el){ const r = railIn.getBoundingClientRect(), e = el.getBoundingClientRect();
+  railIn.scrollTo({left: railIn.scrollLeft + (e.left + e.width/2) - (r.left + r.width/2), behavior: reduceMotion?'auto':'smooth'}); }
 function setHint(t){ hint.textContent = t; hint.classList.remove('gone'); clearTimeout(setHint.t); setHint.t = setTimeout(()=>hint.classList.add('gone'), 4200); }
 function fillCard(p){ document.body.dataset.fk=p.k;
   $('#cImg').src = PK('chip/'+p.img+'.webp'); $('#cImg').alt = p.name;
@@ -1123,7 +1134,7 @@ function focus(p){
   if(!shown(p)) return;
   state.focus = p; document.body.classList.add('focus');
   PRODUCTS.forEach(q => q.chip.setAttribute('aria-current', String(q===p)));
-  p.chip.scrollIntoView({behavior: reduceMotion?'auto':'smooth', inline:'center', block:'nearest'});
+  railTo(p.chip);
   fillCard(p); card.classList.remove('away');
   $('#back').hidden = false;
   const pose = focusPose(p);
@@ -1145,6 +1156,7 @@ const step = d => { const L = vis(); if(!L.length) return; const i = state.focus
 function setCat(c){
   state.cat = CATS[c] ? c : 'all';
   for(const p of PRODUCTS){ const on = shown(p); p.model.visible = on; p.chip.hidden = !on; if(!on) p.el.hidden = true; }
+  railIn.querySelectorAll('.grp').forEach(g => g.hidden = ![...g.querySelectorAll('.pi')].some(c=>!c.hidden));
   if(state.focus && !shown(state.focus)) overview();
   if(state.focus) fillCard(state.focus);
   railIn.scrollTo({left:0, behavior: reduceMotion?'auto':'smooth'});
