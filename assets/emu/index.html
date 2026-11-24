@@ -1036,7 +1036,7 @@ const stand = new THREE.Group(); rig.add(stand);
   w.lineTo(-.094, .02); w.quadraticCurveTo(-.101, .014, -.101, .007); w.lineTo(-.006,.006);
   const b = new THREE.Shape(); b.moveTo(-.002,-.0035); b.lineTo(-.106,-.0035); b.lineTo(-.106,.0035); b.lineTo(-.002,.0035); b.lineTo(-.002,-.0035);
   const fabB = fab.clone(); fabB.wrapS = fabB.wrapT = THREE.RepeatWrapping; fabB.repeat.set(5,5); fabB.needsUpdate = true;
-  const fabric = new THREE.MeshStandardMaterial({ color:0xb9b6b1, roughness:.97, bumpMap:fabB, bumpScale:1.4, envMapIntensity:.25 });
+  const fabric = new THREE.MeshStandardMaterial({ color:0x8e8b86, roughness:.97, bumpMap:fabB, bumpScale:1.2, envMapIntensity:.25 });
   const plate = new THREE.MeshStandardMaterial({ color:0xeeeeec, roughness:.5 });
   const wm = new THREE.Mesh(ex(w,.158,.004), fabric), bm = new THREE.Mesh(ex(b,.158,.0015), plate);
   for(const m of [wm,bm]){ m.castShadow = m.receiveShadow = true; stand.add(m); }
