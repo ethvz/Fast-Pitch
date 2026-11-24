@@ -178,7 +178,7 @@ import * as THREE from 'three';
 /* three.js r165 + the addons the tour uses, bundled locally so the tour works offline */
 import { OrbitControls, RoundedBoxGeometry, RoomEnvironment, GLTFLoader, MeshoptDecoder } from 'three';
 /* textures, decals and the sky come in one bundle (pack.jpg) so Fast Pitch stays under its file limit */
-const __PK = await (async()=>{ try{ const r=await fetch('pack.jpg?v=5'); const tot=+r.headers.get('content-length')||9e6, rd=r.body.getReader(), parts=[]; let got=0;
+const __PK = await (async()=>{ try{ const r=await fetch('pack.jpg?v=6'); const tot=+r.headers.get('content-length')||9e6, rd=r.body.getReader(), parts=[]; let got=0;
   for(;;){ const {done,value}=await rd.read(); if(done) break; parts.push(value); got+=value.length; const b=document.getElementById('loadBar'); if(b) b.style.setProperty('--p', Math.min(92,Math.round(92*got/tot))+'%'); }
   const u8=new Uint8Array(got); let o=0; for(const p of parts){ u8.set(p,o); o+=p.length; } const buf=u8.buffer; const n=new DataView(buf).getUint32(0,true);
   const idx=JSON.parse(new TextDecoder().decode(new Uint8Array(buf,4,n))), base=4+n, m={};
@@ -463,10 +463,7 @@ slab(-5,1.4,EH+FL-.02,EH+FL+.2,-5.8,3.8,M.ceil);   // lid
   slab(-1.9,-0.9,FL,FL+2.35,3.84,3.9,M.door,d);
   slab(-1.72,-1.62,FL+.35,FL+2.05,3.9,3.905,M.glassLit,d);
   slab(-1.98,-1.9,FL,FL+2.43,3.78,4.04,M.trim,d); slab(-0.9,-0.82,FL,FL+2.43,3.78,4.04,M.trim,d); slab(-1.98,-0.82,FL+2.35,FL+2.43,3.78,4.04,M.trim,d);
-  // passage lever below the smart lock (matte black, like the Kwikset set)
-  const rose = cyl(.032,.012,M.blackM,32); rose.rotation.x = Math.PI/2; rose.position.set(-1.12,FL+.92,3.906); d.add(rose);
-  const neck = cyl(.009,.05,M.blackM,16); neck.rotation.x = Math.PI/2; neck.position.set(-1.12,FL+.92,3.935); d.add(neck);
-  const lever = new THREE.Mesh(new RoundedBoxGeometry(.12,.02,.016,3,.006), M.blackM); lever.position.set(-1.17,FL+.92,3.958); lever.castShadow = true; d.add(lever); }
+}
 /* entry canopy with downlights */
 slab(-4.9,1.6,3.08,3.24,4.0,5.45,M.fascia);
 slab(-4.9,1.6,3.0,3.08,4.0,5.42,mat(0x6b4a33,{r:.6,x:{map:TX.floor,color:0x9a7656}}));   // wood soffit
@@ -825,15 +822,8 @@ const MODELS = {
     add(g, torus(.0145,.0029,PM.ring),0,-.055,.0366);
     add(g, faceZ(cyl(.0118,.002,PM.gloss,48)),0,-.055,.0372);
     return g; },
-  lock(){ const g=G();                                  // Kwikset keypad deadbolt in matte black, lever below
-    add(g, rslab(.074,.118,.014,.008,.004,PM.blackM),0,0,.007);
-    for(let r=0;r<2;r++) for(let c=0;c<5;c++) add(g, rslab(.0104,.0136,.0045,.0028,.0014,PM.keyCap),-.024+c*.012,.03-r*.019,.01625);
-    add(g, decal(DEC.keys,.06,.038,{r:.4}),0,.0205,.0186);
-    add(g, decal(DEC.kwik,.026,.013,{r:.4}),0,.0485,.0142);
-    add(g, faceZ(cyl(.021,.006,PM.blackM,64)),0,-.028,.017);
-    add(g, torus(.021,.0022,PM.blackM),0,-.028,.0198);
-    add(g, faceZ(cyl(.0115,.004,PM.blackM,48)),0,-.028,.022);
-    add(g, decal(DEC.keyway,.034,.034,{r:.35}),0,-.028,.0241);
+  lock(){ const g=G();                                  // Kwikset keypad deadbolt (photo-accurate face, bevelled body) + passage lever below
+    add(g, photoSolid('lock',.074,.026));
     add(g, faceZ(cyl(.028,.01,PM.blackM)),0,-.15,.005);
     add(g, faceZ(cyl(.011,.03,PM.blackM)),0,-.15,.024);
     add(g, rslab(.12,.022,.018,.009,.006,PM.blackM),-.05,-.15,.042);
@@ -883,7 +873,7 @@ const MODELS = {
     add(g, new THREE.Mesh(new THREE.PlaneGeometry(.1513,.0915), (()=>{ const t = HUB ? hubTex('hubscr') : DEC.hub; return new THREE.MeshStandardMaterial({map:t, emissiveMap:t, emissive:0xffffff, emissiveIntensity:.75, color:0x222222, roughness:.15, polygonOffset:true, polygonOffsetFactor:-2, polygonOffsetUnits:-2}); })()),-.0032,.01555,.02262);
     add(g, faceZ(cyl(.0013,.0004,PM.lens,24)),0,.0705,.0228);   // camera pinhole above the screen
     return g; },
-  therm(){ return photoBody('therm',.085,.024,.014); },
+  therm(){ return photoSolid('therm',.085,.024); },
   icp(){ const g=G();                                   // Indoor Camera Pro: round base, loop arm, square glossy head (origin at base)
     add(g, cyl(.043,.01,PM.blackM,64),0,.005,0);
     const rim = add(g, torus(.043,.005,PM.blackM),0,.005,0); rim.rotation.x = Math.PI/2;
@@ -900,21 +890,18 @@ const MODELS = {
     add(g, rslab(.01,.003,.0008,.0012,.0003,mat(0xb9bdbf,{r:.5})),.03,.008,.0162);
     add(g, rslab(.05,.012,.014,.004,.003,PM.whiteM),.004,-.0215,.007);
     return g; },
-  motion(){ return photoBody('motion',.072,.042,.016); },
-  smokeco(){ const g=G();                               // Smoke & CO Detector: round body, real photo on the face
-    const b = add(g, cyl(.066,.034,PM.whiteM,64),0,0,.017); b.rotation.x = Math.PI/2;
-    add(g, photoFace('smokeco',.134,.134),0,0,.0345);
-    return g; },
-  water(){ return photoFlat('water',.072,.022,.012); },
+  motion(){ return photoSolid('motion',.072,.042); },
+  smokeco(){ return photoSolid('smokeco',.134,.045); },
+  water(){ return photoSolid('water',.072,.022,true); },
   /* products photographed from the front: a rounded body with the real product photo as its face */
-  chime(){ return photoBody('chime',.06,.035,.009); },
-  fire(){ return photoBody('fire',.055,.028,.01); },
-  garage(){ return photoBody('garage',.12,.034,.022); },
-  glass(){ return photoBody('glass',.055,.02,.012); },
-  keypad(){ return photoBody('keypad',.075,.02,.01); },
-  plug(){ return photoBody('plug',.045,.03,.008); },
-  fob(){ return photoFlat('fob',.035,.012,.012); },
-  pendant(){ return photoFlat('pendant',.035,.014,.012); },
+  chime(){ return photoSolid('chime',.06,.035); },
+  fire(){ return photoSolid('fire',.055,.028); },
+  garage(){ return photoSolid('garage',.12,.034); },
+  glass(){ return photoSolid('glass',.055,.02); },
+  keypad(){ return photoSolid('keypad',.075,.02); },
+  plug(){ return photoSolid('plug',.045,.03); },
+  fob(){ return photoSolid('fob',.035,.012,true); },
+  pendant(){ return photoSolid('pendant',.035,.014,true); },
   ysign(){ const g=G();                                 // yard sign: double-sided round sign on a wire stake (origin at the ground)
     const t = photoTex('ysign'), face = new THREE.MeshStandardMaterial({map:t, transparent:true, alphaTest:.5, roughness:.45, side:THREE.DoubleSide});
     const disc = add(g, cyl(.224,.004,mat(0xe8780f,{r:.5}),64),0,.7,0); disc.rotation.x = Math.PI/2;
@@ -925,8 +912,29 @@ const MODELS = {
 };
 const PHT = {};
 function photoTex(k){ if(PHT[k]) return PHT[k]; const t = texLoader.load(PK('ph/'+k+'.webp')); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = Math.min(8, maxAniso); return PHT[k] = t; }
-const PH_ASPECT = {therm:1, motion:512/455, water:1, smokeco:1, chime:374/199, fire:165/98, fob:512/266, garage:253/254, glass:512/337, keypad:512/273, pendant:512/288, plug:260/148};
+const PH_ASPECT = {lock:512/330, therm:1, motion:512/455, water:1, smokeco:1, chime:374/199, fire:165/98, fob:512/266, garage:253/254, glass:512/337, keypad:512/273, pendant:512/288, plug:260/148};
 function photoFace(k, w, h){ return new THREE.Mesh(new THREE.PlaneGeometry(w,h), new THREE.MeshPhysicalMaterial({map:photoTex(k), transparent:true, alphaTest:.04, roughness:.42, clearcoat:.35, clearcoatRoughness:.3, polygonOffset:true, polygonOffsetFactor:-2, polygonOffsetUnits:-2})); }
+/* photoSolid: the product's real outline (traced from its photo) extruded to its true thickness with rounded edges.
+   The photo sits on a flat front face that matches the outline exactly; the photo also drives a bump map so keys,
+   grilles and seams catch the light. Sides take the product's own edge colour. */
+const PHS = await fetch(PK('ph/shapes.json')).then(r=>r.json()).catch(()=>({}));
+function photoSolid(k, w, d, flat=false){
+  const S = PHS[k], h = w*(S ? S.aspect : 1), shape = new THREE.Shape();
+  if(!S || S.pts.length <= 4){ const r = Math.min(w,h)*.07, x0=-w/2, y0=-h/2;      // rectangle: rounded corners
+    shape.moveTo(x0+r,y0); shape.lineTo(x0+w-r,y0); shape.quadraticCurveTo(x0+w,y0,x0+w,y0+r); shape.lineTo(x0+w,y0+h-r); shape.quadraticCurveTo(x0+w,y0+h,x0+w-r,y0+h);
+    shape.lineTo(x0+r,y0+h); shape.quadraticCurveTo(x0,y0+h,x0,y0+h-r); shape.lineTo(x0,y0+r); shape.quadraticCurveTo(x0,y0,x0+r,y0); }
+  else S.pts.forEach(([u,v],i) => { const x=(u-.5)*w, y=(v-.5)*h; i ? shape.lineTo(x,y) : shape.moveTo(x,y); });
+  const b = Math.min(d*.32, Math.min(w,h)*.09, .006);
+  const uvg = { generateTopUV(g,v,a,bb,c){ const f=i=>new THREE.Vector2(v[i*3]/w+.5, v[i*3+1]/h+.5); return [f(a),f(bb),f(c)]; },
+                generateSideWallUV(){ return [new THREE.Vector2(0,0),new THREE.Vector2(1,0),new THREE.Vector2(1,1),new THREE.Vector2(0,1)]; } };
+  const geo = new THREE.ExtrudeGeometry(shape, {depth:Math.max(.001,d-2*b), bevelEnabled:true, bevelThickness:b, bevelSize:b*.85, bevelOffset:-b*.85, bevelSegments:5, curveSegments:24, UVGenerator:uvg});
+  geo.translate(0,0,b); geo.computeVertexNormals();
+  if(flat) geo.rotateX(-Math.PI/2);
+  const t = photoTex(k);
+  const face = new THREE.MeshPhysicalMaterial({map:t, bumpMap:t, bumpScale:1.2, roughness:.42, clearcoat:.35, clearcoatRoughness:.28});
+  const side = new THREE.MeshPhysicalMaterial({color:new THREE.Color(S ? S.edge : '#dddddd'), roughness:.45, clearcoat:.35, clearcoatRoughness:.3});
+  const m = new THREE.Mesh(geo, [face, side]); m.castShadow = m.receiveShadow = true;
+  const g = G(); g.add(m); return g; }
 /* wall-mounted: back on the wall at z=0, face toward +z */
 function photoBody(k, w, d, r){ const g=G(), h = w*PH_ASPECT[k];
   add(g, rbox(w*.97,h*.97,d,r,PM.whiteM),0,0,d/2);
