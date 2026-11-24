@@ -167,19 +167,16 @@ body.focus #brand{display:none}
 <div id="loading"><div id="loadMsg">Building the house…</div><i id="loadBar"></i></div>
 
 <script type="importmap">
-{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.165.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.165.0/examples/jsm/"}}
+{"imports":{"three":"./three.bundle.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.165.0/examples/jsm/"}}
 </script>
 <script>
-// Shows a readable message if the 3D library can't load (offline, blocked CDN).
-window.__failT = setTimeout(()=>{ if(!window.__booted){ const m=document.getElementById('loadMsg'); if(m) m.textContent='The 3D view could not load. Check the connection and reopen this page.'; } }, 15000);
+// Shows a readable message if the 3D library can't load (not downloaded yet and offline).
+window.__failT = setTimeout(()=>{ if(!window.__booted){ const m=document.getElementById('loadMsg'); if(m) m.textContent='The 3D home could not load. Connect to the internet once, then tap Download for Offline in the menu.'; } }, 15000);
 </script>
 <script type="module">
 import * as THREE from 'three';
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
-import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
+/* three.js r165 + the addons the tour uses, bundled locally so the tour works offline */
+import { OrbitControls, RoundedBoxGeometry, RoomEnvironment, GLTFLoader, MeshoptDecoder } from 'three';
 /* textures, decals and the sky come in one bundle (pack.jpg) so Fast Pitch stays under its file limit */
 const __PK = await (async()=>{ try{ const r=await fetch('pack.jpg?v=5'); const tot=+r.headers.get('content-length')||9e6, rd=r.body.getReader(), parts=[]; let got=0;
   for(;;){ const {done,value}=await rd.read(); if(done) break; parts.push(value); got+=value.length; const b=document.getElementById('loadBar'); if(b) b.style.setProperty('--p', Math.min(92,Math.round(92*got/tot))+'%'); }
