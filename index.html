@@ -2750,7 +2750,7 @@ body.hd3 #gTitle{opacity:0!important}
         <div class="strip"><div class="hbpane" id="hbCall"></div><div class="hbpane" id="hbSpec"></div></div>
         <div class="fsp spill" style="left:578px;top:869px;width:220px;height:60px"><i class="ind"></i><button class="on" data-fs="f">Hardware</button><button data-fs="s">Specs</button></div>
       </div>
-      <div id="emuLayer" class="in"><div class="st"><iframe id="emuF" class="emuf" title="Smart Hub Pro 2" allow="autoplay" data-src="assets/emu/index.html?v=12"></iframe><div class="tf"></div></div></div>
+      <div id="emuLayer" class="in"><div class="st"><iframe id="emuF" class="emuf" title="Smart Hub Pro 2" allow="autoplay" data-src="assets/emu/index.html?v=13"></iframe><div class="tf"></div></div></div>
       <div class="otab hb" data-t="hist"><div class="hx3" id="hbX"><div class="hbpane" id="hbHist"></div><div class="hbpane" id="hbNew"></div><div class="hbpane" id="hbOut"></div></div><div class="hb3pill" id="hb3"><i class="ind"></i><button class="on" data-hb3="0">Historical</button><button data-hb3="1">What’s New</button><button data-hb3="2">Internet Outage</button></div></div>
       <div class="otab hb" data-t="cmp"><div id="hbCmp"></div></div>
       <div class="otab tall hb" data-t="videos" hidden><div id="hbVlib"></div></div>
@@ -2821,7 +2821,7 @@ body.hd3 #gTitle{opacity:0!important}
 const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
 
 /* ---------- scale stage ---------- */
-let HW=1376; window.FPV='v409'; if(Math.min(screen.width||0,screen.height||0)<500) document.documentElement.classList.add('phn');
+let HW=1376; window.FPV='v410'; if(Math.min(screen.width||0,screen.height||0)<500) document.documentElement.classList.add('phn');
 function safeBox(){ let pr=document.getElementById('safeProbe'); if(!pr){ pr=document.createElement('div'); pr.id='safeProbe';
   pr.style.cssText='position:fixed;left:0;top:0;width:100vw;height:100vh;height:100dvh;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);box-sizing:border-box;visibility:hidden;pointer-events:none;z-index:-1'; document.documentElement.appendChild(pr); }
   const cs=getComputedStyle(pr), t=parseFloat(cs.paddingTop)||0, b=parseFloat(cs.paddingBottom)||0, l=parseFloat(cs.paddingLeft)||0, r=parseFloat(cs.paddingRight)||0;
@@ -3586,7 +3586,9 @@ fpDock($('#barRight'),{ items:'.bbtn', active:()=>{ const rail=$('#barRight'), r
     const rail=$('#barRight.pnav'), rr=rail&&rail.getBoundingClientRect(), L=(rr&&rr.width&&rr.right<br.left+br.width/2)?(rr.right-br.left)/k+26:40, R=Wl-30;
     const pill=eS.querySelector(':scope>.fsp'), B=(pill?pill.offsetTop:Hl-150)-20, T=118;
     const fitp=(u0,u1,v0,v1,mx)=>{ const sc=Math.min(1.12,(R-L)/(u1-u0),(B-T)/(v1-v0)); return { sc, tx:(L+R)/2-sc*mx, ty:T+((B-T)-sc*(v1-v0))/2-sc*v0 }; };
-    const h=fitp(22,1352,150,770,687), sp=fitp(60,1300,140,800,680);
+    const sp=fitp(60,1300,140,800,680);
+    /* Hardware: the Hub dead-centre on the screen (callouts scale around it), a touch smaller than on Modes */
+    const hcx=Wl/2, hcy=Hl/2, hsc=Math.min(1.12,2*Math.min(hcx-L,R-hcx)/(1352-22),(hcy-T)/(498-150),(B-hcy)/(770-498))*.96, h={ sc:hsc, tx:hcx-hsc*686, ty:hcy-hsc*498 };
     const hc=$('#hbCall'), hs=$('#hbSpec'); if(hc) hc.style.transform=`translate(${h.tx.toFixed(1)}px,${h.ty.toFixed(1)}px) scale(${h.sc.toFixed(4)})`; if(hs) hs.style.transform=`translate(${sp.tx.toFixed(1)}px,${sp.ty.toFixed(1)}px) scale(${sp.sc.toFixed(4)})`;
     const hm=$('#hbModes'), ml=hm&&hm.offsetWidth?(Wl-36-hm.offsetWidth):Wl-200;
     if(hm&&rr&&rr.height){ hm.classList.add('al'); hm.style.setProperty('--mt',((rr.top-br.top)/k).toFixed(1)+'px'); hm.style.setProperty('--mh',(rr.height/k).toFixed(1)+'px');
@@ -3614,6 +3616,8 @@ fpDock($('#barRight'),{ items:'.bbtn', active:()=>{ const rail=$('#barRight'), r
   const order=()=>[...box.children].filter(c=>c.dataset.t&&!c.hidden).map(c=>c.dataset.t);
   setInterval(()=>{ const near=cur==='hub'&&['hero','modes','feat','hist'].includes(HB.tab); if(near&&!f.src) f.src=f.dataset.src;
     const on=cur==='hub'&&['modes','feat'].includes(HB.tab)&&!document.hidden; if(on!==vis&&f.contentWindow){ vis=on; post({fpEmu:'vis',on}); if(on){ lastP=-1; prog(); } } },400);
+  addEventListener('message',e=>{ const d=e.data; if(!d||d.fpEmu!=='pinch'||e.source!==f.contentWindow||!window.fpPinch) return; const r=f.getBoundingClientRect(), k=r.width/(f.offsetWidth||1)||1;
+    if(d.ph==='start') fpPinch.start(r.left+d.x*k, r.top+d.y*k); else if(d.ph==='move') fpPinch.move(d.r); else fpPinch.end(); });
   /* drags outside the Hub (reported by the 3D view) scroll between sections, or swipe Hardware ⇄ Specs */
   let DG=null;
   addEventListener('message',e=>{ const d=e.data; if(!d||d.fpEmu!=='drag'||e.source!==f.contentWindow) return;
@@ -3621,7 +3625,7 @@ fpDock($('#barRight'),{ items:'.bbtn', active:()=>{ const rail=$('#barRight'), r
     if(d.ph==='move'){ if(d.ax==='y'){ box.__jt=DG.t; box.scrollTop=DG.s0-d.dy; } return; }
     const g=DG; DG=null; box.__jt=null;
     if(d.ax==='x'&&g.t==='feat'&&Math.abs(d.dx)>50){ stripCommit(eS,d.dx<0?1:0); return; }
-    if(d.ax!=='y'){ return; }
+    if(d.ax!=='y'){ if(d.ax==null) jump(box,g.t); return; }
     const o=order(), i=o.indexOf(g.t), dir=(Math.abs(d.dy)>90||Math.abs(d.v)>.45)?(d.dy<0?1:-1):0, t=o[Math.max(0,Math.min(o.length-1,i+dir))]; if(t) jump(box,t); });
   addEventListener('message',e=>{ const d=e.data; if(!d||d.fpEmu!=='wheel'||e.source!==f.contentWindow) return; const now=Date.now(); if(Math.abs(d.dy)<12||now-lastJ<750) return; lastJ=now;
     const o=order(), i=o.indexOf(HB.tab), t=o[Math.max(0,Math.min(o.length-1,i+(d.dy>0?1:-1)))]; if(t) jump(box,t); });
@@ -4584,6 +4588,13 @@ IP.tools='<path d="M14.5 6.5a4 4 0 0 0-5 5L4 17l3 3 5.5-5.5a4 4 0 0 0 5-5l-2.5 2
       if(hm){ hm.classList.add('pbg-go'); hm.style.opacity='0'; }
       setTimeout(()=>{ P.classList.remove('pcol','pcol-go'); P.style.transformOrigin=''; P.style.clipPath=P.style.webkitClipPath='';
         if(hm){ hm.classList.remove('pbg','pbg-go'); hm.style.opacity=''; } },380); } };
+  /* the same collapse, driven from inside an iframe (the 3D Smart Hub forwards its pinches) */
+  window.fpPinch={ start(x,y){ if(NOZ()) return; pg=$('#p-'+cur)||pg; const m=loc(x,y); g={d:1,z:1,tx:0,ty:0,mx:m[0],my:m[1]}; },
+    move(ratio){ if(!g||ratio>=1) return; const c=Math.max(.35,1-(1-ratio)*1.1); g.c=c;
+      if(!g.col){ g.col=1; pg.classList.add('pcol'); pg.style.transformOrigin=`${g.mx}px ${g.my}px`; }
+      pg.style.transform=`scale(${c})`; pg.style.opacity=String(Math.min(1,.35+c)); pg.style.clipPath=pg.style.webkitClipPath=`inset(0 round ${Math.round(Math.min(1,(1-c)*6)*44/c)}px)`;
+      const hm=$('#p-home'); if(hm&&!hm.classList.contains('pbg')){ hm.classList.add('pbg'); document.body.classList.add('pcoll'); } if(hm) hm.style.opacity=String(Math.min(1,(1-c)*2.2)); },
+    end(){ if(g&&g.col) collapseEnd(g); g=null; } };
   scr.addEventListener('touchend',e=>{ if(e.touches.length<2){ if(g&&g.col) collapseEnd(g); g=null; } if(!e.touches.length){ if(Z<1.05&&Z!==1) reset(true);
       /* double-tap: zoom in to 2x there, or back out */
       pan=null; } },{passive:true});
